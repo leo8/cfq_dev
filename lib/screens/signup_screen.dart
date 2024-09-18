@@ -35,7 +35,8 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Column(
             children: [
               // Flexible(child: Container(), flex: 2),
-              Image.asset('assets/logo_white.png'), // png plus lourds (cf login_screen.dart) ?
+              Image.asset(
+                  'assets/logo_white.png'), // png plus lourds (cf login_screen.dart) ?
               const SizedBox(
                 height: 32,
               ),
@@ -43,7 +44,18 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   CircleAvatar(
                     radius: 64,
-                    backgroundImage: NetworkImage('https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'),
+                    backgroundImage: NetworkImage(
+                        'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'),
+                  ),
+                  Positioned(
+                    bottom: -10,
+                    left: 80,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.add_a_photo,
+                      ),
+                    ),
                   )
                 ],
               ),
