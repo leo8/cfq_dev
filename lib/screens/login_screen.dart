@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Log in button
               InkWell(
                 child: Container(
-                  child: const Text('Log in'),
+                  child: const Text('Connexion'),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
