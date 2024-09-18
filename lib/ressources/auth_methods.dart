@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:cfq_dev/models/user.dart' as model;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,16 +30,22 @@ class AuthMethods {
               .uploadImageToStorage('profilePicture', profilePicture, false);
         }
 
+        // Create user with data model
+
+        model.User user = model.User(
+          username: username,
+          uid: userCredential.user!.uid,
+          bio: (bio != null) ? bio : "",
+          email: email,
+          followers: [],
+          following: [],
+          profilePictureUrl: profilePictureUrl,
+        );
+
         // Add user to Firestore Database
-        await _firestore.collection('users').doc(userCredential.user!.uid).set({
-          'username': username,
-          'uid': userCredential.user!.uid,
-          'bio': bio,
-          'email': email,
-          'followers': [],
-          'following': [],
-          'profilePictureUrl': profilePictureUrl,
-        });
+        await _firestore.collection('users').doc(userCredential.user!.uid).set(
+              user.toJson(),
+            );
         res = 'success';
       }
     } catch (err) {
