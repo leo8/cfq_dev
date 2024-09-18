@@ -1,6 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
+import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
+import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
+import 'package:cfq_dev/screens/login_screen.dart';
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
@@ -21,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -38,6 +43,42 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      profilePicture: _image != null ? _image! : null,
+    );
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const RepsonsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
+    }
+  }
+
+  void navigateToLogIn() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +89,7 @@ class _SignupScreenState extends State<SignupScreen> {
           width: double.infinity,
           child: Column(
             children: [
-              // Flexible(child: Container(), flex: 2),
-              Image.asset(
-                  'assets/logo_white.png'), // png plus lourds (cf login_screen.dart) ?
+              Image.asset('assets/logo_white.png'),
               const SizedBox(
                 height: 12,
               ),
@@ -70,7 +109,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     bottom: -10,
                     left: 80,
                     child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        selectImage();
+                      },
                       icon: const Icon(
                         Icons.add_a_photo,
                       ),
@@ -120,17 +161,13 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               // Sign up button
               InkWell(
-                onTap: () async {
-                  String res = await AuthMethods().signUpUser(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    username: _usernameController.text,
-                    bio: _bioController.text,
-                    //file:
-                  );
-                },
+                onTap: signUpUser,
                 child: Container(
-                  child: const Text('Inscription'),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(color: primaryColor),
+                        )
+                      : const Text('Inscription'),
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -157,7 +194,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: navigateToLogIn,
                     child: Container(
                       child: Text(
                         "Je me connecte",
