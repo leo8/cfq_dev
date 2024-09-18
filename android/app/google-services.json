@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "160341522687",
+    "project_id": "cfq-dev-11498",
+    "storage_bucket": "cfq-dev-11498.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160341522687:android:d4cc8d8996ece343e574ca",
+        "android_client_info": {
+          "package_name": "com.example.cfq_dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChO-OUGWZ1bzlEYCYcKMHcl-XyiSoWHpQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
