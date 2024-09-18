@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -16,6 +20,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  Uint8List? _image;
 
   @override
   void dispose() {
@@ -26,9 +31,17 @@ class _SignupScreenState extends State<SignupScreen> {
     _bioController.dispose();
   }
 
+  void selectImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -39,15 +52,20 @@ class _SignupScreenState extends State<SignupScreen> {
               Image.asset(
                   'assets/logo_white.png'), // png plus lourds (cf login_screen.dart) ?
               const SizedBox(
-                height: 32,
+                height: 12,
               ),
               Stack(
                 children: [
-                  CircleAvatar(
-                    radius: 64,
-                    backgroundImage: NetworkImage(
-                        'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'),
-                  ),
+                  _image != null
+                      ? CircleAvatar(
+                          radius: 64,
+                          backgroundImage: MemoryImage(_image!),
+                        )
+                      : CircleAvatar(
+                          radius: 64,
+                          backgroundImage: NetworkImage(
+                              'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'),
+                        ),
                   Positioned(
                     bottom: -10,
                     left: 80,
@@ -61,7 +79,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
               const SizedBox(
-                height: 24,
+                height: 12,
               ),
               // Email input
               TextFieldInput(
@@ -70,7 +88,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 textEditingController: _emailController,
               ),
               const SizedBox(
-                height: 12,
+                height: 6,
               ),
               // Password input
               TextFieldInput(
@@ -80,7 +98,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 isPassword: true,
               ),
               const SizedBox(
-                height: 12,
+                height: 6,
               ),
               // Password input
               TextFieldInput(
@@ -89,7 +107,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 textEditingController: _usernameController,
               ),
               const SizedBox(
-                height: 12,
+                height: 6,
               ),
               // Password input
               TextFieldInput(
@@ -98,16 +116,17 @@ class _SignupScreenState extends State<SignupScreen> {
                 textEditingController: _bioController,
               ),
               const SizedBox(
-                height: 12,
+                height: 6,
               ),
               // Sign up button
               InkWell(
                 onTap: () async {
-                  String res = await AuthMethods.signUpUser(
+                  String res = await AuthMethods().signUpUser(
                     email: _emailController.text,
                     password: _passwordController.text,
                     username: _usernameController.text,
                     bio: _bioController.text,
+                    //file:
                   );
                 },
                 child: Container(
