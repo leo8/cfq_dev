@@ -20,6 +20,10 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _organizersController = TextEditingController();
+  final TextEditingController _inviteesController = TextEditingController(); // Pour le champ "À qui"
+  final TextEditingController _locationController = TextEditingController(); // Pour le champ "Où"
+  DateTime? _selectedDateTime;
+  String? _mood;
 
   _selectImage(BuildContext context) async {
     return showDialog(
@@ -63,21 +67,57 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     );
   }
 
+  _selectDateTime(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: _selectedDateTime != null
+            ? TimeOfDay.fromDateTime(_selectedDateTime!)
+            : TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
+  }
+
+  _selectMood(BuildContext context) async {
+    setState(() {
+      _mood = 'Happy'; // Placeholder pour la sélection du mood
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
     _organizersController.dispose();
+    _inviteesController.dispose();
+    _locationController.dispose();
   }
 
   void _postCfq() async {
     String res = await FirestoreMethods().uploadCfq(
       _nameController.text,
       _descriptionController.text,
-      'Mood', // Replace with appropriate mood value or input
+      _mood ?? 'Mood', // Utilise le mood sélectionné
       Provider.of<UserProvider>(context, listen: false).getUser.uid,
-      _organizersController.text.split(','), // Convert the organizers input to a list
+      _organizersController.text.split(','), // Convertir les organisateurs en liste
       Provider.of<UserProvider>(context, listen: false).getUser.username,
       _file!,
       Provider.of<UserProvider>(context, listen: false).getUser.profilePictureUrl,
@@ -108,7 +148,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.close), // 'X' button
+          icon: const Icon(Icons.close),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -134,18 +174,11 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               // Profile picture and image preview container
               Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(user.profilePictureUrl),
-                      ),
-                    ],
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(user.profilePictureUrl),
                   ),
                   const SizedBox(width: 20),
-
-                  // Image Preview Container
                   Stack(
                     children: [
                       Container(
@@ -217,16 +250,72 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Description Field
-              const Text('Description', style: TextStyle(color: Colors.white)),
+              // Date & Time and Mood Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Date & Time', style: TextStyle(color: Colors.white)),
+                        const SizedBox(height: 6),
+                        ElevatedButton(
+                          onPressed: () => _selectDateTime(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: const Size(double.infinity, 50), // Ensure button is as wide as text fields
+                          ),
+                          child: Text(
+                            _selectedDateTime != null
+                                ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year} ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}'
+                                : 'Select Date & Time',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8), // Space between buttons
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Mood', style: TextStyle(color: Colors.white)),
+                        const SizedBox(height: 6),
+                        ElevatedButton(
+                          onPressed: () => _selectMood(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: const Size(double.infinity, 50), // Ensure button is as wide as text fields
+                          ),
+                          child: Text(
+                            _mood != null ? _mood! : 'Add a mood',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Invitees Field
+              const Text('À qui ?', style: TextStyle(color: Colors.white)),
               const SizedBox(height: 6),
               TextField(
-                controller: _descriptionController,
-                maxLines: 5,
+                controller: _inviteesController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[800],
-                  hintText: "Raconte pas ta vie, dis nous juste où tu sors...",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -253,11 +342,40 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Mood Field
-              const Text('Mood', style: TextStyle(color: Colors.white)),
+              // Location Field (Où)
+              const Text('Où ?', style: TextStyle(color: Colors.white)),
               const SizedBox(height: 6),
-              // Add your mood selection UI here
+              TextField(
+                controller: _locationController,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                ),
+                style: const TextStyle(fontSize: 13),
+              ),
+              const SizedBox(height: 12),
 
+              // Description Field
+              const Text('Description', style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 6),
+              TextField(
+                controller: _descriptionController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  hintText: "Raconte pas ta vie, dis nous juste où tu sors...",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                ),
+                style: const TextStyle(fontSize: 13),
+              ),
             ],
           ),
         ),
