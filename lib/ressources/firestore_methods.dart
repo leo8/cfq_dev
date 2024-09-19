@@ -50,6 +50,7 @@ class FirestoreMethods {
         notSureAttending: [],
         notAttending: [],
         notAnswered: [],
+        comments: []
       );
 
       // Save TURN data to Firestore
@@ -95,7 +96,8 @@ class FirestoreMethods {
         profilePictureUrl: profilePictureUrl,
         where: where,                    // Using the new 'where' field
         organizers: organizers,
-        followers: [],                   // Initialize followers as empty
+        followers: [],                 // Initialize followers as empty
+        comments: [],                 // Initialize comments as empty
       );
 
       // Save CFQ data to Firestore

@@ -1,33 +1,25 @@
 import 'package:flutter/material.dart';
 
 class CFQCard extends StatelessWidget {
-  final String profileImageUrl;
-  final String username;
-  final String additionalUsers;
-  final String eventTitle;
-  final String eventType;
-  final String date;
-  final String time;
-  final String description;
-  final String location;
-  final String exactLocation;
-  final int attendees;
-  final int comments;
+  final String profilePictureUrl; // Profile picture URL of the creator
+  final String username; // Username of the creator
+  final List<String> organizers; // Co-organizers or contributors (List of Strings)
+  final String cfqName; // Name of the CFQ (discussion/topic)
+  final String description; // Description of the CFQ
+  final DateTime datePublished; // Date when the CFQ was published
+  final String where; // General location (e.g., "online", "at home")
+  final List<String> followers; // Followers of the CFQ (List of Strings)
 
   const CFQCard({
     Key? key,
-    required this.profileImageUrl,
+    required this.profilePictureUrl,
     required this.username,
-    required this.additionalUsers,
-    required this.eventTitle,
-    required this.eventType,
-    required this.date,
-    required this.time,
+    required this.organizers,
+    required this.cfqName,
     required this.description,
-    required this.location,
-    required this.exactLocation,
-    required this.attendees,
-    required this.comments,
+    required this.datePublished,
+    required this.where,
+    required this.followers,
   }) : super(key: key);
 
   @override
@@ -48,7 +40,7 @@ class CFQCard extends StatelessWidget {
               // Profile Picture
               CircleAvatar(
                 radius: 28,
-                backgroundImage: NetworkImage(profileImageUrl),
+                backgroundImage: NetworkImage(profilePictureUrl),
               ),
               const SizedBox(width: 12),
               // Username and Additional Info
@@ -67,8 +59,9 @@ class CFQCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
+                        // Display organizers list joined by commas
                         Text(
-                          'à $additionalUsers',
+                          'à ${organizers.join(', ')}',
                           style: const TextStyle(
                             color: Colors.blueAccent,
                             fontWeight: FontWeight.w600,
@@ -79,13 +72,13 @@ class CFQCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '3h', // Static for now, replace with dynamic time later
+                      '${datePublished.day}/${datePublished.month}/${datePublished.year}', // Dynamic date
                       style: const TextStyle(color: Colors.white54),
                     ),
                   ],
                 ),
               ),
-              // Attendee Button
+              // Attendee Button (Followers count can be displayed here)
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -94,7 +87,7 @@ class CFQCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('T’y vas?'),
+                child: const Text('Follow'),
               ),
             ],
           ),
@@ -105,28 +98,19 @@ class CFQCard extends StatelessWidget {
               const Icon(Icons.event, color: Colors.white54, size: 20), // CFQ Icon
               const SizedBox(width: 4),
               Text(
-                eventType,
+                'CFQ',
                 style: const TextStyle(color: Colors.white54),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          // Event Title
+          // CFQ Name (Topic Title)
           Text(
-            eventTitle,
+            cfqName,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          // Event Date and Time
-          Text(
-            '$date | $time',
-            style: const TextStyle(
-              color: Colors.pinkAccent,
-              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
@@ -138,19 +122,14 @@ class CFQCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Location and Exact Location
+          // Location (Where it's happening)
           Row(
             children: [
               const Icon(Icons.location_on, color: Colors.white54, size: 20),
               const SizedBox(width: 4),
               Text(
-                location,
+                where,
                 style: const TextStyle(color: Colors.white70),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                exactLocation,
-                style: const TextStyle(color: Colors.white54),
               ),
             ],
           ),

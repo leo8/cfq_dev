@@ -1,32 +1,28 @@
 import 'package:flutter/material.dart';
 
 class TurnCard extends StatelessWidget {
-  final String profileImageUrl;
-  final String username;
-  final String additionalUsers;
-  final String eventTitle;
-  final String eventType;
-  final String date;
-  final String time;
-  final String description;
-  final String location;
-  final String exactLocation;
-  final int attendees;
-  final int comments;
+  final String profilePictureUrl; // Profile picture URL of the creator
+  final String username; // Username of the creator
+  final List<String> organizers; // Co-organizers (List of Strings)
+  final String turnName; // Name of the TURN event
+  final String description; // Description of the event
+  final DateTime eventDateTime; // Date and time when the event occurs
+  final String where; // General location (e.g., "at home")
+  final String address; // Precise address
+  final List<String> attending; // List of attendees
+  final List<String> comments; // Comments are usually a list
 
   const TurnCard({
     Key? key,
-    required this.profileImageUrl,
+    required this.profilePictureUrl,
     required this.username,
-    required this.additionalUsers,
-    required this.eventTitle,
-    required this.eventType,
-    required this.date,
-    required this.time,
+    required this.organizers,
+    required this.turnName,
     required this.description,
-    required this.location,
-    required this.exactLocation,
-    required this.attendees,
+    required this.eventDateTime,
+    required this.where,
+    required this.address,
+    required this.attending,
     required this.comments,
   }) : super(key: key);
 
@@ -48,7 +44,7 @@ class TurnCard extends StatelessWidget {
               // Profile Picture
               CircleAvatar(
                 radius: 28,
-                backgroundImage: NetworkImage(profileImageUrl),
+                backgroundImage: NetworkImage(profilePictureUrl),
               ),
               const SizedBox(width: 12),
               // Username and Additional Info
@@ -67,8 +63,9 @@ class TurnCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
+                        // Display organizers list joined by commas
                         Text(
-                          'à $additionalUsers',
+                          'à ${organizers.join(', ')}',
                           style: const TextStyle(
                             color: Colors.blueAccent,
                             fontWeight: FontWeight.w600,
@@ -79,7 +76,7 @@ class TurnCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '1h', // Static for now, replace with dynamic time later
+                      '1h', // Placeholder, dynamic time can be calculated
                       style: const TextStyle(color: Colors.white54),
                     ),
                   ],
@@ -105,15 +102,15 @@ class TurnCard extends StatelessWidget {
               const Icon(Icons.home, color: Colors.white54, size: 20), // Appart Icon
               const SizedBox(width: 4),
               Text(
-                eventType,
+                where, // Use the 'where' field for location type
                 style: const TextStyle(color: Colors.white54),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          // Event Title
+          // Event Title (Turn Name)
           Text(
-            eventTitle,
+            turnName,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -123,7 +120,7 @@ class TurnCard extends StatelessWidget {
           const SizedBox(height: 8),
           // Event Date and Time
           Text(
-            '$date | $time',
+            '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute}',
             style: const TextStyle(
               color: Colors.pinkAccent,
               fontWeight: FontWeight.w500,
@@ -144,12 +141,12 @@ class TurnCard extends StatelessWidget {
               const Icon(Icons.location_on, color: Colors.white54, size: 20),
               const SizedBox(width: 4),
               Text(
-                location,
+                where, // General location (e.g., "at home")
                 style: const TextStyle(color: Colors.white70),
               ),
               const SizedBox(width: 4),
               Text(
-                exactLocation,
+                address, // Precise address
                 style: const TextStyle(color: Colors.white54),
               ),
             ],

@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart'; // Add this import for combining streams
+import 'package:cfq_dev/widgets/turn_card.dart';
+import 'package:cfq_dev/widgets/cfq_card.dart';
 
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({super.key});
@@ -8,19 +12,94 @@ class ThreadScreen extends StatefulWidget {
 }
 
 class _ThreadScreenState extends State<ThreadScreen> {
-  // Sample list of profile picture URLs for demo purposes
-  final List<String> profilePics = [
-    'https://randomuser.me/api/portraits/men/1.jpg',
-    'https://randomuser.me/api/portraits/women/2.jpg',
-    'https://randomuser.me/api/portraits/men/3.jpg',
-    'https://randomuser.me/api/portraits/women/4.jpg',
-    'https://randomuser.me/api/portraits/men/5.jpg',
-  ];
+  // Helper function to parse date
+  DateTime parseDate(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date);
+      } catch (e) {
+        print("Warning: Could not parse date as DateTime: $date");
+        return DateTime.now(); // Fallback to current date
+      }
+    } else if (date is DateTime) {
+      return date;
+    } else {
+      print("Warning: Unknown type for date: $date");
+      return DateTime.now(); // Fallback to current date
+    }
+  }
+
+  // Fetch turns and cfqs and combine them into a single stream
+  Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
+    try {
+      print("Fetching turns and cfqs...");
+
+      // Fetch turns
+      Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
+          .collection('turns')
+          .orderBy('datePublished', descending: true)
+          .snapshots();
+
+      // Fetch cfqs
+      Stream<QuerySnapshot> cfqsStream = FirebaseFirestore.instance
+          .collection('cfqs')
+          .orderBy('datePublished', descending: true)
+          .snapshots();
+
+      // Combine both streams using Rx.combineLatest2 from rxdart
+      return Rx.combineLatest2(turnsStream, cfqsStream,
+          (QuerySnapshot turnsSnapshot, QuerySnapshot cfqsSnapshot) {
+        // Debug logs for turns and cfqs snapshots
+        print("Turns snapshot docs count: ${turnsSnapshot.docs.length}");
+        print("CFQs snapshot docs count: ${cfqsSnapshot.docs.length}");
+
+        // Merge the docs from both collections
+        List<DocumentSnapshot> allDocs = [];
+        allDocs.addAll(turnsSnapshot.docs);
+        allDocs.addAll(cfqsSnapshot.docs);
+
+        // Helper function to get date for sorting
+        DateTime getDate(DocumentSnapshot doc) {
+          dynamic date;
+          if (doc.reference.parent.id == 'turns') {
+            date = doc['eventDateTime'];
+          } else if (doc.reference.parent.id == 'cfqs') {
+            date = doc['datePublished'];
+          } else {
+            date = DateTime.now(); // Default to now if unknown collection
+          }
+          return parseDate(date);
+        }
+
+        // Sort combined events by their respective dates
+        allDocs.sort((a, b) {
+          try {
+            DateTime dateTimeA = getDate(a);
+            DateTime dateTimeB = getDate(b);
+            // Compare the two DateTime objects
+            return dateTimeB.compareTo(dateTimeA); // Sort descending
+          } catch (error) {
+            print("Error while sorting events: $error");
+            return 0; // Avoid crashing on errors
+          }
+        });
+
+        print("Total events after merging and sorting: ${allDocs.length}");
+        return allDocs;
+      });
+    } catch (error) {
+      print("Error in fetchCombinedEvents: $error");
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Make the app bar transparent over the background
+      extendBodyBehindAppBar:
+          true, // Make the app bar transparent over the background
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Transparent app bar
         elevation: 0,
@@ -32,7 +111,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white24,
-                  prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                  prefixIcon:
+                      const Icon(Icons.search, color: Colors.white70),
                   hintText: 'Search for people...',
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(
@@ -72,20 +152,24 @@ class _ThreadScreenState extends State<ThreadScreen> {
               padding: const EdgeInsets.only(left: 10),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: profilePics.length,
+                itemCount:
+                    5, // Assume we are displaying 5 profile pictures
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12.0),
                     child: Column(
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: NetworkImage(profilePics[index]),
+                          backgroundImage: const NetworkImage(
+                              'https://randomuser.me/api/portraits/men/1.jpg'),
                         ),
                         const SizedBox(height: 5),
                         const Text(
                           'Username', // Sample username for now
-                          style: TextStyle(color: Colors.white70, fontSize: 12),
+                          style: TextStyle(
+                              color: Colors.white70, fontSize: 12),
                         ),
                       ],
                     ),
@@ -94,13 +178,80 @@ class _ThreadScreenState extends State<ThreadScreen> {
               ),
             ),
             const SizedBox(height: 20), // Extra space below profile avatars
-            // Placeholder for future content, such as posts or threads
             Expanded(
-              child: Center(
-                child: Text(
-                  'Thread content will go here',
-                  style: TextStyle(color: Colors.white70, fontSize: 18),
-                ),
+              // Fetch and display combined events sorted by date
+              child: StreamBuilder<List<DocumentSnapshot>>(
+                stream: fetchCombinedEvents(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print("Error fetching events: ${snapshot.error}");
+                    return const Center(
+                        child: Text("Error fetching events"));
+                  }
+                  if (!snapshot.hasData) {
+                    print("Fetching data, no events yet...");
+                    return const Center(
+                        child: CircularProgressIndicator());
+                  }
+
+                  final events = snapshot.data!;
+                  print("Number of events to display: ${events.length}");
+
+                  if (events.isEmpty) {
+                    print("No events found");
+                    return const Center(
+                        child: Text("No events available"));
+                  }
+
+                  return ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      final isTurn =
+                          event.reference.parent.id == 'turns';
+
+                      print(
+                          "Displaying event from collection: ${event.reference.parent.id}");
+
+                      if (isTurn) {
+                        // Display Turn Card
+                        return TurnCard(
+                          profilePictureUrl:
+                              event['profilePictureUrl'] ?? '',
+                          username: event['username'] ?? '',
+                          organizers: List<String>.from(
+                              event['organizers'] ?? []),
+                          turnName: event['turnName'] ?? '',
+                          description: event['description'] ?? '',
+                          eventDateTime:
+                              parseDate(event['eventDateTime']),
+                          where: event['where'] ?? '',
+                          address: event['address'] ?? '',
+                          attending: List<String>.from(
+                              event['attending'] ?? []),
+                          comments: List<String>.from(
+                              event['comments'] ?? []),
+                        );
+                      } else {
+                        // Display CFQ Card
+                        return CFQCard(
+                          profilePictureUrl:
+                              event['profilePictureUrl'] ?? '',
+                          username: event['username'] ?? '',
+                          organizers: List<String>.from(
+                              event['organizers'] ?? []),
+                          cfqName: event['cfqName'] ?? '',
+                          description: event['description'] ?? '',
+                          datePublished:
+                              parseDate(event['datePublished']),
+                          where: event['where'] ?? '',
+                          followers: List<String>.from(
+                              event['followers'] ?? []),
+                        );
+                      }
+                    },
+                  );
+                },
               ),
             ),
           ],
