@@ -9,6 +9,8 @@ class User {
   final List followers;
   final List following;
   final String profilePictureUrl;
+  final String location;
+  final bool isActive;
 
   const User({
     required this.username,
@@ -18,8 +20,11 @@ class User {
     required this.followers,
     required this.following,
     required this.profilePictureUrl,
+    required this.location,
+    required this.isActive,
   });
 
+  // Convert user object to JSON
   Map<String, dynamic> toJson() => {
         "username": username,
         "uid": uid,
@@ -28,8 +33,11 @@ class User {
         "followers": followers,
         "following": following,
         "profilePictureUrl": profilePictureUrl,
+        "location": location,
+        "isActive": isActive,
       };
-  
+
+  // Convert Firestore snapshot to User object
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
@@ -41,6 +49,8 @@ class User {
       followers: snapshot['followers'],
       following: snapshot['following'],
       profilePictureUrl: snapshot['profilePictureUrl'],
+      location: snapshot['location'],
+      isActive: snapshot['isActive'],
     );
   }
 }

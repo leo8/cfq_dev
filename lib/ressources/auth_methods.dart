@@ -23,6 +23,7 @@ class AuthMethods {
       {required String email,
       required String password,
       required String username,
+      String? location,
       String? bio,
       Uint8List? profilePicture}) async {
     String res = 'Some error occurred';
@@ -49,6 +50,8 @@ class AuthMethods {
           followers: [],
           following: [],
           profilePictureUrl: profilePictureUrl,
+          location: (location != null) ? location : "",
+          isActive: false,
         );
 
         // Add user to Firestore Database
