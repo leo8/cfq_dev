@@ -19,6 +19,8 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _organizersController = TextEditingController();
+  DateTime? _selectedDateTime;
+  String? _mood;
 
   _selectImage(BuildContext context) async {
     return showDialog(
@@ -62,6 +64,40 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     );
   }
 
+  _selectDateTime(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: _selectedDateTime != null
+            ? TimeOfDay.fromDateTime(_selectedDateTime!)
+            : TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
+  }
+
+  _selectMood(BuildContext context) async {
+    setState(() {
+      _mood = 'Happy';
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -87,19 +123,18 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.close), // 'X' button
+          icon: const Icon(Icons.close),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              // Handle post turn functionality
-            },
+            onPressed: () {},
             child: const Text(
               'Publier',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -110,81 +145,75 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8), // Reduced height
+              const SizedBox(height: 8),
 
               // Profile picture and image preview container
               Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 30, // Slightly smaller avatar
-                        backgroundImage: NetworkImage(user.profilePictureUrl), // User's profile picture
-                      ),
-                    ],
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(user.profilePictureUrl),
                   ),
-                  const SizedBox(width: 20), // Reduced width
-
-                  // Image Preview Container
-                  Stack(
-                    children: [
-                      Container(
-                        width: 300,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[800],
-                          borderRadius: BorderRadius.circular(10),
-                          image: _file != null
-                              ? DecorationImage(
-                                  image: MemoryImage(_file!),
-                                  fit: BoxFit.cover,
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[800],
+                            borderRadius: BorderRadius.circular(10),
+                            image: _file != null
+                                ? DecorationImage(
+                                    image: MemoryImage(_file!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
+                          ),
+                          child: _file == null
+                              ? const Center(
+                                  child: Text(
+                                    'Aucune image',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                                 )
                               : null,
                         ),
-                        child: _file == null
-                            ? const Center(
-                                child: Text(
-                                  'Aucune image',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                      // Add Image Button in the top right corner
-                      Positioned(
-                        top: 5,
-                        right: 5,
-                        child: GestureDetector(
-                          onTap: () {
-                            _selectImage(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.purple,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.add_a_photo,
-                              color: Colors.white,
-                              size: 16,
+                        Positioned(
+                          top: 5,
+                          right: 5,
+                          child: GestureDetector(
+                            onTap: () {
+                              _selectImage(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.purple,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.add_a_photo,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // Reduced height
+              const SizedBox(height: 12),
 
               // Event Name Field
-              const Text('Nom de l\'Event', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6), // Reduced height
+              const Text('Nom de l\'Event',
+                  style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 6),
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(
@@ -193,51 +222,80 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 ),
-                style: const TextStyle(fontSize: 13), // Smaller font size
+                style: const TextStyle(fontSize: 13),
               ),
-              const SizedBox(height: 12), // Reduced height
+              const SizedBox(height: 12),
 
-              // Start Date & Time Field
-              const Text('Start Date & Time', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6), // Reduced height
+              // Date & Time and Mood Buttons
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Date & Time',
+                            style: TextStyle(color: Colors.white)),
+                        const SizedBox(height: 6),
+                        ElevatedButton(
+                          onPressed: () => _selectDateTime(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: const Size(double.infinity,
+                                50), // Ensure button is as wide as text fields
+                          ),
+                          child: Text(
+                            _selectedDateTime != null
+                                ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year} ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}'
+                                : 'Select Date & Time',
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 8), // Reduced vertical padding
-                      ),
-                      child: const Text('Add end time', style: TextStyle(fontSize: 12)), // Smaller text
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8), // Reduced width
+                  const SizedBox(width: 8), // Space between buttons
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Mood',
+                            style: TextStyle(color: Colors.white)),
+                        const SizedBox(height: 6),
+                        ElevatedButton(
+                          onPressed: () => _selectMood(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            minimumSize: const Size(double.infinity,
+                                50), // Ensure button is as wide as text fields
+                          ),
+                          child: Text(
+                            _mood != null ? _mood! : 'Add a mood',
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 8), // Reduced vertical padding
-                      ),
-                      child: const Text('Repeat event', style: TextStyle(fontSize: 12)), // Smaller text
+                      ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // Reduced height
+
+              const SizedBox(height: 12),
 
               // Organizers Field
-              const Text('Organisateurs (Séparés par une virgule)', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6), // Reduced height
+              const Text('Organisateurs (Séparés par une virgule)',
+                  style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 6),
               TextField(
                 controller: _organizersController,
                 decoration: InputDecoration(
@@ -246,15 +304,17 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 ),
-                style: const TextStyle(fontSize: 13), // Smaller font size
+                style: const TextStyle(fontSize: 13),
               ),
-              const SizedBox(height: 12), // Reduced height
+              const SizedBox(height: 12),
 
               // Invitees and Location
-              const Text('À qui ? (Liste(s) ou manuel)', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6), // Reduced height
+              const Text('À qui ? (Liste(s) ou manuel)',
+                  style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 6),
               TextField(
                 decoration: InputDecoration(
                   filled: true,
@@ -262,11 +322,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 ),
-                style: const TextStyle(fontSize: 13), // Smaller font size
+                style: const TextStyle(fontSize: 13),
               ),
-              const SizedBox(height: 12), // Reduced height
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
@@ -278,12 +339,13 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
                       ),
-                      style: const TextStyle(fontSize: 13), // Smaller font size
+                      style: const TextStyle(fontSize: 13),
                     ),
                   ),
-                  const SizedBox(width: 8), // Reduced width
+                  const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
@@ -293,21 +355,22 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
                       ),
-                      style: const TextStyle(fontSize: 13), // Smaller font size
+                      style: const TextStyle(fontSize: 13),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // Reduced height
+              const SizedBox(height: 12),
 
-              // Description Field (Increased size)
+              // Description Field
               const Text('Description', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6), // Reduced height
+              const SizedBox(height: 6),
               TextField(
                 controller: _descriptionController,
-                maxLines: 5, // Increased the number of lines
+                maxLines: 5,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[800],
@@ -315,9 +378,10 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), // Reduced padding
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 ),
-                style: const TextStyle(fontSize: 13), // Smaller font size
+                style: const TextStyle(fontSize: 13),
               ),
             ],
           ),
