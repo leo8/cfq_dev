@@ -86,18 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 250, // Adjust size as necessary
                 color: Colors.deepPurple,
               ),
-              const SizedBox(height: 20), // Spacing after the logo
-              // Title
-              const Text(
-                'Connexion',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-
+              const SizedBox(height: 64), // Spacing after the logo
               // Email input
               Container(
                 decoration: BoxDecoration(
@@ -153,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 64),
 
               // Log in button
               InkWell(
@@ -175,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: const Text(
-                          'CONNECTE-TOI',
+                          'CONNEXION',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -190,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'OU',
                 style: TextStyle(color: Colors.white70),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Sign-up option
               Row(
@@ -212,7 +201,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
             ],
           ),
         ),

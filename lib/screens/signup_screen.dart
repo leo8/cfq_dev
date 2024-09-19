@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
@@ -9,7 +8,6 @@ import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -24,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   Uint8List? _image;
   bool _isLoading = false;
 
@@ -34,6 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _passwordController.dispose();
     _usernameController.dispose();
     _bioController.dispose();
+    _locationController.dispose();
   }
 
   void selectImage() async {
@@ -53,6 +53,7 @@ class _SignupScreenState extends State<SignupScreen> {
       username: _usernameController.text,
       bio: _bioController.text,
       profilePicture: _image != null ? _image! : null,
+      location: _locationController.text,
     );
     setState(() {
       _isLoading = false;
@@ -87,126 +88,208 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           width: double.infinity,
-          child: Column(
-            children: [
-              Image.asset('assets/logo_white.png'),
-              const SizedBox(
-                height: 12,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(
+                'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
               ),
+              fit: BoxFit.cover, // Background image
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              // CaFoutQuoi Logo, adjusted to the same size as in LoginScreen
+              Image.asset(
+                'assets/logo_white.png',
+                height: 250, // Adjusted to avoid overflow
+                color: Colors.white,
+              ),
+
+              // Profile Image
               Stack(
                 children: [
-                  _image != null
-                      ? CircleAvatar(
-                          radius: 64,
-                          backgroundImage: MemoryImage(_image!),
-                        )
-                      : CircleAvatar(
-                          radius: 64,
-                          backgroundImage: NetworkImage(
-                              'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg'),
-                        ),
+                  CircleAvatar(
+                    radius: 64, // Keeping the CircleAvatar size
+                    backgroundImage: _image != null
+                        ? MemoryImage(_image!)
+                        : const NetworkImage(
+                            'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
+                          ) as ImageProvider,
+                  ),
                   Positioned(
                     bottom: -10,
                     left: 80,
                     child: IconButton(
-                      onPressed: () {
-                        selectImage();
-                      },
+                      onPressed: selectImage,
                       icon: const Icon(
                         Icons.add_a_photo,
+                        color: Colors.white70,
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
+
               // Email input
-              TextFieldInput(
-                hintText: "Ton email",
-                textInputType: TextInputType.emailAddress,
-                textEditingController: _emailController,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: _emailController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Ton email',
+                    hintStyle: const TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 6,
-              ),
+              const SizedBox(height: 8),
+
               // Password input
-              TextFieldInput(
-                hintText: "Ton mot de passe",
-                textInputType: TextInputType.text,
-                textEditingController: _passwordController,
-                isPassword: true,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Ton mot de passe',
+                    hintStyle: const TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 6,
+              const SizedBox(height: 8),
+
+              // Un petit nom and Ta localisation side by side
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        controller: _usernameController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Un petit nom ?',
+                          hintStyle: const TextStyle(color: Colors.white70),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        controller: _locationController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: 'Ta localisation',
+                          hintStyle: const TextStyle(color: Colors.white70),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              // Password input
-              TextFieldInput(
-                hintText: "Un petit nom ?",
-                textInputType: TextInputType.text,
-                textEditingController: _usernameController,
+              const SizedBox(height: 8),
+
+              // Bio input
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: TextField(
+                  controller: _bioController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Ta bio',
+                    hintStyle: const TextStyle(color: Colors.white70),
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 6,
-              ),
-              // Password input
-              TextFieldInput(
-                hintText: "Ta bio",
-                textInputType: TextInputType.text,
-                textEditingController: _bioController,
-              ),
-              const SizedBox(
-                height: 6,
-              ),
+              const SizedBox(height: 12),
+
               // Sign up button
               InkWell(
                 onTap: signUpUser,
                 child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF7A00FF), Color(0xFF7900F4)],
+                    ),
+                  ),
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(color: primaryColor),
                         )
-                      : const Text('Inscription'),
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4),
-                      ),
-                    ),
-                    color: blueColor,
-                  ),
+                      : const Text(
+                          'INSCRIPTION',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
                 ),
               ),
-              const SizedBox(
-                height: 6,
+              const SizedBox(height: 8),
+
+              const Text(
+                'OU',
+                style: TextStyle(color: Colors.white70),
               ),
-              Flexible(child: Container(), flex: 2),
-              // Transition to log in
+              const SizedBox(height: 8),
+
+              // Log in option
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    child: Text('Déjà inscrit.e ?'),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  const Text(
+                    'Déjà inscrit.e ?',
+                    style: TextStyle(color: Colors.white70),
                   ),
                   GestureDetector(
                     onTap: navigateToLogIn,
-                    child: Container(
-                      child: Text(
-                        "Je me connecte",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    child: const Text(
+                      ' Je me connecte',
+                      style: TextStyle(
+                        color: Color(0xFF7A00FF),
+                        fontWeight: FontWeight.bold,
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
