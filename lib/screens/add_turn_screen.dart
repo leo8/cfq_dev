@@ -6,6 +6,7 @@ import 'package:cfq_dev/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/models/user.dart' as model;
+import 'package:cfq_dev/ressources/firestore_methods.dart';
 
 class AddTurnScreen extends StatefulWidget {
   const AddTurnScreen({super.key});
@@ -18,11 +19,16 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
   Uint8List? _file;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _organizersController = TextEditingController();
+  final TextEditingController _locationController =
+      TextEditingController(); // For "Où"
+  final TextEditingController _addressController =
+      TextEditingController(); // For "Adresse"
   DateTime? _selectedDateTime;
   String? _mood;
+  bool _isLoading = false;
 
-  _selectImage(BuildContext context) async {
+  // Select an image for the Turn
+  Future<void> _selectImage(BuildContext context) async {
     return showDialog(
       context: context,
       builder: (context) {
@@ -64,7 +70,8 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     );
   }
 
-  _selectDateTime(BuildContext context) async {
+  // Select date and time
+  Future<void> _selectDateTime(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDateTime ?? DateTime.now(),
@@ -92,10 +99,58 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     }
   }
 
-  _selectMood(BuildContext context) async {
+  // Select mood (placeholder implementation)
+  void _selectMood(BuildContext context) {
     setState(() {
-      _mood = 'Happy';
+      _mood = 'Happy'; // Placeholder for mood selection
     });
+  }
+
+  // Posting the Turn
+  Future<void> _postTurn() async {
+    if (_file == null) {
+      showSnackBar('Veuillez sélectionner une image', context);
+      return;
+    }
+
+    if (_nameController.text.isEmpty || _descriptionController.text.isEmpty) {
+      showSnackBar('Veuillez remplir tous les champs', context);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await FirestoreMethods().uploadTurn(
+      _nameController.text,
+      _descriptionController.text,
+      _mood ?? 'Mood',
+      Provider.of<UserProvider>(context, listen: false).getUser.uid,
+      [], // Organizers remain empty for now
+      Provider.of<UserProvider>(context, listen: false).getUser.username,
+      _file!,
+      Provider.of<UserProvider>(context, listen: false)
+          .getUser
+          .profilePictureUrl,
+      _locationController.text, // "Où" field
+      _addressController.text, // "Adresse" field
+    );
+
+    if (res == 'success') {
+      // Show SnackBar for successful publication
+      showSnackBar('Publication réussie !', context);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Navigate back to the post screen (assuming you navigate to the add turn screen from the post screen)
+      Navigator.of(context).pop();
+    } else {
+      // Handle error
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -103,239 +158,130 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     super.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
-    _organizersController.dispose();
+    _locationController.dispose();
+    _addressController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final model.User user = Provider.of<UserProvider>(context).getUser;
 
-    return Scaffold(
-      backgroundColor: mobileBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
-        centerTitle: true,
-        title: const Text(
-          'TURN',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Publier',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: primaryColor,
             ),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
-
-              // Profile picture and image preview container
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(user.profilePictureUrl),
+          )
+        : Scaffold(
+            backgroundColor: mobileBackgroundColor,
+            appBar: AppBar(
+              backgroundColor: mobileBackgroundColor,
+              centerTitle: true,
+              title: const Text(
+                'Ça Turn',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: _postTurn,
+                  child: const Text(
+                    'Publier',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Stack(
+                ),
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+
+                    // Profile picture and image preview container
+                    Row(
                       children: [
-                        Container(
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(10),
-                            image: _file != null
-                                ? DecorationImage(
-                                    image: MemoryImage(_file!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
-                          ),
-                          child: _file == null
-                              ? const Center(
-                                  child: Text(
-                                    'Aucune image',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 10,
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: NetworkImage(user.profilePictureUrl),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[800],
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: _file != null
+                                      ? DecorationImage(
+                                          image: MemoryImage(_file!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : null,
+                                ),
+                                child: _file == null
+                                    ? const Center(
+                                        child: Text(
+                                          'Aucune image',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _selectImage(context);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.purple,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add_a_photo,
+                                      color: Colors.white,
+                                      size: 16,
                                     ),
                                   ),
-                                )
-                              : null,
-                        ),
-                        Positioned(
-                          top: 5,
-                          right: 5,
-                          child: GestureDetector(
-                            onTap: () {
-                              _selectImage(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.purple,
-                                shape: BoxShape.circle,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.add_a_photo,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-              // Event Name Field
-              const Text('Nom de l\'Event',
-                  style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                ),
-                style: const TextStyle(fontSize: 13),
-              ),
-              const SizedBox(height: 12),
-
-              // Date & Time and Mood Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Date & Time',
-                            style: TextStyle(color: Colors.white)),
-                        const SizedBox(height: 6),
-                        ElevatedButton(
-                          onPressed: () => _selectDateTime(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            minimumSize: const Size(double.infinity,
-                                50), // Ensure button is as wide as text fields
-                          ),
-                          child: Text(
-                            _selectedDateTime != null
-                                ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year} ${_selectedDateTime!.hour}:${_selectedDateTime!.minute.toString().padLeft(2, '0')}'
-                                : 'Select Date & Time',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8), // Space between buttons
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text('Mood',
-                            style: TextStyle(color: Colors.white)),
-                        const SizedBox(height: 6),
-                        ElevatedButton(
-                          onPressed: () => _selectMood(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            minimumSize: const Size(double.infinity,
-                                50), // Ensure button is as wide as text fields
-                          ),
-                          child: Text(
-                            _mood != null ? _mood! : 'Add a mood',
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // Organizers Field
-              const Text('Organisateurs (Séparés par une virgule)',
-                  style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _organizersController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                ),
-                style: const TextStyle(fontSize: 13),
-              ),
-              const SizedBox(height: 12),
-
-              // Invitees and Location
-              const Text('À qui ? (Liste(s) ou manuel)',
-                  style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6),
-              TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                ),
-                style: const TextStyle(fontSize: 13),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
+                    // Turn Name Field
+                    const Text('Nom du Turn',
+                        style: TextStyle(color: Colors.white)),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: _nameController,
                       decoration: InputDecoration(
-                        hintText: 'Où ?',
                         filled: true,
                         fillColor: Colors.grey[800],
+                        hintText: 'Nom du Turn',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -344,14 +290,176 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                       ),
                       style: const TextStyle(fontSize: 13),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
+                    const SizedBox(height: 12),
+
+                    // Date & Mood Buttons (side by side)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('Ajouter une date',
+                                  style: TextStyle(color: Colors.white)),
+                              const SizedBox(height: 6),
+                              ElevatedButton(
+                                onPressed: () => _selectDateTime(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.purple,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                child: Text(
+                                  _selectedDateTime != null
+                                      ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year}'
+                                      : 'Sélectionner',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('Mood',
+                                  style: TextStyle(color: Colors.white)),
+                              const SizedBox(height: 6),
+                              ElevatedButton(
+                                onPressed: () => _selectMood(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.purple,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  minimumSize: const Size(double.infinity, 50),
+                                ),
+                                child: Text(
+                                  _mood != null ? _mood! : 'Sélectionner',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Organisateurs and À qui Fields (side by side)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('Organisateurs',
+                                  style: TextStyle(color: Colors.white)),
+                              const SizedBox(height: 6),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Sélectionner',
+                                  filled: true,
+                                  fillColor: Colors.grey[800],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                ),
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('À qui ?',
+                                  style: TextStyle(color: Colors.white)),
+                              const SizedBox(height: 6),
+                              TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Sélectionner',
+                                  filled: true,
+                                  fillColor: Colors.grey[800],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
+                                ),
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Where and Address fields (on the same row)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _locationController,
+                            decoration: InputDecoration(
+                              hintText: 'Où ?',
+                              filled: true,
+                              fillColor: Colors.grey[800],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                            ),
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: _addressController,
+                            decoration: InputDecoration(
+                              hintText: 'Adresse',
+                              filled: true,
+                              fillColor: Colors.grey[800],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                            ),
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Description Field
+                    const Text('Description',
+                        style: TextStyle(color: Colors.white)),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: _descriptionController,
+                      maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: 'Adresse',
                         filled: true,
                         fillColor: Colors.grey[800],
+                        hintText:
+                            "Raconte pas ta vie, dis nous juste où tu sors...",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -360,33 +468,10 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                       ),
                       style: const TextStyle(fontSize: 13),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Description Field
-              const Text('Description', style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _descriptionController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  hintText: "Raconte pas ta vie, dis nous juste où tu sors...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  ],
                 ),
-                style: const TextStyle(fontSize: 13),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
