@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/global_variables.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
@@ -39,16 +40,10 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
-        children: [
-          Center(child: Text('Feed')),
-          Center(child: Text('Map')),
-          Center(child: Text('Create post')),
-          Center(child: Text('Calendar')),
-          Center(child: Text('Profile')),
-        ],
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         onPageChanged: onPageChanged,
+        children: homeScreenItems,
       ),
       bottomNavigationBar: CupertinoTabBar(
         iconSize: 32,

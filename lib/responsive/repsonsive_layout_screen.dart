@@ -1,5 +1,5 @@
 import 'package:cfq_dev/providers/user_provider.dart';
-import 'package:cfq_dev/utils/dimensions.dart';
+import 'package:cfq_dev/utils/global_variables.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
