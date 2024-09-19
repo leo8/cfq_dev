@@ -11,6 +11,7 @@ class Cfq {
   final String where;                   // General location (e.g., "online", "at home")
   final List<String> organizers;        // List of co-organizers or main contributors
   final List<String> followers;         // List of followers of the CFQ
+  final List<String> comments;          // List of comments
 
   Cfq({
     required this.cfqName,
@@ -25,6 +26,7 @@ class Cfq {
     required this.where,
     required this.organizers,
     required this.followers,
+    required this.comments, // Added comments to constructor
   });
 
   // Convert Cfq object to JSON format
@@ -42,6 +44,7 @@ class Cfq {
       'where': where,
       'organizers': organizers,
       'followers': followers,
+      'comments': comments, // Included comments in toJson
     };
   }
 
@@ -60,6 +63,7 @@ class Cfq {
       where: json['where'],
       organizers: List<String>.from(json['organizers']),
       followers: List<String>.from(json['followers']),
+      comments: List<String>.from(json['comments'] ?? []), // Included comments in fromJson
     );
   }
 }

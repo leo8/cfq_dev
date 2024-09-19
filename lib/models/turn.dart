@@ -17,6 +17,7 @@ class Turn {
   final List<String> notSureAttending;  // List of people who might attend
   final List<String> notAttending;      // List of people who declined
   final List<String> notAnswered;       // List of people who haven't responded
+  final List<String> comments;          // List of comments
 
   Turn({
     required this.turnName,
@@ -37,6 +38,7 @@ class Turn {
     required this.notSureAttending,
     required this.notAttending,
     required this.notAnswered,
+    required this.comments, // Added comments to constructor
   });
 
   // Convert Turn object to JSON format
@@ -60,6 +62,7 @@ class Turn {
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
       'notAnswered': notAnswered,
+      'comments': comments, // Included comments in toJson
     };
   }
 
@@ -84,6 +87,7 @@ class Turn {
       notSureAttending: List<String>.from(json['notSureAttending']),
       notAttending: List<String>.from(json['notAttending']),
       notAnswered: List<String>.from(json['notAnswered']),
+      comments: List<String>.from(json['comments'] ?? []), // Included comments in fromJson
     );
   }
 }
