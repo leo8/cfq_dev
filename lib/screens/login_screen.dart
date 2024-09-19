@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: navigateToSignUp,
                     child: const Text(
-                      ' INSCRIS-TOI',
+                      " Je m'inscris",
                       style: TextStyle(
                         color: Color(0xFF7A00FF),
                         fontWeight: FontWeight.bold,
