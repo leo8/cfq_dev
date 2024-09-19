@@ -1,9 +1,6 @@
-import 'package:cfq_dev/providers/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:cfq_dev/models/user.dart' as model;
+import 'package:cfq_dev/utils/colors.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({Key? key}) : super(key: key);
@@ -13,13 +10,101 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
+  int _page = 0;
+  late PageController pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  void navigationTapped(int page) {
+    pageController.jumpToPage(page);
+  }
+
+  void onPageChanged(int page) {
+    setState(() {
+      _page = page;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    model.User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
-      body: Center(
-        child: Text('Welcome ${user.username}'),
+      body: PageView(
+        children: [
+          Center(child: Text('Feed')),
+          Center(child: Text('Map')),
+          Center(child: Text('Create post')),
+          Center(child: Text('Calendar')),
+          Center(child: Text('Profile')),
+        ],
+        physics: const NeverScrollableScrollPhysics(),
+        controller: pageController,
+        onPageChanged: onPageChanged,
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        iconSize: 32,
+        items: [
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 13),
+              child: Icon(
+                Icons.language_outlined,
+                color: _page == 0 ? primaryColor : secondaryColor,
+              ),
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 13),
+              child: Icon(
+                Icons.location_on_outlined,
+                color: _page == 1 ? primaryColor : secondaryColor,
+              ),
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 13),
+              child: Icon(
+                Icons.add_circle_outline_rounded,
+                color: _page == 2 ? Colors.purpleAccent : secondaryColor,
+              ),
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 13),
+              child: Icon(
+                Icons.calendar_today_outlined,
+                color: _page == 3 ? primaryColor : secondaryColor,
+              ),
+            ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 13),
+              child: Icon(
+                Icons.person_outlined,
+                color: _page == 4 ? primaryColor : secondaryColor,
+              ),
+            ),
+            label: '',
+          ),
+        ],
+        onTap: navigationTapped,
       ),
     );
   }
