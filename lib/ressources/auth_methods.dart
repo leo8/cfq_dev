@@ -18,6 +18,18 @@ class AuthMethods {
     return model.User.fromSnap(snap);
   }
 
+  // Method to update isActive status
+  Future<void> updateIsActiveStatus(bool isActive) async {
+    try {
+      String uid = _auth.currentUser!.uid;
+      await _firestore.collection('users').doc(uid).update({
+        'isActive': isActive,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   //Sign up user
   Future<String> signUpUser({
     required String email,

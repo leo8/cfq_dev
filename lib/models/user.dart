@@ -10,9 +10,9 @@ class User {
   final List following;
   final String profilePictureUrl;
   final String location;
-  final bool isActive;
+  bool isActive;
 
-  const User({
+  User({
     required this.username,
     required this.uid,
     required this.bio,

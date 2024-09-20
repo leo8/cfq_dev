@@ -38,6 +38,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await AuthMethods().logOutUser();
   }
 
+  void updateIsActiveStatus(bool isActive) async {
+    try {
+      await AuthMethods().updateIsActiveStatus(isActive);
+    } catch (e) {
+      print(e.toString());
+      // Revert the change in the UI
+      setState(() {
+        if (_user != null) {
+          _user!.isActive = !isActive;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Failed to update status. Please try again.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     image: NetworkImage(
                       'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                     ),
-                    fit: BoxFit.cover, // Ensures the image covers the entire background
+                    fit: BoxFit.cover,
                   ),
                 ),
                 child: Column(
@@ -66,6 +84,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       radius: 64,
                       backgroundImage:
                           NetworkImage(_user?.profilePictureUrl ?? ''),
+                    ),
+                    const SizedBox(height: 20),
+                    // Active Switch
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Off',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Switch(
+                          value: _user?.isActive ?? false,
+                          onChanged: (bool newValue) {
+                            setState(() {
+                              if (_user != null) {
+                                _user!.isActive = newValue; // Updated line
+                              }
+                            });
+                            // Update isActive in the database
+                            updateIsActiveStatus(newValue);
+                          },
+                          activeColor: Colors.green,
+                          inactiveThumbColor: Colors.grey,
+                          inactiveTrackColor: Colors.white70,
+                        ),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        const Text(
+                          'Turn',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     // Username
