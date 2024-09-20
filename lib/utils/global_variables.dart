@@ -13,3 +13,12 @@ const homeScreenItems = [
   Center(child: Text('Calendar')),
   ProfileScreen()
 ];
+
+const List<String> availableMoods = [
+  'maison',
+  'bar',
+  'club',
+  'street',
+  'turn',
+  'chill'
+];

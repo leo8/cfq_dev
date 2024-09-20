@@ -1,7 +1,7 @@
 class Turn {
   final String turnName;                // Name of the TURN event
   final String description;             // Description of the event
-  final String mood;                    // Mood associated with the TURN
+  final List<String> moods;             // moods associated with the TURN
   final String uid;                     // User ID of the creator
   final String username;                // Username of the creator
   final String turnId;                  // Unique ID for the TURN event
@@ -22,7 +22,7 @@ class Turn {
   Turn({
     required this.turnName,
     required this.description,
-    required this.mood,
+    required this.moods,
     required this.uid,
     required this.username,
     required this.turnId,
@@ -46,7 +46,7 @@ class Turn {
     return {
       'turnName': turnName,
       'description': description,
-      'mood': mood,
+      'moods': moods,
       'uid': uid,
       'username': username,
       'turnId': turnId,
@@ -71,7 +71,7 @@ class Turn {
     return Turn(
       turnName: json['turnName'],
       description: json['description'],
-      mood: json['mood'],
+      moods: json['moods'],
       uid: json['uid'],
       username: json['username'],
       turnId: json['turnId'],

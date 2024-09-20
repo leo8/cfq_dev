@@ -1,7 +1,7 @@
 class Cfq {
   final String cfqName;                 // Name of the CFQ (discussion/topic)
   final String description;             // Description of the CFQ
-  final String mood;                    // Mood associated with the CFQ
+  final List<String> moods;              // moods associated with the CFQ
   final String uid;                     // User ID of the creator
   final String username;                // Username of the creator
   final String cfqId;                   // Unique ID for the CFQ
@@ -16,7 +16,7 @@ class Cfq {
   Cfq({
     required this.cfqName,
     required this.description,
-    required this.mood,
+    required this.moods,
     required this.uid,
     required this.username,
     required this.cfqId,
@@ -34,7 +34,7 @@ class Cfq {
     return {
       'cfqName': cfqName,
       'description': description,
-      'mood': mood,
+      'moods': moods,
       'uid': uid,
       'username': username,
       'cfqId': cfqId,
@@ -53,7 +53,7 @@ class Cfq {
     return Cfq(
       cfqName: json['cfqName'],
       description: json['description'],
-      mood: json['mood'],
+      moods: json['moods'],
       uid: json['uid'],
       username: json['username'],
       cfqId: json['cfqId'],

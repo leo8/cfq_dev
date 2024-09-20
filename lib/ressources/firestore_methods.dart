@@ -12,7 +12,7 @@ class FirestoreMethods {
   Future<String> uploadTurn(
     String turnName,
     String description,
-    String mood,
+    List<String> moods,
     String uid,
     List<String> organizers,
     String username,
@@ -34,7 +34,7 @@ class FirestoreMethods {
       Turn turn = Turn(
         turnName: turnName,
         description: description,
-        mood: mood,
+        moods: moods,
         uid: uid,
         username: username,
         turnId: turnId,
@@ -66,7 +66,7 @@ class FirestoreMethods {
   Future<String> uploadCfq(
     String cfqName,
     String description,
-    String mood,
+    List<String> moods,
     String uid,
     List<String> organizers,
     String username,
@@ -87,7 +87,7 @@ class FirestoreMethods {
       Cfq cfq = Cfq(
         cfqName: cfqName,
         description: description,
-        mood: mood,
+        moods: moods,
         uid: uid,
         username: username,
         cfqId: cfqId,

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/ressources/firestore_methods.dart';
+import 'package:cfq_dev/utils/global_variables.dart';
 
 class AddCfqScreen extends StatefulWidget {
   const AddCfqScreen({super.key});
@@ -22,7 +23,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
   final TextEditingController _locationController =
       TextEditingController(); // For precise address
   DateTime? _selectedDateTime;
-  String? _mood;
+  List<String>? _moods;
   bool _isLoading = false;
 
   // Select an image for the CFQ
@@ -97,10 +98,57 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     }
   }
 
-  // Select mood (placeholder implementation)
-  void _selectMood(BuildContext context) {
-    setState(() {
-      _mood = 'Happy'; // Placeholder for mood selection
+  // Select moods
+  void _selectMoods(BuildContext context) {
+    showDialog<List<String>>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        // Temporary variable to store selected moods during selection
+        List<String> tempSelectedMoods = List<String>.from(_moods ?? []);
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Sélectionnez le(s) mood(s) de votre CFQ'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: availableMoods.map((mood) {
+                    return CheckboxListTile(
+                      title: Text(mood),
+                      value: tempSelectedMoods.contains(mood),
+                      onChanged: (bool? value) {
+                        setState(() {
+                          if (value == true) {
+                            tempSelectedMoods.add(mood);
+                          } else {
+                            tempSelectedMoods.remove(mood);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    // Close the dialog and pass back the selected moods
+                    Navigator.of(dialogContext).pop(tempSelectedMoods);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ).then((selectedMoods) {
+      if (selectedMoods != null) {
+        // Update the parent state with the selected moods
+        setState(() {
+          _moods = selectedMoods;
+        });
+      }
     });
   }
 
@@ -123,7 +171,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     String res = await FirestoreMethods().uploadCfq(
       _nameController.text,
       _descriptionController.text,
-      _mood ?? 'Mood',
+      _moods ?? [],
       Provider.of<UserProvider>(context, listen: false).getUser.uid,
       [], // Organizers remain empty for now
       Provider.of<UserProvider>(context, listen: false).getUser.username,
@@ -290,7 +338,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Date & Mood Buttons
+                    // Date & moods Buttons
                     Row(
                       children: [
                         Expanded(
@@ -326,11 +374,11 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Mood',
+                              const Text('moods',
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               ElevatedButton(
-                                onPressed: () => _selectMood(context),
+                                onPressed: () => _selectMoods(context),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.purple,
                                   shape: RoundedRectangleBorder(
@@ -341,8 +389,11 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                   minimumSize: const Size(double.infinity, 50),
                                 ),
                                 child: Text(
-                                  _mood != null ? _mood! : 'Sélectionner',
+                                  _moods != null && _moods!.isNotEmpty
+                                      ? _moods!.join(', ')
+                                      : 'Sélectionner',
                                   style: const TextStyle(fontSize: 14),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ],
