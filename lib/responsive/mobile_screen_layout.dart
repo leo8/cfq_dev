@@ -56,7 +56,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: _page == 0 ? primaryColor : secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -66,7 +65,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: _page == 1 ? primaryColor : secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -76,7 +74,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: _page == 2 ? Colors.purpleAccent : secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -86,7 +83,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: _page == 3 ? primaryColor : secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
@@ -96,7 +92,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: _page == 4 ? primaryColor : secondaryColor,
               ),
             ),
-            label: '',
           ),
         ],
         onTap: navigationTapped,

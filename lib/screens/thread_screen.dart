@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart'; // Add this import for combining streams
@@ -155,19 +156,19 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 itemCount:
                     5, // Assume we are displaying 5 profile pictures
                 itemBuilder: (context, index) {
-                  return Padding(
+                  return const Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12.0),
+                        EdgeInsets.symmetric(horizontal: 12.0),
                     child: Column(
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: const NetworkImage(
+                          backgroundImage: NetworkImage(
                               'https://randomuser.me/api/portraits/men/1.jpg'),
                         ),
-                        const SizedBox(height: 5),
-                        const Text(
-                          'Username', // Sample username for now
+                        SizedBox(height: 5),
+                        Text(
+                          CustomString.username, // Sample username for now
                           style: TextStyle(
                               color: Colors.white70, fontSize: 12),
                         ),
