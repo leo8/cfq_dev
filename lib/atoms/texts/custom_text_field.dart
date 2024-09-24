@@ -1,18 +1,21 @@
-import 'package:cfq_dev/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:cfq_dev/utils/colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
+  final int maxLines; // Added maxLines parameter
 
   const CustomTextField({
     required this.controller,
     required this.hintText,
     this.obscureText = false,
     this.suffixIcon,
-  });
+    this.maxLines = 1, // Default value is 1 for single-line input
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +28,7 @@ class CustomTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: obscureText,
+        maxLines: maxLines, // Use the maxLines parameter here
         style: const TextStyle(color: CustomColor.primaryColor),
         decoration: InputDecoration(
           hintText: hintText,
