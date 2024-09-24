@@ -6,6 +6,7 @@ import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/screens/login_screen.dart';
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
@@ -126,7 +127,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: IconButton(
                       onPressed: selectImage,
                       icon: const Icon(
-                        Icons.add_a_photo,
+                        CustomIcon.addAPhoto,
                         color: CustomColor.white70,
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +116,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   filled: true,
                   fillColor: CustomColor.white24,
                   prefixIcon:
-                      const Icon(Icons.search, color: CustomColor.white70),
+                      const Icon(CustomIcon.search, color: CustomColor.white70),
                   hintText: CustomString.chercherDesUtilisateurs,
                   hintStyle: const TextStyle(color: CustomColor.white70),
                   border: OutlineInputBorder(
@@ -128,7 +129,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
             const SizedBox(width: 10),
             // Notification Bell Button
             IconButton(
-              icon: const Icon(Icons.notifications, color: CustomColor.primaryColor),
+              icon: const Icon(CustomIcon.notifications, color: CustomColor.primaryColor),
               onPressed: () {
                 // Add function later
               },

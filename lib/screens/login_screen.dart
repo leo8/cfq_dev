@@ -3,6 +3,7 @@ import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/screens/signup_screen.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: CustomColor.white70, // Light hint text to ensure visibility
                     ),
                     border: InputBorder.none, // Removing the default border
-                    suffixIcon: const Icon(Icons.visibility, color: CustomColor.white70),
+                    suffixIcon: const Icon(CustomIcon.visibility, color: CustomColor.white70),
                   ),
                 ),
               ),

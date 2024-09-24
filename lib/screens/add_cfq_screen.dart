@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/moods.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
@@ -234,7 +235,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                 ),
               ),
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(CustomIcon.close),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -307,7 +308,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
-                                    Icons.add_a_photo,
+                                    CustomIcon.addAPhoto,
                                     color: CustomColor.primaryColor,
                                     size: 16,
                                   ),

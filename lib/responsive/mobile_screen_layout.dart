@@ -1,4 +1,5 @@
 import 'package:cfq_dev/utils/home_screen_items.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
@@ -52,7 +53,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
-                Icons.language_outlined,
+                CustomIcon.languageOutlined,
                 color: _page == 0 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
@@ -61,7 +62,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
-                Icons.location_on_outlined,
+                CustomIcon.locationOnOutlined,
                 color: _page == 1 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
@@ -70,7 +71,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
-                Icons.add_circle_outline_rounded,
+                CustomIcon.addCircleOutlineRounded,
                 color: _page == 2 ? CustomColor.purpleAccent : CustomColor.secondaryColor,
               ),
             ),
@@ -79,7 +80,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
-                Icons.calendar_today_outlined,
+                CustomIcon.calendarTodayOutlined,
                 color: _page == 3 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
@@ -88,7 +89,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
-                Icons.person_outlined,
+                CustomIcon.personOutlined,
                 color: _page == 4 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),

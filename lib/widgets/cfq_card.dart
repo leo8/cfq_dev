@@ -1,5 +1,6 @@
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
@@ -98,7 +99,7 @@ class CFQCard extends StatelessWidget {
           // Event Details
           Row(
             children: [
-              const Icon(Icons.event, color: CustomColor.white54, size: 20), // CFQ Icon
+              const Icon(CustomIcon.event, color: CustomColor.white54, size: 20), // CFQ Icon
               const SizedBox(width: 4),
               Text(
                 CustomString.cfq,
@@ -128,7 +129,7 @@ class CFQCard extends StatelessWidget {
           // Location (Where it's happening)
           Row(
             children: [
-              const Icon(Icons.location_on, color: CustomColor.white54, size: 20),
+              const Icon(CustomIcon.locationOn, color: CustomColor.white54, size: 20),
               const SizedBox(width: 4),
               Text(
                 where,
@@ -142,15 +143,15 @@ class CFQCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: const Icon(Icons.share, color: CustomColor.white54),
+                icon: const Icon(CustomIcon.share, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.send, color: CustomColor.white54),
+                icon: const Icon(CustomIcon.send, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.chat_bubble_outline, color: CustomColor.white54),
+                icon: const Icon(CustomIcon.chatBubbleOutline, color: CustomColor.white54),
                 onPressed: () {},
               ),
             ],
