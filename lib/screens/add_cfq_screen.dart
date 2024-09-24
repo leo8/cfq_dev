@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -228,8 +229,8 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               title: const Text(
                 CustomString.caFoutQuoi,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontWeight: CustomFont.fontWeightBold,
+                  fontSize: CustomFont.fontSize20,
                 ),
               ),
               leading: IconButton(
@@ -244,7 +245,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                   child: const Text(
                     CustomString.publier,
                     style: TextStyle(
-                        color: CustomColor.primaryColor, fontWeight: FontWeight.bold),
+                        color: CustomColor.primaryColor, fontWeight: CustomFont.fontWeightBold),
                   ),
                 ),
               ],
@@ -286,7 +287,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                         CustomString.aucuneImage,
                                         style: TextStyle(
                                           color: CustomColor.white70,
-                                          fontSize: 10,
+                                          fontSize: CustomFont.fontSize10,
                                         ),
                                       ),
                                     )
@@ -335,7 +336,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 10),
                       ),
-                      style: const TextStyle(fontSize: 13),
+                      style: const TextStyle(fontSize: CustomFont.fontSize13),
                     ),
                     const SizedBox(height: 12),
 
@@ -364,7 +365,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                   _selectedDateTime != null
                                       ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year}'
                                       : CustomString.selectionner,
-                                  style: const TextStyle(fontSize: 14),
+                                  style: const TextStyle(fontSize: CustomFont.fontSize14),
                                 ),
                               ),
                             ],
@@ -393,7 +394,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                   _moods != null && _moods!.isNotEmpty
                                       ? _moods!.join(', ')
                                       : CustomString.selectionner,
-                                  style: const TextStyle(fontSize: 14),
+                                  style: const TextStyle(fontSize: CustomFont.fontSize14),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -425,7 +426,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 10),
                                 ),
-                                style: const TextStyle(fontSize: 13),
+                                style: const TextStyle(fontSize: CustomFont.fontSize13),
                               ),
                             ],
                           ),
@@ -449,7 +450,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 10),
                                 ),
-                                style: const TextStyle(fontSize: 13),
+                                style: const TextStyle(fontSize: CustomFont.fontSize13),
                               ),
                             ],
                           ),
@@ -473,7 +474,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 10),
                       ),
-                      style: const TextStyle(fontSize: 13),
+                      style: const TextStyle(fontSize: CustomFont.fontSize13),
                     ),
                     const SizedBox(height: 12),
 
@@ -495,7 +496,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 10),
                       ),
-                      style: const TextStyle(fontSize: 13),
+                      style: const TextStyle(fontSize: CustomFont.fontSize13),
                     ),
                   ],
                 ),

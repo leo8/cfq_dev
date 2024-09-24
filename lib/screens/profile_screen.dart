@@ -1,4 +1,5 @@
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
@@ -97,8 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           CustomString.off,
                           style: TextStyle(
                             color: CustomColor.primaryColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold
+                            fontSize: CustomFont.fontSize14,
+                            fontWeight: CustomFont.fontWeightBold
                           ),
                         ),
                         SizedBox(
@@ -126,8 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           CustomString.turn,
                           style: TextStyle(
                             color: CustomColor.primaryColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold
+                            fontSize: CustomFont.fontSize14,
+                            fontWeight: CustomFont.fontWeightBold
                           ),
                         ),
                       ],
@@ -138,8 +139,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _user?.username ?? CustomString.emptyString,
                       style: const TextStyle(
                         color: CustomColor.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                        fontWeight: CustomFont.fontWeightBold,
+                        fontSize: CustomFont.fontSize24,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -148,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _user?.bio ?? CustomString.emptyString,
                       style: const TextStyle(
                         color: CustomColor.white70,
-                        fontSize: 16,
+                        fontSize: CustomFont.fontSize16,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -168,15 +169,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 '${_user?.followers.length ?? 0}',
                                 style: const TextStyle(
                                   color: CustomColor.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontWeight: CustomFont.fontWeightBold,
+                                  fontSize: CustomFont.fontSize18,
                                 ),
                               ),
                               const Text(
                                 'Followers',
                                 style: TextStyle(
                                   color: CustomColor.white70,
-                                  fontSize: 14,
+                                  fontSize: CustomFont.fontSize14,
                                 ),
                               ),
                             ],
@@ -194,15 +195,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 '${_user?.following.length ?? 0}',
                                 style: const TextStyle(
                                   color: CustomColor.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                  fontWeight: CustomFont.fontWeightBold,
+                                  fontSize: CustomFont.fontSize18,
                                 ),
                               ),
                               const Text(
                                 'Following',
                                 style: TextStyle(
                                   color: CustomColor.white70,
-                                  fontSize: 14,
+                                  fontSize: CustomFont.fontSize14,
                                 ),
                               ),
                             ],
@@ -228,8 +229,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Log Out',
                           style: TextStyle(
                             color: CustomColor.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontWeight: CustomFont.fontWeightBold,
+                            fontSize: CustomFont.fontSize18,
                           ),
                         ),
                       ),

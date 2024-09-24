@@ -8,6 +8,7 @@ import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -139,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {}, // Add the "Forgot password" functionality here
                   child: const Text(
                     CustomString.tAsOublieTonMotDePasse,
-                    style: TextStyle(color: CustomColor.white70, fontSize: 12),
+                    style: TextStyle(color: CustomColor.white70, fontSize: CustomFont.fontSize12),
                   ),
                 ),
               ),
@@ -168,8 +169,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           CustomString.connexionCapital,
                           style: TextStyle(
                             color: CustomColor.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontWeight: CustomFont.fontWeightBold,
+                            fontSize: CustomFont.fontSize18,
                           ),
                         ),
                       ),
@@ -196,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       CustomString.jemInscris,
                       style: TextStyle(
                         color: CustomColor.personnalizedPurple,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: CustomFont.fontWeightBold,
                       ),
                     ),
                   ),

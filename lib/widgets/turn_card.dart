@@ -1,4 +1,5 @@
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
@@ -60,8 +61,8 @@ class TurnCard extends StatelessWidget {
                           username,
                           style: const TextStyle(
                             color: CustomColor.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            fontWeight: CustomFont.fontWeightBold,
+                            fontSize: CustomFont.fontSize16,
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -70,8 +71,8 @@ class TurnCard extends StatelessWidget {
                           'à ${organizers.join(', ')}',
                           style: const TextStyle(
                             color: CustomColor.blueAccent,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                            fontWeight:CustomFont.fontweight600,
+                            fontSize: CustomFont.fontSize14,
                           ),
                         ),
                       ],
@@ -115,8 +116,8 @@ class TurnCard extends StatelessWidget {
             turnName,
             style: const TextStyle(
               color: CustomColor.primaryColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: CustomFont.fontSize20,
+              fontWeight: CustomFont.fontWeightBold,
             ),
           ),
           const SizedBox(height: 8),
@@ -125,7 +126,7 @@ class TurnCard extends StatelessWidget {
             '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute}',
             style: const TextStyle(
               color: CustomColor.pinkAccent,
-              fontWeight: FontWeight.w500,
+              fontWeight:CustomFont.fontweight500,
             ),
           ),
           const SizedBox(height: 8),

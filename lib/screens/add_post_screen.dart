@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/screens/add_turn_screen.dart';
@@ -17,8 +18,8 @@ class AddPostScreen extends StatelessWidget {
         title: const Text(
           CustomString.publier,
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontWeight: CustomFont.fontWeightBold,
+            fontSize: CustomFont.fontSize20,
           ),
         ),
       ),
@@ -65,8 +66,8 @@ class AddPostScreen extends StatelessWidget {
                   child: Text(
                     CustomString.caFoutQuoi,
                     style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                      fontSize: CustomFont.fontSize30,
+                      fontWeight: CustomFont.fontWeightBold,
                       color: CustomColor.primaryColor,
                     ),
                   ),
@@ -111,8 +112,8 @@ class AddPostScreen extends StatelessWidget {
                   child: Text(
                     CustomString.caTurn,
                     style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                      fontSize: CustomFont.fontSize30,
+                      fontWeight: CustomFont.fontWeightBold,
                       color: CustomColor.primaryColor,
                     ),
                   ),

@@ -5,6 +5,7 @@ import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/screens/login_screen.dart';
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
@@ -257,8 +258,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           CustomString.inscriptionCapital,
                           style: TextStyle(
                             color: CustomColor.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontWeight: CustomFont.fontWeightBold,
+                            fontSize: CustomFont.fontSize18,
                           ),
                         ),
                 ),
@@ -285,7 +286,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       CustomString.jeMeConnecte,
                       style: TextStyle(
                         color: CustomColor.personnalizedPurple,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: CustomFont.fontWeightBold,
                       ),
                     ),
                   ),

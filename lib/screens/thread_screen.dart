@@ -1,4 +1,5 @@
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -171,7 +172,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         Text(
                           CustomString.username, // Sample username for now
                           style: TextStyle(
-                              color: CustomColor.white70, fontSize: 12),
+                              color: CustomColor.white70, fontSize: CustomFont.fontSize12),
                         ),
                       ],
                     ),
