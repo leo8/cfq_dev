@@ -93,7 +93,11 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 16),
           // Sign-Up Option
-          SignUpOption(onTap: navigateToSignUp),
+          SignUpOption(
+            questionText: CustomString.tAsPasEncoreDeCompte,
+            actionText: CustomString.jemInscris,
+            onTap: navigateToSignUp,
+          ),
         ],
       ),
     );

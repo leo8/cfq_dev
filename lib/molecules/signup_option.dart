@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
-import 'package:cfq_dev/utils/string.dart';
 
 class SignUpOption extends StatelessWidget {
+  final String questionText;
+  final String actionText;
   final VoidCallback onTap;
 
-  const SignUpOption({required this.onTap});
+  const SignUpOption({
+    required this.questionText,
+    required this.actionText,
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          CustomString.tAsPasEncoreDeCompte,
-          style: TextStyle(color: CustomColor.white70),
+        Text(
+          questionText,
+          style: const TextStyle(color: CustomColor.white70),
         ),
         GestureDetector(
           onTap: onTap,
-          child: const Text(
-            CustomString.jemInscris,
-            style: TextStyle(
+          child: Text(
+            actionText,
+            style: const TextStyle(
               color: CustomColor.personnalizedPurple,
               fontWeight: CustomFont.fontWeightBold,
             ),
