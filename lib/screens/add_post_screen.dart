@@ -9,9 +9,9 @@ class AddPostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mobileBackgroundColor,
+      backgroundColor: CustomColor.mobileBackgroundColor,
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
+        backgroundColor: CustomColor.mobileBackgroundColor,
         centerTitle: true,
         title: const Text(
           'Publier',
@@ -51,12 +51,12 @@ class AddPostScreen extends StatelessWidget {
                       BlendMode.overlay,
                     ),
                   ),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
-                      color: Colors.deepPurple[800]!.withOpacity(0.5),
+                      color: Color(0xff4527a0),
                       spreadRadius: 5,
                       blurRadius: 10,
-                      offset: const Offset(0, 5), // Shadow position
+                      offset: Offset(0, 5), // Shadow position
                     ),
                   ],
                 ),

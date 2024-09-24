@@ -53,50 +53,45 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.language_outlined,
-                color: _page == 0 ? primaryColor : secondaryColor,
+                color: _page == 0 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.location_on_outlined,
-                color: _page == 1 ? primaryColor : secondaryColor,
+                color: _page == 1 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.add_circle_outline_rounded,
-                color: _page == 2 ? Colors.purpleAccent : secondaryColor,
+                color: _page == 2 ? Colors.purpleAccent : CustomColor.secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.calendar_today_outlined,
-                color: _page == 3 ? primaryColor : secondaryColor,
+                color: _page == 3 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.person_outlined,
-                color: _page == 4 ? primaryColor : secondaryColor,
+                color: _page == 4 ? CustomColor.primaryColor : CustomColor.secondaryColor,
               ),
             ),
-            label: '',
           ),
         ],
         onTap: navigationTapped,

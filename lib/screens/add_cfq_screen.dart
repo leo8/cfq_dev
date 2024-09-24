@@ -216,13 +216,13 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     return _isLoading
         ? const Center(
             child: CircularProgressIndicator(
-              color: primaryColor,
+              color: CustomColor.primaryColor,
             ),
           )
         : Scaffold(
-            backgroundColor: mobileBackgroundColor,
+            backgroundColor: CustomColor.mobileBackgroundColor,
             appBar: AppBar(
-              backgroundColor: mobileBackgroundColor,
+              backgroundColor: CustomColor.mobileBackgroundColor,
               centerTitle: true,
               title: const Text(
                 'Ça fout quoi ?',
