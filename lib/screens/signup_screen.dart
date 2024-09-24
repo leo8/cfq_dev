@@ -9,7 +9,7 @@ import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
-import 'package:cfq_dev/widgets/text_field_input.dart';
+import 'package:cfq_dev/atoms/texts/text_field_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
