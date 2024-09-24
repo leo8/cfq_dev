@@ -1,4 +1,4 @@
-import 'package:cfq_dev/utils/global_variables.dart';
+import 'package:cfq_dev/utils/home_screen_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
@@ -43,7 +43,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         onPageChanged: onPageChanged,
-        children: homeScreenItems,
+        children: CustomHomeScreenItems.homeScreenItems,
       ),
       bottomNavigationBar: CupertinoTabBar(
         iconSize: 32,
