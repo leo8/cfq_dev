@@ -39,7 +39,7 @@ class AddPostScreen extends StatelessWidget {
                 );
               },
               child: Container(
-                height: 180,  // Increase the height to make the button taller
+                height: 180, // Increase the height to make the button taller
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
@@ -85,7 +85,7 @@ class AddPostScreen extends StatelessWidget {
                 );
               },
               child: Container(
-                height: 180,  // Increase the height to make the button taller
+                height: 180, // Increase the height to make the button taller
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
@@ -101,7 +101,9 @@ class AddPostScreen extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: CustomColor.deepPurpleAccent[800]!.withOpacity(0.5),
+                      color: (CustomColor.deepPurpleAccent[800] ??
+                              Colors.deepPurpleAccent)
+                          .withOpacity(0.5),
                       spreadRadius: 5,
                       blurRadius: 10,
                       offset: const Offset(0, 5), // Shadow position
