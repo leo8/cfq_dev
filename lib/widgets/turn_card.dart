@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
 class TurnCard extends StatelessWidget {
@@ -76,7 +77,7 @@ class TurnCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '1h', // Placeholder, dynamic time can be calculated
+                      CustomString.uneHeure, // Placeholder, dynamic time can be calculated
                       style: const TextStyle(color: Colors.white54),
                     ),
                   ],
@@ -91,7 +92,7 @@ class TurnCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('J’suis là'),
+                child: const Text(CustomString.jeSuisLa),
               ),
             ],
           ),

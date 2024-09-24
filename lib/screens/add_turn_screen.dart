@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cfq_dev/utils/colors.dart';
@@ -34,11 +35,11 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          title: const Text('Créer un Turn'),
+          title: const Text(CustomString.creerUnTurn),
           children: [
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Prendre une photo avec l'appareil"),
+              child: const Text(CustomString.prendreUnePhotoAveclAppareil),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
@@ -49,7 +50,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Choisir une photo de la galerie"),
+              child: const Text(CustomString.choisirUnePhotoDeLaGalerie),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.gallery);
@@ -60,7 +61,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Annuler"),
+              child: const Text(CustomString.annuler),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -111,7 +112,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Sélectionnez le(s) mood(s) de votre turn'),
+              title: const Text(CustomString.selectionnerLesMoodsDeVotreTurn),
               content: SingleChildScrollView(
                 child: Column(
                   children: availableMoods.map((mood) {
@@ -137,7 +138,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                     // Close the dialog and pass back the selected moods
                     Navigator.of(dialogContext).pop(tempSelectedMoods);
                   },
-                  child: const Text('OK'),
+                  child: const Text(CustomString.ok),
                 ),
               ],
             );
@@ -157,12 +158,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
   // Posting the Turn
   Future<void> _postTurn() async {
     if (_file == null) {
-      showSnackBar('Veuillez sélectionner une image', context);
+      showSnackBar(CustomString.veuillezSelectionnerUneImage, context);
       return;
     }
 
     if (_nameController.text.isEmpty || _descriptionController.text.isEmpty) {
-      showSnackBar('Veuillez remplir tous les champs', context);
+      showSnackBar(CustomString.veuillezRemplirTousLesChamps, context);
       return;
     }
 
@@ -185,9 +186,9 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
       _addressController.text, // "Adresse" field
     );
 
-    if (res == 'success') {
+    if (res == CustomString.success) {
       // Show SnackBar for successful publication
-      showSnackBar('Publication réussie !', context);
+      showSnackBar(CustomString.publicationReussie, context);
 
       setState(() {
         _isLoading = false;
@@ -242,7 +243,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                 TextButton(
                   onPressed: _postTurn,
                   child: const Text(
-                    'Publier',
+                    CustomString.publier,
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
@@ -283,7 +284,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                                 child: _file == null
                                     ? const Center(
                                         child: Text(
-                                          'Aucune image',
+                                          CustomString.aucuneImage,
                                           style: TextStyle(
                                             color: Colors.white70,
                                             fontSize: 10,
@@ -321,7 +322,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                     const SizedBox(height: 12),
 
                     // Turn Name Field
-                    const Text('Nom du Turn',
+                    const Text(CustomString.nomDuTurn,
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 6),
                     TextField(
@@ -329,7 +330,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[800],
-                        hintText: 'Nom du Turn',
+                        hintText: CustomString.nomDuTurn,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -347,7 +348,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Ajouter une date',
+                              const Text(CustomString.ajouterUneDate,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               ElevatedButton(
@@ -364,7 +365,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                                 child: Text(
                                   _selectedDateTime != null
                                       ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year}'
-                                      : 'Sélectionner',
+                                      : CustomString.selectionner,
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -376,7 +377,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Mood',
+                              const Text(CustomString.moods,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               ElevatedButton(
@@ -393,7 +394,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                                 child: Text(
                                   _moods != null && _moods!.isNotEmpty
                                       ? _moods!.join(', ')
-                                      : 'Sélectionner',
+                                      : CustomString.selectionner,
                                   style: const TextStyle(fontSize: 14),
                                   textAlign: TextAlign.center,
                                 ),
@@ -412,12 +413,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Organisateurs',
+                              const Text(CustomString.organisateurs,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'Sélectionner',
+                                  hintText: CustomString.selectionner,
                                   filled: true,
                                   fillColor: Colors.grey[800],
                                   border: OutlineInputBorder(
@@ -436,12 +437,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('À qui ?',
+                              const Text(CustomString.aQui,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'Sélectionner',
+                                  hintText: CustomString.selectionner,
                                   filled: true,
                                   fillColor: Colors.grey[800],
                                   border: OutlineInputBorder(
@@ -466,7 +467,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: TextField(
                             controller: _locationController,
                             decoration: InputDecoration(
-                              hintText: 'Où ?',
+                              hintText: CustomString.ou,
                               filled: true,
                               fillColor: Colors.grey[800],
                               border: OutlineInputBorder(
@@ -483,7 +484,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                           child: TextField(
                             controller: _addressController,
                             decoration: InputDecoration(
-                              hintText: 'Adresse',
+                              hintText: CustomString.adresse,
                               filled: true,
                               fillColor: Colors.grey[800],
                               border: OutlineInputBorder(
@@ -500,7 +501,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                     const SizedBox(height: 12),
 
                     // Description Field
-                    const Text('Description',
+                    const Text(CustomString.description,
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 6),
                     TextField(
@@ -510,7 +511,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                         filled: true,
                         fillColor: Colors.grey[800],
                         hintText:
-                            "Raconte pas ta vie, dis nous juste où tu sors...",
+                            CustomString.racontePasTaVieDisNousJusteOuTuSors,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

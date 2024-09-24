@@ -114,7 +114,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   fillColor: Colors.white24,
                   prefixIcon:
                       const Icon(Icons.search, color: Colors.white70),
-                  hintText: 'Search for people...',
+                  hintText: CustomString.chercherDesUtilisateurs,
                   hintStyle: const TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -187,10 +187,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   if (snapshot.hasError) {
                     print("Error fetching events: ${snapshot.error}");
                     return const Center(
-                        child: Text("Error fetching events"));
+                        child: Text(CustomString.errorFetchingEvents));
                   }
                   if (!snapshot.hasData) {
-                    print("Fetching data, no events yet...");
+                    print(CustomString.fetchingDataNoEventsYet);
                     return const Center(
                         child: CircularProgressIndicator());
                   }
@@ -201,7 +201,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   if (events.isEmpty) {
                     print("No events found");
                     return const Center(
-                        child: Text("No events available"));
+                        child: Text(CustomString.noEventsAvailable));
                   }
 
                   return ListView.builder(
@@ -218,16 +218,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         // Display Turn Card
                         return TurnCard(
                           profilePictureUrl:
-                              event['profilePictureUrl'] ?? '',
-                          username: event['username'] ?? '',
+                              event['profilePictureUrl'] ?? CustomString.emptyString,
+                          username: event['username'] ?? CustomString.emptyString,
                           organizers: List<String>.from(
                               event['organizers'] ?? []),
-                          turnName: event['turnName'] ?? '',
-                          description: event['description'] ?? '',
+                          turnName: event['turnName'] ?? CustomString.emptyString,
+                          description: event['description'] ?? CustomString.emptyString,
                           eventDateTime:
                               parseDate(event['eventDateTime']),
-                          where: event['where'] ?? '',
-                          address: event['address'] ?? '',
+                          where: event['where'] ?? CustomString.emptyString,
+                          address: event['address'] ?? CustomString.emptyString,
                           attending: List<String>.from(
                               event['attending'] ?? []),
                           comments: List<String>.from(
@@ -237,15 +237,15 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         // Display CFQ Card
                         return CFQCard(
                           profilePictureUrl:
-                              event['profilePictureUrl'] ?? '',
-                          username: event['username'] ?? '',
+                              event['profilePictureUrl'] ?? CustomString.emptyString,
+                          username: event['username'] ?? CustomString.emptyString,
                           organizers: List<String>.from(
                               event['organizers'] ?? []),
-                          cfqName: event['cfqName'] ?? '',
-                          description: event['description'] ?? '',
+                          cfqName: event['cfqName'] ?? CustomString.emptyString,
+                          description: event['description'] ?? CustomString.emptyString,
                           datePublished:
                               parseDate(event['datePublished']),
-                          where: event['where'] ?? '',
+                          where: event['where'] ?? CustomString.emptyString,
                           followers: List<String>.from(
                               event['followers'] ?? []),
                         );

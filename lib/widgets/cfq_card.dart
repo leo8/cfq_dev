@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
 class CFQCard extends StatelessWidget {
@@ -87,7 +88,7 @@ class CFQCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text('Follow'),
+                child: const Text(CustomString.follow),
               ),
             ],
           ),
@@ -98,7 +99,7 @@ class CFQCard extends StatelessWidget {
               const Icon(Icons.event, color: Colors.white54, size: 20), // CFQ Icon
               const SizedBox(width: 4),
               Text(
-                'CFQ',
+                CustomString.cfq,
                 style: const TextStyle(color: Colors.white54),
               ),
             ],

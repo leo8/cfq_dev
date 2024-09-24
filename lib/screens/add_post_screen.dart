@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/screens/add_turn_screen.dart';
 import 'package:cfq_dev/screens/add_cfq_screen.dart';
@@ -14,7 +15,7 @@ class AddPostScreen extends StatelessWidget {
         backgroundColor: CustomColor.mobileBackgroundColor,
         centerTitle: true,
         title: const Text(
-          'Publier',
+          CustomString.publier,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
@@ -62,7 +63,7 @@ class AddPostScreen extends StatelessWidget {
                 ),
                 child: const Center(
                   child: Text(
-                    'Ça fout quoi ?',
+                    CustomString.caFoutQuoi,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -108,7 +109,7 @@ class AddPostScreen extends StatelessWidget {
                 ),
                 child: const Center(
                   child: Text(
-                    'Ça turn',
+                    CustomString.caTurn,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,

@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -18,6 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     fetchUserData();
   }
+
 
   Future<void> fetchUserData() async {
     try {
@@ -51,7 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Failed to update status. Please try again.')),
+            content: Text(CustomString.failedtoUpdateStatusPleaseTryAgain)),
       );
     }
   }
@@ -83,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
                       radius: 64,
                       backgroundImage:
-                          NetworkImage(_user?.profilePictureUrl ?? ''),
+                          NetworkImage(_user?.profilePictureUrl ?? CustomString.emptyString),
                     ),
                     const SizedBox(height: 20),
                     // Active Switch
@@ -91,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Off',
+                          CustomString.off,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -120,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 6,
                         ),
                         const Text(
-                          'Turn',
+                          CustomString.turn,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -132,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     // Username
                     Text(
-                      _user?.username ?? '',
+                      _user?.username ?? CustomString.emptyString,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -142,7 +144,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 10),
                     // Bio
                     Text(
-                      _user?.bio ?? '',
+                      _user?.bio ?? CustomString.emptyString,
                       style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 16,

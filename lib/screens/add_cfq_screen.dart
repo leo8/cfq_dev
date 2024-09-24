@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cfq_dev/utils/colors.dart';
@@ -32,11 +33,11 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       context: context,
       builder: (context) {
         return SimpleDialog(
-          title: const Text('Créer un CFQ'),
+          title: const Text(CustomString.creerUnCfq),
           children: [
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Prendre une photo avec l'appareil"),
+              child: const Text(CustomString.prendreUnePhotoAveclAppareil),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.camera);
@@ -47,7 +48,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Choisir une photo de la galerie"),
+              child: const Text(CustomString.choisirUnePhotoDeLaGalerie),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List file = await pickImage(ImageSource.gallery);
@@ -58,7 +59,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Text("Annuler"),
+              child: const Text(CustomString.annuler),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -109,7 +110,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Sélectionnez le(s) mood(s) de votre CFQ'),
+              title: const Text(CustomString.selectionnerLesMoodsDeVotreCfq),
               content: SingleChildScrollView(
                 child: Column(
                   children: availableMoods.map((mood) {
@@ -135,7 +136,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     // Close the dialog and pass back the selected moods
                     Navigator.of(dialogContext).pop(tempSelectedMoods);
                   },
-                  child: const Text('OK'),
+                  child: const Text(CustomString.ok),
                 ),
               ],
             );
@@ -155,12 +156,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
   // Posting the CFQ
   Future<void> _postCfq() async {
     if (_file == null) {
-      showSnackBar('Veuillez sélectionner une image', context);
+      showSnackBar(CustomString.veuillezSelectionnerUneImage, context);
       return;
     }
 
     if (_nameController.text.isEmpty || _descriptionController.text.isEmpty) {
-      showSnackBar('Veuillez remplir tous les champs', context);
+      showSnackBar(CustomString.veuillezRemplirTousLesChamps, context);
       return;
     }
 
@@ -182,9 +183,9 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       _locationController.text, // "Où" field for CFQ
     );
 
-    if (res == 'success') {
+    if (res == CustomString.success) {
       // Show SnackBar for successful publication
-      showSnackBar('Publication réussie !', context);
+      showSnackBar(CustomString.publicationReussie, context);
 
       setState(() {
         _isLoading = false;
@@ -225,7 +226,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               backgroundColor: CustomColor.mobileBackgroundColor,
               centerTitle: true,
               title: const Text(
-                'Ça fout quoi ?',
+                CustomString.caFoutQuoi,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -241,7 +242,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                 TextButton(
                   onPressed: _postCfq,
                   child: const Text(
-                    'Publier',
+                    CustomString.publier,
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
@@ -282,7 +283,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                               child: _file == null
                                   ? const Center(
                                       child: Text(
-                                        'Aucune image',
+                                        CustomString.aucuneImage,
                                         style: TextStyle(
                                           color: Colors.white70,
                                           fontSize: 10,
@@ -319,7 +320,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     const SizedBox(height: 12),
 
                     // CFQ Name Field
-                    const Text('Nom du CFQ',
+                    const Text(CustomString.nomDuCfq,
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 6),
                     TextField(
@@ -327,7 +328,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[800],
-                        hintText: 'Nom du CFQ',
+                        hintText: CustomString.nomDuCfq,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -345,7 +346,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Ajouter une date',
+                              const Text(CustomString.ajouterUneDate,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               ElevatedButton(
@@ -362,7 +363,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                 child: Text(
                                   _selectedDateTime != null
                                       ? '${_selectedDateTime!.day}/${_selectedDateTime!.month}/${_selectedDateTime!.year}'
-                                      : 'Sélectionner',
+                                      : CustomString.selectionner,
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ),
@@ -374,7 +375,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('moods',
+                              const Text(CustomString.moods,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               ElevatedButton(
@@ -391,7 +392,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                 child: Text(
                                   _moods != null && _moods!.isNotEmpty
                                       ? _moods!.join(', ')
-                                      : 'Sélectionner',
+                                      : CustomString.selectionner,
                                   style: const TextStyle(fontSize: 14),
                                   textAlign: TextAlign.center,
                                 ),
@@ -410,12 +411,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('Organisateurs',
+                              const Text(CustomString.organisateurs,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'Sélectionner',
+                                  hintText: CustomString.selectionner,
                                   filled: true,
                                   fillColor: Colors.grey[800],
                                   border: OutlineInputBorder(
@@ -434,12 +435,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text('À qui ?',
+                              const Text(CustomString.aQui,
                                   style: TextStyle(color: Colors.white)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'Sélectionner',
+                                  hintText: CustomString.selectionner,
                                   filled: true,
                                   fillColor: Colors.grey[800],
                                   border: OutlineInputBorder(
@@ -458,12 +459,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     const SizedBox(height: 12),
 
                     // Where Field (Où)
-                    const Text('Où ?', style: TextStyle(color: Colors.white)),
+                    const Text(CustomString.ou, style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _locationController,
                       decoration: InputDecoration(
-                        hintText: 'Où ?',
+                        hintText: CustomString.ou,
                         filled: true,
                         fillColor: Colors.grey[800],
                         border: OutlineInputBorder(
@@ -477,7 +478,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     const SizedBox(height: 12),
 
                     // Description Field
-                    const Text('Description',
+                    const Text(CustomString.description,
                         style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 6),
                     TextField(
@@ -487,7 +488,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                         filled: true,
                         fillColor: Colors.grey[800],
                         hintText:
-                            "Raconte pas ta vie, dis nous juste où tu sors...",
+                            CustomString.racontePasTaVieDisNousJusteOuTuSors,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

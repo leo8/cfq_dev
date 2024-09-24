@@ -5,6 +5,7 @@ import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/screens/login_screen.dart';
 import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() {
       _isLoading = false;
     });
-    if (res != 'success') {
+    if (res != CustomString.success) {
       showSnackBar(res, context);
     } else {
       Navigator.of(context).pushReplacement(
@@ -144,7 +145,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   controller: _emailController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Ton email',
+                    hintText: CustomString.tonMail,
                     hintStyle: const TextStyle(color: Colors.white70),
                     border: InputBorder.none,
                   ),
@@ -164,7 +165,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Ton mot de passe',
+                    hintText: CustomString.tonMotDePasse,
                     hintStyle: const TextStyle(color: Colors.white70),
                     border: InputBorder.none,
                   ),
@@ -186,7 +187,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         controller: _usernameController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          hintText: 'Un petit nom ?',
+                          hintText: CustomString.unPetitNom,
                           hintStyle: const TextStyle(color: Colors.white70),
                           border: InputBorder.none,
                         ),
@@ -205,7 +206,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         controller: _locationController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          hintText: 'Ta localisation',
+                          hintText: CustomString.taLocalisation,
                           hintStyle: const TextStyle(color: Colors.white70),
                           border: InputBorder.none,
                         ),
@@ -227,7 +228,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   controller: _bioController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Ta bio',
+                    hintText: CustomString.taBio,
                     hintStyle: const TextStyle(color: Colors.white70),
                     border: InputBorder.none,
                   ),
@@ -253,7 +254,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: CircularProgressIndicator(color: CustomColor.primaryColor),
                         )
                       : const Text(
-                          'INSCRIPTION',
+                          CustomString.inscriptionCapital,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -265,7 +266,7 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 8),
 
               const Text(
-                'OU',
+                CustomString.ouCapital,
                 style: TextStyle(color: Colors.white70),
               ),
               const SizedBox(height: 8),
@@ -275,13 +276,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Déjà inscrit.e ?',
+                    CustomString.dejaInscrit,
                     style: TextStyle(color: Colors.white70),
                   ),
                   GestureDetector(
                     onTap: navigateToLogIn,
                     child: const Text(
-                      ' Je me connecte',
+                      CustomString.jeMeConnecte,
                       style: TextStyle(
                         color: Color(0xFF7A00FF),
                         fontWeight: FontWeight.bold,

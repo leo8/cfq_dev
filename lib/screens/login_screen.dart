@@ -3,6 +3,7 @@ import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/screens/signup_screen.dart';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/widgets/text_field_input.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _isLoading = false;
     });
-    if (res == 'success') {
+    if (res == CustomString.success) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const RepsonsiveLayout(
@@ -98,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   style: const TextStyle(color: Colors.white), // Ensures the text is white
                   decoration: InputDecoration(
-                    hintText: 'Ton mail',
+                    hintText: CustomString.tonMail,
                     hintStyle: const TextStyle(
                       color: Colors.white70, // Light hint text to ensure visibility
                     ),
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: 'Ton mot de passe',
+                    hintText: CustomString.tonMotDePasse,
                     hintStyle: const TextStyle(
                       color: Colors.white70, // Light hint text to ensure visibility
                     ),
@@ -137,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: TextButton(
                   onPressed: () {}, // Add the "Forgot password" functionality here
                   child: const Text(
-                    "T’as oublié ton mot de passe ?",
+                    CustomString.tAsOublieTonMotDePasse,
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
@@ -164,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: const Text(
-                          'CONNEXION',
+                          CustomString.connexionCapital,
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -176,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
 
               const Text(
-                'OU',
+                CustomString.ouCapital,
                 style: TextStyle(color: Colors.white70),
               ),
               const SizedBox(height: 16),
@@ -186,13 +187,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'T’as pas encore de compte?',
+                    CustomString.tAsPasEncoreDeCompte,
                     style: TextStyle(color: Colors.white70),
                   ),
                   GestureDetector(
                     onTap: navigateToSignUp,
                     child: const Text(
-                      " Je m'inscris",
+                      CustomString.jemInscris,
                       style: TextStyle(
                         color: Color(0xFF7A00FF),
                         fontWeight: FontWeight.bold,
