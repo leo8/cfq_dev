@@ -244,7 +244,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                   child: const Text(
                     CustomString.publier,
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                        color: CustomColor.primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -271,7 +271,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                               width: 300,
                               height: 120,
                               decoration: BoxDecoration(
-                                color: Colors.grey[800],
+                                color: CustomColor.secondaryColor[800],
                                 borderRadius: BorderRadius.circular(10),
                                 image: _file != null
                                     ? DecorationImage(
@@ -285,7 +285,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                       child: Text(
                                         CustomString.aucuneImage,
                                         style: TextStyle(
-                                          color: Colors.white70,
+                                          color: CustomColor.white70,
                                           fontSize: 10,
                                         ),
                                       ),
@@ -302,12 +302,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
-                                    color: Colors.purple,
+                                    color: CustomColor.purple,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.add_a_photo,
-                                    color: Colors.white,
+                                    color: CustomColor.primaryColor,
                                     size: 16,
                                   ),
                                 ),
@@ -321,13 +321,13 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
 
                     // CFQ Name Field
                     const Text(CustomString.nomDuCfq,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: CustomColor.primaryColor)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey[800],
+                        fillColor: CustomColor.secondaryColor[800],
                         hintText: CustomString.nomDuCfq,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -347,12 +347,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.ajouterUneDate,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               ElevatedButton(
                                 onPressed: () => _selectDateTime(context),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
+                                  backgroundColor: CustomColor.purple,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -376,12 +376,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.moods,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               ElevatedButton(
                                 onPressed: () => _selectMoods(context),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
+                                  backgroundColor: CustomColor.purple,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -412,13 +412,13 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.organisateurs,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
                                   hintText: CustomString.selectionner,
                                   filled: true,
-                                  fillColor: Colors.grey[800],
+                                  fillColor: CustomColor.secondaryColor[800],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -436,13 +436,13 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.aQui,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
                                   hintText: CustomString.selectionner,
                                   filled: true,
-                                  fillColor: Colors.grey[800],
+                                  fillColor: CustomColor.secondaryColor[800],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -459,14 +459,14 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
                     const SizedBox(height: 12),
 
                     // Where Field (Où)
-                    const Text(CustomString.ou, style: TextStyle(color: Colors.white)),
+                    const Text(CustomString.ou, style: TextStyle(color: CustomColor.primaryColor)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _locationController,
                       decoration: InputDecoration(
                         hintText: CustomString.ou,
                         filled: true,
-                        fillColor: Colors.grey[800],
+                        fillColor: CustomColor.secondaryColor[800],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -479,14 +479,14 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
 
                     // Description Field
                     const Text(CustomString.description,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: CustomColor.primaryColor)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _descriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey[800],
+                        fillColor: CustomColor.secondaryColor[800],
                         hintText:
                             CustomString.racontePasTaVieDisNousJusteOuTuSors,
                         border: OutlineInputBorder(

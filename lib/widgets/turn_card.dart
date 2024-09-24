@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ class TurnCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A0551), // Similar purple background
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white24), // Border for slight effect
+        border: Border.all(color: CustomColor.white24), // Border for slight effect
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +59,7 @@ class TurnCard extends StatelessWidget {
                         Text(
                           username,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -68,7 +69,7 @@ class TurnCard extends StatelessWidget {
                         Text(
                           'à ${organizers.join(', ')}',
                           style: const TextStyle(
-                            color: Colors.blueAccent,
+                            color: CustomColor.blueAccent,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -78,7 +79,7 @@ class TurnCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       CustomString.uneHeure, // Placeholder, dynamic time can be calculated
-                      style: const TextStyle(color: Colors.white54),
+                      style: const TextStyle(color: CustomColor.white54),
                     ),
                   ],
                 ),
@@ -87,7 +88,7 @@ class TurnCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7A00FF), // Gradient-like effect
+                  backgroundColor: CustomColor.personnalizedPurple, // Gradient-like effect
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -100,11 +101,11 @@ class TurnCard extends StatelessWidget {
           // Event Details
           Row(
             children: [
-              const Icon(Icons.home, color: Colors.white54, size: 20), // Appart Icon
+              const Icon(Icons.home, color: CustomColor.white54, size: 20), // Appart Icon
               const SizedBox(width: 4),
               Text(
                 where, // Use the 'where' field for location type
-                style: const TextStyle(color: Colors.white54),
+                style: const TextStyle(color: CustomColor.white54),
               ),
             ],
           ),
@@ -113,7 +114,7 @@ class TurnCard extends StatelessWidget {
           Text(
             turnName,
             style: const TextStyle(
-              color: Colors.white,
+              color: CustomColor.primaryColor,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -123,7 +124,7 @@ class TurnCard extends StatelessWidget {
           Text(
             '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute}',
             style: const TextStyle(
-              color: Colors.pinkAccent,
+              color: CustomColor.pinkAccent,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -132,23 +133,23 @@ class TurnCard extends StatelessWidget {
           Text(
             description,
             style: const TextStyle(
-              color: Colors.white70,
+              color: CustomColor.white70,
             ),
           ),
           const SizedBox(height: 16),
           // Location and Exact Location
           Row(
             children: [
-              const Icon(Icons.location_on, color: Colors.white54, size: 20),
+              const Icon(Icons.location_on, color: CustomColor.white54, size: 20),
               const SizedBox(width: 4),
               Text(
                 where, // General location (e.g., "at home")
-                style: const TextStyle(color: Colors.white70),
+                style: const TextStyle(color: CustomColor.white70),
               ),
               const SizedBox(width: 4),
               Text(
                 address, // Precise address
-                style: const TextStyle(color: Colors.white54),
+                style: const TextStyle(color: CustomColor.white54),
               ),
             ],
           ),
@@ -158,15 +159,15 @@ class TurnCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: const Icon(Icons.share, color: Colors.white54),
+                icon: const Icon(Icons.share, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.send, color: Colors.white54),
+                icon: const Icon(Icons.send, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.chat_bubble_outline, color: Colors.white54),
+                icon: const Icon(Icons.chat_bubble_outline, color: CustomColor.white54),
                 onPressed: () {},
               ),
             ],

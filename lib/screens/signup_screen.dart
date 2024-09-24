@@ -105,7 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Image.asset(
                 'assets/logo_white.png',
                 height: 250, // Adjusted to avoid overflow
-                color: Colors.white,
+                color: CustomColor.primaryColor,
               ),
 
               // Profile Image
@@ -126,7 +126,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onPressed: selectImage,
                       icon: const Icon(
                         Icons.add_a_photo,
-                        color: Colors.white70,
+                        color: CustomColor.white70,
                       ),
                     ),
                   ),
@@ -137,16 +137,16 @@ class _SignupScreenState extends State<SignupScreen> {
               // Email input
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: CustomColor.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: CustomColor.primaryColor),
                   decoration: InputDecoration(
                     hintText: CustomString.tonMail,
-                    hintStyle: const TextStyle(color: Colors.white70),
+                    hintStyle: const TextStyle(color: CustomColor.white70),
                     border: InputBorder.none,
                   ),
                 ),
@@ -156,17 +156,17 @@ class _SignupScreenState extends State<SignupScreen> {
               // Password input
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: CustomColor.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
                   controller: _passwordController,
                   obscureText: true,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: CustomColor.primaryColor),
                   decoration: InputDecoration(
                     hintText: CustomString.tonMotDePasse,
-                    hintStyle: const TextStyle(color: Colors.white70),
+                    hintStyle: const TextStyle(color: CustomColor.white70),
                     border: InputBorder.none,
                   ),
                 ),
@@ -179,16 +179,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: CustomColor.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: TextField(
                         controller: _usernameController,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: CustomColor.primaryColor),
                         decoration: InputDecoration(
                           hintText: CustomString.unPetitNom,
-                          hintStyle: const TextStyle(color: Colors.white70),
+                          hintStyle: const TextStyle(color: CustomColor.white70),
                           border: InputBorder.none,
                         ),
                       ),
@@ -198,16 +198,16 @@ class _SignupScreenState extends State<SignupScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: CustomColor.primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: TextField(
                         controller: _locationController,
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: CustomColor.primaryColor),
                         decoration: InputDecoration(
                           hintText: CustomString.taLocalisation,
-                          hintStyle: const TextStyle(color: Colors.white70),
+                          hintStyle: const TextStyle(color: CustomColor.white70),
                           border: InputBorder.none,
                         ),
                       ),
@@ -220,16 +220,16 @@ class _SignupScreenState extends State<SignupScreen> {
               // Bio input
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: CustomColor.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
                   controller: _bioController,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: CustomColor.primaryColor),
                   decoration: InputDecoration(
                     hintText: CustomString.taBio,
-                    hintStyle: const TextStyle(color: Colors.white70),
+                    hintStyle: const TextStyle(color: CustomColor.white70),
                     border: InputBorder.none,
                   ),
                 ),
@@ -246,7 +246,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF7A00FF), Color(0xFF7900F4)],
+                      colors: [CustomColor.personnalizedPurple, Color(0xFF7900F4)],
                     ),
                   ),
                   child: _isLoading
@@ -256,7 +256,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       : const Text(
                           CustomString.inscriptionCapital,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -267,7 +267,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const Text(
                 CustomString.ouCapital,
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: CustomColor.white70),
               ),
               const SizedBox(height: 8),
 
@@ -277,14 +277,14 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   const Text(
                     CustomString.dejaInscrit,
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: CustomColor.white70),
                   ),
                   GestureDetector(
                     onTap: navigateToLogIn,
                     child: const Text(
                       CustomString.jeMeConnecte,
                       style: TextStyle(
-                        color: Color(0xFF7A00FF),
+                        color: CustomColor.personnalizedPurple,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

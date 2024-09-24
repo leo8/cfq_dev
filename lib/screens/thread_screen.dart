@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +103,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
       extendBodyBehindAppBar:
           true, // Make the app bar transparent over the background
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Transparent app bar
+        backgroundColor: CustomColor.transparent, // Transparent app bar
         elevation: 0,
         title: Row(
           children: [
@@ -111,11 +112,11 @@ class _ThreadScreenState extends State<ThreadScreen> {
               child: TextField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white24,
+                  fillColor: CustomColor.white24,
                   prefixIcon:
-                      const Icon(Icons.search, color: Colors.white70),
+                      const Icon(Icons.search, color: CustomColor.white70),
                   hintText: CustomString.chercherDesUtilisateurs,
-                  hintStyle: const TextStyle(color: Colors.white70),
+                  hintStyle: const TextStyle(color: CustomColor.white70),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
@@ -126,7 +127,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
             const SizedBox(width: 10),
             // Notification Bell Button
             IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.white),
+              icon: const Icon(Icons.notifications, color: CustomColor.primaryColor),
               onPressed: () {
                 // Add function later
               },
@@ -170,7 +171,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         Text(
                           CustomString.username, // Sample username for now
                           style: TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                              color: CustomColor.white70, fontSize: 12),
                         ),
                       ],
                     ),

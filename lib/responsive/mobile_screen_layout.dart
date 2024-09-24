@@ -71,7 +71,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 Icons.add_circle_outline_rounded,
-                color: _page == 2 ? Colors.purpleAccent : CustomColor.secondaryColor,
+                color: _page == 2 ? CustomColor.purpleAccent : CustomColor.secondaryColor,
               ),
             ),
           ),

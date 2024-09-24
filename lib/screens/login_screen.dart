@@ -85,23 +85,23 @@ class _LoginScreenState extends State<LoginScreen> {
               Image.asset(
                 'assets/logo_white.png', // Ensure the logo path is correct
                 height: 250, // Adjust size as necessary
-                color: Colors.deepPurple,
+                color: CustomColor.deepPurpleAccent,
               ),
               const SizedBox(height: 64), // Spacing after the logo
               // Email input
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1), // Semi-transparent background
+                  color: CustomColor.primaryColor.withOpacity(0.1), // Semi-transparent background
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
                   controller: _emailController,
-                  style: const TextStyle(color: Colors.white), // Ensures the text is white
+                  style: const TextStyle(color: CustomColor.primaryColor), // Ensures the text is white
                   decoration: InputDecoration(
                     hintText: CustomString.tonMail,
                     hintStyle: const TextStyle(
-                      color: Colors.white70, // Light hint text to ensure visibility
+                      color: CustomColor.white70, // Light hint text to ensure visibility
                     ),
                     border: InputBorder.none, // Removing the default border
                   ),
@@ -112,21 +112,21 @@ class _LoginScreenState extends State<LoginScreen> {
               // Password input
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1), // Semi-transparent background
+                  color: CustomColor.primaryColor.withOpacity(0.1), // Semi-transparent background
                   borderRadius: BorderRadius.circular(15),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: TextField(
                   controller: _passwordController,
                   obscureText: true,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: CustomColor.primaryColor),
                   decoration: InputDecoration(
                     hintText: CustomString.tonMotDePasse,
                     hintStyle: const TextStyle(
-                      color: Colors.white70, // Light hint text to ensure visibility
+                      color: CustomColor.white70, // Light hint text to ensure visibility
                     ),
                     border: InputBorder.none, // Removing the default border
-                    suffixIcon: const Icon(Icons.visibility, color: Colors.white70),
+                    suffixIcon: const Icon(Icons.visibility, color: CustomColor.white70),
                   ),
                 ),
               ),
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {}, // Add the "Forgot password" functionality here
                   child: const Text(
                     CustomString.tAsOublieTonMotDePasse,
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(color: CustomColor.white70, fontSize: 12),
                   ),
                 ),
               ),
@@ -161,13 +161,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF7A00FF), Color(0xFF7900F4)],
+                            colors: [CustomColor.personnalizedPurple, Color(0xFF7900F4)],
                           ),
                         ),
                         child: const Text(
                           CustomString.connexionCapital,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const Text(
                 CustomString.ouCapital,
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: CustomColor.white70),
               ),
               const SizedBox(height: 16),
 
@@ -188,14 +188,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Text(
                     CustomString.tAsPasEncoreDeCompte,
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: CustomColor.white70),
                   ),
                   GestureDetector(
                     onTap: navigateToSignUp,
                     child: const Text(
                       CustomString.jemInscris,
                       style: TextStyle(
-                        color: Color(0xFF7A00FF),
+                        color: CustomColor.personnalizedPurple,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

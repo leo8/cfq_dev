@@ -48,13 +48,13 @@ class AddPostScreen extends StatelessWidget {
                     ),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
-                      Colors.deepPurpleAccent, // Tint overlay
+                      CustomColor.deepPurpleAccent, // Tint overlay
                       BlendMode.overlay,
                     ),
                   ),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0xff4527a0),
+                      color: CustomColor.personnalizedPurple,
                       spreadRadius: 5,
                       blurRadius: 10,
                       offset: Offset(0, 5), // Shadow position
@@ -67,7 +67,7 @@ class AddPostScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: CustomColor.primaryColor,
                     ),
                   ),
                 ),
@@ -94,13 +94,13 @@ class AddPostScreen extends StatelessWidget {
                     ),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
-                      Colors.deepPurple, // Tint overlay
+                      CustomColor.deepPurpleAccent, // Tint overlay
                       BlendMode.overlay,
                     ),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.deepPurple[800]!.withOpacity(0.5),
+                      color: CustomColor.deepPurpleAccent[800]!.withOpacity(0.5),
                       spreadRadius: 5,
                       blurRadius: 10,
                       offset: const Offset(0, 5), // Shadow position
@@ -113,7 +113,7 @@ class AddPostScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: CustomColor.primaryColor,
                     ),
                   ),
                 ),

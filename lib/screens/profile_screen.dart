@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
@@ -95,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const Text(
                           CustomString.off,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold
                           ),
@@ -114,9 +115,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             // Update isActive in the database
                             updateIsActiveStatus(newValue);
                           },
-                          activeColor: Colors.green,
-                          inactiveThumbColor: Colors.grey,
-                          inactiveTrackColor: Colors.white70,
+                          activeColor: CustomColor.greenColor,
+                          inactiveThumbColor: CustomColor.secondaryColor,
+                          inactiveTrackColor: CustomColor.white70,
                         ),
                         SizedBox(
                           width: 6,
@@ -124,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const Text(
                           CustomString.turn,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold
                           ),
@@ -136,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       _user?.username ?? CustomString.emptyString,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: CustomColor.primaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
@@ -146,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       _user?.bio ?? CustomString.emptyString,
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: CustomColor.white70,
                         fontSize: 16,
                       ),
                       textAlign: TextAlign.center,
@@ -166,7 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text(
                                 '${_user?.followers.length ?? 0}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: CustomColor.primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
@@ -174,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Text(
                                 'Followers',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: CustomColor.white70,
                                   fontSize: 14,
                                 ),
                               ),
@@ -192,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text(
                                 '${_user?.following.length ?? 0}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: CustomColor.primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 ),
@@ -200,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const Text(
                                 'Following',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: CustomColor.white70,
                                   fontSize: 14,
                                 ),
                               ),
@@ -220,13 +221,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF7A00FF), Color(0xFF7900F4)],
+                            colors: [CustomColor.personnalizedPurple, Color(0xFF7900F4)],
                           ),
                         ),
                         child: const Text(
                           'Log Out',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),

@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,7 @@ class CFQCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A0551), // Similar purple background
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white24), // Border for slight effect
+        border: Border.all(color: CustomColor.white24), // Border for slight effect
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +55,7 @@ class CFQCard extends StatelessWidget {
                         Text(
                           username,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: CustomColor.primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -64,7 +65,7 @@ class CFQCard extends StatelessWidget {
                         Text(
                           'à ${organizers.join(', ')}',
                           style: const TextStyle(
-                            color: Colors.blueAccent,
+                            color: CustomColor.blueAccent,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -74,7 +75,7 @@ class CFQCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       '${datePublished.day}/${datePublished.month}/${datePublished.year}', // Dynamic date
-                      style: const TextStyle(color: Colors.white54),
+                      style: const TextStyle(color: CustomColor.white54),
                     ),
                   ],
                 ),
@@ -83,7 +84,7 @@ class CFQCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7A00FF), // Gradient-like effect
+                  backgroundColor: CustomColor.personnalizedPurple, // Gradient-like effect
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -96,11 +97,11 @@ class CFQCard extends StatelessWidget {
           // Event Details
           Row(
             children: [
-              const Icon(Icons.event, color: Colors.white54, size: 20), // CFQ Icon
+              const Icon(Icons.event, color: CustomColor.white54, size: 20), // CFQ Icon
               const SizedBox(width: 4),
               Text(
                 CustomString.cfq,
-                style: const TextStyle(color: Colors.white54),
+                style: const TextStyle(color: CustomColor.white54),
               ),
             ],
           ),
@@ -109,7 +110,7 @@ class CFQCard extends StatelessWidget {
           Text(
             cfqName,
             style: const TextStyle(
-              color: Colors.white,
+              color: CustomColor.primaryColor,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -119,18 +120,18 @@ class CFQCard extends StatelessWidget {
           Text(
             description,
             style: const TextStyle(
-              color: Colors.white70,
+              color: CustomColor.white70,
             ),
           ),
           const SizedBox(height: 16),
           // Location (Where it's happening)
           Row(
             children: [
-              const Icon(Icons.location_on, color: Colors.white54, size: 20),
+              const Icon(Icons.location_on, color: CustomColor.white54, size: 20),
               const SizedBox(width: 4),
               Text(
                 where,
-                style: const TextStyle(color: Colors.white70),
+                style: const TextStyle(color: CustomColor.white70),
               ),
             ],
           ),
@@ -140,15 +141,15 @@ class CFQCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: const Icon(Icons.share, color: Colors.white54),
+                icon: const Icon(Icons.share, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.send, color: Colors.white54),
+                icon: const Icon(Icons.send, color: CustomColor.white54),
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.chat_bubble_outline, color: Colors.white54),
+                icon: const Icon(Icons.chat_bubble_outline, color: CustomColor.white54),
                 onPressed: () {},
               ),
             ],

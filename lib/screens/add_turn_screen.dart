@@ -245,7 +245,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                   child: const Text(
                     CustomString.publier,
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                        color: CustomColor.primaryColor, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -272,7 +272,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                               Container(
                                 height: 120,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[800],
+                                  color: CustomColor.secondaryColor[800],
                                   borderRadius: BorderRadius.circular(10),
                                   image: _file != null
                                       ? DecorationImage(
@@ -286,7 +286,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                                         child: Text(
                                           CustomString.aucuneImage,
                                           style: TextStyle(
-                                            color: Colors.white70,
+                                            color: CustomColor.white70,
                                             fontSize: 10,
                                           ),
                                         ),
@@ -303,12 +303,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
-                                      color: Colors.purple,
+                                      color: CustomColor.purple,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.add_a_photo,
-                                      color: Colors.white,
+                                      color: CustomColor.primaryColor,
                                       size: 16,
                                     ),
                                   ),
@@ -323,13 +323,13 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
 
                     // Turn Name Field
                     const Text(CustomString.nomDuTurn,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: CustomColor.primaryColor)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey[800],
+                        fillColor: CustomColor.secondaryColor[800],
                         hintText: CustomString.nomDuTurn,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -349,12 +349,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.ajouterUneDate,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               ElevatedButton(
                                 onPressed: () => _selectDateTime(context),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
+                                  backgroundColor: CustomColor.purple,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -378,12 +378,12 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.moods,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               ElevatedButton(
                                 onPressed: () => _selectMoods(context),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.purple,
+                                  backgroundColor: CustomColor.purple,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -414,13 +414,13 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.organisateurs,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
                                   hintText: CustomString.selectionner,
                                   filled: true,
-                                  fillColor: Colors.grey[800],
+                                  fillColor: CustomColor.secondaryColor[800],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -438,13 +438,13 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text(CustomString.aQui,
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: CustomColor.primaryColor)),
                               const SizedBox(height: 6),
                               TextField(
                                 decoration: InputDecoration(
                                   hintText: CustomString.selectionner,
                                   filled: true,
-                                  fillColor: Colors.grey[800],
+                                  fillColor: CustomColor.secondaryColor[800],
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -469,7 +469,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             decoration: InputDecoration(
                               hintText: CustomString.ou,
                               filled: true,
-                              fillColor: Colors.grey[800],
+                              fillColor: CustomColor.secondaryColor[800],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -486,7 +486,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
                             decoration: InputDecoration(
                               hintText: CustomString.adresse,
                               filled: true,
-                              fillColor: Colors.grey[800],
+                              fillColor: CustomColor.secondaryColor[800],
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -502,14 +502,14 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
 
                     // Description Field
                     const Text(CustomString.description,
-                        style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: CustomColor.primaryColor)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: _descriptionController,
                       maxLines: 5,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.grey[800],
+                        fillColor: CustomColor.secondaryColor[800],
                         hintText:
                             CustomString.racontePasTaVieDisNousJusteOuTuSors,
                         border: OutlineInputBorder(
