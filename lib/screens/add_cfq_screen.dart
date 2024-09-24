@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/moods.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/ressources/firestore_methods.dart';
-import 'package:cfq_dev/utils/global_variables.dart';
 
 class AddCfqScreen extends StatefulWidget {
   const AddCfqScreen({super.key});
@@ -114,7 +114,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
               title: const Text(CustomString.selectionnerLesMoodsDeVotreCfq),
               content: SingleChildScrollView(
                 child: Column(
-                  children: availableMoods.map((mood) {
+                  children: CustomMood.moods.map((mood) {
                     return CheckboxListTile(
                       title: Text(mood),
                       value: tempSelectedMoods.contains(mood),
