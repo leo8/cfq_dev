@@ -5,7 +5,7 @@ import 'package:cfq_dev/utils/fonts.dart';
 class CustomLabel extends StatelessWidget {
   final String text;
 
-  const CustomLabel({required this.text, Key? key}) : super(key: key);
+  const CustomLabel({required this.text, super.key});
 
   @override
   Widget build(BuildContext context) {

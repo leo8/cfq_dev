@@ -8,8 +8,8 @@ class CustomSwitch extends StatelessWidget {
   const CustomSwitch({
     required this.value,
     required this.onChanged,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

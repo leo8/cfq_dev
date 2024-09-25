@@ -12,8 +12,8 @@ class AppBarContent extends StatelessWidget {
   const AppBarContent({
     required this.searchController,
     required this.onNotificationPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -13,8 +13,8 @@ class LabeledInputField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     this.isMultiline = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

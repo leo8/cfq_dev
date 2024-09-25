@@ -13,8 +13,8 @@ class TurnEventDetails extends StatelessWidget {
     required this.where,
     required this.turnName,
     required this.eventDateTime,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/ressources/firestore_methods.dart';
 
 class AddCfqScreen extends StatefulWidget {
-  const AddCfqScreen({Key? key}) : super(key: key);
+  const AddCfqScreen({super.key});
 
   @override
   State<AddCfqScreen> createState() => _AddCfqScreenState();

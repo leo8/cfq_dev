@@ -10,8 +10,8 @@ class CfqEventDetails extends StatelessWidget {
 
   const CfqEventDetails({
     required this.cfqName,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

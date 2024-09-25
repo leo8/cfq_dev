@@ -13,7 +13,7 @@ class LoginForm extends StatelessWidget {
   final VoidCallback onForgotPassword;
   final bool isLoading;
 
-  const LoginForm({
+  const LoginForm({super.key, 
     required this.emailController,
     required this.passwordController,
     required this.onLogin,

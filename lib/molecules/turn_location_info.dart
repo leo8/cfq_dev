@@ -11,8 +11,8 @@ class TurnLocationInfo extends StatelessWidget {
   const TurnLocationInfo({
     required this.where,
     required this.address,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

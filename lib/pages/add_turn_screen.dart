@@ -14,7 +14,7 @@ import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/ressources/firestore_methods.dart';
 
 class AddTurnScreen extends StatefulWidget {
-  const AddTurnScreen({Key? key}) : super(key: key);
+  const AddTurnScreen({super.key});
 
   @override
   State<AddTurnScreen> createState() => _AddTurnScreenState();

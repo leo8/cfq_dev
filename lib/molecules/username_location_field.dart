@@ -6,7 +6,7 @@ class UsernameLocationFields extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController locationController;
 
-  const UsernameLocationFields({
+  const UsernameLocationFields({super.key, 
     required this.usernameController,
     required this.locationController,
   });

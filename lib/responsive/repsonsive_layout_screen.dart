@@ -7,10 +7,9 @@ class RepsonsiveLayout extends StatefulWidget {
   final Widget webScreenLayout;
   final Widget mobileScreenLayout;
   const RepsonsiveLayout(
-      {Key? key,
+      {super.key,
       required this.webScreenLayout,
-      required this.mobileScreenLayout})
-      : super(key: key);
+      required this.mobileScreenLayout});
 
   @override
   State<RepsonsiveLayout> createState() => _RepsonsiveLayoutState();

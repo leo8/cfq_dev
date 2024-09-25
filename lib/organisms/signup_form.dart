@@ -17,7 +17,7 @@ class SignUpForm extends StatelessWidget {
   final VoidCallback onSignUp;
   final bool isLoading;
 
-  const SignUpForm({
+  const SignUpForm({super.key, 
     required this.emailController,
     required this.passwordController,
     required this.usernameController,

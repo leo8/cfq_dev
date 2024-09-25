@@ -7,8 +7,8 @@ class CustomCircleAvatar extends StatelessWidget {
   const CustomCircleAvatar({
     required this.radius,
     this.backgroundImage,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

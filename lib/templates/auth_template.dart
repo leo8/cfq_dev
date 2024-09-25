@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/colors.dart';
 
 class AuthTemplate extends StatelessWidget {
   final Widget body;
 
-  const AuthTemplate({required this.body});
+  const AuthTemplate({super.key, required this.body});
 
   @override
   Widget build(BuildContext context) {

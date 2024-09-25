@@ -15,8 +15,8 @@ class CustomText extends StatelessWidget {
     this.fontWeight,
     this.color,
     this.textAlign,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -36,8 +36,8 @@ class TurnForm extends StatelessWidget {
     required this.moodsDisplay,
     required this.isLoading,
     required this.onSubmit,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

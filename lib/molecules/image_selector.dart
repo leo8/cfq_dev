@@ -13,8 +13,8 @@ class ImageSelector extends StatelessWidget {
     required this.image,
     required this.onSelectImage,
     this.placeholderText = 'No Image Selected',
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

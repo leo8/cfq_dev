@@ -12,8 +12,8 @@ class DateTimePicker extends StatelessWidget {
     required this.label,
     required this.onSelectDateTime,
     required this.displayText,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -6,8 +6,8 @@ class ProfilePicturesRow extends StatelessWidget {
 
   const ProfilePicturesRow({
     required this.profiles,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

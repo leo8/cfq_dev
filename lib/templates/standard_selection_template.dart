@@ -9,8 +9,8 @@ class StandardSelectionTemplate extends StatelessWidget {
   const StandardSelectionTemplate({
     required this.title,
     required this.body,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

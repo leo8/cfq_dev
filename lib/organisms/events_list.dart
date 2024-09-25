@@ -9,8 +9,8 @@ class EventsList extends StatelessWidget {
 
   const EventsList({
     required this.eventsStream,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   // Helper function to parse date if not already available in utils.dart
   DateTime parseDate(dynamic date) {

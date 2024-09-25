@@ -35,8 +35,8 @@ class TurnCardContent extends StatelessWidget {
     required this.onSharePressed,
     required this.onSendPressed,
     required this.onCommentPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

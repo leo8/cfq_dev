@@ -7,7 +7,7 @@ class ProfileImageAvatar extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onImageSelected;
 
-  const ProfileImageAvatar({
+  const ProfileImageAvatar({super.key, 
     this.image,
     required this.onImageSelected,
   });

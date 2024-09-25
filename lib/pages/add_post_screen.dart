@@ -4,13 +4,13 @@ import 'package:cfq_dev/organisms/selection_buttons.dart';
 import 'package:cfq_dev/utils/string.dart';
 
 class AddPostScreen extends StatelessWidget {
-  const AddPostScreen({Key? key}) : super(key: key);
+  const AddPostScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StandardSelectionTemplate(
+    return const StandardSelectionTemplate(
       title: CustomString.publier,
-      body: const SelectionButtons(),
+      body: SelectionButtons(),
     );
   }
 }

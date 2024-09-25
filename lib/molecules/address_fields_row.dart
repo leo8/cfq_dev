@@ -9,8 +9,8 @@ class AddressFieldsRow extends StatelessWidget {
   const AddressFieldsRow({
     required this.locationController,
     required this.addressController,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

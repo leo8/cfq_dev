@@ -12,8 +12,8 @@ class StandardFormTemplate extends StatelessWidget {
     required this.appBarActions,
     required this.body,
     required this.onBackPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -15,8 +15,8 @@ class FollowersFollowingRow extends StatelessWidget {
     required this.followingCount,
     required this.onFollowersTap,
     required this.onFollowingTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

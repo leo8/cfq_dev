@@ -7,7 +7,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isLoading;
 
-  const CustomButton({
+  const CustomButton({super.key, 
     required this.label,
     required this.onTap,
     this.isLoading = false,

@@ -12,8 +12,8 @@ class CustomIconButton extends StatelessWidget {
     required this.onTap,
     this.size = 24.0,
     this.color = CustomColor.primaryColor,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

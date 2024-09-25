@@ -11,8 +11,8 @@ class CustomElevatedButton extends StatelessWidget {
     required this.child,
     this.backgroundColor,
     this.shape,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

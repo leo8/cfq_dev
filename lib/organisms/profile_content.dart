@@ -22,8 +22,8 @@ class ProfileContent extends StatelessWidget {
     required this.onFollowersTap,
     required this.onFollowingTap,
     required this.onLogoutTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

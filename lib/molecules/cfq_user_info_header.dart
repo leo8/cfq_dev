@@ -19,8 +19,8 @@ class CfqUserInfoHeader extends StatelessWidget {
     required this.organizers,
     required this.datePublished,
     required this.onFollowPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

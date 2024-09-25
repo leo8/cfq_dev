@@ -8,8 +8,8 @@ class CfqLocationInfo extends StatelessWidget {
 
   const CfqLocationInfo({
     required this.location,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

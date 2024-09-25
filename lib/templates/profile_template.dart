@@ -7,8 +7,8 @@ class ProfileTemplate extends StatelessWidget {
   const ProfileTemplate({
     required this.body,
     required this.backgroundImageUrl,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

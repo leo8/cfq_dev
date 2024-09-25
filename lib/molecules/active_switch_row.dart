@@ -12,8 +12,8 @@ class ActiveSwitchRow extends StatelessWidget {
   const ActiveSwitchRow({
     required this.isActive,
     required this.onChanged,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

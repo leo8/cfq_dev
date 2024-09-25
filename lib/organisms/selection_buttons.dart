@@ -5,7 +5,7 @@ import 'package:cfq_dev/pages/add_turn_screen.dart';
 import 'package:cfq_dev/utils/string.dart';
 
 class SelectionButtons extends StatelessWidget {
-  const SelectionButtons({Key? key}) : super(key: key);
+  const SelectionButtons({super.key});
 
   @override
   Widget build(BuildContext context) {

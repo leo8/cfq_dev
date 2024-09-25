@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ForgotPasswordLink extends StatelessWidget {
   final VoidCallback onTap;
 
-  const ForgotPasswordLink({required this.onTap});
+  const ForgotPasswordLink({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

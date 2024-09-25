@@ -19,8 +19,8 @@ class TurnUserInfoHeader extends StatelessWidget {
     required this.organizers,
     required this.timeInfo,
     required this.onAttendingPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
