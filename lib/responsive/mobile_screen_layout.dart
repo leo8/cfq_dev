@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/colors.dart';
 
 class MobileScreenLayout extends StatefulWidget {
-  const MobileScreenLayout({Key? key}) : super(key: key);
+  const MobileScreenLayout({super.key});
 
   @override
   State<MobileScreenLayout> createState() => _MobileScreenLayoutState();

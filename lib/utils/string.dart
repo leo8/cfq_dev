@@ -20,10 +20,13 @@ class CustomString {
   static const failedToUploadProfilePicture = "Failed to upload profile picture";
   static const fetchingDataNoEventsYet = "Fetching data, no events yet...";
   static const follow = "Follow";
+  static const followers = "Followers";
+  static const following = "Following";
   static const inscriptionCapital = "INSCRIPTION";
   static const jeMeConnecte = "Je me connecte";
   static const jemInscris = "Je m'inscris";
   static const jeSuisLa = "Je suis là";
+  static const logOut = "Log out";
   static const moods = "Mood(s)";
   static const noEventsAvailable = "No events available";
   static const nomDuCfq = "Nom du CFQ";
@@ -38,6 +41,8 @@ class CustomString {
   static const publicationReussie = "Publication réussie !";
   static const publier = "Publier";
   static const racontePasTaVieDisNousJusteOuTuSors = "Raconte pas ta vie, dis nous juste où tu sors...";
+  static const search = "Search..";
+  static const searchUsers = "Search users..";
   static const selectionner = "Sélectionner";
   static const selectionnerLesMoodsDeVotreCfq = "Sélectionnez le(s) mood(s) de votre CFQ";
   static const selectionnerLesMoodsDeVotreTurn = "Sélectionnez le(s) mood(s) de votre turn";
