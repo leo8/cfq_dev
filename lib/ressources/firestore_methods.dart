@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cfq_dev/models/turn.dart';
 import 'package:cfq_dev/models/cfq.dart';
 import 'package:cfq_dev/ressources/storage_methods.dart';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +22,7 @@ class FirestoreMethods {
     String where,             // New 'where' field (e.g., "at home")
     String address,           // New 'address' field (precise address)
   ) async {
-    String res = 'Some error occurred';
+    String res = CustomString.someErrorOccurred;
     try {
       // Upload image to storage
       String turnImageUrl =
@@ -55,7 +56,7 @@ class FirestoreMethods {
 
       // Save TURN data to Firestore
       await _firestore.collection('turns').doc(turnId).set(turn.toJson());
-      res = "success";
+      res = CustomString.success;
     } catch (err) {
       res = err.toString();
     }
@@ -74,7 +75,7 @@ class FirestoreMethods {
     String profilePictureUrl,
     String where,             // New 'where' field (e.g., "online")
   ) async {
-    String res = 'Some error occurred';
+    String res = CustomString.someErrorOccurred;
     try {
       // Upload image to storage
       String cfqImageUrl =
@@ -102,7 +103,7 @@ class FirestoreMethods {
 
       // Save CFQ data to Firestore
       await _firestore.collection('cfqs').doc(cfqId).set(cfq.toJson());
-      res = "success";
+      res = CustomString.success;
     } catch (err) {
       res = err.toString();
     }

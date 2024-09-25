@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/ressources/storage_methods.dart';
+import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -39,7 +40,7 @@ class AuthMethods {
     String? bio,
     Uint8List? profilePicture,
   }) async {
-    String res = 'Some error occurred';
+    String res = CustomString.someErrorOccurred;
     try {
       if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
         // Register the user
@@ -47,7 +48,7 @@ class AuthMethods {
             .createUserWithEmailAndPassword(email: email, password: password);
 
         // Store profilePicture and get profilePictureUrl
-        String profilePictureUrl = '';
+        String profilePictureUrl = CustomString.emptyString;
         if (profilePicture != null) {
           profilePictureUrl = await StorageMethods()
               .uploadImageToStorage('profilePicture', profilePicture, false);
@@ -58,19 +59,19 @@ class AuthMethods {
 
         // If profilePictureUrl is still empty, something went wrong
         if (profilePictureUrl.isEmpty) {
-          return 'Failed to upload profile picture';
+          return CustomString.failedToUploadProfilePicture;
         }
 
         // Create user data with the provided model
         model.User user = model.User(
           username: username,
           uid: userCredential.user!.uid,
-          bio: bio ?? "",
+          bio: bio ?? CustomString.emptyString,
           email: email,
           followers: [],
           following: [],
           profilePictureUrl: profilePictureUrl, // Correct assignment
-          location: location ?? "",
+          location: location ?? CustomString.emptyString,
           isActive: false,
         );
 
@@ -79,9 +80,9 @@ class AuthMethods {
               user.toJson(),
             );
 
-        res = 'success';
+        res = CustomString.success;
       } else {
-        res = 'Please fill in all required fields';
+        res = CustomString.pleaseFillInAllRequiredFields;
       }
     } catch (err) {
       res = err.toString();
@@ -95,15 +96,15 @@ class AuthMethods {
     required String email,
     required String password,
   }) async {
-    String res = 'Some error occurred';
+    String res = CustomString.someErrorOccurred;
 
     try {
       if (email.isNotEmpty && password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        res = 'success';
+        res = CustomString.success;
       } else {
-        res = "Please fill in all fields";
+        res = CustomString.pleaseFillInAllRequiredFields;
       }
     } catch (err) {
       res = err.toString();
@@ -113,11 +114,11 @@ class AuthMethods {
 
   // Log out method
   Future<String> logOutUser() async {
-    String res = 'Some error occurred';
+    String res = CustomString.someErrorOccurred;
 
     try {
       await _auth.signOut(); // Firebase's sign-out method
-      res = 'success';
+      res = CustomString.success;
     } catch (err) {
       res = err.toString();
     }

@@ -1,9 +1,12 @@
-import 'package:cfq_dev/utils/string.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart'; // Add this import for combining streams
-import 'package:cfq_dev/widgets/turn_card.dart';
-import 'package:cfq_dev/widgets/cfq_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:cfq_dev/organisms/turn_card_content.dart';
+import 'package:cfq_dev/organisms/cfq_card_content.dart';
+import 'package:cfq_dev/utils/colors.dart';
+import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/icons.dart';
+import 'package:cfq_dev/utils/string.dart';
 
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({super.key});
@@ -35,7 +38,6 @@ class _ThreadScreenState extends State<ThreadScreen> {
   // Fetch turns and cfqs and combine them into a single stream
   Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
     try {
-      print("Fetching turns and cfqs...");
 
       // Fetch turns
       Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
@@ -102,7 +104,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
       extendBodyBehindAppBar:
           true, // Make the app bar transparent over the background
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Transparent app bar
+        backgroundColor: CustomColor.transparent, // Transparent app bar
         elevation: 0,
         title: Row(
           children: [
@@ -111,11 +113,11 @@ class _ThreadScreenState extends State<ThreadScreen> {
               child: TextField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white24,
+                  fillColor: CustomColor.white24,
                   prefixIcon:
-                      const Icon(Icons.search, color: Colors.white70),
-                  hintText: 'Search for people...',
-                  hintStyle: const TextStyle(color: Colors.white70),
+                      const Icon(CustomIcon.search, color: CustomColor.white70),
+                  hintText: CustomString.chercherDesUtilisateurs,
+                  hintStyle: const TextStyle(color: CustomColor.white70),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
@@ -126,7 +128,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
             const SizedBox(width: 10),
             // Notification Bell Button
             IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.white),
+              icon: const Icon(CustomIcon.notifications,
+                  color: CustomColor.primaryColor),
               onPressed: () {
                 // Add function later
               },
@@ -153,12 +156,10 @@ class _ThreadScreenState extends State<ThreadScreen> {
               padding: const EdgeInsets.only(left: 10),
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount:
-                    5, // Assume we are displaying 5 profile pictures
+                itemCount: 5, // Assume we are displaying 5 profile pictures
                 itemBuilder: (context, index) {
                   return const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12.0),
+                    padding: EdgeInsets.symmetric(horizontal: 12.0),
                     child: Column(
                       children: [
                         CircleAvatar(
@@ -170,7 +171,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
                         Text(
                           CustomString.username, // Sample username for now
                           style: TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                              color: CustomColor.white70,
+                              fontSize: CustomFont.fontSize12),
                         ),
                       ],
                     ),
@@ -187,12 +189,11 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   if (snapshot.hasError) {
                     print("Error fetching events: ${snapshot.error}");
                     return const Center(
-                        child: Text("Error fetching events"));
+                        child: Text(CustomString.errorFetchingEvents));
                   }
                   if (!snapshot.hasData) {
-                    print("Fetching data, no events yet...");
-                    return const Center(
-                        child: CircularProgressIndicator());
+                    print(CustomString.fetchingDataNoEventsYet);
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   final events = snapshot.data!;
@@ -201,53 +202,71 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   if (events.isEmpty) {
                     print("No events found");
                     return const Center(
-                        child: Text("No events available"));
+                        child: Text(CustomString.noEventsAvailable));
                   }
 
                   return ListView.builder(
                     itemCount: events.length,
                     itemBuilder: (context, index) {
                       final event = events[index];
-                      final isTurn =
-                          event.reference.parent.id == 'turns';
+                      final isTurn = event.reference.parent.id == 'turns';
 
                       print(
                           "Displaying event from collection: ${event.reference.parent.id}");
 
                       if (isTurn) {
-                        // Display Turn Card
-                        return TurnCard(
+                        // Display TurnCardContent
+                        return TurnCardContent(
                           profilePictureUrl:
-                              event['profilePictureUrl'] ?? '',
-                          username: event['username'] ?? '',
-                          organizers: List<String>.from(
-                              event['organizers'] ?? []),
-                          turnName: event['turnName'] ?? '',
-                          description: event['description'] ?? '',
-                          eventDateTime:
-                              parseDate(event['eventDateTime']),
-                          where: event['where'] ?? '',
-                          address: event['address'] ?? '',
-                          attending: List<String>.from(
-                              event['attending'] ?? []),
-                          comments: List<String>.from(
-                              event['comments'] ?? []),
+                              event['profilePictureUrl'] ?? CustomString.emptyString,
+                          username: event['username'] ?? CustomString.emptyString,
+                          organizers:
+                              List<String>.from(event['organizers'] ?? []),
+                          timeInfo: 'une heure', // Compute as needed
+                          turnName: event['turnName'] ?? CustomString.emptyString,
+                          description:
+                              event['description'] ?? CustomString.emptyString,
+                          eventDateTime: parseDate(event['eventDateTime']),
+                          where: event['where'] ?? CustomString.emptyString,
+                          address: event['address'] ?? CustomString.emptyString,
+                          onAttendingPressed: () {
+                            // Handle attending action
+                          },
+                          onSharePressed: () {
+                            // Handle share action
+                          },
+                          onSendPressed: () {
+                            // Handle send action
+                          },
+                          onCommentPressed: () {
+                            // Handle comment action
+                          },
                         );
                       } else {
-                        // Display CFQ Card
-                        return CFQCard(
+                        // Display CFQCardContent
+                        return CFQCardContent(
                           profilePictureUrl:
-                              event['profilePictureUrl'] ?? '',
-                          username: event['username'] ?? '',
-                          organizers: List<String>.from(
-                              event['organizers'] ?? []),
-                          cfqName: event['cfqName'] ?? '',
-                          description: event['description'] ?? '',
-                          datePublished:
-                              parseDate(event['datePublished']),
-                          where: event['where'] ?? '',
-                          followers: List<String>.from(
-                              event['followers'] ?? []),
+                              event['profilePictureUrl'] ?? CustomString.emptyString,
+                          username: event['username'] ?? CustomString.emptyString,
+                          organizers:
+                              List<String>.from(event['organizers'] ?? []),
+                          cfqName: event['cfqName'] ?? CustomString.emptyString,
+                          description:
+                              event['description'] ?? CustomString.emptyString,
+                          datePublished: parseDate(event['datePublished']),
+                          location: event['where'] ?? CustomString.emptyString,
+                          onFollowPressed: () {
+                            // Handle follow action
+                          },
+                          onSharePressed: () {
+                            // Handle share action
+                          },
+                          onSendPressed: () {
+                            // Handle send action
+                          },
+                          onCommentPressed: () {
+                            // Handle comment action
+                          },
                         );
                       }
                     },

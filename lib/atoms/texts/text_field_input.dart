@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class TextFieldInput extends StatelessWidget {
@@ -36,7 +37,7 @@ class TextFieldInput extends StatelessWidget {
           ), // Use custom decoration if provided, otherwise use default
       keyboardType: textInputType,
       obscureText: isPassword,
-      style: style ?? const TextStyle(color: Colors.black), // Use custom style if provided
+      style: style ?? const TextStyle(color: CustomColor.black), // Use custom style if provided
     );
   }
 }
