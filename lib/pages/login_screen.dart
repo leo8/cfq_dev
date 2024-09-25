@@ -8,9 +8,8 @@ import 'package:cfq_dev/organisms/login_form.dart';
 import 'package:cfq_dev/molecules/signup_option.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/utils/colors.dart';
-import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
-import 'package:cfq_dev/screens/signup_screen.dart';
+import 'package:cfq_dev/pages/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

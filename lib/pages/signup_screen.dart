@@ -7,7 +7,7 @@ import 'package:cfq_dev/utils/utils.dart';
 import 'package:cfq_dev/utils/string.dart';
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
-import 'package:cfq_dev/screens/login_screen.dart';
+import 'package:cfq_dev/pages/login_screen.dart';
 import 'package:cfq_dev/ressources/auth_methods.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
