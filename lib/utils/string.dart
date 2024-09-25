@@ -41,6 +41,8 @@ class CustomString {
   static const publicationReussie = "Publication réussie !";
   static const publier = "Publier";
   static const racontePasTaVieDisNousJusteOuTuSors = "Raconte pas ta vie, dis nous juste où tu sors...";
+  static const search = "Search..";
+  static const searchUsers = "Search users..";
   static const selectionner = "Sélectionner";
   static const selectionnerLesMoodsDeVotreCfq = "Sélectionnez le(s) mood(s) de votre CFQ";
   static const selectionnerLesMoodsDeVotreTurn = "Sélectionnez le(s) mood(s) de votre turn";
