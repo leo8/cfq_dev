@@ -68,7 +68,7 @@ class CFQCard extends StatelessWidget {
                           'à ${organizers.join(', ')}',
                           style: const TextStyle(
                             color: CustomColor.blueAccent,
-                            fontWeight:CustomFont.fontweight600,
+                            fontWeight:CustomFont.fontWeight600,
                             fontSize: CustomFont.fontSize14,
                           ),
                         ),

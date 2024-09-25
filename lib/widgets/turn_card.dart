@@ -72,7 +72,7 @@ class TurnCard extends StatelessWidget {
                           'à ${organizers.join(', ')}',
                           style: const TextStyle(
                             color: CustomColor.blueAccent,
-                            fontWeight:CustomFont.fontweight600,
+                            fontWeight:CustomFont.fontWeight600,
                             fontSize: CustomFont.fontSize14,
                           ),
                         ),
@@ -127,7 +127,7 @@ class TurnCard extends StatelessWidget {
             '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute}',
             style: const TextStyle(
               color: CustomColor.pinkAccent,
-              fontWeight:CustomFont.fontweight500,
+              fontWeight:CustomFont.fontWeight500,
             ),
           ),
           const SizedBox(height: 8),
