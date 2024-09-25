@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/molecules/user_info_header.dart';
-import 'package:cfq_dev/molecules/event_details.dart';
+import 'package:cfq_dev/molecules/cfq_user_info_header.dart';
+import 'package:cfq_dev/molecules/cfq_event_details.dart';
 import 'package:cfq_dev/molecules/description_section.dart';
-import 'package:cfq_dev/molecules/location_info.dart';
+import 'package:cfq_dev/molecules/cfq_location_info.dart';
 import 'package:cfq_dev/molecules/action_buttons_row.dart';
 import 'package:cfq_dev/utils/colors.dart';
 
@@ -47,7 +47,7 @@ class CFQCardContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserInfoHeader(
+          CfqUserInfoHeader(
             profilePictureUrl: profilePictureUrl,
             username: username,
             organizers: organizers,
@@ -55,7 +55,7 @@ class CFQCardContent extends StatelessWidget {
             onFollowPressed: onFollowPressed,
           ),
           const SizedBox(height: 16),
-          EventDetails(
+          CfqEventDetails(
             cfqName: cfqName,
           ),
           const SizedBox(height: 8),
@@ -63,7 +63,7 @@ class CFQCardContent extends StatelessWidget {
             description: description,
           ),
           const SizedBox(height: 16),
-          LocationInfo(
+          CfqLocationInfo(
             location: location,
           ),
           const SizedBox(height: 16),

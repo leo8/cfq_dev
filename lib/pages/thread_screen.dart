@@ -4,13 +4,8 @@ import 'package:cfq_dev/organisms/app_bar_content.dart';
 import 'package:cfq_dev/organisms/profile_pictures_row.dart';
 import 'package:cfq_dev/organisms/events_list.dart';
 import 'package:cfq_dev/utils/colors.dart';
-import 'package:cfq_dev/utils/icons.dart';
-import 'package:cfq_dev/utils/string.dart';
-import 'package:cfq_dev/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:cfq_dev/widgets/turn_card.dart';
-import 'package:cfq_dev/widgets/cfq_card.dart';
 
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({Key? key}) : super(key: key);
@@ -24,12 +19,81 @@ class _ThreadScreenState extends State<ThreadScreen> {
 
   // Helper function to parse date
   DateTime parseDate(dynamic date) {
-    // Your existing implementation
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date);
+      } catch (e) {
+        print("Warning: Could not parse date as DateTime: $date");
+        return DateTime.now(); // Fallback to current date
+      }
+    } else if (date is DateTime) {
+      return date;
+    } else {
+      print("Warning: Unknown type for date: $date");
+      return DateTime.now(); // Fallback to current date
+    }
   }
 
   // Fetch turns and cfqs and combine them into a single stream
   Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
-    // Your existing implementation
+    try {
+      print("Fetching turns and cfqspackage:cfq_dev.");
+
+      // Fetch turns
+      Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
+          .collection('turns')
+          .orderBy('datePublished', descending: true)
+          .snapshots();
+
+      // Fetch cfqs
+      Stream<QuerySnapshot> cfqsStream = FirebaseFirestore.instance
+          .collection('cfqs')
+          .orderBy('datePublished', descending: true)
+          .snapshots();
+
+      // Combine both streams using Rx.combineLatest2 from rxdart
+      return Rx.combineLatest2(turnsStream, cfqsStream,
+          (QuerySnapshot turnsSnapshot, QuerySnapshot cfqsSnapshot) {
+        // Merge the docs from both collections
+        List<DocumentSnapshot> allDocs = [];
+        allDocs.addAll(turnsSnapshot.docs);
+        allDocs.addAll(cfqsSnapshot.docs);
+
+        // Helper function to get date for sorting
+        DateTime getDate(DocumentSnapshot doc) {
+          dynamic date;
+          if (doc.reference.parent.id == 'turns') {
+            date = doc['eventDateTime'];
+          } else if (doc.reference.parent.id == 'cfqs') {
+            date = doc['datePublished'];
+          } else {
+            date = DateTime.now(); // Default to now if unknown collection
+          }
+          return parseDate(date);
+        }
+
+        // Sort combined events by their respective dates
+        allDocs.sort((a, b) {
+          try {
+            DateTime dateTimeA = getDate(a);
+            DateTime dateTimeB = getDate(b);
+            // Compare the two DateTime objects
+            return dateTimeB.compareTo(dateTimeA); // Sort descending
+          } catch (error) {
+            print("Error while sorting events: $error");
+            return 0; // Avoid crashing on errors
+          }
+        });
+
+        print("Total events after merging and sorting: ${allDocs.length}");
+        return allDocs;
+      });
+    } catch (error) {
+      print("Error in fetchCombinedEvents: $error");
+      rethrow;
+    }
   }
 
   @override
@@ -52,7 +116,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
         children: [
           const SizedBox(height: 135),
           // Profile Pictures Row
-          ProfilePicturesRow(
+          const ProfilePicturesRow(
             profiles: [
               // Provide a list of profiles with imageUrl and username
               {'imageUrl': 'https://randomuser.me/api/portraits/men/1.jpg', 'username': 'User1'},

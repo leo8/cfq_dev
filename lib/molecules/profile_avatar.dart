@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../atoms/custom_avatar.dart';
-import '../atoms/custom_text.dart';
-import '../utils/fonts.dart';
-import '../utils/colors.dart';
+import 'package:cfq_dev/atoms/avatars/custom_avatar.dart';
+import 'package:cfq_dev/atoms/texts/custom_text.dart';
+import 'package:cfq_dev/utils/fonts.dart';
+import 'package:cfq_dev/utils/colors.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final String imageUrl;

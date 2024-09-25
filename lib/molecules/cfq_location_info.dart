@@ -3,10 +3,10 @@ import 'package:cfq_dev/atoms/texts/custom_text.dart';
 import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/icons.dart';
 
-class LocationInfo extends StatelessWidget {
+class CfqLocationInfo extends StatelessWidget {
   final String location;
 
-  const LocationInfo({
+  const CfqLocationInfo({
     required this.location,
     Key? key,
   }) : super(key: key);

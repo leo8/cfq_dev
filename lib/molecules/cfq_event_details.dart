@@ -5,10 +5,10 @@ import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/icons.dart';
 import 'package:cfq_dev/utils/string.dart';
 
-class EventDetails extends StatelessWidget {
+class CfqEventDetails extends StatelessWidget {
   final String cfqName;
 
-  const EventDetails({
+  const CfqEventDetails({
     required this.cfqName,
     Key? key,
   }) : super(key: key);

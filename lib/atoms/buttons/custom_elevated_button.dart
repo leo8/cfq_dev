@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CustomElevatedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Widget child;
-  final Color backgroundColor;
-  final ShapeBorder? shape;
+  final Color? backgroundColor;
+  final OutlinedBorder? shape;
 
   const CustomElevatedButton({
     required this.onPressed,
     required this.child,
-    required this.backgroundColor,
+    this.backgroundColor,
     this.shape,
     Key? key,
   }) : super(key: key);
@@ -18,9 +18,13 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        shape: shape,
+      style: ButtonStyle(
+        backgroundColor: backgroundColor != null
+            ? WidgetStateProperty.all<Color>(backgroundColor!)
+            : null,
+        shape: shape != null
+            ? WidgetStateProperty.all<OutlinedBorder>(shape!)
+            : null,
       ),
       child: child,
     );

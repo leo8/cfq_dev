@@ -6,14 +6,14 @@ import 'package:cfq_dev/utils/colors.dart';
 import 'package:cfq_dev/utils/fonts.dart';
 import 'package:cfq_dev/utils/string.dart';
 
-class UserInfoHeader extends StatelessWidget {
+class CfqUserInfoHeader extends StatelessWidget {
   final String profilePictureUrl;
   final String username;
   final List<String> organizers;
   final DateTime datePublished;
   final VoidCallback onFollowPressed;
 
-  const UserInfoHeader({
+  const CfqUserInfoHeader({
     required this.profilePictureUrl,
     required this.username,
     required this.organizers,
