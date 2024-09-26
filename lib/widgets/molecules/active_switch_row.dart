@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_switch.dart';
 
 class ActiveSwitchRow extends StatelessWidget {

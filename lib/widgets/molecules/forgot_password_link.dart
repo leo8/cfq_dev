@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 
 class ForgotPasswordLink extends StatelessWidget {
   final VoidCallback onTap;
@@ -16,7 +16,8 @@ class ForgotPasswordLink extends StatelessWidget {
         onPressed: onTap,
         child: const Text(
           CustomString.tAsOublieTonMotDePasse,
-          style: TextStyle(color: CustomColor.white70, fontSize: CustomFont.fontSize12),
+          style: TextStyle(
+              color: CustomColor.white70, fontSize: CustomFont.fontSize12),
         ),
       ),
     );

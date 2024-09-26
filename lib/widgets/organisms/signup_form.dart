@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/avatars/profile_image_avatar.dart';
-import 'package:cfq_dev/utils/ui/molecules/username_location_field.dart';
+import 'package:cfq_dev/widgets/atoms/avatars/profile_image_avatar.dart';
+import 'package:cfq_dev/widgets/molecules/username_location_field.dart';
 
-import '../../gen/string.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_button.dart';
 import '../atoms/texts/custom_text_field.dart';
 
@@ -18,7 +18,8 @@ class SignUpForm extends StatelessWidget {
   final VoidCallback onSignUp;
   final bool isLoading;
 
-  const SignUpForm({super.key, 
+  const SignUpForm({
+    super.key,
     required this.emailController,
     required this.passwordController,
     required this.usernameController,

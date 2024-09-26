@@ -3,7 +3,7 @@ import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login_screen.dart';
-import 'package:cfq_dev/utils/gen/colors.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'cfq_dev',
-        theme: ThemeData.dark()
-            .copyWith(scaffoldBackgroundColor: CustomColor.mobileBackgroundColor),
+        theme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: CustomColor.mobileBackgroundColor),
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {

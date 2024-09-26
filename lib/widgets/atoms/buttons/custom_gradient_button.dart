@@ -1,8 +1,8 @@
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import 'package:flutter/material.dart';
 
-import '../../../gen/colors.dart';
-import '../../../gen/fonts.dart';
+import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/fonts.dart';
 
 class CustomGradientButton extends StatelessWidget {
   final String text;

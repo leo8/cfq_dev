@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../gen/colors.dart';
+import '../../../utils/styles/colors.dart';
 
 class TextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
@@ -38,7 +38,9 @@ class TextFieldInput extends StatelessWidget {
           ), // Use custom decoration if provided, otherwise use default
       keyboardType: textInputType,
       obscureText: isPassword,
-      style: style ?? const TextStyle(color: CustomColor.black), // Use custom style if provided
+      style: style ??
+          const TextStyle(
+              color: CustomColor.black), // Use custom style if provided
     );
   }
 }

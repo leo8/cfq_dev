@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
 
 class ImageButton extends StatelessWidget {
   final String title;

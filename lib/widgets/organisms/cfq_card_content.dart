@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/molecules/cfq_user_info_header.dart';
-import '../../gen/colors.dart';
+import 'package:cfq_dev/widgets/molecules/cfq_user_info_header.dart';
+import '../../utils/styles/colors.dart';
 import '../molecules/action_buttons_row.dart';
 import '../molecules/cfq_event_details.dart';
 import '../molecules/cfq_location_info.dart';

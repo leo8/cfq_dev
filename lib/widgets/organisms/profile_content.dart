@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/avatars/custom_circle_avatar.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
-import 'package:cfq_dev/utils/ui/molecules/followers_following_row.dart';
+import 'package:cfq_dev/widgets/atoms/avatars/custom_circle_avatar.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import 'package:cfq_dev/widgets/molecules/followers_following_row.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_gradient_button.dart';
 import '../molecules/active_switch_row.dart';
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../gen/string.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/texts/custom_text_field.dart';
 
 class UsernameLocationFields extends StatelessWidget {
   final TextEditingController usernameController;
   final TextEditingController locationController;
 
-  const UsernameLocationFields({super.key, 
+  const UsernameLocationFields({
+    super.key,
     required this.usernameController,
     required this.locationController,
   });

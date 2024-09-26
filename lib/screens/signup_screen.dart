@@ -2,16 +2,16 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/auth_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
-import 'package:cfq_dev/ressources/auth_methods.dart';
+import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../utils/gen/colors.dart';
-import '../utils/gen/string.dart';
-import '../utils/ui/molecules/signup_option.dart';
-import '../utils/ui/organisms/signup_form.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/string.dart';
+import '../widgets/molecules/signup_option.dart';
+import '../widgets/organisms/signup_form.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {

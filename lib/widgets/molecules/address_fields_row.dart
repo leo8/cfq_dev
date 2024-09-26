@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../gen/string.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/texts/custom_text_field.dart';
 
 class AddressFieldsRow extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/icons.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/icons.dart';
 
 class TurnEventDetails extends StatelessWidget {
   final String where;
@@ -18,7 +18,8 @@ class TurnEventDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedDateTime = '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute.toString().padLeft(2, '0')}';
+    String formattedDateTime =
+        '${eventDateTime.day}/${eventDateTime.month}/${eventDateTime.year} | ${eventDateTime.hour}:${eventDateTime.minute.toString().padLeft(2, '0')}';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

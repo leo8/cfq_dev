@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/gen/colors.dart';
-import '../utils/gen/fonts.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/fonts.dart';
 
 class StandardSelectionTemplate extends StatelessWidget {
   final String title;

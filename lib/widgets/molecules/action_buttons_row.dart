@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../gen/colors.dart';
-import '../../gen/icons.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/icons.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class ActionButtonsRow extends StatelessWidget {

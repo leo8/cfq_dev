@@ -1,14 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
-import '../../../gen/colors.dart';
-import '../../../gen/icons.dart';
+import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 
 class ProfileImageAvatar extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onImageSelected;
 
-  const ProfileImageAvatar({super.key, 
+  const ProfileImageAvatar({
+    super.key,
     this.image,
     required this.onImageSelected,
   });

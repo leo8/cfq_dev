@@ -2,17 +2,17 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/standard_form_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
-import 'package:cfq_dev/models/moods_model.dart';
+import 'package:cfq_dev/enums/moods.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/models/user.dart' as model;
-import 'package:cfq_dev/ressources/firestore_methods.dart';
+import 'package:cfq_dev/providers/firestore_methods.dart';
 
-import '../utils/gen/colors.dart';
-import '../utils/gen/fonts.dart';
-import '../utils/gen/string.dart';
-import '../utils/ui/organisms/turn_form.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/fonts.dart';
+import '../utils/styles/string.dart';
+import '../widgets/organisms/turn_form.dart';
 
 class AddTurnScreen extends StatefulWidget {
   const AddTurnScreen({super.key});

@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-import 'package:cfq_dev/ressources/storage_methods.dart';
+import 'package:cfq_dev/providers/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 
-import '../utils/gen/string.dart';
+import '../utils/styles/string.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/molecules/custom_search_bar.dart';
-import '../../gen/colors.dart';
-import '../../gen/icons.dart';
-import '../../gen/string.dart';
+import 'package:cfq_dev/widgets/molecules/custom_search_bar.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/icons.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class AppBarContent extends StatelessWidget {

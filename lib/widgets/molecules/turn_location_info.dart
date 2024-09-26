@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/icons.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/icons.dart';
 
 class TurnLocationInfo extends StatelessWidget {
   final String where;

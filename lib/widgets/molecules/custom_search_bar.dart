@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../gen/colors.dart';
-import '../../gen/icons.dart';
-import '../../gen/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/icons.dart';
+import '../../utils/styles/string.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;

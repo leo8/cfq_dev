@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/molecules/date_time_picker.dart';
-import 'package:cfq_dev/utils/ui/molecules/moods_selector.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/icons.dart';
-import '../../gen/string.dart';
+import 'package:cfq_dev/widgets/molecules/date_time_picker.dart';
+import 'package:cfq_dev/widgets/molecules/moods_selector.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/icons.dart';
+import '../../utils/styles/string.dart';
 import '../molecules/image_selector.dart';
 import '../molecules/labeled_input_field.dart';
 

@@ -1,11 +1,9 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ThreadViewModel {
-
-    ThreadViewModel();
-    // Helper function to parse date
+  ThreadViewModel();
+  // Helper function to parse date
   DateTime parseDate(dynamic date) {
     if (date is Timestamp) {
       return date.toDate();
@@ -27,7 +25,6 @@ class ThreadViewModel {
   // Fetch turns and cfqs and combine them into a single stream
   Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
     try {
-
       // Fetch turns
       Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
           .collection('turns')
@@ -86,5 +83,4 @@ class ThreadViewModel {
       rethrow;
     }
   }
-
 }

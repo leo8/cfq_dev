@@ -1,8 +1,8 @@
-import 'package:cfq_dev/utils/ui/organisms/turn_card_content.dart';
+import 'package:cfq_dev/widgets/organisms/turn_card_content.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../gen/string.dart';
+import '../../utils/styles/string.dart';
 import 'cfq_card_content.dart';
 
 class EventsList extends StatelessWidget {

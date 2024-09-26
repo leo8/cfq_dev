@@ -2,8 +2,8 @@ import 'package:cfq_dev/utils/home_screen_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/gen/colors.dart';
-import '../utils/gen/icons.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/icons.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -55,7 +55,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 CustomIcon.languageOutlined,
-                color: _page == 0 ? CustomColor.primaryColor : CustomColor.secondaryColor,
+                color: _page == 0
+                    ? CustomColor.primaryColor
+                    : CustomColor.secondaryColor,
               ),
             ),
           ),
@@ -64,7 +66,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 CustomIcon.locationOnOutlined,
-                color: _page == 1 ? CustomColor.primaryColor : CustomColor.secondaryColor,
+                color: _page == 1
+                    ? CustomColor.primaryColor
+                    : CustomColor.secondaryColor,
               ),
             ),
           ),
@@ -73,7 +77,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 CustomIcon.addCircleOutlineRounded,
-                color: _page == 2 ? CustomColor.purpleAccent : CustomColor.secondaryColor,
+                color: _page == 2
+                    ? CustomColor.purpleAccent
+                    : CustomColor.secondaryColor,
               ),
             ),
           ),
@@ -82,7 +88,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 CustomIcon.calendarTodayOutlined,
-                color: _page == 3 ? CustomColor.primaryColor : CustomColor.secondaryColor,
+                color: _page == 3
+                    ? CustomColor.primaryColor
+                    : CustomColor.secondaryColor,
               ),
             ),
           ),
@@ -91,7 +99,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               padding: const EdgeInsets.only(top: 13),
               child: Icon(
                 CustomIcon.personOutlined,
-                color: _page == 4 ? CustomColor.primaryColor : CustomColor.secondaryColor,
+                color: _page == 4
+                    ? CustomColor.primaryColor
+                    : CustomColor.secondaryColor,
               ),
             ),
           ),

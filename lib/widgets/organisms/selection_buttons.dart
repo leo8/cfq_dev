@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../screens/add_cfq_screen.dart';
-import '../../../screens/add_turn_screen.dart';
-import '../../gen/string.dart';
+import '../../screens/add_cfq_screen.dart';
+import '../../screens/add_turn_screen.dart';
+import '../../utils/styles/string.dart';
 import '../molecules/image_button.dart';
 
 class SelectionButtons extends StatelessWidget {

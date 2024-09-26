@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../gen/colors.dart';
+import '../../utils/styles/colors.dart';
 import '../molecules/action_buttons_row.dart';
 import '../molecules/description_section.dart';
 import '../molecules/turn_event_details.dart';

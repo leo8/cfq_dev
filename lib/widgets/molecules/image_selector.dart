@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
-import '../../gen/icons.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/styles/icons.dart';
 
 class ImageSelector extends StatelessWidget {
   final Uint8List? image;

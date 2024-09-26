@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../gen/colors.dart';
-import '../../../gen/fonts.dart';
+import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/fonts.dart';
 
 class CustomButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool isLoading;
 
-  const CustomButton({super.key, 
+  const CustomButton({
+    super.key,
     required this.label,
     required this.onTap,
     this.isLoading = false,

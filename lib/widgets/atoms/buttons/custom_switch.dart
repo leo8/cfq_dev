@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../gen/colors.dart';
+import '../../../utils/styles/colors.dart';
 
 class CustomSwitch extends StatelessWidget {
   final bool value;

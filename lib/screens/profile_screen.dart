@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
-import 'package:cfq_dev/ressources/auth_methods.dart';
+import 'package:cfq_dev/providers/auth_methods.dart';
 
-import '../utils/gen/string.dart';
-import '../utils/ui/organisms/profile_content.dart';
+import '../utils/styles/string.dart';
+import '../widgets/organisms/profile_content.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/ui/atoms/texts/custom_text.dart';
-import '../../gen/colors.dart';
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import '../../utils/styles/colors.dart';
 
 class DescriptionSection extends StatelessWidget {
   final String description;

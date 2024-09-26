@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../gen/colors.dart';
-import '../../gen/fonts.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
 import '../atoms/labels/custom_label.dart';
 
 class DateTimePicker extends StatelessWidget {

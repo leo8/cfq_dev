@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../gen/colors.dart';
-import '../../../gen/fonts.dart';
+import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/fonts.dart';
 
 class CustomLabel extends StatelessWidget {
   final String text;

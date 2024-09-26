@@ -1,4 +1,4 @@
-import 'package:cfq_dev/ressources/auth_methods.dart';
+import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart';
 

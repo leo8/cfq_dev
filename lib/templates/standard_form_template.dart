@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../utils/gen/colors.dart';
+import '../utils/styles/colors.dart';
 
 class StandardFormTemplate extends StatelessWidget {
   final Widget appBarTitle;
