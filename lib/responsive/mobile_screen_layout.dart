@@ -1,8 +1,9 @@
 import 'package:cfq_dev/utils/home_screen_items.dart';
-import 'package:cfq_dev/utils/icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/utils/colors.dart';
+
+import '../utils/gen/colors.dart';
+import '../utils/gen/icons.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});

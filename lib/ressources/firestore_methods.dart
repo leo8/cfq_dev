@@ -2,9 +2,10 @@ import 'dart:typed_data';
 import 'package:cfq_dev/models/turn.dart';
 import 'package:cfq_dev/models/cfq.dart';
 import 'package:cfq_dev/ressources/storage_methods.dart';
-import 'package:cfq_dev/utils/string.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
+
+import '../utils/gen/string.dart';
 
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

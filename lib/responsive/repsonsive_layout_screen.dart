@@ -1,7 +1,8 @@
 import 'package:cfq_dev/providers/user_provider.dart';
-import 'package:cfq_dev/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../utils/gen/dimensions.dart';
 
 class RepsonsiveLayout extends StatefulWidget {
   final Widget webScreenLayout;
