@@ -1,5 +1,6 @@
-import 'package:cfq_dev/utils/string.dart';
 import 'package:flutter/material.dart';
+
+import '../utils/styles/string.dart';
 
 class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({super.key});
