@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/widgets/organisms/turn_card_content.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,13 +22,13 @@ class EventsList extends StatelessWidget {
       try {
         return DateTime.parse(date);
       } catch (e) {
-        print("Warning: Could not parse date as DateTime: $date");
+        AppLogger.warning("Warning: Could not parse date as DateTime: $date");
         return DateTime.now(); // Fallback to current date
       }
     } else if (date is DateTime) {
       return date;
     } else {
-      print("Warning: Unknown type for date: $date");
+      AppLogger.warning("Warning: Unknown type for date: $date");
       return DateTime.now(); // Fallback to current date
     }
   }
@@ -38,7 +39,7 @@ class EventsList extends StatelessWidget {
       stream: eventsStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          print("Error fetching events: ${snapshot.error}");
+          AppLogger.error("Error fetching events: ${snapshot.error}");
           return const Center(child: Text(CustomString.errorFetchingEvents));
         }
         if (!snapshot.hasData) {

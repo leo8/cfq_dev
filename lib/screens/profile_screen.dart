@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -34,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _isLoading = false;
       });
-      print(e.toString());
+      AppLogger.error(e.toString());
     }
   }
 
@@ -46,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await AuthMethods().updateIsActiveStatus(isActive);
     } catch (e) {
-      print(e.toString());
+      AppLogger.error(e.toString());
       // Revert the change in the UI
       setState(() {
         if (_user != null) {

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/providers/storage_methods.dart';
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -28,7 +29,7 @@ class AuthMethods {
         'isActive': isActive,
       });
     } catch (e) {
-      print(e.toString());
+      AppLogger.error(e.toString());
     }
   }
 
@@ -55,7 +56,7 @@ class AuthMethods {
               .uploadImageToStorage('profilePicture', profilePicture, false);
 
           // Log the URL to ensure it's not empty
-          print('Profile picture URL: $profilePictureUrl');
+          AppLogger.debug('Profile picture URL: $profilePictureUrl');
         }
 
         // If profilePictureUrl is still empty, something went wrong
