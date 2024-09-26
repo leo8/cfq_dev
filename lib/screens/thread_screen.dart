@@ -1,13 +1,13 @@
+import 'package:cfq_dev/view_model/thread_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:rxdart/rxdart.dart';
 
-import '../utils/gen/colors.dart';
-import '../utils/gen/fonts.dart';
-import '../utils/gen/icons.dart';
-import '../utils/gen/string.dart';
-import '../utils/ui/organisms/cfq_card_content.dart';
-import '../utils/ui/organisms/turn_card_content.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/fonts.dart';
+import '../utils/styles/icons.dart';
+import '../utils/styles/string.dart';
+import '../widgets/organisms/cfq_card_content.dart';
+import '../widgets/organisms/turn_card_content.dart';
 
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({super.key});
@@ -17,87 +17,8 @@ class ThreadScreen extends StatefulWidget {
 }
 
 class _ThreadScreenState extends State<ThreadScreen> {
-  // Helper function to parse date
-  DateTime parseDate(dynamic date) {
-    if (date is Timestamp) {
-      return date.toDate();
-    } else if (date is String) {
-      try {
-        return DateTime.parse(date);
-      } catch (e) {
-        print("Warning: Could not parse date as DateTime: $date");
-        return DateTime.now(); // Fallback to current date
-      }
-    } else if (date is DateTime) {
-      return date;
-    } else {
-      print("Warning: Unknown type for date: $date");
-      return DateTime.now(); // Fallback to current date
-    }
-  }
-
-  // Fetch turns and cfqs and combine them into a single stream
-  Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
-    try {
-
-      // Fetch turns
-      Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
-          .collection('turns')
-          .orderBy('datePublished', descending: true)
-          .snapshots();
-
-      // Fetch cfqs
-      Stream<QuerySnapshot> cfqsStream = FirebaseFirestore.instance
-          .collection('cfqs')
-          .orderBy('datePublished', descending: true)
-          .snapshots();
-
-      // Combine both streams using Rx.combineLatest2 from rxdart
-      return Rx.combineLatest2(turnsStream, cfqsStream,
-          (QuerySnapshot turnsSnapshot, QuerySnapshot cfqsSnapshot) {
-        // Debug logs for turns and cfqs snapshots
-        print("Turns snapshot docs count: ${turnsSnapshot.docs.length}");
-        print("CFQs snapshot docs count: ${cfqsSnapshot.docs.length}");
-
-        // Merge the docs from both collections
-        List<DocumentSnapshot> allDocs = [];
-        allDocs.addAll(turnsSnapshot.docs);
-        allDocs.addAll(cfqsSnapshot.docs);
-
-        // Helper function to get date for sorting
-        DateTime getDate(DocumentSnapshot doc) {
-          dynamic date;
-          if (doc.reference.parent.id == 'turns') {
-            date = doc['eventDateTime'];
-          } else if (doc.reference.parent.id == 'cfqs') {
-            date = doc['datePublished'];
-          } else {
-            date = DateTime.now(); // Default to now if unknown collection
-          }
-          return parseDate(date);
-        }
-
-        // Sort combined events by their respective dates
-        allDocs.sort((a, b) {
-          try {
-            DateTime dateTimeA = getDate(a);
-            DateTime dateTimeB = getDate(b);
-            // Compare the two DateTime objects
-            return dateTimeB.compareTo(dateTimeA); // Sort descending
-          } catch (error) {
-            print("Error while sorting events: $error");
-            return 0; // Avoid crashing on errors
-          }
-        });
-
-        print("Total events after merging and sorting: ${allDocs.length}");
-        return allDocs;
-      });
-    } catch (error) {
-      print("Error in fetchCombinedEvents: $error");
-      rethrow;
-    }
-  }
+  
+  final viewModel = ThreadViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +106,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
             Expanded(
               // Fetch and display combined events sorted by date
               child: StreamBuilder<List<DocumentSnapshot>>(
-                stream: fetchCombinedEvents(),
+                stream: viewModel.fetchCombinedEvents(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     print("Error fetching events: ${snapshot.error}");
@@ -227,7 +148,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                           turnName: event['turnName'] ?? CustomString.emptyString,
                           description:
                               event['description'] ?? CustomString.emptyString,
-                          eventDateTime: parseDate(event['eventDateTime']),
+                          eventDateTime: viewModel.parseDate(event['eventDateTime']),
                           where: event['where'] ?? CustomString.emptyString,
                           address: event['address'] ?? CustomString.emptyString,
                           onAttendingPressed: () {
@@ -254,7 +175,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                           cfqName: event['cfqName'] ?? CustomString.emptyString,
                           description:
                               event['description'] ?? CustomString.emptyString,
-                          datePublished: parseDate(event['datePublished']),
+                          datePublished: viewModel.parseDate(event['datePublished']),
                           location: event['where'] ?? CustomString.emptyString,
                           onFollowPressed: () {
                             // Handle follow action
