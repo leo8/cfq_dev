@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/view_model/thread_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -109,20 +110,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 stream: viewModel.fetchCombinedEvents(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    print("Error fetching events: ${snapshot.error}");
+                    AppLogger.error("Error fetching events: ${snapshot.error}");
                     return const Center(
                         child: Text(CustomString.errorFetchingEvents));
                   }
                   if (!snapshot.hasData) {
-                    print(CustomString.fetchingDataNoEventsYet);
+                    AppLogger.error(CustomString.fetchingDataNoEventsYet);
                     return const Center(child: CircularProgressIndicator());
                   }
 
                   final events = snapshot.data!;
-                  print("Number of events to display: ${events.length}");
+                  AppLogger.info("Number of events to display: ${events.length}");
 
                   if (events.isEmpty) {
-                    print("No events found");
+                    AppLogger.debug("No events found");
                     return const Center(
                         child: Text(CustomString.noEventsAvailable));
                   }
@@ -133,7 +134,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       final event = events[index];
                       final isTurn = event.reference.parent.id == 'turns';
 
-                      print(
+                      AppLogger.debug(
                           "Displaying event from collection: ${event.reference.parent.id}");
 
                       if (isTurn) {
