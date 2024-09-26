@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/standard_form_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
-import 'package:cfq_dev/models/moods.dart';
+import 'package:cfq_dev/models/moods_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:cfq_dev/models/turn.dart';
-import 'package:cfq_dev/models/cfq.dart';
+import 'package:cfq_dev/models/turn_event_model.dart';
+import 'package:cfq_dev/models/cfq_event_model.dart';
 import 'package:cfq_dev/ressources/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -34,15 +34,15 @@ class FirestoreMethods {
 
       // Create the TURN object with new 'where' and 'address' fields
       Turn turn = Turn(
-        turnName: turnName,
+        name: turnName,
         description: description,
         moods: moods,
         uid: uid,
         username: username,
-        turnId: turnId,
+        eventId: turnId,
         datePublished: DateTime.now(),
         eventDateTime: DateTime.now(),  // Assuming the eventDateTime is DateTime.now(), update accordingly
-        turnImageUrl: turnImageUrl,
+        imageUrl: turnImageUrl,
         profilePictureUrl: profilePictureUrl,
         where: where,                    // Using the new 'where' field
         address: address,                // Using the new 'address' field
@@ -87,14 +87,14 @@ class FirestoreMethods {
 
       // Create the CFQ object with new 'where' field
       Cfq cfq = Cfq(
-        cfqName: cfqName,
+        name: cfqName,
         description: description,
         moods: moods,
         uid: uid,
         username: username,
-        cfqId: cfqId,
+        eventId: cfqId,
         datePublished: DateTime.now(),
-        cfqImageUrl: cfqImageUrl,
+        imageUrl: cfqImageUrl,
         profilePictureUrl: profilePictureUrl,
         where: where,                    // Using the new 'where' field
         organizers: organizers,
