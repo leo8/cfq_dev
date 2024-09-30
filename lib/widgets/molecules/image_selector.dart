@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
@@ -12,7 +13,7 @@ class ImageSelector extends StatelessWidget {
   const ImageSelector({
     required this.image,
     required this.onSelectImage,
-    this.placeholderText = 'No Image Selected',
+    this.placeholderText = CustomString.veuillezSelectionnerUneImage,
     super.key,
   });
 
