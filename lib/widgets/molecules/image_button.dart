@@ -46,7 +46,7 @@ class ImageButton extends StatelessWidget {
             text: title,
             fontSize: CustomFont.fontSize30,
             fontWeight: CustomFont.fontWeightBold,
-            color: CustomColor.primaryColor,
+            color: CustomColor.white,
           ),
         ),
       ),

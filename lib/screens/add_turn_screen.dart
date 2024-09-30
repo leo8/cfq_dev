@@ -188,7 +188,7 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
           child: const Text(
             CustomString.publier,
             style: TextStyle(
-              color: CustomColor.primaryColor,
+              color: CustomColor.white,
               fontWeight: CustomFont.fontWeightBold,
             ),
           ),

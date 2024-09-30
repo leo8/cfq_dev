@@ -32,7 +32,7 @@ class FollowersFollowingRow extends StatelessWidget {
                 text: '$followersCount',
                 fontSize: CustomFont.fontSize18,
                 fontWeight: CustomFont.fontWeightBold,
-                color: CustomColor.primaryColor,
+                color: CustomColor.white,
               ),
               const CustomText(
                 text: CustomString.followers,
@@ -52,7 +52,7 @@ class FollowersFollowingRow extends StatelessWidget {
                 text: '$followingCount',
                 fontSize: CustomFont.fontSize18,
                 fontWeight: CustomFont.fontWeightBold,
-                color: CustomColor.primaryColor,
+                color: CustomColor.white,
               ),
               const CustomText(
                 text: CustomString.following,

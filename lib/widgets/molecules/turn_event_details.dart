@@ -41,7 +41,7 @@ class TurnEventDetails extends StatelessWidget {
         const SizedBox(height: 8),
         CustomText(
           text: turnName,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
           fontSize: CustomFont.fontSize20,
           fontWeight: CustomFont.fontWeightBold,
         ),

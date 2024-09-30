@@ -41,7 +41,7 @@ class TurnUserInfoHeader extends StatelessWidget {
                 children: [
                   CustomText(
                     text: username,
-                    color: CustomColor.primaryColor,
+                    color: CustomColor.white,
                     fontWeight: CustomFont.fontWeightBold,
                     fontSize: CustomFont.fontSize16,
                   ),
@@ -74,7 +74,7 @@ class TurnUserInfoHeader extends StatelessWidget {
           ),
           child: const CustomText(
             text: CustomString.jeSuisLa,
-            color: CustomColor.primaryColor,
+            color: CustomColor.white,
             fontSize: CustomFont.fontSize14,
           ),
         ),

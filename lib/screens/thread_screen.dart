@@ -18,7 +18,6 @@ class ThreadScreen extends StatefulWidget {
 }
 
 class _ThreadScreenState extends State<ThreadScreen> {
-  
   final viewModel = ThreadViewModel();
 
   @override
@@ -52,7 +51,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
             // Notification Bell Button
             IconButton(
               icon: const Icon(CustomIcon.notifications,
-                  color: CustomColor.primaryColor),
+                  color: CustomColor.white),
               onPressed: () {
                 // Add function later
               },
@@ -120,7 +119,8 @@ class _ThreadScreenState extends State<ThreadScreen> {
                   }
 
                   final events = snapshot.data!;
-                  AppLogger.info("Number of events to display: ${events.length}");
+                  AppLogger.info(
+                      "Number of events to display: ${events.length}");
 
                   if (events.isEmpty) {
                     AppLogger.debug("No events found");
@@ -140,16 +140,19 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       if (isTurn) {
                         // Display TurnCardContent
                         return TurnCardContent(
-                          profilePictureUrl:
-                              event['profilePictureUrl'] ?? CustomString.emptyString,
-                          username: event['username'] ?? CustomString.emptyString,
+                          profilePictureUrl: event['profilePictureUrl'] ??
+                              CustomString.emptyString,
+                          username:
+                              event['username'] ?? CustomString.emptyString,
                           organizers:
                               List<String>.from(event['organizers'] ?? []),
                           timeInfo: 'une heure', // Compute as needed
-                          turnName: event['turnName'] ?? CustomString.emptyString,
+                          turnName:
+                              event['turnName'] ?? CustomString.emptyString,
                           description:
                               event['description'] ?? CustomString.emptyString,
-                          eventDateTime: viewModel.parseDate(event['eventDateTime']),
+                          eventDateTime:
+                              viewModel.parseDate(event['eventDateTime']),
                           where: event['where'] ?? CustomString.emptyString,
                           address: event['address'] ?? CustomString.emptyString,
                           onAttendingPressed: () {
@@ -168,15 +171,17 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       } else {
                         // Display CFQCardContent
                         return CFQCardContent(
-                          profilePictureUrl:
-                              event['profilePictureUrl'] ?? CustomString.emptyString,
-                          username: event['username'] ?? CustomString.emptyString,
+                          profilePictureUrl: event['profilePictureUrl'] ??
+                              CustomString.emptyString,
+                          username:
+                              event['username'] ?? CustomString.emptyString,
                           organizers:
                               List<String>.from(event['organizers'] ?? []),
                           cfqName: event['cfqName'] ?? CustomString.emptyString,
                           description:
                               event['description'] ?? CustomString.emptyString,
-                          datePublished: viewModel.parseDate(event['datePublished']),
+                          datePublished:
+                              viewModel.parseDate(event['datePublished']),
                           location: event['where'] ?? CustomString.emptyString,
                           onFollowPressed: () {
                             // Handle follow action

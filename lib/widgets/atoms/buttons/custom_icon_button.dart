@@ -11,7 +11,7 @@ class CustomIconButton extends StatelessWidget {
     required this.icon,
     required this.onTap,
     this.size = 24.0,
-    this.color = CustomColor.primaryColor,
+    this.color = CustomColor.white,
     super.key,
   });
 

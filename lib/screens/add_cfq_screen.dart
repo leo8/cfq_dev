@@ -185,7 +185,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
           child: const Text(
             CustomString.publier,
             style: TextStyle(
-              color: CustomColor.primaryColor,
+              color: CustomColor.white,
               fontWeight: CustomFont.fontWeightBold,
             ),
           ),

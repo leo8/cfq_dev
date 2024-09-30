@@ -95,9 +95,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 child: Transform.rotate(
                   alignment: Alignment.center,
                   angle: isOpen ? 0.75 : 0,
-                  child: const Icon(
+                  child: Icon(
                     Icons.add,
-                    color: CustomColor.white100,
+                    color: CustomColor.white,
                     size: sizeIcon,
                   ),
                 ),
@@ -117,7 +117,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                     child: IconButton(
                       icon: const Icon(
                         Icons.edit,
-                        color: CustomColor.white100,
+                        color: CustomColor.white,
                       ),
                       splashColor: CustomColor.transparent,
                       onPressed: () {
@@ -136,7 +136,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                       focusColor: CustomColor.transparent,
                       icon: const Icon(
                         Icons.camera_alt,
-                        color: CustomColor.white100,
+                        color: CustomColor.white,
                       ),
                       onPressed: () {
                         print("click photo");
@@ -165,7 +165,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.languageOutlined,
-                color: CustomColor.white100,
+                color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
@@ -182,7 +182,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.locationOnOutlined,
-                color: CustomColor.white100,
+                color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
@@ -199,7 +199,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.calendarTodayOutlined,
-                color: CustomColor.white100,
+                color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
@@ -215,7 +215,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.personOutlined,
-                color: CustomColor.white100,
+                color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(

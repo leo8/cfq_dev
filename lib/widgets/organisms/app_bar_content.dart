@@ -29,7 +29,7 @@ class AppBarContent extends StatelessWidget {
         CustomIconButton(
           icon: CustomIcon.notifications,
           onTap: onNotificationPressed,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
         ),
       ],
     );

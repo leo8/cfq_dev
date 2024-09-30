@@ -22,7 +22,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: CustomColor.primaryColor.withOpacity(0.1),
+        color: CustomColor.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -30,7 +30,7 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         obscureText: obscureText,
         maxLines: maxLines, // Use the maxLines parameter here
-        style: const TextStyle(color: CustomColor.primaryColor),
+        style: const TextStyle(color: CustomColor.white),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(color: CustomColor.white70),

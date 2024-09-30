@@ -58,7 +58,7 @@ class ImageSelector extends StatelessWidget {
               ),
               child: const Icon(
                 CustomIcon.addAPhoto,
-                color: CustomColor.primaryColor,
+                color: CustomColor.white,
                 size: 16,
               ),
             ),

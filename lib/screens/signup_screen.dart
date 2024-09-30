@@ -96,7 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
             Image.asset(
               'assets/logo_white.png',
               height: 250,
-              color: CustomColor.primaryColor,
+              color: CustomColor.white,
             ),
             const SizedBox(height: 20),
             // Sign-Up Form
