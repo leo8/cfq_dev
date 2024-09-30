@@ -41,6 +41,7 @@ class AuthMethods {
     String? location,
     String? bio,
     Uint8List? profilePicture,
+    DateTime? birthDate
   }) async {
     String res = CustomString.someErrorOccurred;
     try {
@@ -74,6 +75,7 @@ class AuthMethods {
           following: [],
           profilePictureUrl: profilePictureUrl, // Correct assignment
           location: location ?? CustomString.emptyString,
+          birthDate: birthDate,
           isActive: false,
         );
 
