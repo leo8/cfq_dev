@@ -9,6 +9,7 @@ class User {
   final List following;
   final String profilePictureUrl;
   final String location;
+  final DateTime? birthDate;
   bool isActive;
 
   User({
@@ -20,6 +21,7 @@ class User {
     required this.following,
     required this.profilePictureUrl,
     required this.location,
+    required this.birthDate,
     required this.isActive,
   });
 
@@ -33,6 +35,7 @@ class User {
         "following": following,
         "profilePictureUrl": profilePictureUrl,
         "location": location,
+        "birthDate": birthDate,
         "isActive": isActive,
       };
 
@@ -49,6 +52,7 @@ class User {
       following: snapshot['following'],
       profilePictureUrl: snapshot['profilePictureUrl'],
       location: snapshot['location'],
+      birthDate: snapshot['birthDate'],
       isActive: snapshot['isActive'],
     );
   }

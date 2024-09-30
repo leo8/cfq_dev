@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/widgets/atoms/dates/custom_date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/avatars/profile_image_avatar.dart';
 import 'package:cfq_dev/widgets/molecules/username_location_field.dart';
@@ -14,9 +15,12 @@ class SignUpForm extends StatelessWidget {
   final TextEditingController locationController;
   final TextEditingController bioController;
   final Uint8List? image;
+  final TextEditingController birthDateController;
+  final DateTime? selectedBirthDate; // To store selected birth date
+  final bool isLoading;
   final VoidCallback onImageSelected;
   final VoidCallback onSignUp;
-  final bool isLoading;
+  final Function(DateTime?) onBirthDateChanged; // Callback for birth date change
 
   const SignUpForm({
     super.key,
@@ -26,9 +30,12 @@ class SignUpForm extends StatelessWidget {
     required this.locationController,
     required this.bioController,
     this.image,
+    required this.birthDateController,
+    this.selectedBirthDate, // Pass the current selected date
+    this.isLoading = false,
     required this.onImageSelected,
     required this.onSignUp,
-    this.isLoading = false,
+    required this.onBirthDateChanged, // Required callback for date change
   });
 
   @override
@@ -59,6 +66,13 @@ class SignUpForm extends StatelessWidget {
         CustomTextField(
           controller: bioController,
           hintText: CustomString.taBio,
+        ),
+        const SizedBox(height: 8),
+        CustomDateField(
+          controller: birthDateController,
+          hintText: CustomString.taDateDeNaissance,
+          selectedDate: selectedBirthDate, // Pass the currently selected date
+          onDateChanged: onBirthDateChanged, // Trigger callback on date selection
         ),
         const SizedBox(height: 12),
         CustomButton(

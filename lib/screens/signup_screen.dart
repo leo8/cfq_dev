@@ -27,6 +27,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _birthDateController = TextEditingController(); // New birth date controller
+  DateTime? _selectedBirthDate; // Store the selected birth date
   Uint8List? _image;
   bool _isLoading = false;
 
@@ -38,6 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _usernameController.dispose();
     _bioController.dispose();
     _locationController.dispose();
+    _birthDateController.dispose();
   }
 
   void selectImage() async {
@@ -58,6 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
       bio: _bioController.text,
       profilePicture: _image != null ? _image! : null,
       location: _locationController.text,
+      birthDate: _selectedBirthDate, // Pass selected birth date
     );
     setState(() {
       _isLoading = false;
@@ -106,6 +110,13 @@ class _SignupScreenState extends State<SignupScreen> {
               usernameController: _usernameController,
               locationController: _locationController,
               bioController: _bioController,
+              birthDateController: _birthDateController, // Pass the birthdate controller
+              selectedBirthDate: _selectedBirthDate, // Pass current selected date
+              onBirthDateChanged: (DateTime? newDate) {
+                setState(() {
+                  _selectedBirthDate = newDate; // Update selected birth date
+                });
+              },
               image: _image,
               onImageSelected: selectImage,
               onSignUp: signUpUser,
