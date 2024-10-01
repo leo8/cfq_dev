@@ -1,4 +1,5 @@
 import 'package:cfq_dev/providers/user_provider.dart';
+import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,13 @@ class ThreadScreen extends StatelessWidget {
                     model.User user = viewModel.users[index];
                     return GestureDetector(
                       onTap: () {
-                        // Handle tap (e.g., navigate to user profile)
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileScreen(userId: user.uid),
+                          ),
+                        );
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(
