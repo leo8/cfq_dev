@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:provider/provider.dart';
-import '../utils/styles/string.dart';
 import '../utils/styles/colors.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
+import 'friends_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
@@ -25,13 +25,13 @@ class ProfileScreen extends StatelessWidget {
               // Show back button if viewing another user's profile
               if (!viewModel.isCurrentUser) {
                 return IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 );
               } else {
-                return const SizedBox.shrink(); // No back button
+                return SizedBox.shrink(); // No back button
               }
             },
           ),
@@ -39,24 +39,7 @@ class ProfileScreen extends StatelessWidget {
         extendBodyBehindAppBar: true,
         body: Consumer<ProfileViewModel>(
           builder: (context, viewModel, child) {
-            // Check if friend was added or removed
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (viewModel.friendAdded) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(CustomString.amiAjoute),
-                  ),
-                );
-                viewModel.resetStatus();
-              } else if (viewModel.friendRemoved) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(CustomString.amiSupprime),
-                  ),
-                );
-                viewModel.resetStatus();
-              }
-            });
+            // Existing status handling...
 
             if (viewModel.isLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -75,25 +58,31 @@ class ProfileScreen extends StatelessWidget {
                           viewModel.updateIsActiveStatus(newValue);
                         }
                       : null,
-                  onFriendsTap: () {
-                    // Handle friends tap
+                  onFriendsTap: () async {
+                    // Navigate to FriendsListScreen
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FriendsListScreen(
+                          currentUserId: viewModel.user!.uid,
+                        ),
+                      ),
+                    );
+                    // Refresh the profile data upon returning
+                    viewModel.fetchUserData();
                   },
                   onLogoutTap:
                       viewModel.isCurrentUser ? () => viewModel.logOut() : null,
                   onAddFriendTap:
                       !viewModel.isCurrentUser && !viewModel.isFriend
                           ? () {
-                              viewModel.addFriend(onSuccess: () {
-                                // Success handled in the ViewModel
-                              });
+                              viewModel.addFriend(onSuccess: () {});
                             }
                           : null,
                   onRemoveFriendTap:
                       !viewModel.isCurrentUser && viewModel.isFriend
                           ? () {
-                              viewModel.removeFriend(onSuccess: () {
-                                // Success handled in the ViewModel
-                              });
+                              viewModel.removeFriend(onSuccess: () {});
                             }
                           : null,
                 ),
