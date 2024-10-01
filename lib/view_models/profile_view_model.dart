@@ -1,5 +1,3 @@
-// profile_view_model.dart
-
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
