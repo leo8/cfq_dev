@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -15,6 +16,13 @@ class ProfileViewModel extends ChangeNotifier {
   bool get isCurrentUser => _isCurrentUser;
   bool _isFriend = false; // Indicates if the profile user is a friend
   bool get isFriend => _isFriend;
+
+  // Status variables for UI feedback
+  bool _friendAdded = false;
+  bool get friendAdded => _friendAdded;
+
+  bool _friendRemoved = false;
+  bool get friendRemoved => _friendRemoved;
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
@@ -54,6 +62,107 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
       AppLogger.error(e.toString());
     }
+  }
+
+  /// Adds the profile user as a friend
+  Future<void> addFriend({required VoidCallback onSuccess}) async {
+    if (_isCurrentUser || _isFriend) return;
+
+    try {
+      // Get references to the user documents
+      DocumentReference currentUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
+      DocumentReference viewedUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_user!.uid);
+
+      // Update the friends lists atomically
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      // Add viewed user's ID to current user's friends list
+      batch.update(currentUserRef, {
+        'friends': FieldValue.arrayUnion([_user!.uid])
+      });
+
+      // Add current user's ID to viewed user's friends list
+      batch.update(viewedUserRef, {
+        'friends': FieldValue.arrayUnion([_currentUser!.uid])
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Update the local model.User objects
+      _currentUser!.friends.add(_user!.uid);
+      _user!.friends.add(_currentUser!.uid);
+
+      // Update isFriend status
+      _isFriend = true;
+
+      // Set friendAdded to true
+      _friendAdded = true;
+
+      notifyListeners();
+
+      // Call the success callback
+      onSuccess();
+    } catch (e) {
+      AppLogger.error('Error adding friend: $e');
+      // Optionally, handle the error
+    }
+  }
+
+  /// Removes the profile user from friends
+  Future<void> removeFriend({required VoidCallback onSuccess}) async {
+    if (_isCurrentUser || !_isFriend) return;
+
+    try {
+      // Get references to the user documents
+      DocumentReference currentUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
+      DocumentReference viewedUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_user!.uid);
+
+      // Update the friends lists atomically
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      // Remove viewed user's ID from current user's friends list
+      batch.update(currentUserRef, {
+        'friends': FieldValue.arrayRemove([_user!.uid])
+      });
+
+      // Remove current user's ID from viewed user's friends list
+      batch.update(viewedUserRef, {
+        'friends': FieldValue.arrayRemove([_currentUser!.uid])
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Update the local model.User objects
+      _currentUser!.friends.remove(_user!.uid);
+      _user!.friends.remove(_currentUser!.uid);
+
+      // Update isFriend status
+      _isFriend = false;
+
+      // Set friendRemoved to true
+      _friendRemoved = true;
+
+      notifyListeners();
+
+      // Call the success callback
+      onSuccess();
+    } catch (e) {
+      AppLogger.error('Error removing friend: $e');
+      // Optionally, handle the error
+    }
+  }
+
+  // Reset the status variables after the UI has displayed the message
+  void resetStatus() {
+    _friendAdded = false;
+    _friendRemoved = false;
+    notifyListeners();
   }
 
   /// Updates the user's active status in Firestore.

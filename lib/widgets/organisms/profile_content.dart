@@ -1,3 +1,5 @@
+// profile_content.dart
+
 import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -12,6 +14,7 @@ class ProfileContent extends StatelessWidget {
   final Function(bool)? onActiveChanged;
   final VoidCallback? onLogoutTap;
   final VoidCallback? onAddFriendTap;
+  final VoidCallback? onRemoveFriendTap;
   final VoidCallback? onFriendsTap;
 
   const ProfileContent({
@@ -21,6 +24,7 @@ class ProfileContent extends StatelessWidget {
     this.onActiveChanged,
     this.onLogoutTap,
     this.onAddFriendTap,
+    this.onRemoveFriendTap,
     this.onFriendsTap,
   });
 
@@ -67,11 +71,17 @@ class ProfileContent extends StatelessWidget {
               onPressed: onLogoutTap,
               child: Text('Logout'),
             ),
-          // 'Ajouter' Button for Other Users
+          // 'Ajouter' Button for Other Users (only if not friends)
           if (onAddFriendTap != null)
             ElevatedButton(
               onPressed: onAddFriendTap,
               child: Text('Ajouter'),
+            ),
+          // 'Retirer' Button for Other Users (only if friends)
+          if (onRemoveFriendTap != null)
+            ElevatedButton(
+              onPressed: onRemoveFriendTap,
+              child: Text('Retirer'),
             ),
           // Lock Icon for Other Users
           if (!isCurrentUser)
