@@ -1,5 +1,3 @@
-// profile_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -52,25 +50,24 @@ class ProfileScreen extends StatelessWidget {
                     'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop',
                 body: ProfileContent(
                   user: viewModel.user!,
+                  isFriend: viewModel.isFriend,
+                  isCurrentUser: viewModel.isCurrentUser,
                   onActiveChanged: viewModel.isCurrentUser
                       ? (bool newValue) {
                           viewModel.updateIsActiveStatus(newValue);
                         }
-                      : null, // Hide the switch for other users
-                  onFollowersTap: () {
-                    // Handle followers tap
-                  },
-                  onFollowingTap: () {
-                    // Handle following tap
+                      : null,
+                  onFriendsTap: () {
+                    // Handle friends tap
                   },
                   onLogoutTap: viewModel.isCurrentUser
                       ? () => viewModel.logOut()
-                      : null, // Hide logout button for other users
+                      : null,
                   onAddFriendTap: !viewModel.isCurrentUser
                       ? () {
-                          // Handle add friend tap (currently does nothing)
+                          // Handle add friend tap (functionality to be implemented later)
                         }
-                      : null, // Show 'Ajouter' button for other users
+                      : null,
                 ),
               );
             }

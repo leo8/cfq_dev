@@ -1,23 +1,27 @@
-// profile_content.dart
-
+import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
+import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
+import 'package:cfq_dev/utils/styles/fonts.dart';
 
 class ProfileContent extends StatelessWidget {
   final model.User user;
+  final bool isFriend;
+  final bool isCurrentUser;
   final Function(bool)? onActiveChanged;
   final VoidCallback? onLogoutTap;
   final VoidCallback? onAddFriendTap;
-  final VoidCallback? onFollowersTap;
-  final VoidCallback? onFollowingTap;
+  final VoidCallback? onFriendsTap;
 
   const ProfileContent({
     required this.user,
+    required this.isFriend,
+    required this.isCurrentUser,
     this.onActiveChanged,
     this.onLogoutTap,
     this.onAddFriendTap,
-    this.onFollowersTap,
-    this.onFollowingTap,
+    this.onFriendsTap,
   });
 
   @override
@@ -44,38 +48,10 @@ class ProfileContent extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10),
-          // Followers/Following Counts
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: onFollowersTap,
-                child: Column(
-                  children: [
-                    Text(
-                      '${user.followers.length}',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text('Followers'),
-                  ],
-                ),
-              ),
-              SizedBox(width: 20),
-              GestureDetector(
-                onTap: onFollowingTap,
-                child: Column(
-                  children: [
-                    Text(
-                      '${user.following.length}',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text('Following'),
-                  ],
-                ),
-              ),
-            ],
+          // Friends Count
+          FriendsCount(
+            friendsCount: user.friends.length,
+            onFriendsTap: onFriendsTap ?? () {},
           ),
           SizedBox(height: 20),
           // On/Off Switch for Current User
@@ -96,6 +72,20 @@ class ProfileContent extends StatelessWidget {
             ElevatedButton(
               onPressed: onAddFriendTap,
               child: Text('Ajouter'),
+            ),
+          // Lock Icon for Other Users
+          if (!isCurrentUser)
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundColor: CustomColor.white24,
+                child: Icon(
+                  isFriend ? Icons.lock_open : Icons.lock,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ),
             ),
         ],
       ),

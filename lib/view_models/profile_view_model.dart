@@ -6,12 +6,15 @@ import '../utils/logger.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   final String? userId;
-  model.User? _user;
+  model.User? _user; // Profile user's data
+  model.User? _currentUser; // Current user's data
   bool _isLoading = true;
   bool get isLoading => _isLoading;
   model.User? get user => _user;
   bool _isCurrentUser = false;
   bool get isCurrentUser => _isCurrentUser;
+  bool _isFriend = false; // Indicates if the profile user is a friend
+  bool get isFriend => _isFriend;
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
@@ -22,15 +25,27 @@ class ProfileViewModel extends ChangeNotifier {
       // Get current user's UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      // If userId is null, we are viewing the current user's profile
+      // Determine which user profile to display
       String profileUserId = userId ?? currentUserId;
 
-      // Fetch user data
+      // Fetch profile user's data
       model.User userData =
           await AuthMethods().getUserDetailsById(profileUserId);
 
+      // Fetch current user's data if viewing another user's profile
+      if (profileUserId != currentUserId) {
+        _currentUser = await AuthMethods().getUserDetailsById(currentUserId);
+      } else {
+        _currentUser = userData; // Viewing own profile
+      }
+
       _user = userData;
       _isCurrentUser = (profileUserId == currentUserId);
+
+      // Determine if the profile user is a friend
+      if (!_isCurrentUser) {
+        _isFriend = _currentUser!.friends.contains(profileUserId);
+      }
 
       _isLoading = false;
       notifyListeners();
