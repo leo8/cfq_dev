@@ -4,11 +4,9 @@ import '../../utils/styles/fonts.dart';
 import '../atoms/labels/custom_label.dart';
 
 class MoodsSelector extends StatelessWidget {
-  final String label; // The label for the mood selector
-  final VoidCallback
-      onSelectMoods; // Callback function when the button is pressed
-  final String
-      displayText; // Text to display on the button, such as selected moods
+  final String label;
+  final VoidCallback onSelectMoods;
+  final String displayText;
 
   const MoodsSelector({
     required this.label,
@@ -21,24 +19,22 @@ class MoodsSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Label for the moods selector
         CustomLabel(text: label),
-        const SizedBox(height: 6), // Space between label and button
-        // Button to select moods
+        const SizedBox(height: 6),
         ElevatedButton(
-          onPressed: onSelectMoods, // Trigger mood selection when pressed
+          onPressed: onSelectMoods,
           style: ElevatedButton.styleFrom(
-            backgroundColor: CustomColor.purple, // Button color
+            backgroundColor: CustomColor.purple,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Rounded corners
+              borderRadius: BorderRadius.circular(20),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12), // Button padding
-            minimumSize: const Size(double.infinity, 50), // Full width button
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            minimumSize: const Size(double.infinity, 50),
           ),
           child: Text(
-            displayText, // Display selected moods or default text
+            displayText,
             style: const TextStyle(fontSize: CustomFont.fontSize14),
-            textAlign: TextAlign.center, // Center the text
+            textAlign: TextAlign.center,
           ),
         ),
       ],

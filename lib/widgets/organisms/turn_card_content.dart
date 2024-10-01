@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../../utils/styles/colors.dart'; // Import color styles
-import '../molecules/action_buttons_row.dart'; // Import action buttons row
-import '../molecules/description_section.dart'; // Import description section
-import '../molecules/turn_event_details.dart'; // Import turn event details
-import '../molecules/turn_location_info.dart'; // Import turn location info
-import '../molecules/turn_user_info_header.dart'; // Import user info header
+import '../../utils/styles/colors.dart';
+import '../molecules/action_buttons_row.dart';
+import '../molecules/description_section.dart';
+import '../molecules/turn_event_details.dart';
+import '../molecules/turn_location_info.dart';
+import '../molecules/turn_user_info_header.dart';
 
 class TurnCardContent extends StatelessWidget {
-  final String profilePictureUrl; // URL of the user's profile picture
-  final String username; // Username of the user
-  final List<String> organizers; // List of event organizers
-  final String timeInfo; // Information about event timing
-  final String turnName; // Name of the turn event
-  final String description; // Description of the turn event
-  final DateTime eventDateTime; // Date and time of the event
-  final String where; // Location of the event
-  final String address; // Address of the event
-  final VoidCallback onAttendingPressed; // Callback for attending button
-  final VoidCallback onSharePressed; // Callback for share button
-  final VoidCallback onSendPressed; // Callback for send button
-  final VoidCallback onCommentPressed; // Callback for comment button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final String timeInfo;
+  final String turnName;
+  final String description;
+  final DateTime eventDateTime;
+  final String where;
+  final String address;
+  final VoidCallback onAttendingPressed;
+  final VoidCallback onSharePressed;
+  final VoidCallback onSendPressed;
+  final VoidCallback onCommentPressed;
 
   const TurnCardContent({
     required this.profilePictureUrl,
@@ -42,52 +42,43 @@ class TurnCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-          vertical: 8, horizontal: 16), // Margin around the card
-      padding: const EdgeInsets.all(16), // Padding inside the card
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0551), // Background color of the card
-        borderRadius: BorderRadius.circular(16), // Rounded corners for the card
-        border:
-            Border.all(color: CustomColor.white24), // Border color of the card
+        color: const Color(0xFF1A0551),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: CustomColor.white24),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align children to the start
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User info header section
           TurnUserInfoHeader(
-            profilePictureUrl: profilePictureUrl, // Pass profile picture URL
-            username: username, // Pass username
-            organizers: organizers, // Pass list of organizers
-            timeInfo: timeInfo, // Pass time info
-            onAttendingPressed:
-                onAttendingPressed, // Action for attending button
+            profilePictureUrl: profilePictureUrl,
+            username: username,
+            organizers: organizers,
+            timeInfo: timeInfo,
+            onAttendingPressed: onAttendingPressed,
           ),
-          const SizedBox(height: 16), // Space between sections
-          // Event details section
+          const SizedBox(height: 16),
           TurnEventDetails(
-            where: where, // Pass event location
-            turnName: turnName, // Pass turn name
-            eventDateTime: eventDateTime, // Pass event date and time
+            where: where,
+            turnName: turnName,
+            eventDateTime: eventDateTime,
           ),
-          const SizedBox(height: 8), // Space between sections
-          // Description section
+          const SizedBox(height: 8),
           DescriptionSection(
-            description: description, // Pass event description
+            description: description,
           ),
-          const SizedBox(height: 16), // Space between sections
-          // Location information section
+          const SizedBox(height: 16),
           TurnLocationInfo(
-            where: where, // Pass location
-            address: address, // Pass address
+            where: where,
+            address: address,
           ),
-          const SizedBox(height: 16), // Space between sections
-          // Action buttons row
+          const SizedBox(height: 16),
           ActionButtonsRow(
-            onSharePressed: onSharePressed, // Action for share button
-            onSendPressed: onSendPressed, // Action for send button
-            onCommentPressed: onCommentPressed, // Action for comment button
+            onSharePressed: onSharePressed,
+            onSendPressed: onSendPressed,
+            onCommentPressed: onCommentPressed,
           ),
         ],
       ),

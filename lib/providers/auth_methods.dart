@@ -1,52 +1,38 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/providers/storage_methods.dart';
-import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
+
 import '../utils/styles/string.dart';
 
-// Provider class for authentication-related methods
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fetch the current user's details from Firestore
+  // Fetching user details
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
-    // Retrieve user document from 'users' collection
+
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
 
-    // Return User model created from Firestore snapshot
     return model.User.fromSnap(snap);
   }
 
-  // Fetch any user's details from Firestore by userId
-  Future<model.User> getUserDetailsById(String uid) async {
-    // Retrieve user document from 'users' collection
-    DocumentSnapshot snap =
-        await _firestore.collection('users').doc(uid).get();
-
-    // Return User model created from Firestore snapshot
-    return model.User.fromSnap(snap);
-  }
-
-  // Update the user's 'isActive' status in Firestore
+  // Method to update isActive status
   Future<void> updateIsActiveStatus(bool isActive) async {
     try {
       String uid = _auth.currentUser!.uid;
-      // Update 'isActive' field in the user's document
       await _firestore.collection('users').doc(uid).update({
         'isActive': isActive,
       });
     } catch (e) {
-      // Log any errors that occur
-      AppLogger.error(e.toString());
+      print(e.toString());
     }
   }
 
-  // Sign up a new user
+  //Sign up user
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -54,65 +40,59 @@ class AuthMethods {
     String? location,
     String? bio,
     Uint8List? profilePicture,
-    DateTime? birthDate,
   }) async {
     String res = CustomString.someErrorOccurred;
-
     try {
-      // Validate that required fields are not empty
       if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
-        // Register user with email and password
+        // Register the user
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        // Upload profile picture to storage and get the URL
+        // Store profilePicture and get profilePictureUrl
         String profilePictureUrl = CustomString.emptyString;
         if (profilePicture != null) {
           profilePictureUrl = await StorageMethods()
               .uploadImageToStorage('profilePicture', profilePicture, false);
 
-          // Log the profile picture URL for debugging
-          AppLogger.debug('Profile picture URL: $profilePictureUrl');
+          // Log the URL to ensure it's not empty
+          print('Profile picture URL: $profilePictureUrl');
         }
 
-        // Check if profile picture upload failed
+        // If profilePictureUrl is still empty, something went wrong
         if (profilePictureUrl.isEmpty) {
           return CustomString.failedToUploadProfilePicture;
         }
 
-        // Create User model object with the provided data
+        // Create user data with the provided model
         model.User user = model.User(
           username: username,
           uid: userCredential.user!.uid,
           bio: bio ?? CustomString.emptyString,
           email: email,
-          friends: [],
-          profilePictureUrl: profilePictureUrl,
+          followers: [],
+          following: [],
+          profilePictureUrl: profilePictureUrl, // Correct assignment
           location: location ?? CustomString.emptyString,
-          birthDate: birthDate,
           isActive: false,
-          searchKey: username.toLowerCase(), // New users start as inactive
         );
 
-        // Save the user data to Firestore under 'users' collection
+        // Add user to Firestore Database
         await _firestore.collection('users').doc(userCredential.user!.uid).set(
               user.toJson(),
             );
 
-        res = CustomString.success; // Indicate successful sign-up
+        res = CustomString.success;
       } else {
-        res = CustomString
-            .pleaseFillInAllRequiredFields; // Handle missing required fields
+        res = CustomString.pleaseFillInAllRequiredFields;
       }
     } catch (err) {
-      // Handle any errors and return them as a string
       res = err.toString();
     }
 
     return res;
   }
 
-  // Log in an existing user with email and password
+  // Log in method
   Future<String> logInUser({
     required String email,
     required String password,
@@ -120,31 +100,27 @@ class AuthMethods {
     String res = CustomString.someErrorOccurred;
 
     try {
-      // Validate that email and password are provided
       if (email.isNotEmpty && password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
-            email: email, password: password); // Sign in the user
-        res = CustomString.success; // Indicate successful login
+            email: email, password: password);
+        res = CustomString.success;
       } else {
-        res =
-            CustomString.pleaseFillInAllRequiredFields; // Handle missing fields
+        res = CustomString.pleaseFillInAllRequiredFields;
       }
     } catch (err) {
-      // Return any errors as a string
       res = err.toString();
     }
     return res;
   }
 
-  // Log out the current user
+  // Log out method
   Future<String> logOutUser() async {
     String res = CustomString.someErrorOccurred;
 
     try {
-      await _auth.signOut(); // Firebase's method for signing out
-      res = CustomString.success; // Indicate successful logout
+      await _auth.signOut(); // Firebase's sign-out method
+      res = CustomString.success;
     } catch (err) {
-      // Handle any errors and return them as a string
       res = err.toString();
     }
 

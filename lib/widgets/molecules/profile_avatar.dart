@@ -5,8 +5,8 @@ import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 
 class ProfileAvatar extends StatelessWidget {
-  final String imageUrl; // URL of the profile image
-  final String username; // The username to display below the avatar
+  final String imageUrl;
+  final String username;
 
   const ProfileAvatar({
     required this.imageUrl,
@@ -18,14 +18,12 @@ class ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Display the avatar with the profile image
         CustomAvatar(imageUrl: imageUrl),
-        const SizedBox(height: 5), // Spacing between avatar and username
-        // Display the username below the avatar
+        const SizedBox(height: 5),
         CustomText(
           text: username,
           fontSize: CustomFont.fontSize12,
-          color: CustomColor.white70, // Subtle text color
+          color: CustomColor.white70,
         ),
       ],
     );

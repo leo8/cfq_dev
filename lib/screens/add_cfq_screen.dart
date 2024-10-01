@@ -6,6 +6,7 @@ import 'package:cfq_dev/enums/moods.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
+import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/firestore_methods.dart';
 
 import '../utils/styles/colors.dart';
@@ -21,35 +22,32 @@ class AddCfqScreen extends StatefulWidget {
 }
 
 class _AddCfqScreenState extends State<AddCfqScreen> {
-  // Controllers to handle input text
   Uint8List? _file;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-
   DateTime? _selectedDateTime;
   List<String>? _moods;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    // Dispose of controllers when the widget is destroyed to avoid memory leaks
     super.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
   }
 
-  // Function to select an image from the gallery
   Future<void> _selectImage(BuildContext context) async {
-    Uint8List? file = await pickImage(ImageSource.gallery);
+    // Image selection logic
+    Uint8List file = await pickImage(ImageSource.gallery);
     setState(() {
       _file = file;
     });
   }
 
-  // Function to select a date and time for the event
   Future<void> _selectDateTime(BuildContext context) async {
+    // DateTime selection logic
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDateTime ?? DateTime.now(),
@@ -77,8 +75,8 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     }
   }
 
-  // Function to open a dialog for selecting moods
   void _selectMoods(BuildContext context) {
+    // Moods selection logic
     showDialog<List<String>>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -127,8 +125,8 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     });
   }
 
-  // Function to upload the CFQ data to Firestore
   Future<void> _postCfq() async {
+    // Posting logic
     if (_file == null) {
       showSnackBar(CustomString.veuillezSelectionnerUneImage, context);
       return;
@@ -143,13 +141,12 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       _isLoading = true;
     });
 
-    // Upload CFQ to Firestore using FirestoreMethods
     String res = await FirestoreMethods().uploadCfq(
       _nameController.text,
       _descriptionController.text,
       _moods ?? [],
       Provider.of<UserProvider>(context, listen: false).getUser.uid,
-      [], // Empty organizers for now
+      [], // Organizers remain empty for now
       Provider.of<UserProvider>(context, listen: false).getUser.username,
       _file!,
       Provider.of<UserProvider>(context, listen: false)
@@ -162,7 +159,6 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       _isLoading = false;
     });
 
-    // Show success or error message
     if (res == CustomString.success) {
       showSnackBar(CustomString.publicationReussie, context);
       Navigator.of(context).pop();
@@ -173,6 +169,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return StandardFormTemplate(
       appBarTitle: const Text(
@@ -188,7 +185,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
           child: const Text(
             CustomString.publier,
             style: TextStyle(
-              color: CustomColor.white,
+              color: CustomColor.primaryColor,
               fontWeight: CustomFont.fontWeightBold,
             ),
           ),
@@ -197,7 +194,6 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       onBackPressed: () {
         Navigator.of(context).pop();
       },
-      // CFQForm widget handles the form input fields for creating CFQ
       body: CFQForm(
         image: _file,
         onSelectImage: () => _selectImage(context),

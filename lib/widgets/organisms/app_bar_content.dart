@@ -6,14 +6,12 @@ import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class AppBarContent extends StatelessWidget {
-  final TextEditingController
-      searchController; // Controller for the search input
-  final VoidCallback
-      onNotificationPressed; // Callback for notification button action
+  final TextEditingController searchController;
+  final VoidCallback onNotificationPressed;
 
   const AppBarContent({
-    required this.searchController, // Requires a search controller
-    required this.onNotificationPressed, // Requires a function to handle notification presses
+    required this.searchController,
+    required this.onNotificationPressed,
     super.key,
   });
 
@@ -23,18 +21,15 @@ class AppBarContent extends StatelessWidget {
       children: [
         Expanded(
           child: CustomSearchBar(
-            controller: searchController, // Assigning the search controller
-            hintText:
-                CustomString.searchUsers, // Placeholder text for the search bar
+            controller: searchController,
+            hintText: CustomString.searchUsers,
           ),
         ),
-        const SizedBox(
-            width: 10), // Space between the search bar and notification button
+        const SizedBox(width: 10),
         CustomIconButton(
-          icon: CustomIcon.notifications, // Notification icon
-          onTap:
-              onNotificationPressed, // Action to perform when the notification button is pressed
-          color: CustomColor.white, // Color for the icon
+          icon: CustomIcon.notifications,
+          onTap: onNotificationPressed,
+          color: CustomColor.primaryColor,
         ),
       ],
     );

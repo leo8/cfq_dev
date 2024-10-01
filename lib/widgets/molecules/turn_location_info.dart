@@ -5,8 +5,8 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/icons.dart';
 
 class TurnLocationInfo extends StatelessWidget {
-  final String where; // General location (e.g., "at home", "at a park")
-  final String address; // Specific address of the event
+  final String where;
+  final String address;
 
   const TurnLocationInfo({
     required this.where,
@@ -18,25 +18,22 @@ class TurnLocationInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Location icon
         const Icon(
           CustomIcon.locationOn,
-          color: CustomColor.white54, // Light color for the icon
-          size: 20, // Icon size
+          color: CustomColor.white54,
+          size: 20,
         ),
-        const SizedBox(width: 4), // Spacing between the icon and text
-        // Display the general location
+        const SizedBox(width: 4),
         CustomText(
-          text: where, // General location (e.g., "at home")
-          color: CustomColor.white70, // Slightly lighter color
-          fontSize: CustomFont.fontSize14, // Text size
+          text: where,
+          color: CustomColor.white70,
+          fontSize: CustomFont.fontSize14,
         ),
-        const SizedBox(width: 4), // Spacing between the location and address
-        // Display the specific address
+        const SizedBox(width: 4),
         CustomText(
-          text: address, // Specific address (e.g., "123 Main St")
-          color: CustomColor.white54, // Lighter color for less emphasis
-          fontSize: CustomFont.fontSize14, // Text size
+          text: address,
+          color: CustomColor.white54,
+          fontSize: CustomFont.fontSize14,
         ),
       ],
     );

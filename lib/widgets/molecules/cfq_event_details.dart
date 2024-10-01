@@ -7,7 +7,7 @@ import '../../utils/styles/icons.dart';
 import '../../utils/styles/string.dart';
 
 class CfqEventDetails extends StatelessWidget {
-  final String cfqName; // CFQ event name to be displayed
+  final String cfqName;
 
   const CfqEventDetails({
     required this.cfqName,
@@ -17,19 +17,16 @@ class CfqEventDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Row for event icon and CFQ label
         const Row(
           children: [
-            // Event icon
             Icon(
               CustomIcon.event,
               color: CustomColor.white54,
               size: 20,
             ),
-            SizedBox(width: 4), // Small space between icon and text
-            // Text label "CFQ"
+            SizedBox(width: 4),
             CustomText(
               text: CustomString.cfq,
               color: CustomColor.white54,
@@ -37,11 +34,10 @@ class CfqEventDetails extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8), // Space between the label and event name
-        // CFQ event name
+        const SizedBox(height: 8),
         CustomText(
-          text: cfqName, // The name of the CFQ event passed as a parameter
-          color: CustomColor.white,
+          text: cfqName,
+          color: CustomColor.primaryColor,
           fontSize: CustomFont.fontSize20,
           fontWeight: CustomFont.fontWeightBold,
         ),

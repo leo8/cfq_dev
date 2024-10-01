@@ -7,11 +7,10 @@ import 'package:uuid/uuid.dart';
 
 import '../utils/styles/string.dart';
 
-// Provider class for handling Firestore operations for TURN and CFQ events
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Upload a TURN event to Firestore
+  // Upload TURN with 'where' and 'address'
   Future<String> uploadTurn(
     String turnName,
     String description,
@@ -21,20 +20,19 @@ class FirestoreMethods {
     String username,
     Uint8List file,
     String profilePictureUrl,
-    String where, // General location for the event (e.g., "at home")
-    String address, // Precise address for the event
+    String where, // New 'where' field (e.g., "at home")
+    String address, // New 'address' field (precise address)
   ) async {
     String res = CustomString.someErrorOccurred;
-
     try {
-      // Upload event image to Firebase Storage and get the download URL
+      // Upload image to storage
       String turnImageUrl =
           await StorageMethods().uploadImageToStorage('posts', file, true);
 
-      // Generate a unique ID for the TURN event
+      // Generate unique ID for the TURN
       String turnId = const Uuid().v1();
 
-      // Create a TURN object with the provided data and additional fields
+      // Create the TURN object with new 'where' and 'address' fields
       Turn turn = Turn(
           name: turnName,
           description: description,
@@ -43,33 +41,30 @@ class FirestoreMethods {
           username: username,
           eventId: turnId,
           datePublished: DateTime.now(),
-          eventDateTime:
-              DateTime.now(), // For now, set the event time to the current date
+          eventDateTime: DateTime
+              .now(), // Assuming the eventDateTime is DateTime.now(), update accordingly
           imageUrl: turnImageUrl,
           profilePictureUrl: profilePictureUrl,
-          where: where, // General location of the event
-          address: address, // Precise address of the event
+          where: where, // Using the new 'where' field
+          address: address, // Using the new 'address' field
           organizers: organizers,
-          invitees: [], // Initialize invitees list as empty
-          attending: [], // Initialize attending list as empty
-          notSureAttending: [], // Initialize not sure attending list as empty
-          notAttending: [], // Initialize not attending list as empty
-          notAnswered: [], // Initialize not answered list as empty
-          comments: [] // Initialize comments list as empty
-          );
+          invitees: [], // Initialize invitees as empty
+          attending: [],
+          notSureAttending: [],
+          notAttending: [],
+          notAnswered: [],
+          comments: []);
 
-      // Save the TURN object to Firestore under the 'turns' collection
+      // Save TURN data to Firestore
       await _firestore.collection('turns').doc(turnId).set(turn.toJson());
-
-      res = CustomString.success; // Indicate successful upload
+      res = CustomString.success;
     } catch (err) {
-      res = err.toString(); // Catch and return any error messages
+      res = err.toString();
     }
-
     return res;
   }
 
-  // Upload a CFQ event to Firestore
+  // Upload CFQ with 'where' field
   Future<String> uploadCfq(
     String cfqName,
     String description,
@@ -79,43 +74,40 @@ class FirestoreMethods {
     String username,
     Uint8List file,
     String profilePictureUrl,
-    String where, // General location of the CFQ event (e.g., "online")
+    String where, // New 'where' field (e.g., "online")
   ) async {
     String res = CustomString.someErrorOccurred;
-
     try {
-      // Upload CFQ image to Firebase Storage and get the download URL
+      // Upload image to storage
       String cfqImageUrl =
           await StorageMethods().uploadImageToStorage('cfqs', file, true);
 
-      // Generate a unique ID for the CFQ event
+      // Generate unique ID for the CFQ
       String cfqId = const Uuid().v1();
 
-      // Create a CFQ object with the provided data
+      // Create the CFQ object with new 'where' field
       Cfq cfq = Cfq(
-          name: cfqName,
-          description: description,
-          moods: moods,
-          uid: uid,
-          username: username,
-          eventId: cfqId,
-          datePublished: DateTime.now(),
-          imageUrl: cfqImageUrl,
-          profilePictureUrl: profilePictureUrl,
-          where: where, // General location of the CFQ event
-          organizers: organizers,
-          followers: [], // Initialize followers list as empty
-          comments: [] // Initialize comments list as empty
-          );
+        name: cfqName,
+        description: description,
+        moods: moods,
+        uid: uid,
+        username: username,
+        eventId: cfqId,
+        datePublished: DateTime.now(),
+        imageUrl: cfqImageUrl,
+        profilePictureUrl: profilePictureUrl,
+        where: where, // Using the new 'where' field
+        organizers: organizers,
+        followers: [], // Initialize followers as empty
+        comments: [], // Initialize comments as empty
+      );
 
-      // Save the CFQ object to Firestore under the 'cfqs' collection
+      // Save CFQ data to Firestore
       await _firestore.collection('cfqs').doc(cfqId).set(cfq.toJson());
-
-      res = CustomString.success; // Indicate successful upload
+      res = CustomString.success;
     } catch (err) {
-      res = err.toString(); // Catch and return any error messages
+      res = err.toString();
     }
-
     return res;
   }
 }

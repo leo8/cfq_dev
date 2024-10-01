@@ -7,11 +7,11 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
 
 class TurnUserInfoHeader extends StatelessWidget {
-  final String profilePictureUrl; // URL of the user's profile picture
-  final String username; // Username of the user
-  final List<String> organizers; // List of event organizers
-  final String timeInfo; // Information about the event time
-  final VoidCallback onAttendingPressed; // Callback for attending button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final String timeInfo;
+  final VoidCallback onAttendingPressed;
 
   const TurnUserInfoHeader({
     required this.profilePictureUrl,
@@ -28,10 +28,10 @@ class TurnUserInfoHeader extends StatelessWidget {
       children: [
         // Profile Picture
         CustomAvatar(
-          imageUrl: profilePictureUrl, // Display user's profile picture
-          radius: 28, // Avatar size
+          imageUrl: profilePictureUrl,
+          radius: 28,
         ),
-        const SizedBox(width: 12), // Spacing between avatar and text
+        const SizedBox(width: 12),
         // Username and Additional Info
         Expanded(
           child: Column(
@@ -40,25 +40,25 @@ class TurnUserInfoHeader extends StatelessWidget {
               Row(
                 children: [
                   CustomText(
-                    text: username, // Username
-                    color: CustomColor.white,
+                    text: username,
+                    color: CustomColor.primaryColor,
                     fontWeight: CustomFont.fontWeightBold,
                     fontSize: CustomFont.fontSize16,
                   ),
-                  const SizedBox(width: 4), // Spacing after username
-                  // Display organizers list if available
+                  const SizedBox(width: 4),
+                  // Display organizers list joined by commas
                   if (organizers.isNotEmpty)
                     CustomText(
-                      text: 'à ${organizers.join(', ')}', // Organizers
+                      text: 'à ${organizers.join(', ')}',
                       color: CustomColor.blueAccent,
                       fontWeight: CustomFont.fontWeight600,
                       fontSize: CustomFont.fontSize14,
                     ),
                 ],
               ),
-              const SizedBox(height: 4), // Spacing after the row
+              const SizedBox(height: 4),
               CustomText(
-                text: timeInfo, // Event time info (e.g., 'une heure')
+                text: timeInfo, // This can be 'une heure' or calculated time
                 color: CustomColor.white54,
                 fontSize: CustomFont.fontSize12,
               ),
@@ -67,14 +67,14 @@ class TurnUserInfoHeader extends StatelessWidget {
         ),
         // Attendee Button
         CustomElevatedButton(
-          onPressed: onAttendingPressed, // Callback for button
+          onPressed: onAttendingPressed,
           backgroundColor: CustomColor.personnalizedPurple,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: const CustomText(
-            text: CustomString.jeSuisLa, // Button text
-            color: CustomColor.white,
+            text: CustomString.jeSuisLa,
+            color: CustomColor.primaryColor,
             fontSize: CustomFont.fontSize14,
           ),
         ),

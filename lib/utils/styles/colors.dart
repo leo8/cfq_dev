@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-// Define custom colors
 class CustomColor {
   static const mobileBackgroundColor = Color.fromRGBO(0, 0, 0, 1);
   static const webBackgroundColor = Color.fromRGBO(18, 18, 18, 1);
   static const mobileSearchColor = Color.fromRGBO(38, 38, 38, 1);
+  static const primaryColor = Colors.white;
   static const white24 = Colors.white24;
   static const white54 = Colors.white54;
   static const white70 = Colors.white70;
-  static const white = Colors.white;
   static const secondaryColor = Colors.grey;
   static const purple = Colors.purple;
   static const purpleAccent = Colors.purpleAccent;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Define custom fonts
 class CustomFont {
   static const fontWeightBold = FontWeight.bold;
   static const fontWeight600 = FontWeight.w600;

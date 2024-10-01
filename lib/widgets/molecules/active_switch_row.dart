@@ -7,9 +7,8 @@ import '../../utils/styles/string.dart';
 import '../atoms/buttons/custom_switch.dart';
 
 class ActiveSwitchRow extends StatelessWidget {
-  final bool isActive; // Boolean to determine the switch's state (on/off)
-  final ValueChanged<bool>
-      onChanged; // Callback function for when the switch is toggled
+  final bool isActive;
+  final ValueChanged<bool> onChanged;
 
   const ActiveSwitchRow({
     required this.isActive,
@@ -20,30 +19,25 @@ class ActiveSwitchRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center, // Center the row
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // "Off" label text on the left side of the switch
         const CustomText(
-          text: CustomString.off, // Text for the "off" label
+          text: CustomString.off,
           fontSize: CustomFont.fontSize14,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.white,
+          color: CustomColor.primaryColor,
         ),
-        const SizedBox(width: 6), // Spacing between "Off" and the switch
-        // The switch itself
+        const SizedBox(width: 6),
         CustomSwitch(
-          value: isActive, // Current state of the switch (active or not)
-          onChanged:
-              onChanged, // Function to be called when the switch is toggled
+          value: isActive,
+          onChanged: onChanged,
         ),
-        const SizedBox(
-            width: 6), // Spacing between the switch and the "On" label
-        // "On" label text on the right side of the switch
+        const SizedBox(width: 6),
         const CustomText(
-          text: CustomString.turn, // Text for the "on" label
+          text: CustomString.turn,
           fontSize: CustomFont.fontSize14,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.white,
+          color: CustomColor.primaryColor,
         ),
       ],
     );

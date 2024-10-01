@@ -1,80 +1,71 @@
-import 'package:cfq_dev/providers/user_provider.dart'; // User provider for state management
-import 'package:cfq_dev/responsive/mobile_screen_layout.dart'; // Mobile layout
-import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart'; // Responsive layout
-import 'package:cfq_dev/responsive/web_screen_layout.dart'; // Web layout
-import 'package:cfq_dev/screens/login_screen.dart'; // Login screen
-import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
-import 'package:firebase_core/firebase_core.dart'; // Firebase core
-import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
-import 'package:flutter/material.dart'; // Flutter material components
-import 'package:provider/provider.dart'; // State management using Provider
+import 'package:cfq_dev/providers/user_provider.dart';
+import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
+import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
+import 'package:cfq_dev/responsive/web_screen_layout.dart';
+import 'package:cfq_dev/screens/login_screen.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure bindings are initialized
-  // Initialize Firebase for web
+  WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBcr5WVuZxga_98ZFohPuJ4assvOdDXjC4", // Your API key
-        appId: "1:160341522687:web:10b0092c6c1c7ba9e574ca", // Your app ID
-        messagingSenderId: "160341522687", // Sender ID
-        projectId: "cfq-dev-11498", // Project ID
-        storageBucket: "cfq-dev-11498.appspot.com", // Storage bucket
-      ),
-    );
-  } else {
-    // Initialize Firebase for mobile platforms
+        options: const FirebaseOptions(
+      apiKey: "AIzaSyBcr5WVuZxga_98ZFohPuJ4assvOdDXjC4",
+      appId: "1:160341522687:web:10b0092c6c1c7ba9e574ca",
+      messagingSenderId: "160341522687",
+      projectId: "cfq-dev-11498",
+      storageBucket: "cfq-dev-11498.appspot.com",
+    ));
+  }
+  {
     await Firebase.initializeApp();
   }
-  runApp(const MyApp()); // Run the application
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // Root widget of the application
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) =>
-              UserProvider(), // Provide UserProvider to the widget tree
+          create: (_) => UserProvider(),
         ),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false, // Hide debug banner
-        title: 'cfq_dev', // App title
+        debugShowCheckedModeBanner: false,
+        title: 'cfq_dev',
         theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor:
-              CustomColor.mobileBackgroundColor, // Set the background color
-        ),
+            scaffoldBackgroundColor: CustomColor.mobileBackgroundColor),
         home: StreamBuilder(
-          stream: FirebaseAuth.instance
-              .authStateChanges(), // Listen for authentication state changes
+          stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData) {
-                // User is logged in
                 return const RepsonsiveLayout(
-                  mobileScreenLayout: MobileScreenLayout(), // Mobile layout
-                  webScreenLayout: WebScreenLayout(), // Web layout
+                  mobileScreenLayout: MobileScreenLayout(),
+                  webScreenLayout: WebScreenLayout(),
                 );
               } else if (snapshot.hasError) {
-                return Center(
-                    child: Text('${snapshot.error}')); // Show error message
+                return Center(child: Text('${snapshot.error}'));
               }
             }
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // Waiting for authentication state
               return const Center(
                 child: CircularProgressIndicator(
-                  color: CustomColor.white, // Loading indicator color
+                  color: CustomColor.primaryColor,
                 ),
               );
             }
-            return LoginScreen(); // Show login screen if not authenticated
+            return LoginScreen();
           },
         ),
       ),

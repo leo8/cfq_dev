@@ -4,10 +4,8 @@ import '../../utils/styles/string.dart';
 import '../atoms/texts/custom_text_field.dart';
 
 class AddressFieldsRow extends StatelessWidget {
-  final TextEditingController
-      locationController; // Controller for the "Location" input field
-  final TextEditingController
-      addressController; // Controller for the "Address" input field
+  final TextEditingController locationController;
+  final TextEditingController addressController;
 
   const AddressFieldsRow({
     required this.locationController,
@@ -19,19 +17,17 @@ class AddressFieldsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // First expanded widget for the location field
         Expanded(
           child: CustomTextField(
             controller: locationController,
-            hintText: CustomString.ou, // Hint text: "Where" (in French: "Où")
+            hintText: CustomString.ou,
           ),
         ),
-        const SizedBox(width: 8), // Spacing between the two fields
-        // Second expanded widget for the address field
+        const SizedBox(width: 8),
         Expanded(
           child: CustomTextField(
             controller: addressController,
-            hintText: CustomString.adresse, // Hint text: "Address"
+            hintText: CustomString.adresse,
           ),
         ),
       ],

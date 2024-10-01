@@ -1,79 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
-import 'package:provider/provider.dart';
+import 'package:cfq_dev/providers/auth_methods.dart';
+
 import '../utils/styles/string.dart';
-import '../utils/styles/colors.dart';
-import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final String? userId;
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
-  const ProfileScreen({super.key, this.userId});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  model.User? _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      model.User userData = await AuthMethods().getUserDetails();
+      setState(() {
+        _user = userData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      print(e.toString());
+    }
+  }
+
+  void logOut(BuildContext context) async {
+    await AuthMethods().logOutUser();
+  }
+
+  void updateIsActiveStatus(bool isActive) async {
+    try {
+      await AuthMethods().updateIsActiveStatus(isActive);
+    } catch (e) {
+      print(e.toString());
+      // Revert the change in the UI
+      setState(() {
+        if (_user != null) {
+          _user!.isActive = !isActive;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(CustomString.failedtoUpdateStatusPleaseTryAgain),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProfileViewModel>(
-      create: (_) => ProfileViewModel(userId: userId),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: CustomColor.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          leading: Consumer<ProfileViewModel>(
-            builder: (context, viewModel, child) {
-              // Show back button if viewing another user's profile
-              if (!viewModel.isCurrentUser) {
-                return IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              } else {
-                return SizedBox.shrink(); // No back button
-              }
-            },
-          ),
-        ),
-        extendBodyBehindAppBar: true,
-        body: Consumer<ProfileViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (viewModel.user == null) {
-              return const Center(child: Text('User not found'));
-            } else {
-              return ProfileTemplate(
-                backgroundImageUrl:
-                    'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop',
-                body: ProfileContent(
-                  user: viewModel.user!,
-                  isFriend: viewModel.isFriend,
-                  isCurrentUser: viewModel.isCurrentUser,
-                  onActiveChanged: viewModel.isCurrentUser
-                      ? (bool newValue) {
-                          viewModel.updateIsActiveStatus(newValue);
-                        }
-                      : null,
-                  onFriendsTap: () {
-                    // Handle friends tap
-                  },
-                  onLogoutTap: viewModel.isCurrentUser
-                      ? () => viewModel.logOut()
-                      : null,
-                  onAddFriendTap: !viewModel.isCurrentUser
-                      ? () {
-                          // Handle add friend tap (functionality to be implemented later)
-                        }
-                      : null,
-                ),
-              );
-            }
-          },
-        ),
-      ),
+    return Scaffold(
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProfileTemplate(
+              backgroundImageUrl:
+                  'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              body: ProfileContent(
+                user: _user!,
+                onActiveChanged: (bool newValue) {
+                  setState(() {
+                    _user!.isActive = newValue;
+                  });
+                  updateIsActiveStatus(newValue);
+                },
+                onFollowersTap: () {
+                  // Handle followers tap
+                },
+                onFollowingTap: () {
+                  // Handle following tap
+                },
+                onLogoutTap: () => logOut(context),
+              ),
+            ),
     );
   }
 }

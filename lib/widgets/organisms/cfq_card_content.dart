@@ -7,17 +7,17 @@ import '../molecules/cfq_location_info.dart';
 import '../molecules/description_section.dart';
 
 class CFQCardContent extends StatelessWidget {
-  final String profilePictureUrl; // User's profile picture URL
-  final String username; // User's name
-  final List<String> organizers; // List of event organizers
-  final String cfqName; // CFQ event name
-  final String description; // CFQ event description
-  final DateTime datePublished; // Date when the CFQ was published
-  final String location; // Location of the CFQ event
-  final VoidCallback onFollowPressed; // Callback for follow button
-  final VoidCallback onSharePressed; // Callback for share button
-  final VoidCallback onSendPressed; // Callback for send button
-  final VoidCallback onCommentPressed; // Callback for comment button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final String cfqName;
+  final String description;
+  final DateTime datePublished;
+  final String location;
+  final VoidCallback onFollowPressed;
+  final VoidCallback onSharePressed;
+  final VoidCallback onSendPressed;
+  final VoidCallback onCommentPressed;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -37,42 +37,40 @@ class CFQCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-          vertical: 8, horizontal: 16), // Margin around the card
-      padding: const EdgeInsets.all(16), // Padding inside the card
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0551), // Card background color
-        borderRadius: BorderRadius.circular(16), // Rounded corners
-        border: Border.all(color: CustomColor.white24), // Border color
+        color: const Color(0xFF1A0551),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: CustomColor.white24),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align children to the start
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CfqUserInfoHeader(
-            profilePictureUrl: profilePictureUrl, // User's profile picture
-            username: username, // User's name
-            organizers: organizers, // List of event organizers
-            datePublished: datePublished, // Date published
-            onFollowPressed: onFollowPressed, // Follow button action
+            profilePictureUrl: profilePictureUrl,
+            username: username,
+            organizers: organizers,
+            datePublished: datePublished,
+            onFollowPressed: onFollowPressed,
           ),
-          const SizedBox(height: 16), // Space between sections
+          const SizedBox(height: 16),
           CfqEventDetails(
-            cfqName: cfqName, // Name of the CFQ event
+            cfqName: cfqName,
           ),
-          const SizedBox(height: 8), // Space between sections
+          const SizedBox(height: 8),
           DescriptionSection(
-            description: description, // Description of the CFQ
+            description: description,
           ),
-          const SizedBox(height: 16), // Space between sections
+          const SizedBox(height: 16),
           CfqLocationInfo(
-            location: location, // Location of the CFQ event
+            location: location,
           ),
-          const SizedBox(height: 16), // Space between sections
+          const SizedBox(height: 16),
           ActionButtonsRow(
-            onSharePressed: onSharePressed, // Share button action
-            onSendPressed: onSendPressed, // Send button action
-            onCommentPressed: onCommentPressed, // Comment button action
+            onSharePressed: onSharePressed,
+            onSendPressed: onSendPressed,
+            onCommentPressed: onCommentPressed,
           ),
         ],
       ),

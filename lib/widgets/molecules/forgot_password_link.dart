@@ -4,25 +4,20 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
 
 class ForgotPasswordLink extends StatelessWidget {
-  final VoidCallback onTap; // Callback when the link is tapped
+  final VoidCallback onTap;
 
-  const ForgotPasswordLink({
-    super.key,
-    required this.onTap,
-  });
+  const ForgotPasswordLink({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight, // Aligns the link to the right
+      alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: onTap, // Triggers the provided onTap callback
+        onPressed: onTap,
         child: const Text(
-          CustomString.tAsOublieTonMotDePasse, // "Forgot Password" text
+          CustomString.tAsOublieTonMotDePasse,
           style: TextStyle(
-            color: CustomColor.white70, // Semi-transparent white text color
-            fontSize: CustomFont.fontSize12, // Small font size
-          ),
+              color: CustomColor.white70, fontSize: CustomFont.fontSize12),
         ),
       ),
     );

@@ -7,18 +7,18 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
 
 class CfqUserInfoHeader extends StatelessWidget {
-  final String profilePictureUrl; // User's profile picture URL
-  final String username; // User's username
-  final List<String> organizers; // List of organizers
-  final DateTime datePublished; // Event publication date
-  final VoidCallback onFollowPressed; // Callback for follow button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final DateTime datePublished;
+  final VoidCallback onFollowPressed;
 
   const CfqUserInfoHeader({
-    required this.profilePictureUrl, // User profile picture URL
-    required this.username, // Username of the event creator
-    required this.organizers, // Organizers of the CFQ event
-    required this.datePublished, // Publication date of the CFQ event
-    required this.onFollowPressed, // Action triggered when the follow button is pressed
+    required this.profilePictureUrl,
+    required this.username,
+    required this.organizers,
+    required this.datePublished,
+    required this.onFollowPressed,
     super.key,
   });
 
@@ -26,30 +26,29 @@ class CfqUserInfoHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Profile Picture Avatar
+        // Profile Picture
         CustomAvatar(
-          imageUrl: profilePictureUrl, // User's profile picture
-          radius: 28, // Circle avatar size
+          imageUrl: profilePictureUrl,
+          radius: 28,
         ),
-        const SizedBox(width: 12), // Space between avatar and username
-        // Username and Additional Information
+        const SizedBox(width: 12),
+        // Username and Additional Info
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  // Username Text
                   CustomText(
                     text: username,
-                    color: CustomColor.white,
+                    color: CustomColor.primaryColor,
                     fontWeight: CustomFont.fontWeightBold,
                     fontSize: CustomFont.fontSize16,
                   ),
                   const SizedBox(width: 4),
-                  // Organizers Information
+                  // Display organizers list joined by commas
                   CustomText(
-                    text: 'à ${organizers.join(', ')}', // Organizers names
+                    text: 'à ${organizers.join(', ')}',
                     color: CustomColor.blueAccent,
                     fontWeight: CustomFont.fontWeight600,
                     fontSize: CustomFont.fontSize14,
@@ -57,10 +56,9 @@ class CfqUserInfoHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              // Date of Publication
               CustomText(
                 text:
-                    '${datePublished.day}/${datePublished.month}/${datePublished.year}', // Date formatted as dd/mm/yyyy
+                    '${datePublished.day}/${datePublished.month}/${datePublished.year}',
                 color: CustomColor.white54,
                 fontSize: CustomFont.fontSize12,
               ),
@@ -69,14 +67,14 @@ class CfqUserInfoHeader extends StatelessWidget {
         ),
         // Follow Button
         CustomElevatedButton(
-          onPressed: onFollowPressed, // Follow button callback
-          backgroundColor: CustomColor.personnalizedPurple, // Button color
+          onPressed: onFollowPressed,
+          backgroundColor: CustomColor.personnalizedPurple,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Button border radius
+            borderRadius: BorderRadius.circular(12),
           ),
           child: const CustomText(
-            text: CustomString.follow, // Button label
-            color: CustomColor.white,
+            text: CustomString.follow,
+            color: CustomColor.primaryColor,
             fontSize: CustomFont.fontSize14,
           ),
         ),

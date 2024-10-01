@@ -1,47 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Model representing a user in the application
 class User {
-  final String username; // Username of the user
-  final String uid; // Unique user ID
-  final String bio; // User bio or description
-  final String email; // User email address
-  final List friends; // List of friends
-  final String profilePictureUrl; // URL for the user's profile picture
-  final String location; // User's location
-  final DateTime? birthDate; // Optional birthdate of the user
-  bool isActive; // User's active status
-  final String searchKey; // Used to facilitate user search
+  final String username;
+  final String uid;
+  final String bio;
+  final String email;
+  final List followers;
+  final List following;
+  final String profilePictureUrl;
+  final String location;
+  bool isActive;
 
-  // Constructor for initializing a User object
-  User(
-      {required this.username,
-      required this.uid,
-      required this.bio,
-      required this.email,
-      required this.friends,
-      required this.profilePictureUrl,
-      required this.location,
-      required this.birthDate,
-      required this.isActive,
-      required this.searchKey});
+  User({
+    required this.username,
+    required this.uid,
+    required this.bio,
+    required this.email,
+    required this.followers,
+    required this.following,
+    required this.profilePictureUrl,
+    required this.location,
+    required this.isActive,
+  });
 
-  // Convert User object to a JSON format for storage
+  // Convert user object to JSON
   Map<String, dynamic> toJson() => {
         "username": username,
         "uid": uid,
         "bio": bio,
         "email": email,
-        "friends": friends,
+        "followers": followers,
+        "following": following,
         "profilePictureUrl": profilePictureUrl,
         "location": location,
-        "birthDate": birthDate
-            ?.toIso8601String(), // Convert birthDate to string if it's not null
         "isActive": isActive,
-        "searchKey": searchKey,
       };
 
-  // Create a User object from a Firestore snapshot
+  // Convert Firestore snapshot to User object
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
@@ -50,14 +45,11 @@ class User {
       uid: snapshot['uid'],
       bio: snapshot['bio'],
       email: snapshot['email'],
-      friends: snapshot['friends'],
+      followers: snapshot['followers'],
+      following: snapshot['following'],
       profilePictureUrl: snapshot['profilePictureUrl'],
       location: snapshot['location'],
-      birthDate: snapshot['birthDate'] != null
-          ? DateTime.parse(snapshot['birthDate'])
-          : null, // Parse birthDate if it's not null
       isActive: snapshot['isActive'],
-      searchKey: snapshot['searchKey'],
     );
   }
 }

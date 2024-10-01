@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Define custom icons
 class CustomIcon {
   static const addAPhoto = Icons.add_a_photo;
   static const addCircleOutlineRounded = Icons.add_circle_outline_rounded;
