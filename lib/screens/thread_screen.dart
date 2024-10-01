@@ -1,6 +1,9 @@
+// thread_screen.dart
+
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
+import 'package:cfq_dev/utils/styles/fonts.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -127,8 +130,55 @@ class ThreadScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 135),
-                    // Horizontal list of profile pictures (if needed)
-                    // ... Existing code ...
+                    // Horizontal list of profile pictures
+                    Container(
+                      height:
+                          100, // Adjusted height to allow space beneath avatars
+                      padding: const EdgeInsets.only(left: 10),
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            5, // Assume we are displaying 5 profile pictures
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Navigate to the user's profile
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                            userId:
+                                                'user_id_$index'), // Replace with actual user ID
+                                      ),
+                                    );
+                                  },
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage: NetworkImage(
+                                      'https://randomuser.me/api/portraits/men/${index + 1}.jpg',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                const Text(
+                                  CustomString
+                                      .username, // Sample username for now
+                                  style: TextStyle(
+                                    color: CustomColor.white70,
+                                    fontSize: CustomFont.fontSize12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     // Event list area
                     Expanded(
