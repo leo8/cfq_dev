@@ -1,5 +1,3 @@
-// profile_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -42,6 +40,25 @@ class ProfileScreen extends StatelessWidget {
         extendBodyBehindAppBar: true,
         body: Consumer<ProfileViewModel>(
           builder: (context, viewModel, child) {
+            // Check if friend was added or removed
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (viewModel.friendAdded) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(CustomString.amiAjoute),
+                  ),
+                );
+                viewModel.resetStatus();
+              } else if (viewModel.friendRemoved) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(CustomString.amiSupprime),
+                  ),
+                );
+                viewModel.resetStatus();
+              }
+            });
+
             if (viewModel.isLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (viewModel.user == null) {
@@ -64,18 +81,22 @@ class ProfileScreen extends StatelessWidget {
                   },
                   onLogoutTap:
                       viewModel.isCurrentUser ? () => viewModel.logOut() : null,
-                  onAddFriendTap: !viewModel.isCurrentUser &&
-                          !viewModel.isFriend
-                      ? () {
-                          viewModel.addFriend(onSuccess: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(CustomString.amiAjouteAvecSucces),
-                              ),
-                            );
-                          });
-                        }
-                      : null, // Only show if not friends
+                  onAddFriendTap:
+                      !viewModel.isCurrentUser && !viewModel.isFriend
+                          ? () {
+                              viewModel.addFriend(onSuccess: () {
+                                // Success handled in the ViewModel
+                              });
+                            }
+                          : null,
+                  onRemoveFriendTap:
+                      !viewModel.isCurrentUser && viewModel.isFriend
+                          ? () {
+                              viewModel.removeFriend(onSuccess: () {
+                                // Success handled in the ViewModel
+                              });
+                            }
+                          : null,
                 ),
               );
             }

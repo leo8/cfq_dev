@@ -14,6 +14,7 @@ class ProfileContent extends StatelessWidget {
   final Function(bool)? onActiveChanged;
   final VoidCallback? onLogoutTap;
   final VoidCallback? onAddFriendTap;
+  final VoidCallback? onRemoveFriendTap;
   final VoidCallback? onFriendsTap;
 
   const ProfileContent({
@@ -23,6 +24,7 @@ class ProfileContent extends StatelessWidget {
     this.onActiveChanged,
     this.onLogoutTap,
     this.onAddFriendTap,
+    this.onRemoveFriendTap,
     this.onFriendsTap,
   });
 
@@ -74,6 +76,12 @@ class ProfileContent extends StatelessWidget {
             ElevatedButton(
               onPressed: onAddFriendTap,
               child: Text('Ajouter'),
+            ),
+          // 'Retirer' Button for Other Users (only if friends)
+          if (onRemoveFriendTap != null)
+            ElevatedButton(
+              onPressed: onRemoveFriendTap,
+              child: Text('Retirer'),
             ),
           // Lock Icon for Other Users
           if (!isCurrentUser)
