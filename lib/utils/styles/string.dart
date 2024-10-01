@@ -1,3 +1,4 @@
+// Define custom strings
 class CustomString {
   static const adresse = "Adresse";
   static const ajouterUneDate = "Ajouter une date";
@@ -16,8 +17,10 @@ class CustomString {
   static const description = "Description";
   static const emptyString = "";
   static const errorFetchingEvents = "Error fetching events";
-  static const failedtoUpdateStatusPleaseTryAgain = "Failed to update status. Please try again.";
-  static const failedToUploadProfilePicture = "Failed to upload profile picture";
+  static const failedtoUpdateStatusPleaseTryAgain =
+      "Failed to update status. Please try again.";
+  static const failedToUploadProfilePicture =
+      "Failed to upload profile picture";
   static const fetchingDataNoEventsYet = "Fetching data, no events yet...";
   static const follow = "Follow";
   static const followers = "Followers";
@@ -36,19 +39,25 @@ class CustomString {
   static const organisateurs = "Organisateurs";
   static const ou = "Où ?";
   static const ouCapital = "OU";
-  static const pleaseFillInAllRequiredFields = "Please fill in all required fields";
-  static const prendreUnePhotoAveclAppareil = "Prendre une photo avec l'appareil";
+  static const pleaseFillInAllRequiredFields =
+      "Please fill in all required fields";
+  static const prendreUnePhotoAveclAppareil =
+      "Prendre une photo avec l'appareil";
   static const publicationReussie = "Publication réussie !";
   static const publier = "Publier";
-  static const racontePasTaVieDisNousJusteOuTuSors = "Raconte pas ta vie, dis nous juste où tu sors...";
+  static const racontePasTaVieDisNousJusteOuTuSors =
+      "Raconte pas ta vie, dis nous juste où tu sors...";
   static const search = "Search..";
   static const searchUsers = "Search users..";
   static const selectionner = "Sélectionner";
-  static const selectionnerLesMoodsDeVotreCfq = "Sélectionnez le(s) mood(s) de votre CFQ";
-  static const selectionnerLesMoodsDeVotreTurn = "Sélectionnez le(s) mood(s) de votre turn";
+  static const selectionnerLesMoodsDeVotreCfq =
+      "Sélectionnez le(s) mood(s) de votre CFQ";
+  static const selectionnerLesMoodsDeVotreTurn =
+      "Sélectionnez le(s) mood(s) de votre turn";
   static const someErrorOccurred = "Some error occurred";
   static const success = "success";
   static const taBio = "Ta bio";
+  static const taDateDeNaissance = "Ta date de naissance";
   static const taLocalisation = "Ta localisation";
   static const tAsOublieTonMotDePasse = "T’as oublié ton mot de passe ?";
   static const tAsPasEncoreDeCompte = "T'as pas encore de compte ?";
@@ -59,6 +68,7 @@ class CustomString {
   static const uneHeure = "1h";
   static const unPetitNom = "Un petit nom ?";
   static const username = "Username";
-  static const veuillezRemplirTousLesChamps = "Veuillez remplir tous les champs";
+  static const veuillezRemplirTousLesChamps =
+      "Veuillez remplir tous les champs";
   static const veuillezSelectionnerUneImage = "Veuillez sélectionner une image";
 }

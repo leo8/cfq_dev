@@ -2,24 +2,28 @@ import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
 
 class CustomIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  final double size;
-  final Color color;
+  final IconData icon; // The icon displayed inside the button
+  final VoidCallback onTap; // The function triggered when the button is pressed
+  final double size; // The size of the icon
+  final Color color; // The color of the icon
 
   const CustomIconButton({
-    required this.icon,
-    required this.onTap,
-    this.size = 24.0,
-    this.color = CustomColor.primaryColor,
+    required this.icon, // The icon is required to be passed to the button
+    required this.onTap, // The onTap callback function is required
+    this.size = 24.0, // Default icon size is set to 24.0
+    this.color = CustomColor.white, // Default icon color is white
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(icon, size: size, color: color),
-      onPressed: onTap,
+      icon: Icon(
+        icon, // Set the icon passed through the constructor
+        size: size, // Set the size of the icon
+        color: color, // Set the color of the icon
+      ),
+      onPressed: onTap, // Call the provided onTap function when pressed
     );
   }
 }

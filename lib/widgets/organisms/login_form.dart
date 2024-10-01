@@ -8,11 +8,13 @@ import '../atoms/buttons/custom_button.dart';
 import '../atoms/texts/custom_text_field.dart';
 
 class LoginForm extends StatelessWidget {
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final VoidCallback onLogin;
-  final VoidCallback onForgotPassword;
-  final bool isLoading;
+  final TextEditingController emailController; // Controller for the email input
+  final TextEditingController
+      passwordController; // Controller for the password input
+  final VoidCallback onLogin; // Function to execute login action
+  final VoidCallback
+      onForgotPassword; // Function to execute forgot password action
+  final bool isLoading; // Indicates loading state for the login button
 
   const LoginForm({
     super.key,
@@ -29,23 +31,26 @@ class LoginForm extends StatelessWidget {
       children: [
         CustomTextField(
           controller: emailController,
-          hintText: CustomString.tonMail,
+          hintText: CustomString.tonMail, // Placeholder for email input
         ),
         const SizedBox(height: 8),
         CustomTextField(
           controller: passwordController,
-          hintText: CustomString.tonMotDePasse,
-          obscureText: true,
-          suffixIcon:
-              const Icon(CustomIcon.visibility, color: CustomColor.white70),
+          hintText:
+              CustomString.tonMotDePasse, // Placeholder for password input
+          obscureText: true, // Hides the password for security
+          suffixIcon: const Icon(CustomIcon.visibility,
+              color:
+                  CustomColor.white70), // Icon for password visibility toggle
         ),
         const SizedBox(height: 4),
-        ForgotPasswordLink(onTap: onForgotPassword),
+        ForgotPasswordLink(
+            onTap: onForgotPassword), // Link to initiate password recovery
         const SizedBox(height: 64),
         CustomButton(
-          label: CustomString.connexionCapital,
-          onTap: onLogin,
-          isLoading: isLoading,
+          label: CustomString.connexionCapital, // Label for the login button
+          onTap: onLogin, // Function to call on button press
+          isLoading: isLoading, // Show loading indicator if true
         ),
       ],
     );

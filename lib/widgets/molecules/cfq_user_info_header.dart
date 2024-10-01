@@ -7,18 +7,18 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
 
 class CfqUserInfoHeader extends StatelessWidget {
-  final String profilePictureUrl;
-  final String username;
-  final List<String> organizers;
-  final DateTime datePublished;
-  final VoidCallback onFollowPressed;
+  final String profilePictureUrl; // User's profile picture URL
+  final String username; // User's username
+  final List<String> organizers; // List of organizers
+  final DateTime datePublished; // Event publication date
+  final VoidCallback onFollowPressed; // Callback for follow button
 
   const CfqUserInfoHeader({
-    required this.profilePictureUrl,
-    required this.username,
-    required this.organizers,
-    required this.datePublished,
-    required this.onFollowPressed,
+    required this.profilePictureUrl, // User profile picture URL
+    required this.username, // Username of the event creator
+    required this.organizers, // Organizers of the CFQ event
+    required this.datePublished, // Publication date of the CFQ event
+    required this.onFollowPressed, // Action triggered when the follow button is pressed
     super.key,
   });
 
@@ -26,29 +26,30 @@ class CfqUserInfoHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Profile Picture
+        // Profile Picture Avatar
         CustomAvatar(
-          imageUrl: profilePictureUrl,
-          radius: 28,
+          imageUrl: profilePictureUrl, // User's profile picture
+          radius: 28, // Circle avatar size
         ),
-        const SizedBox(width: 12),
-        // Username and Additional Info
+        const SizedBox(width: 12), // Space between avatar and username
+        // Username and Additional Information
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
+                  // Username Text
                   CustomText(
                     text: username,
-                    color: CustomColor.primaryColor,
+                    color: CustomColor.white,
                     fontWeight: CustomFont.fontWeightBold,
                     fontSize: CustomFont.fontSize16,
                   ),
                   const SizedBox(width: 4),
-                  // Display organizers list joined by commas
+                  // Organizers Information
                   CustomText(
-                    text: 'à ${organizers.join(', ')}',
+                    text: 'à ${organizers.join(', ')}', // Organizers names
                     color: CustomColor.blueAccent,
                     fontWeight: CustomFont.fontWeight600,
                     fontSize: CustomFont.fontSize14,
@@ -56,9 +57,10 @@ class CfqUserInfoHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
+              // Date of Publication
               CustomText(
                 text:
-                    '${datePublished.day}/${datePublished.month}/${datePublished.year}',
+                    '${datePublished.day}/${datePublished.month}/${datePublished.year}', // Date formatted as dd/mm/yyyy
                 color: CustomColor.white54,
                 fontSize: CustomFont.fontSize12,
               ),
@@ -67,14 +69,14 @@ class CfqUserInfoHeader extends StatelessWidget {
         ),
         // Follow Button
         CustomElevatedButton(
-          onPressed: onFollowPressed,
-          backgroundColor: CustomColor.personnalizedPurple,
+          onPressed: onFollowPressed, // Follow button callback
+          backgroundColor: CustomColor.personnalizedPurple, // Button color
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12), // Button border radius
           ),
           child: const CustomText(
-            text: CustomString.follow,
-            color: CustomColor.primaryColor,
+            text: CustomString.follow, // Button label
+            color: CustomColor.white,
             fontSize: CustomFont.fontSize14,
           ),
         ),
