@@ -48,7 +48,7 @@ class ProfileContent extends StatelessWidget {
           text: user.username,
           fontSize: CustomFont.fontSize24,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
         ),
         const SizedBox(height: 10),
         // Bio

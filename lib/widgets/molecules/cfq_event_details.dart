@@ -37,7 +37,7 @@ class CfqEventDetails extends StatelessWidget {
         const SizedBox(height: 8),
         CustomText(
           text: cfqName,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
           fontSize: CustomFont.fontSize20,
           fontWeight: CustomFont.fontWeightBold,
         ),

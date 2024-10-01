@@ -32,7 +32,7 @@ class CustomGradientButton extends StatelessWidget {
           text: text,
           fontSize: CustomFont.fontSize18,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
         ),
       ),
     );

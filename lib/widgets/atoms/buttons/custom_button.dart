@@ -22,7 +22,7 @@ class CustomButton extends StatelessWidget {
       child: isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: CustomColor.primaryColor,
+                color: CustomColor.white,
               ),
             )
           : Container(
@@ -38,7 +38,7 @@ class CustomButton extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  color: CustomColor.primaryColor,
+                  color: CustomColor.white,
                   fontWeight: CustomFont.fontWeightBold,
                   fontSize: CustomFont.fontSize18,
                 ),

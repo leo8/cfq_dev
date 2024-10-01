@@ -45,7 +45,7 @@ class TurnForm extends StatelessWidget {
     return isLoading
         ? const Center(
             child: CircularProgressIndicator(
-              color: CustomColor.primaryColor,
+              color: CustomColor.white,
             ),
           )
         : SingleChildScrollView(
@@ -117,7 +117,7 @@ class TurnForm extends StatelessWidget {
                     child: const Text(
                       CustomString.publier,
                       style: TextStyle(
-                        color: CustomColor.primaryColor,
+                        color: CustomColor.white,
                         fontWeight: CustomFont.fontWeightBold,
                         fontSize: CustomFont.fontSize16,
                       ),

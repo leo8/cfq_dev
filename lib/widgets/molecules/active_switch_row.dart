@@ -25,7 +25,7 @@ class ActiveSwitchRow extends StatelessWidget {
           text: CustomString.off,
           fontSize: CustomFont.fontSize14,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
         ),
         const SizedBox(width: 6),
         CustomSwitch(
@@ -37,7 +37,7 @@ class ActiveSwitchRow extends StatelessWidget {
           text: CustomString.turn,
           fontSize: CustomFont.fontSize14,
           fontWeight: CustomFont.fontWeightBold,
-          color: CustomColor.primaryColor,
+          color: CustomColor.white,
         ),
       ],
     );
