@@ -82,7 +82,8 @@ class AuthMethods {
           profilePictureUrl: profilePictureUrl,
           location: location ?? CustomString.emptyString,
           birthDate: birthDate,
-          isActive: false, // New users start as inactive
+          isActive: false,
+          searchKey: username.toLowerCase(), // New users start as inactive
         );
 
         // Save the user data to Firestore under 'users' collection
