@@ -5,8 +5,9 @@ import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:provider/provider.dart';
 import '../utils/styles/string.dart';
-import '../widgets/organisms/profile_content.dart';
+import '../utils/styles/colors.dart';
 import '../view_models/profile_view_model.dart';
+import '../widgets/organisms/profile_content.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
@@ -18,6 +19,27 @@ class ProfileScreen extends StatelessWidget {
     return ChangeNotifierProvider<ProfileViewModel>(
       create: (_) => ProfileViewModel(userId: userId),
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: CustomColor.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: Consumer<ProfileViewModel>(
+            builder: (context, viewModel, child) {
+              // Show back button if viewing another user's profile
+              if (!viewModel.isCurrentUser) {
+                return IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              } else {
+                return SizedBox.shrink(); // No back button
+              }
+            },
+          ),
+        ),
+        extendBodyBehindAppBar: true,
         body: Consumer<ProfileViewModel>(
           builder: (context, viewModel, child) {
             if (viewModel.isLoading) {
