@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
-
 import '../utils/styles/string.dart';
 import '../widgets/organisms/profile_content.dart';
 
+/// ProfileScreen allows users to view their profile information and update status.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -15,15 +15,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  model.User? _user;
-  bool _isLoading = true;
+  model.User? _user; // Holds the user data
+  bool _isLoading = true; // Tracks if the profile data is still loading
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    fetchUserData(); // Fetch user data when the screen is initialized
   }
 
+  /// Fetches the logged-in user's details from Firestore.
   Future<void> fetchUserData() async {
     try {
       model.User userData = await AuthMethods().getUserDetails();
@@ -39,16 +40,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Logs out the current user.
   void logOut(BuildContext context) async {
     await AuthMethods().logOutUser();
   }
 
+  /// Updates the user's active status in the Firestore.
   void updateIsActiveStatus(bool isActive) async {
     try {
       await AuthMethods().updateIsActiveStatus(isActive);
     } catch (e) {
       AppLogger.error(e.toString());
-      // Revert the change in the UI
+      // Revert the change in the UI if the update fails
       setState(() {
         if (_user != null) {
           _user!.isActive = !isActive;
@@ -75,6 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               body: ProfileContent(
                 user: _user!,
                 onActiveChanged: (bool newValue) {
+                  // Update user's active status when the switch is toggled
                   setState(() {
                     _user!.isActive = newValue;
                   });
@@ -86,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onFollowingTap: () {
                   // Handle following tap
                 },
-                onLogoutTap: () => logOut(context),
+                onLogoutTap: () => logOut(context), // Handle logout
               ),
             ),
     );

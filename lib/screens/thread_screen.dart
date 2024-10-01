@@ -1,8 +1,7 @@
 import 'package:cfq_dev/utils/logger.dart';
-import 'package:cfq_dev/view_model/thread_view_model.dart';
+import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/icons.dart';
@@ -10,6 +9,8 @@ import '../utils/styles/string.dart';
 import '../widgets/organisms/cfq_card_content.dart';
 import '../widgets/organisms/turn_card_content.dart';
 
+/// ThreadScreen displays a list of events (both CFQs and Turns) sorted by date.
+/// It uses a ViewModel to fetch and process data from Firebase.
 class ThreadScreen extends StatefulWidget {
   const ThreadScreen({super.key});
 
@@ -18,16 +19,17 @@ class ThreadScreen extends StatefulWidget {
 }
 
 class _ThreadScreenState extends State<ThreadScreen> {
+  // ViewModel to handle data fetching and business logic
   final viewModel = ThreadViewModel();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar:
-          true, // Make the app bar transparent over the background
+          true, // App bar overlaps with the background image
       appBar: AppBar(
         backgroundColor: CustomColor.transparent, // Transparent app bar
-        elevation: 0,
+        elevation: 0, // Remove shadow under the app bar
         title: Row(
           children: [
             // Search Bar
@@ -35,63 +37,72 @@ class _ThreadScreenState extends State<ThreadScreen> {
               child: TextField(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: CustomColor.white24,
-                  prefixIcon:
-                      const Icon(CustomIcon.search, color: CustomColor.white70),
-                  hintText: CustomString.chercherDesUtilisateurs,
-                  hintStyle: const TextStyle(color: CustomColor.white70),
+                  fillColor: CustomColor.white24, // Semi-transparent background
+                  prefixIcon: const Icon(
+                    CustomIcon.search,
+                    color: CustomColor.white70,
+                  ), // Search icon
+                  hintText:
+                      CustomString.chercherDesUtilisateurs, // Placeholder text
+                  hintStyle: const TextStyle(
+                      color: CustomColor.white70), // Text style for placeholder
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(30), // Rounded borders
+                    borderSide: BorderSide.none, // No border
                   ),
                 ),
               ),
             ),
             const SizedBox(width: 10),
-            // Notification Bell Button
+            // Notification bell icon (currently without functionality)
             IconButton(
-              icon: const Icon(CustomIcon.notifications,
-                  color: CustomColor.white),
+              icon: const Icon(
+                CustomIcon.notifications,
+                color: CustomColor.white,
+              ),
               onPressed: () {
-                // Add function later
+                // Add functionality later
               },
             ),
           ],
         ),
       ),
+      // Body with background image and event list
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: NetworkImage(
               'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
             ),
-            fit: BoxFit.cover, // Background image covering the whole screen
+            fit: BoxFit.cover, // Cover the entire background with the image
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 135), // Add spacing from the top
+            const SizedBox(height: 135), // Space between top and content
             // Horizontal list of profile pictures
             Container(
-              height: 100, // Adjusted height to allow space beneath avatars
+              height: 100, // Set height for the avatar row
               padding: const EdgeInsets.only(left: 10),
               child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5, // Assume we are displaying 5 profile pictures
+                scrollDirection: Axis.horizontal, // Horizontal scrolling
+                itemCount: 5, // Placeholder for 5 profile avatars
                 itemBuilder: (context, index) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12.0),
                     child: Column(
                       children: [
+                        // Circle avatar representing a user profile
                         CircleAvatar(
                           radius: 30,
                           backgroundImage: NetworkImage(
                               'https://randomuser.me/api/portraits/men/1.jpg'),
                         ),
                         SizedBox(height: 5),
+                        // Placeholder for username below each avatar
                         Text(
-                          CustomString.username, // Sample username for now
+                          CustomString.username,
                           style: TextStyle(
                               color: CustomColor.white70,
                               fontSize: CustomFont.fontSize12),
@@ -102,18 +113,21 @@ class _ThreadScreenState extends State<ThreadScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 20), // Extra space below profile avatars
+            const SizedBox(height: 20), // Extra space after avatars
+            // Event list area
             Expanded(
-              // Fetch and display combined events sorted by date
               child: StreamBuilder<List<DocumentSnapshot>>(
-                stream: viewModel.fetchCombinedEvents(),
+                stream: viewModel
+                    .fetchCombinedEvents(), // Stream of events from Firebase
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
+                    // Log and display error message if the stream fails
                     AppLogger.error("Error fetching events: ${snapshot.error}");
                     return const Center(
                         child: Text(CustomString.errorFetchingEvents));
                   }
                   if (!snapshot.hasData) {
+                    // Log and show progress indicator while data is being fetched
                     AppLogger.error(CustomString.fetchingDataNoEventsYet);
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -123,22 +137,25 @@ class _ThreadScreenState extends State<ThreadScreen> {
                       "Number of events to display: ${events.length}");
 
                   if (events.isEmpty) {
+                    // Log and display a message if there are no events
                     AppLogger.debug("No events found");
                     return const Center(
                         child: Text(CustomString.noEventsAvailable));
                   }
 
                   return ListView.builder(
-                    itemCount: events.length,
+                    itemCount: events.length, // Number of events to display
                     itemBuilder: (context, index) {
                       final event = events[index];
-                      final isTurn = event.reference.parent.id == 'turns';
+                      final isTurn = event.reference.parent.id ==
+                          'turns'; // Check if it's a TURN event
 
                       AppLogger.debug(
                           "Displaying event from collection: ${event.reference.parent.id}");
 
+                      // Show TURN or CFQ card depending on the event type
                       if (isTurn) {
-                        // Display TurnCardContent
+                        // Display TURN event
                         return TurnCardContent(
                           profilePictureUrl: event['profilePictureUrl'] ??
                               CustomString.emptyString,
@@ -146,7 +163,7 @@ class _ThreadScreenState extends State<ThreadScreen> {
                               event['username'] ?? CustomString.emptyString,
                           organizers:
                               List<String>.from(event['organizers'] ?? []),
-                          timeInfo: 'une heure', // Compute as needed
+                          timeInfo: 'une heure', // Placeholder for time info
                           turnName:
                               event['turnName'] ?? CustomString.emptyString,
                           description:
@@ -156,20 +173,20 @@ class _ThreadScreenState extends State<ThreadScreen> {
                           where: event['where'] ?? CustomString.emptyString,
                           address: event['address'] ?? CustomString.emptyString,
                           onAttendingPressed: () {
-                            // Handle attending action
+                            // Add attending functionality
                           },
                           onSharePressed: () {
-                            // Handle share action
+                            // Add share functionality
                           },
                           onSendPressed: () {
-                            // Handle send action
+                            // Add send functionality
                           },
                           onCommentPressed: () {
-                            // Handle comment action
+                            // Add comment functionality
                           },
                         );
                       } else {
-                        // Display CFQCardContent
+                        // Display CFQ event
                         return CFQCardContent(
                           profilePictureUrl: event['profilePictureUrl'] ??
                               CustomString.emptyString,
@@ -184,16 +201,16 @@ class _ThreadScreenState extends State<ThreadScreen> {
                               viewModel.parseDate(event['datePublished']),
                           location: event['where'] ?? CustomString.emptyString,
                           onFollowPressed: () {
-                            // Handle follow action
+                            // Add follow functionality
                           },
                           onSharePressed: () {
-                            // Handle share action
+                            // Add share functionality
                           },
                           onSendPressed: () {
-                            // Handle send action
+                            // Add send functionality
                           },
                           onCommentPressed: () {
-                            // Handle comment action
+                            // Add comment functionality
                           },
                         );
                       }

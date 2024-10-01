@@ -6,9 +6,10 @@ import '../../utils/styles/fonts.dart';
 import '../../utils/styles/icons.dart';
 
 class ImageSelector extends StatelessWidget {
-  final Uint8List? image;
-  final VoidCallback onSelectImage;
-  final String placeholderText;
+  final Uint8List? image; // Holds the selected image data
+  final VoidCallback onSelectImage; // Callback when image is selected
+  final String
+      placeholderText; // Placeholder text displayed when no image is selected
 
   const ImageSelector({
     required this.image,
@@ -21,46 +22,51 @@ class ImageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // Container that holds the image or placeholder text
         Container(
-          width: 300,
-          height: 120,
+          width: 300, // Fixed width
+          height: 120, // Fixed height
           decoration: BoxDecoration(
-            color: CustomColor.secondaryColor[800],
-            borderRadius: BorderRadius.circular(10),
+            color: CustomColor
+                .secondaryColor[800], // Background color when no image
+            borderRadius: BorderRadius.circular(10), // Rounded corners
             image: image != null
                 ? DecorationImage(
-                    image: MemoryImage(image!),
-                    fit: BoxFit.cover,
+                    image: MemoryImage(image!), // Display selected image
+                    fit: BoxFit.cover, // Cover the container
                   )
-                : null,
+                : null, // No image
           ),
           child: image == null
               ? Center(
                   child: Text(
-                    placeholderText,
+                    placeholderText, // Placeholder text when no image is selected
                     style: const TextStyle(
                       color: CustomColor.white70,
                       fontSize: CustomFont.fontSize10,
                     ),
                   ),
                 )
-              : null,
+              : null, // No placeholder if the image is present
         ),
+        // Icon for selecting a new image
         Positioned(
-          top: 5,
+          top: 5, // Position the icon at the top-right corner
           right: 5,
           child: GestureDetector(
-            onTap: onSelectImage,
+            onTap: onSelectImage, // Calls the provided callback when tapped
             child: Container(
-              padding: const EdgeInsets.all(4),
+              padding:
+                  const EdgeInsets.all(4), // Padding inside the icon button
               decoration: const BoxDecoration(
-                color: CustomColor.purple,
-                shape: BoxShape.circle,
+                color:
+                    CustomColor.purple, // Background color for the icon button
+                shape: BoxShape.circle, // Circular shape for the icon button
               ),
               child: const Icon(
-                CustomIcon.addAPhoto,
+                CustomIcon.addAPhoto, // Photo icon for selecting a new image
                 color: CustomColor.white,
-                size: 16,
+                size: 16, // Icon size
               ),
             ),
           ),

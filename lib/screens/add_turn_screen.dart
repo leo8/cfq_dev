@@ -14,6 +14,7 @@ import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
 import '../widgets/organisms/turn_form.dart';
 
+/// Screen for creating a new TURN event.
 class AddTurnScreen extends StatefulWidget {
   const AddTurnScreen({super.key});
 
@@ -22,34 +23,39 @@ class AddTurnScreen extends StatefulWidget {
 }
 
 class _AddTurnScreenState extends State<AddTurnScreen> {
-  Uint8List? _file;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  DateTime? _selectedDateTime;
-  List<String>? _moods;
-  bool _isLoading = false;
+  Uint8List? _file; // Holds the selected image file
+  final TextEditingController _nameController =
+      TextEditingController(); // TURN name controller
+  final TextEditingController _descriptionController =
+      TextEditingController(); // TURN description controller
+  final TextEditingController _locationController =
+      TextEditingController(); // TURN location controller
+  final TextEditingController _addressController =
+      TextEditingController(); // TURN address controller
+  DateTime? _selectedDateTime; // Stores the selected event date and time
+  List<String>? _moods; // Stores selected moods
+  bool _isLoading = false; // Tracks if the form is submitting
 
   @override
   void dispose() {
-    super.dispose();
+    // Dispose of controllers when the widget is removed from the widget tree
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
     _addressController.dispose();
+    super.dispose();
   }
 
+  /// Function to allow the user to select an image from the gallery.
   Future<void> _selectImage(BuildContext context) async {
-    // Image selection logic
-    Uint8List file = await pickImage(ImageSource.gallery);
+    Uint8List? file = await pickImage(ImageSource.gallery);
     setState(() {
       _file = file;
     });
   }
 
+  /// Function to allow the user to pick a date and time for the event.
   Future<void> _selectDateTime(BuildContext context) async {
-    // DateTime selection logic
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDateTime ?? DateTime.now(),
@@ -77,8 +83,8 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     }
   }
 
+  /// Function to allow the user to select moods for the event.
   void _selectMoods(BuildContext context) {
-    // Moods selection logic
     showDialog<List<String>>(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -127,8 +133,9 @@ class _AddTurnScreenState extends State<AddTurnScreen> {
     });
   }
 
+  /// Function to handle TURN posting by uploading the data to Firestore.
   Future<void> _postTurn() async {
-    // Posting logic
+    // Ensure all required fields are filled
     if (_file == null) {
       showSnackBar(CustomString.veuillezSelectionnerUneImage, context);
       return;

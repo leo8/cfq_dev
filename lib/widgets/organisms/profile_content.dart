@@ -11,11 +11,12 @@ import '../atoms/buttons/custom_gradient_button.dart';
 import '../molecules/active_switch_row.dart';
 
 class ProfileContent extends StatelessWidget {
-  final model.User user;
-  final ValueChanged<bool> onActiveChanged;
-  final VoidCallback onFollowersTap;
-  final VoidCallback onFollowingTap;
-  final VoidCallback onLogoutTap;
+  final model.User user; // User model containing profile information
+  final ValueChanged<bool>
+      onActiveChanged; // Callback for toggling active status
+  final VoidCallback onFollowersTap; // Callback for followers count tap
+  final VoidCallback onFollowingTap; // Callback for following count tap
+  final VoidCallback onLogoutTap; // Callback for logout action
 
   const ProfileContent({
     required this.user,
@@ -33,19 +34,21 @@ class ProfileContent extends StatelessWidget {
         const SizedBox(height: 20),
         // Profile Picture
         CustomCircleAvatar(
-          radius: 64,
-          backgroundImage: NetworkImage(user.profilePictureUrl),
+          radius: 64, // Size of the avatar
+          backgroundImage:
+              NetworkImage(user.profilePictureUrl), // User's profile picture
         ),
         const SizedBox(height: 20),
         // Active Switch
         ActiveSwitchRow(
-          isActive: user.isActive,
-          onChanged: onActiveChanged,
+          isActive: user.isActive, // Current active status of the user
+          onChanged:
+              onActiveChanged, // Callback when the active status is changed
         ),
         const SizedBox(height: 20),
         // Username
         CustomText(
-          text: user.username,
+          text: user.username, // Display user's name
           fontSize: CustomFont.fontSize24,
           fontWeight: CustomFont.fontWeightBold,
           color: CustomColor.white,
@@ -53,24 +56,24 @@ class ProfileContent extends StatelessWidget {
         const SizedBox(height: 10),
         // Bio
         CustomText(
-          text: user.bio,
+          text: user.bio, // Display user's bio
           fontSize: CustomFont.fontSize16,
           color: CustomColor.white70,
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.center, // Center align bio text
         ),
         const SizedBox(height: 20),
         // Followers and Following
         FollowersFollowingRow(
-          followersCount: user.followers.length,
-          followingCount: user.following.length,
-          onFollowersTap: onFollowersTap,
-          onFollowingTap: onFollowingTap,
+          followersCount: user.followers.length, // Count of followers
+          followingCount: user.following.length, // Count of following
+          onFollowersTap: onFollowersTap, // Callback for followers tap
+          onFollowingTap: onFollowingTap, // Callback for following tap
         ),
         const SizedBox(height: 40),
         // Log out button
         CustomGradientButton(
-          text: CustomString.logOut,
-          onTap: onLogoutTap,
+          text: CustomString.logOut, // Log out button text
+          onTap: onLogoutTap, // Callback for logout action
         ),
       ],
     );

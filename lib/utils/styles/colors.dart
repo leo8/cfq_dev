@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Define custom colors
 class CustomColor {
   static const mobileBackgroundColor = Color.fromRGBO(0, 0, 0, 1);
   static const webBackgroundColor = Color.fromRGBO(18, 18, 18, 1);
