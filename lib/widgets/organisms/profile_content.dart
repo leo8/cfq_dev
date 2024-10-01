@@ -1,5 +1,6 @@
 // profile_content.dart
 
+import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -73,13 +74,13 @@ class ProfileContent extends StatelessWidget {
           if (onAddFriendTap != null)
             ElevatedButton(
               onPressed: onAddFriendTap,
-              child: Text('Ajouter'),
+              child: Text(CustomString.ajouter),
             ),
           // 'Retirer' Button for Other Users (only if friends)
           if (onRemoveFriendTap != null)
             ElevatedButton(
               onPressed: onRemoveFriendTap,
-              child: Text('Retirer'),
+              child: Text(CustomString.retirer),
             ),
           // Lock Icon for Other Users
           if (!isCurrentUser)

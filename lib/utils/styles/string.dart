@@ -1,9 +1,10 @@
 // Define custom strings
 class CustomString {
   static const adresse = "Adresse";
+  static const ajouter = "Ajouter";
   static const ajouterUneDate = "Ajouter une date";
   static const amiAjoute = "Ami ajouté !";
-  static const amiSupprime = "Ami supprimé";
+  static const amiSupprime = "Ami supprimé !";
   static const annuler = "Annuler";
   static const aQui = "À qui ?";
   static const aucuneImage = "Aucune image";
@@ -32,6 +33,7 @@ class CustomString {
   static const jemInscris = "Je m'inscris";
   static const jeSuisLa = "Je suis là";
   static const logOut = "Log out";
+  static const mesAmis = "Mes amis";
   static const moods = "Mood(s)";
   static const noEventsAvailable = "No events available";
   static const nomDuCfq = "Nom du CFQ";
@@ -50,6 +52,7 @@ class CustomString {
   static const publier = "Publier";
   static const racontePasTaVieDisNousJusteOuTuSors =
       "Raconte pas ta vie, dis nous juste où tu sors...";
+  static const retirer = "Retirer";
   static const search = "Search..";
   static const searchUsers = "Search users..";
   static const selectionner = "Sélectionner";
@@ -74,4 +77,5 @@ class CustomString {
   static const veuillezRemplirTousLesChamps =
       "Veuillez remplir tous les champs";
   static const veuillezSelectionnerUneImage = "Veuillez sélectionner une image";
+  static const vousnAvezPasEncoredAmis = "Vous n'avez pas encore d'amis";
 }
