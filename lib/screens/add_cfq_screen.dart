@@ -6,7 +6,6 @@ import 'package:cfq_dev/enums/moods.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:cfq_dev/providers/user_provider.dart';
-import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/firestore_methods.dart';
 
 import '../utils/styles/colors.dart';
@@ -174,8 +173,6 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve current user data
-    final model.User user = Provider.of<UserProvider>(context).getUser;
 
     return StandardFormTemplate(
       appBarTitle: const Text(
