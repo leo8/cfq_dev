@@ -8,6 +8,7 @@ import '../models/user.dart' as model;
 
 class ThreadViewModel extends ChangeNotifier {
   // Search functionality
+  final String currentUserUid;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
 
@@ -17,7 +18,7 @@ class ThreadViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  ThreadViewModel() {
+  ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
   }
 
@@ -59,7 +60,7 @@ class ThreadViewModel extends ChangeNotifier {
       List<model.User> users =
           snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
 
-      _users = users;
+      _users = users.where((user) => user.uid != currentUserUid).toList();
     } catch (e) {
       AppLogger.error('Error while searching users: $e');
     }

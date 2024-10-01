@@ -1,3 +1,4 @@
+import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +18,11 @@ class ThreadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access the current user from UserProvider
+    final currentUser = Provider.of<UserProvider>(context).getUser;
+
     return ChangeNotifierProvider<ThreadViewModel>(
-      create: (_) => ThreadViewModel(),
+      create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
