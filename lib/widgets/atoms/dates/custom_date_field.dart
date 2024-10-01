@@ -39,13 +39,13 @@ class CustomDateField extends StatelessWidget {
       child: AbsorbPointer( // Prevents direct editing of the field
         child: Container(
           decoration: BoxDecoration(
-            color: CustomColor.primaryColor.withOpacity(0.1),
+            color: CustomColor.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TextField(
             controller: controller,
-            style: const TextStyle(color: CustomColor.primaryColor),
+            style: const TextStyle(color: CustomColor.white70),
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: const TextStyle(color: CustomColor.white70),
