@@ -3,9 +3,7 @@
 import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
-import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import 'package:cfq_dev/utils/styles/colors.dart';
-import 'package:cfq_dev/utils/styles/fonts.dart';
 
 class ProfileContent extends StatelessWidget {
   final model.User user;

@@ -1,8 +1,7 @@
-import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 
@@ -136,7 +135,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                       splashColor:
                           CustomColor.transparent, // Disable splash effect
                       onPressed: () {
-                        print("click edit");
+                        AppLogger.debug("click edit");
                       },
                     ),
                   ),
@@ -156,7 +155,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                         color: CustomColor.white,
                       ),
                       onPressed: () {
-                        print("click photo");
+                        AppLogger.debug("click photo");
                       },
                     ),
                   ),

@@ -1,5 +1,3 @@
-// thread_screen.dart
-
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
@@ -67,7 +65,7 @@ class ThreadScreen extends StatelessWidget {
               } else if (viewModel.users.isEmpty) {
                 return const Center(
                   child: CustomText(
-                    text: 'No users found.',
+                    text: CustomString.noUsersFound,
                   ),
                 );
               } else {
@@ -133,50 +131,91 @@ class ThreadScreen extends StatelessWidget {
                     // Horizontal list of profile pictures
                     Container(
                       height:
-                          100, // Adjusted height to allow space beneath avatars
+                          130, // Adjusted height to allow space beneath avatars
                       padding: const EdgeInsets.only(left: 10),
-                      child: ListView.builder(
+                      child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        itemCount:
-                            5, // Assume we are displaying 5 profile pictures
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12.0),
-                            child: Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    // Navigate to the user's profile
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProfileScreen(
-                                            userId:
-                                                'user_id_$index'), // Replace with actual user ID
+                        child: Row(
+                          children: [
+                            // Current User's Avatar with Switch
+                            if (viewModel.currentUser != null)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigate to the current user's profile
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ProfileScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 30,
+                                        backgroundImage: NetworkImage(
+                                          viewModel
+                                              .currentUser!.profilePictureUrl,
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: NetworkImage(
-                                      'https://randomuser.me/api/portraits/men/${index + 1}.jpg',
                                     ),
-                                  ),
+                                    const SizedBox(height: 5),
+                                    // Switch for active status
+                                    Switch(
+                                      value: viewModel.currentUser!.isActive,
+                                      onChanged: (bool newValue) {
+                                        // Update the active status
+                                        viewModel
+                                            .updateIsActiveStatus(newValue);
+                                      },
+                                      activeColor: CustomColor.greenColor,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 5),
-                                const Text(
-                                  CustomString
-                                      .username, // Sample username for now
-                                  style: TextStyle(
-                                    color: CustomColor.white70,
-                                    fontSize: CustomFont.fontSize12,
-                                  ),
+                              ),
+                            // Active Friends' Avatars
+                            ...viewModel.activeFriends.map((friend) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigate to the friend's profile
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProfileScreen(
+                                                userId: friend.uid),
+                                          ),
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 30,
+                                        backgroundImage: NetworkImage(
+                                          friend.profilePictureUrl,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      friend.username,
+                                      style: const TextStyle(
+                                        color: CustomColor.white70,
+                                        fontSize: CustomFont.fontSize12,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              );
+                            }).toList(),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),

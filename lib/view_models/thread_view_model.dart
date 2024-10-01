@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import '../models/user.dart' as model;
 
 class ThreadViewModel extends ChangeNotifier {
-  // Search functionality
+  // Existing variables
   final String currentUserUid;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -18,24 +17,98 @@ class ThreadViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  // New variables
+  model.User? _currentUser;
+  model.User? get currentUser => _currentUser;
+
+  List<model.User> _activeFriends = [];
+  List<model.User> get activeFriends => _activeFriends;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
+    // Fetch current user and active friends
+    fetchCurrentUserAndActiveFriends();
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
-
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     super.dispose();
   }
 
-  void _onSearchChanged() {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      performSearch(searchController.text);
-    });
+  // Existing methods (performSearch, parseDate, fetchCombinedEvents)
+
+  /// Fetches the current user's data and their active friends.
+  Future<void> fetchCurrentUserAndActiveFriends() async {
+    try {
+      // Fetch current user's data
+      DocumentSnapshot currentUserSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .get();
+
+      _currentUser = model.User.fromSnap(currentUserSnap);
+
+      // Get friends UIDs
+      List<dynamic> friendsUids = _currentUser!.friends;
+
+      // If no friends, set activeFriends to empty and return
+      if (friendsUids.isEmpty) {
+        _activeFriends = [];
+        notifyListeners();
+        return;
+      }
+
+      // Fetch friends who are active (isActive == true)
+      // Firestore 'in' query supports up to 10 items
+      List<model.User> activeFriends = [];
+
+      // Chunk friendsUids into batches of 10
+      int batchSize = 10;
+      for (int i = 0; i < friendsUids.length; i += batchSize) {
+        List<dynamic> batch = friendsUids.sublist(
+            i,
+            i + batchSize > friendsUids.length
+                ? friendsUids.length
+                : i + batchSize);
+
+        QuerySnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('uid', whereIn: batch)
+            .where('isActive', isEqualTo: true)
+            .get();
+
+        List<model.User> batchUsers =
+            snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+
+        activeFriends.addAll(batchUsers);
+      }
+
+      _activeFriends = activeFriends;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching current user and active friends: $e');
+    }
+  }
+
+  /// Updates the current user's active status.
+  Future<void> updateIsActiveStatus(bool newValue) async {
+    if (_currentUser == null) return;
+    try {
+      // Update the active status in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .update({'isActive': newValue});
+
+      // Update the local model
+      _currentUser!.isActive = newValue;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating active status: $e');
+    }
   }
 
   Future<void> performSearch(String query) async {
@@ -153,5 +226,13 @@ class ThreadViewModel extends ChangeNotifier {
       AppLogger.error("Error in fetchCombinedEvents: $error");
       rethrow; // Rethrow the error to propagate it to the caller
     }
+  }
+
+  // Private methods
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      performSearch(searchController.text);
+    });
   }
 }

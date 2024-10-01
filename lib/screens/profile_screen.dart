@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
-import 'package:cfq_dev/models/user.dart' as model;
 import 'package:provider/provider.dart';
 import '../utils/styles/string.dart';
 import '../utils/styles/colors.dart';
@@ -26,13 +25,13 @@ class ProfileScreen extends StatelessWidget {
               // Show back button if viewing another user's profile
               if (!viewModel.isCurrentUser) {
                 return IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 );
               } else {
-                return SizedBox.shrink(); // No back button
+                return const SizedBox.shrink(); // No back button
               }
             },
           ),
