@@ -67,7 +67,7 @@ class ThreadScreen extends StatelessWidget {
               } else if (viewModel.users.isEmpty) {
                 return const Center(
                   child: CustomText(
-                    text: 'No users found.',
+                    text: CustomString.noUsersFound,
                   ),
                 );
               } else {

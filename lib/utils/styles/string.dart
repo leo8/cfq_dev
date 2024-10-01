@@ -36,6 +36,7 @@ class CustomString {
   static const noEventsAvailable = "No events available";
   static const nomDuCfq = "Nom du CFQ";
   static const nomDuTurn = "Nom du Turn";
+  static const noUsersFound = "No users found.";
   static const off = "Off";
   static const ok = "OK";
   static const organisateurs = "Organisateurs";
