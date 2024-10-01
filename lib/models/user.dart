@@ -12,20 +12,21 @@ class User {
   final String location; // User's location
   final DateTime? birthDate; // Optional birthdate of the user
   bool isActive; // User's active status
+  final String searchKey; // Used to facilitate user search
 
   // Constructor for initializing a User object
-  User({
-    required this.username,
-    required this.uid,
-    required this.bio,
-    required this.email,
-    required this.followers,
-    required this.following,
-    required this.profilePictureUrl,
-    required this.location,
-    required this.birthDate,
-    required this.isActive,
-  });
+  User(
+      {required this.username,
+      required this.uid,
+      required this.bio,
+      required this.email,
+      required this.followers,
+      required this.following,
+      required this.profilePictureUrl,
+      required this.location,
+      required this.birthDate,
+      required this.isActive,
+      required this.searchKey});
 
   // Convert User object to a JSON format for storage
   Map<String, dynamic> toJson() => {
@@ -40,6 +41,7 @@ class User {
         "birthDate": birthDate
             ?.toIso8601String(), // Convert birthDate to string if it's not null
         "isActive": isActive,
+        "searchKey": searchKey,
       };
 
   // Create a User object from a Firestore snapshot
@@ -59,6 +61,7 @@ class User {
           ? DateTime.parse(snapshot['birthDate'])
           : null, // Parse birthDate if it's not null
       isActive: snapshot['isActive'],
+      searchKey: snapshot['searchKey'],
     );
   }
 }
