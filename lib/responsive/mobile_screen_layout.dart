@@ -1,6 +1,8 @@
+import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 
@@ -75,6 +77,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    // Access the current user from UserProvider
+    final currentUser = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
       extendBody:
@@ -250,7 +254,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         const ThreadScreen(), // Home thread screen
         const Center(child: Text('Map')), // Map screen
         const Center(child: Text('Friends')), // Friends screen
-        const ProfileScreen() // Profile screen
+        ProfileScreen(userId: currentUser.uid), // Profile screen
       ][currentPageIndex], // Display content based on selected page
     );
   }
