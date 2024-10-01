@@ -14,10 +14,19 @@ class AuthMethods {
   // Fetch the current user's details from Firestore
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
-
     // Retrieve user document from 'users' collection
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
+
+    // Return User model created from Firestore snapshot
+    return model.User.fromSnap(snap);
+  }
+
+  // Fetch any user's details from Firestore by userId
+  Future<model.User> getUserDetailsById(String uid) async {
+    // Retrieve user document from 'users' collection
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(uid).get();
 
     // Return User model created from Firestore snapshot
     return model.User.fromSnap(snap);
@@ -77,8 +86,7 @@ class AuthMethods {
           uid: userCredential.user!.uid,
           bio: bio ?? CustomString.emptyString,
           email: email,
-          followers: [],
-          following: [],
+          friends: [],
           profilePictureUrl: profilePictureUrl,
           location: location ?? CustomString.emptyString,
           birthDate: birthDate,
