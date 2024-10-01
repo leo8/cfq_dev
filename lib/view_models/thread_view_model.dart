@@ -1,4 +1,4 @@
-// thread_view_model.dart
+import 'dart:async';
 
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +9,7 @@ import '../models/user.dart' as model;
 class ThreadViewModel extends ChangeNotifier {
   // Search functionality
   final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
 
   List<model.User> _users = [];
   List<model.User> get users => _users;
@@ -22,13 +23,18 @@ class ThreadViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _debounce?.cancel();
+
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    performSearch(searchController.text);
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      performSearch(searchController.text);
+    });
   }
 
   Future<void> performSearch(String query) async {
