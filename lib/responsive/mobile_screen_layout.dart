@@ -77,8 +77,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-    // Access the current user from UserProvider
-    final currentUser = Provider.of<UserProvider>(context).getUser;
 
     return Scaffold(
       extendBody:
@@ -254,7 +252,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         const ThreadScreen(), // Home thread screen
         const Center(child: Text('Map')), // Map screen
         const Center(child: Text('Friends')), // Friends screen
-        ProfileScreen(userId: currentUser.uid), // Profile screen
+        const ProfileScreen(), // Profile screen
       ][currentPageIndex], // Display content based on selected page
     );
   }

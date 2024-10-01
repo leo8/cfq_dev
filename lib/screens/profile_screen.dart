@@ -27,14 +27,14 @@ class ProfileScreen extends StatelessWidget {
             } else {
               return ProfileTemplate(
                 backgroundImageUrl:
-                    'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop',
                 body: ProfileContent(
                   user: viewModel.user!,
                   onActiveChanged: viewModel.isCurrentUser
                       ? (bool newValue) {
                           viewModel.updateIsActiveStatus(newValue);
                         }
-                      : null, // No active status switch for other users
+                      : null, // Hide the switch for other users
                   onFollowersTap: () {
                     // Handle followers tap
                   },
@@ -43,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
                   },
                   onLogoutTap: viewModel.isCurrentUser
                       ? () => viewModel.logOut()
-                      : null, // No logout button for other users
+                      : null, // Hide logout button for other users
                   onAddFriendTap: !viewModel.isCurrentUser
                       ? () {
                           // Handle add friend tap (currently does nothing)
