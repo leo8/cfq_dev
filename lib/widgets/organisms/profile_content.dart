@@ -1,3 +1,5 @@
+// profile_content.dart
+
 import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -67,7 +69,7 @@ class ProfileContent extends StatelessWidget {
               onPressed: onLogoutTap,
               child: Text('Logout'),
             ),
-          // 'Ajouter' Button for Other Users
+          // 'Ajouter' Button for Other Users (only if not friends)
           if (onAddFriendTap != null)
             ElevatedButton(
               onPressed: onAddFriendTap,

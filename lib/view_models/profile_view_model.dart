@@ -1,7 +1,10 @@
+// profile_view_model.dart
+
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
 import '../utils/logger.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -53,6 +56,49 @@ class ProfileViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       AppLogger.error(e.toString());
+    }
+  }
+
+  /// Adds the profile user as a friend
+  Future<void> addFriend({required VoidCallback onSuccess}) async {
+    if (_isCurrentUser || _isFriend) return;
+
+    try {
+      // Get references to the user documents
+      DocumentReference currentUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
+      DocumentReference viewedUserRef =
+          FirebaseFirestore.instance.collection('users').doc(_user!.uid);
+
+      // Update the friends lists atomically
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      // Add viewed user's ID to current user's friends list
+      batch.update(currentUserRef, {
+        'friends': FieldValue.arrayUnion([_user!.uid])
+      });
+
+      // Add current user's ID to viewed user's friends list
+      batch.update(viewedUserRef, {
+        'friends': FieldValue.arrayUnion([_currentUser!.uid])
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Update the local model.User objects
+      _currentUser!.friends.add(_user!.uid);
+      _user!.friends.add(_currentUser!.uid);
+
+      // Update isFriend status
+      _isFriend = true;
+
+      notifyListeners();
+      // Display a success message
+      onSuccess();
+    } catch (e) {
+      AppLogger.error('Error adding friend: $e');
+      // Optionally, handle the error (e.g., show a message to the user)
     }
   }
 

@@ -2,6 +2,7 @@
 class CustomString {
   static const adresse = "Adresse";
   static const ajouterUneDate = "Ajouter une date";
+  static const amiAjouteAvecSucces = "Ami ajouté avec succès";
   static const annuler = "Annuler";
   static const aQui = "À qui ?";
   static const aucuneImage = "Aucune image";

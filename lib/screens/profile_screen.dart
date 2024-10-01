@@ -1,3 +1,5 @@
+// profile_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/profile_template.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -60,14 +62,20 @@ class ProfileScreen extends StatelessWidget {
                   onFriendsTap: () {
                     // Handle friends tap
                   },
-                  onLogoutTap: viewModel.isCurrentUser
-                      ? () => viewModel.logOut()
-                      : null,
-                  onAddFriendTap: !viewModel.isCurrentUser
+                  onLogoutTap:
+                      viewModel.isCurrentUser ? () => viewModel.logOut() : null,
+                  onAddFriendTap: !viewModel.isCurrentUser &&
+                          !viewModel.isFriend
                       ? () {
-                          // Handle add friend tap (functionality to be implemented later)
+                          viewModel.addFriend(onSuccess: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(CustomString.amiAjouteAvecSucces),
+                              ),
+                            );
+                          });
                         }
-                      : null,
+                      : null, // Only show if not friends
                 ),
               );
             }
