@@ -1,28 +1,31 @@
-import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:cfq_dev/widgets/molecules/date_time_picker.dart';
-import 'package:cfq_dev/widgets/molecules/moods_selector.dart';
+import 'dart:typed_data'; // Import for handling image data
+import 'package:flutter/material.dart'; // Import for Flutter material components
+import 'package:cfq_dev/widgets/molecules/date_time_picker.dart'; // Import date time picker widget
+import 'package:cfq_dev/widgets/molecules/moods_selector.dart'; // Import moods selector widget
 
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
-import '../../utils/styles/string.dart';
-import '../molecules/address_fields_row.dart';
-import '../molecules/image_selector.dart';
-import '../molecules/labeled_input_field.dart';
+import '../../utils/styles/colors.dart'; // Import color styles
+import '../../utils/styles/fonts.dart'; // Import font styles
+import '../../utils/styles/string.dart'; // Import string constants
+import '../molecules/address_fields_row.dart'; // Import address fields row widget
+import '../molecules/image_selector.dart'; // Import image selector widget
+import '../molecules/labeled_input_field.dart'; // Import labeled input field widget
 
 class TurnForm extends StatelessWidget {
-  final Uint8List? image;
-  final VoidCallback onSelectImage;
-  final TextEditingController nameController;
-  final TextEditingController descriptionController;
-  final TextEditingController locationController;
-  final TextEditingController addressController;
-  final VoidCallback onSelectDateTime;
-  final VoidCallback onSelectMoods;
-  final String dateTimeDisplay;
-  final String moodsDisplay;
-  final bool isLoading;
-  final VoidCallback onSubmit;
+  final Uint8List? image; // Selected image for the turn
+  final VoidCallback onSelectImage; // Function to handle image selection
+  final TextEditingController
+      nameController; // Controller for the turn name input
+  final TextEditingController
+      descriptionController; // Controller for description input
+  final TextEditingController
+      locationController; // Controller for location input
+  final TextEditingController addressController; // Controller for address input
+  final VoidCallback onSelectDateTime; // Function to handle date selection
+  final VoidCallback onSelectMoods; // Function to handle mood selection
+  final String dateTimeDisplay; // Display text for the selected date and time
+  final String moodsDisplay; // Display text for selected moods
+  final bool isLoading; // Flag indicating loading state
+  final VoidCallback onSubmit; // Function to handle form submission
 
   const TurnForm({
     required this.image,
@@ -42,29 +45,31 @@ class TurnForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    return isLoading // Show loading indicator if true
         ? const Center(
             child: CircularProgressIndicator(
-              color: CustomColor.white,
+              color: CustomColor.white, // Loading indicator color
             ),
           )
         : SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align children to the start
               children: [
                 const SizedBox(height: 8),
                 // Image Selector
                 ImageSelector(
-                  image: image,
-                  onSelectImage: onSelectImage,
-                  placeholderText: CustomString.aucuneImage,
+                  image: image, // Pass the selected image
+                  onSelectImage: onSelectImage, // Function to select image
+                  placeholderText: CustomString.aucuneImage, // Placeholder text
                 ),
                 const SizedBox(height: 12),
                 // Turn Name Field
                 LabeledInputField(
-                  label: CustomString.nomDuTurn,
-                  controller: nameController,
-                  hintText: CustomString.nomDuTurn,
+                  label: CustomString.nomDuTurn, // Label for turn name
+                  controller: nameController, // Controller for turn name input
+                  hintText:
+                      CustomString.nomDuTurn, // Hint text for turn name input
                 ),
                 const SizedBox(height: 12),
                 // Date & Moods Selectors
@@ -72,17 +77,22 @@ class TurnForm extends StatelessWidget {
                   children: [
                     Expanded(
                       child: DateTimePicker(
-                        label: CustomString.ajouterUneDate,
-                        onSelectDateTime: onSelectDateTime,
-                        displayText: dateTimeDisplay,
+                        label: CustomString
+                            .ajouterUneDate, // Label for date picker
+                        onSelectDateTime:
+                            onSelectDateTime, // Function to select date
+                        displayText:
+                            dateTimeDisplay, // Display text for selected date
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: MoodsSelector(
-                        label: CustomString.moods,
-                        onSelectMoods: onSelectMoods,
-                        displayText: moodsDisplay,
+                        label: CustomString.moods, // Label for moods selector
+                        onSelectMoods:
+                            onSelectMoods, // Function to select moods
+                        displayText:
+                            moodsDisplay, // Display text for selected moods
                       ),
                     ),
                   ],
@@ -90,36 +100,44 @@ class TurnForm extends StatelessWidget {
                 const SizedBox(height: 12),
                 // Address Fields Row
                 AddressFieldsRow(
-                  locationController: locationController,
-                  addressController: addressController,
+                  locationController:
+                      locationController, // Controller for location input
+                  addressController:
+                      addressController, // Controller for address input
                 ),
                 const SizedBox(height: 12),
                 // Description Field
                 LabeledInputField(
-                  label: CustomString.description,
-                  controller: descriptionController,
-                  hintText: CustomString.racontePasTaVieDisNousJusteOuTuSors,
-                  isMultiline: true,
+                  label:
+                      CustomString.description, // Label for description field
+                  controller:
+                      descriptionController, // Controller for description input
+                  hintText: CustomString
+                      .racontePasTaVieDisNousJusteOuTuSors, // Hint text for description
+                  isMultiline: true, // Enable multiline input
                 ),
                 const SizedBox(height: 12),
                 // Submit Button
                 Center(
                   child: ElevatedButton(
-                    onPressed: onSubmit,
+                    onPressed: onSubmit, // Function to submit the form
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: CustomColor.purple,
+                      backgroundColor:
+                          CustomColor.purple, // Button background color
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(
+                            20), // Rounded corners for the button
                       ),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
+                          vertical: 12, horizontal: 24), // Button padding
                     ),
                     child: const Text(
-                      CustomString.publier,
+                      CustomString.publier, // Text for the button
                       style: TextStyle(
-                        color: CustomColor.white,
-                        fontWeight: CustomFont.fontWeightBold,
-                        fontSize: CustomFont.fontSize16,
+                        color: CustomColor.white, // Button text color
+                        fontWeight:
+                            CustomFont.fontWeightBold, // Button text weight
+                        fontSize: CustomFont.fontSize16, // Button text size
                       ),
                     ),
                   ),

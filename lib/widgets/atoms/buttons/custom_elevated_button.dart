@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 
 class CustomElevatedButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final Widget child;
-  final Color? backgroundColor;
-  final OutlinedBorder? shape;
+  final VoidCallback
+      onPressed; // Function to be triggered when the button is pressed
+  final Widget
+      child; // The child widget (typically a text or icon) inside the button
+  final Color? backgroundColor; // Optional background color for the button
+  final OutlinedBorder?
+      shape; // Optional shape for the button (e.g., rounded corners)
 
   const CustomElevatedButton({
-    required this.onPressed,
-    required this.child,
-    this.backgroundColor,
-    this.shape,
+    required this.onPressed, // onPressed callback is required
+    required this.child, // Child widget is required (usually a Text widget)
+    this.backgroundColor, // Optional background color
+    this.shape, // Optional shape for the button
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: onPressed, // Define the onPressed function
       style: ButtonStyle(
+        // Set the background color if provided
         backgroundColor: backgroundColor != null
-            ? WidgetStateProperty.all<Color>(backgroundColor!)
+            ? MaterialStateProperty.all<Color>(backgroundColor!)
             : null,
+        // Set the shape if provided
         shape: shape != null
-            ? WidgetStateProperty.all<OutlinedBorder>(shape!)
+            ? MaterialStateProperty.all<OutlinedBorder>(shape!)
             : null,
       ),
-      child: child,
+      child: child, // Button content (text, icon, or any widget)
     );
   }
 }

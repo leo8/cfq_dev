@@ -4,36 +4,40 @@ import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
-
 import '../utils/styles/string.dart';
 
+// Provider class for authentication-related methods
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fetching user details
+  // Fetch the current user's details from Firestore
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
 
+    // Retrieve user document from 'users' collection
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
 
+    // Return User model created from Firestore snapshot
     return model.User.fromSnap(snap);
   }
 
-  // Method to update isActive status
+  // Update the user's 'isActive' status in Firestore
   Future<void> updateIsActiveStatus(bool isActive) async {
     try {
       String uid = _auth.currentUser!.uid;
+      // Update 'isActive' field in the user's document
       await _firestore.collection('users').doc(uid).update({
         'isActive': isActive,
       });
     } catch (e) {
+      // Log any errors that occur
       AppLogger.error(e.toString());
     }
   }
 
-  //Sign up user
+  // Sign up a new user
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -41,31 +45,33 @@ class AuthMethods {
     String? location,
     String? bio,
     Uint8List? profilePicture,
-    DateTime? birthDate
+    DateTime? birthDate,
   }) async {
     String res = CustomString.someErrorOccurred;
+
     try {
+      // Validate that required fields are not empty
       if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
-        // Register the user
+        // Register user with email and password
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        // Store profilePicture and get profilePictureUrl
+        // Upload profile picture to storage and get the URL
         String profilePictureUrl = CustomString.emptyString;
         if (profilePicture != null) {
           profilePictureUrl = await StorageMethods()
               .uploadImageToStorage('profilePicture', profilePicture, false);
 
-          // Log the URL to ensure it's not empty
+          // Log the profile picture URL for debugging
           AppLogger.debug('Profile picture URL: $profilePictureUrl');
         }
 
-        // If profilePictureUrl is still empty, something went wrong
+        // Check if profile picture upload failed
         if (profilePictureUrl.isEmpty) {
           return CustomString.failedToUploadProfilePicture;
         }
 
-        // Create user data with the provided model
+        // Create User model object with the provided data
         model.User user = model.User(
           username: username,
           uid: userCredential.user!.uid,
@@ -73,29 +79,31 @@ class AuthMethods {
           email: email,
           followers: [],
           following: [],
-          profilePictureUrl: profilePictureUrl, // Correct assignment
+          profilePictureUrl: profilePictureUrl,
           location: location ?? CustomString.emptyString,
           birthDate: birthDate,
-          isActive: false,
+          isActive: false, // New users start as inactive
         );
 
-        // Add user to Firestore Database
+        // Save the user data to Firestore under 'users' collection
         await _firestore.collection('users').doc(userCredential.user!.uid).set(
               user.toJson(),
             );
 
-        res = CustomString.success;
+        res = CustomString.success; // Indicate successful sign-up
       } else {
-        res = CustomString.pleaseFillInAllRequiredFields;
+        res = CustomString
+            .pleaseFillInAllRequiredFields; // Handle missing required fields
       }
     } catch (err) {
+      // Handle any errors and return them as a string
       res = err.toString();
     }
 
     return res;
   }
 
-  // Log in method
+  // Log in an existing user with email and password
   Future<String> logInUser({
     required String email,
     required String password,
@@ -103,27 +111,31 @@ class AuthMethods {
     String res = CustomString.someErrorOccurred;
 
     try {
+      // Validate that email and password are provided
       if (email.isNotEmpty && password.isNotEmpty) {
         await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
-        res = CustomString.success;
+            email: email, password: password); // Sign in the user
+        res = CustomString.success; // Indicate successful login
       } else {
-        res = CustomString.pleaseFillInAllRequiredFields;
+        res =
+            CustomString.pleaseFillInAllRequiredFields; // Handle missing fields
       }
     } catch (err) {
+      // Return any errors as a string
       res = err.toString();
     }
     return res;
   }
 
-  // Log out method
+  // Log out the current user
   Future<String> logOutUser() async {
     String res = CustomString.someErrorOccurred;
 
     try {
-      await _auth.signOut(); // Firebase's sign-out method
-      res = CustomString.success;
+      await _auth.signOut(); // Firebase's method for signing out
+      res = CustomString.success; // Indicate successful logout
     } catch (err) {
+      // Handle any errors and return them as a string
       res = err.toString();
     }
 

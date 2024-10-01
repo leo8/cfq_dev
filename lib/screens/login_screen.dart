@@ -12,6 +12,7 @@ import '../utils/styles/string.dart';
 import '../widgets/molecules/signup_option.dart';
 import '../widgets/organisms/login_form.dart';
 
+/// Login screen where users can log in or navigate to the sign-up screen.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -20,17 +21,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
+  final TextEditingController _emailController =
+      TextEditingController(); // Controller for the email field
+  final TextEditingController _passwordController =
+      TextEditingController(); // Controller for the password field
+  bool _isLoading = false; // Tracks if the login process is in progress
 
   @override
   void dispose() {
-    super.dispose();
+    // Dispose of the controllers when the widget is removed from the widget tree
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
+  /// Function to handle the login process.
   void logInUser() async {
     setState(() {
       _isLoading = true;
@@ -43,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
     if (res == CustomString.success) {
+      // Navigate to the appropriate layout after successful login
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const RepsonsiveLayout(
@@ -52,10 +58,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
+      // Show error message if login fails
       showSnackBar(res, context);
     }
   }
 
+  /// Navigate to the sign-up screen.
   void navigateToSignUp() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -71,14 +79,14 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20),
-          // Logo
+          // App logo
           Image.asset(
             'assets/logo_white.png',
             height: 250,
             color: CustomColor.deepPurpleAccent,
           ),
           const SizedBox(height: 64),
-          // Login Form
+          // Login form that includes email and password fields
           LoginForm(
             emailController: _emailController,
             passwordController: _passwordController,
@@ -92,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(color: CustomColor.white70),
           ),
           const SizedBox(height: 16),
-          // Sign-Up Option
+          // Sign-up option below the form
           SignUpOption(
             questionText: CustomString.tAsPasEncoreDeCompte,
             actionText: CustomString.jemInscris,

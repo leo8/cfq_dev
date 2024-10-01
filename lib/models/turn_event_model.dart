@@ -1,15 +1,16 @@
 import 'package:cfq_dev/models/event_data_model.dart';
 
+// Turn model representing a specific event type, extending EventDataModel
 class Turn extends EventDataModel {
+  final DateTime eventDateTime; // Date and time when the event occurs
+  final String address; // Precise address of the event
+  final List<String> invitees; // List of invited people
+  final List<String> attending; // List of people confirmed to attend
+  final List<String> notSureAttending; // List of people unsure about attending
+  final List<String> notAttending; // List of people who declined the invitation
+  final List<String> notAnswered; // List of people who haven't responded
 
-  final DateTime eventDateTime;         // Date and time when the event occurs
-  final String address;                 // Precise address of the event
-  final List<String> invitees;          // List of invited people
-  final List<String> attending;         // List of people attending
-  final List<String> notSureAttending;  // List of people who might attend
-  final List<String> notAttending;      // List of people who declined
-  final List<String> notAnswered;       // List of people who haven't responded
-
+  // Constructor initializing Turn-specific fields and inheriting from EventDataModel
   Turn({
     required this.eventDateTime,
     required this.address,
@@ -32,7 +33,7 @@ class Turn extends EventDataModel {
     required super.comments,
   });
 
-  // Convert Turn object to JSON format
+  // Convert Turn object to JSON format for storage
   Map<String, dynamic> toJson() {
     return {
       'turnName': name,
@@ -53,11 +54,11 @@ class Turn extends EventDataModel {
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
       'notAnswered': notAnswered,
-      'comments': comments, // Included comments in toJson
+      'comments': comments, // Include comments in JSON
     };
   }
 
-  // Convert JSON to Turn object
+  // Convert JSON data to Turn object
   static Turn fromJson(Map<String, dynamic> json) {
     return Turn(
       name: json['turnName'],
@@ -78,7 +79,8 @@ class Turn extends EventDataModel {
       notSureAttending: List<String>.from(json['notSureAttending']),
       notAttending: List<String>.from(json['notAttending']),
       notAnswered: List<String>.from(json['notAnswered']),
-      comments: List<String>.from(json['comments'] ?? []), // Included comments in fromJson
+      comments: List<String>.from(
+          json['comments'] ?? []), // Safely handle missing comments
     );
   }
 }

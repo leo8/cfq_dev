@@ -3,18 +3,19 @@ import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 
 class DescriptionSection extends StatelessWidget {
-  final String description;
+  final String description; // The description text to display
 
   const DescriptionSection({
-    required this.description,
+    required this.description, // Accepts a description to be displayed
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomText(
-      text: description,
-      color: CustomColor.white70,
+      text: description, // Displays the passed description
+      color:
+          CustomColor.white70, // Text color is set to a semi-transparent white
     );
   }
 }

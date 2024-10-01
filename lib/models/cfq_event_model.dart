@@ -1,8 +1,10 @@
 import 'event_data_model.dart';
 
+// Model for representing a CFQ (event) that extends EventDataModel
 class Cfq extends EventDataModel {
-  final List<String> followers;         // List of followers of the CFQ
+  final List<String> followers; // List of CFQ followers
 
+  // Constructor to initialize CFQ properties
   Cfq({
     required this.followers,
     required super.name,
@@ -19,7 +21,7 @@ class Cfq extends EventDataModel {
     required super.comments,
   });
 
-  // Convert Cfq object to JSON format
+  // Convert CFQ object into a JSON map
   Map<String, dynamic> toJson() {
     return {
       'cfqName': name,
@@ -34,11 +36,11 @@ class Cfq extends EventDataModel {
       'where': where,
       'organizers': organizers,
       'followers': followers,
-      'comments': comments, // Included comments in toJson
+      'comments': comments,
     };
   }
 
-  // Convert JSON to Cfq object
+  // Create a CFQ object from a JSON map
   static Cfq fromJson(Map<String, dynamic> json) {
     return Cfq(
       name: json['cfqName'],
@@ -53,7 +55,8 @@ class Cfq extends EventDataModel {
       where: json['where'],
       organizers: List<String>.from(json['organizers']),
       followers: List<String>.from(json['followers']),
-      comments: List<String>.from(json['comments'] ?? []), // Included comments in fromJson
+      comments: List<String>.from(
+          json['comments'] ?? []), // Handle possible null comments
     );
   }
 }

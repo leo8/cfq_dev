@@ -1,7 +1,6 @@
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
-
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 
@@ -13,90 +12,102 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  bool isClicked = false;
-  bool isOpen = false;
-  bool _showButtons = false;
-  int currentPageIndex = 0;
-  double _yPositionPlusButton = 0.95;
-  double _width = 45.0;
-  final double _height = 45.0;
-  final double _yPositionPlusButtonClose = 0.95;
-  final double _yPositionPlusButtonOpen = 0.80;
-  final Duration durationAnimation200 = const Duration(milliseconds: 200);
-  final Duration durationAnimation500 = const Duration(milliseconds: 500);
-  final double paddingTopIcon = 10;
-  final double paddinghorizontal = 40;
-  final double sizeIcon = 30;
+  // State variables for managing the state of the plus button and navigation
+  bool isClicked = false; // Prevent multiple rapid clicks
+  bool isOpen = false; // Track if the floating button is expanded
+  bool _showButtons =
+      false; // Show additional buttons (edit, camera) when expanded
+  int currentPageIndex = 0; // Track the current page selected
+  double _yPositionPlusButton =
+      0.95; // Y position of the plus button (floating action button)
+  double _width = 45.0; // Initial width of the plus button
+  final double _height = 45.0; // Height of the plus button
+  final double _yPositionPlusButtonClose = 0.95; // Y position when closed
+  final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
+  final Duration durationAnimation200 =
+      const Duration(milliseconds: 200); // Short animation duration
+  final Duration durationAnimation500 =
+      const Duration(milliseconds: 500); // Longer animation duration
+  final double paddingTopIcon =
+      10; // Top padding for icons in the bottom navigation bar
+  final double paddinghorizontal =
+      40; // Horizontal padding for icons in the navigation bar
+  final double sizeIcon = 30; // Size of icons
 
+  // Handle the tap on the plus button
   void _handleTap() {
     if (isClicked) {
-      return;
+      return; // Prevent further clicks while handling the current one
     }
-    isClicked = true;
+    isClicked = true; // Block further taps
 
     if (isOpen) {
-      // Fermer horizontalement puis descendre
+      // If the button is open, close it
       setState(() {
-        _width = 45; // Fermer horizontalement
+        _width = 45; // Shrink the button horizontally
       });
       Future.delayed(durationAnimation200, () {
         setState(() {
-          _yPositionPlusButton = _yPositionPlusButtonClose; // Descendre
-          isClicked = false;
+          _yPositionPlusButton = _yPositionPlusButtonClose; // Move button down
+          isClicked = false; // Allow new clicks
         });
       });
-      _showButtons = false;
+      _showButtons = false; // Hide additional buttons
     } else {
-      // Monter d'abord, puis ouvrir horizontalement
+      // If the button is closed, open it
       setState(() {
-        _yPositionPlusButton = _yPositionPlusButtonOpen; // Monter
+        _yPositionPlusButton = _yPositionPlusButtonOpen; // Move button up
       });
       Future.delayed(durationAnimation200, () {
         setState(() {
-          _width = 200; // Ouvrir horizontalement
+          _width = 200; // Expand the button horizontally
         });
       });
       Future.delayed(durationAnimation500, () {
         setState(() {
-          _showButtons = true; // Afficher les boutons
-          isClicked = false;
+          _showButtons = true; // Show additional buttons
+          isClicked = false; // Allow new clicks
         });
       });
     }
-    isOpen = !isOpen;
+    isOpen = !isOpen; // Toggle open state
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
     return Scaffold(
-      extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      extendBody:
+          true, // Extend the body to allow floating action button over content
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .centerDocked, // Position the floating button at the bottom center
       floatingActionButton: Stack(
         children: [
-          // Positioned element for the button with transformation-like behavior
+          // Floating action button (plus button) with animation for position and size
           AnimatedAlign(
-            alignment: Alignment(0, _yPositionPlusButton),
+            alignment: Alignment(
+                0, _yPositionPlusButton), // Change position dynamically
             duration: durationAnimation500,
-            curve: Curves.easeInOut,
+            curve: Curves.easeInOut, // Smooth animation curve
             child: GestureDetector(
-              onTap: _handleTap,
+              onTap: _handleTap, // Handle tap to toggle open/close state
               child: AnimatedContainer(
-                width: _width,
-                height: _height,
+                width: _width, // Width changes based on open/close state
+                height: _height, // Fixed height
                 decoration: BoxDecoration(
-                  color: CustomColor.black,
-                  borderRadius: BorderRadius.circular(isOpen ? 10.0 : 0.0),
+                  color: CustomColor.black, // Button background color
+                  borderRadius: BorderRadius.circular(
+                      isOpen ? 10.0 : 0.0), // Rounded corners when open
                 ),
-                // Define how long the animation should take.
-                duration: durationAnimation500,
-                // Provide an optional curve to make the animation feel smoother.
-                curve: Curves.easeInOut,
+                duration:
+                    durationAnimation500, // Duration for container width change
+                curve: Curves.easeInOut, // Smooth transition curve
                 child: Transform.rotate(
-                  alignment: Alignment.center,
+                  alignment: Alignment.center, // Rotate the plus icon when open
                   angle: isOpen ? 0.75 : 0,
                   child: Icon(
-                    Icons.add,
+                    Icons.add, // Plus icon
                     color: CustomColor.white,
                     size: sizeIcon,
                   ),
@@ -104,36 +115,41 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               ),
             ),
           ),
+          // Buttons (edit, camera) that appear when the plus button is open
           Align(
-            alignment: Alignment(0, _yPositionPlusButton),
+            alignment: Alignment(0,
+                _yPositionPlusButton), // Align the buttons to the floating action button
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (isOpen)
+                if (isOpen) // Show only when the button is open
                   AnimatedOpacity(
                     duration: durationAnimation200,
                     curve: Curves.fastOutSlowIn,
-                    opacity: _showButtons ? 1 : 0,
+                    opacity: _showButtons ? 1 : 0, // Fade in/out animation
                     child: IconButton(
                       icon: const Icon(
                         Icons.edit,
                         color: CustomColor.white,
                       ),
-                      splashColor: CustomColor.transparent,
+                      splashColor:
+                          CustomColor.transparent, // Disable splash effect
                       onPressed: () {
                         print("click edit");
                       },
                     ),
                   ),
-                const SizedBox(width: 90),
+                const SizedBox(
+                    width: 90), // Space between edit and camera buttons
                 if (isOpen)
                   AnimatedOpacity(
                     duration: durationAnimation200,
                     curve: Curves.fastOutSlowIn,
-                    opacity: _showButtons ? 1 : 0,
+                    opacity: _showButtons ? 1 : 0, // Fade in/out animation
                     child: IconButton(
                       splashColor: CustomColor.transparent,
-                      focusColor: CustomColor.transparent,
+                      focusColor:
+                          CustomColor.transparent, // Disable focus effect
                       icon: const Icon(
                         Icons.camera_alt,
                         color: CustomColor.white,
@@ -148,17 +164,19 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           ),
         ],
       ),
+      // Bottom navigation bar
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
-            currentPageIndex = index;
+            currentPageIndex =
+                index; // Update page index on navigation selection
           });
         },
-        indicatorColor: CustomColor.transparent,
+        indicatorColor: CustomColor.transparent, // Disable indicator color
         overlayColor: WidgetStateProperty.resolveWith<Color>(
-          (_) => CustomColor.transparent,
+          (_) => CustomColor.transparent, // Disable overlay effect
         ),
-        selectedIndex: currentPageIndex,
+        selectedIndex: currentPageIndex, // Track current page
         destinations: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
@@ -173,7 +191,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: '', // No label
             ),
           ),
           Padding(
@@ -190,7 +208,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: '', // No label
             ),
           ),
           Padding(
@@ -207,7 +225,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: '', // No label
             ),
           ),
           Padding(
@@ -223,18 +241,18 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: '', // No label
             ),
           ),
         ],
       ),
+      // Main body content based on current page index
       body: <Widget>[
-        /// Home page
-        const ThreadScreen(),
-        const Center(child: Text('Map')),
-        const Center(child: Text('Friends')),
-        const ProfileScreen()
-      ][currentPageIndex],
+        const ThreadScreen(), // Home thread screen
+        const Center(child: Text('Map')), // Map screen
+        const Center(child: Text('Friends')), // Friends screen
+        const ProfileScreen() // Profile screen
+      ][currentPageIndex], // Display content based on selected page
     );
   }
 }
