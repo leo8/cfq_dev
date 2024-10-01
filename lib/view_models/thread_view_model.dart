@@ -1,9 +1,66 @@
+// thread_view_model.dart
+
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import '../models/user.dart' as model;
 
-class ThreadViewModel {
-  ThreadViewModel();
+class ThreadViewModel extends ChangeNotifier {
+  // Search functionality
+  final TextEditingController searchController = TextEditingController();
+
+  List<model.User> _users = [];
+  List<model.User> get users => _users;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  ThreadViewModel() {
+    searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    performSearch(searchController.text);
+  }
+
+  Future<void> performSearch(String query) async {
+    if (query.isEmpty) {
+      _users = [];
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      // Query Firestore for users matching the search query
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('searchKey', isGreaterThanOrEqualTo: query.toLowerCase())
+          .where('searchKey',
+              isLessThanOrEqualTo: '${query.toLowerCase()}\uf8ff')
+          .get();
+
+      List<model.User> users =
+          snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+
+      _users = users;
+    } catch (e) {
+      AppLogger.error('Error while searching users: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
 
   /// Parses different types of date formats (Timestamp, String, DateTime).
   /// Falls back to the current date if the format is unrecognized.
