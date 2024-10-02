@@ -11,36 +11,41 @@ import 'package:cfq_dev/providers/firestore_methods.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
-import '../widgets/organisms/cfq_form.dart';
+import '../widgets/organisms/turn_form.dart';
 
-class AddCfqScreen extends StatefulWidget {
-  const AddCfqScreen({super.key});
+/// Screen for creating a new TURN event.
+class CreateTurnScreen extends StatefulWidget {
+  const CreateTurnScreen({super.key});
 
   @override
-  State<AddCfqScreen> createState() => _AddCfqScreenState();
+  State<CreateTurnScreen> createState() => _CreateTurnScreenState();
 }
 
-class _AddCfqScreenState extends State<AddCfqScreen> {
-  // Controllers to handle input text
-  Uint8List? _file;
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-
-  DateTime? _selectedDateTime;
-  List<String>? _moods;
-  bool _isLoading = false;
+class _CreateTurnScreenState extends State<CreateTurnScreen> {
+  Uint8List? _file; // Holds the selected image file
+  final TextEditingController _nameController =
+      TextEditingController(); // TURN name controller
+  final TextEditingController _descriptionController =
+      TextEditingController(); // TURN description controller
+  final TextEditingController _locationController =
+      TextEditingController(); // TURN location controller
+  final TextEditingController _addressController =
+      TextEditingController(); // TURN address controller
+  DateTime? _selectedDateTime; // Stores the selected event date and time
+  List<String>? _moods; // Stores selected moods
+  bool _isLoading = false; // Tracks if the form is submitting
 
   @override
   void dispose() {
-    // Dispose of controllers when the widget is destroyed to avoid memory leaks
-    super.dispose();
+    // Dispose of controllers when the widget is removed from the widget tree
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
+    _addressController.dispose();
+    super.dispose();
   }
 
-  // Function to select an image from the gallery
+  /// Function to allow the user to select an image from the gallery.
   Future<void> _selectImage(BuildContext context) async {
     Uint8List? file = await pickImage(ImageSource.gallery);
     setState(() {
@@ -48,7 +53,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     });
   }
 
-  // Function to select a date and time for the event
+  /// Function to allow the user to pick a date and time for the event.
   Future<void> _selectDateTime(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -77,7 +82,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     }
   }
 
-  // Function to open a dialog for selecting moods
+  /// Function to allow the user to select moods for the event.
   void _selectMoods(BuildContext context) {
     showDialog<List<String>>(
       context: context,
@@ -86,7 +91,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text(CustomString.selectionnerLesMoodsDeVotreCfq),
+              title: const Text(CustomString.selectionnerLesMoodsDeVotreTurn),
               content: SingleChildScrollView(
                 child: Column(
                   children: CustomMood.moods.map((mood) {
@@ -127,8 +132,9 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
     });
   }
 
-  // Function to upload the CFQ data to Firestore
-  Future<void> _postCfq() async {
+  /// Function to handle TURN posting by uploading the data to Firestore.
+  Future<void> _postTurn() async {
+    // Ensure all required fields are filled
     if (_file == null) {
       showSnackBar(CustomString.veuillezSelectionnerUneImage, context);
       return;
@@ -143,26 +149,25 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       _isLoading = true;
     });
 
-    // Upload CFQ to Firestore using FirestoreMethods
-    String res = await FirestoreMethods().uploadCfq(
+    String res = await FirestoreMethods().uploadTurn(
       _nameController.text,
       _descriptionController.text,
       _moods ?? [],
       Provider.of<UserProvider>(context, listen: false).getUser.uid,
-      [], // Empty organizers for now
+      [], // Organizers remain empty for now
       Provider.of<UserProvider>(context, listen: false).getUser.username,
       _file!,
       Provider.of<UserProvider>(context, listen: false)
           .getUser
           .profilePictureUrl,
       _locationController.text,
+      _addressController.text,
     );
 
     setState(() {
       _isLoading = false;
     });
 
-    // Show success or error message
     if (res == CustomString.success) {
       showSnackBar(CustomString.publicationReussie, context);
       Navigator.of(context).pop();
@@ -176,7 +181,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
 
     return StandardFormTemplate(
       appBarTitle: const Text(
-        CustomString.caFoutQuoi,
+        CustomString.caTurn,
         style: TextStyle(
           fontWeight: CustomFont.fontWeightBold,
           fontSize: CustomFont.fontSize20,
@@ -184,7 +189,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       ),
       appBarActions: [
         TextButton(
-          onPressed: _postCfq,
+          onPressed: _postTurn,
           child: const Text(
             CustomString.publier,
             style: TextStyle(
@@ -197,13 +202,13 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
       onBackPressed: () {
         Navigator.of(context).pop();
       },
-      // CFQForm widget handles the form input fields for creating CFQ
-      body: CFQForm(
+      body: TurnForm(
         image: _file,
         onSelectImage: () => _selectImage(context),
         nameController: _nameController,
         descriptionController: _descriptionController,
         locationController: _locationController,
+        addressController: _addressController,
         onSelectDateTime: () => _selectDateTime(context),
         onSelectMoods: () => _selectMoods(context),
         dateTimeDisplay: _selectedDateTime != null
@@ -213,7 +218,7 @@ class _AddCfqScreenState extends State<AddCfqScreen> {
             ? _moods!.join(', ')
             : CustomString.selectionner,
         isLoading: _isLoading,
-        onSubmit: _postCfq,
+        onSubmit: _postTurn,
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/screens/add_turn_screen.dart';
+import 'package:cfq_dev/screens/create_turn_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 
 class TurnButton extends StatelessWidget {
@@ -11,7 +11,7 @@ class TurnButton extends StatelessWidget {
       onTap: () {
         AppLogger.debug("Navigating to AddTurnScreen");
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const AddTurnScreen()),
+          MaterialPageRoute(builder: (context) => const CreateTurnScreen()),
         );
       },
       child: Image.asset(
