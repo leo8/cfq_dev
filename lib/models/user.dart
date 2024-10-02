@@ -6,7 +6,8 @@ class User {
   final String uid; // Unique user ID
   final String bio; // User bio or description
   final String email; // User email address
-  final List friends; // List of friends
+  final List<String> friends; // List of friends 'uid
+  final List<String> teams; // List of teams 'uid
   final String profilePictureUrl; // URL for the user's profile picture
   final String location; // User's location
   final DateTime? birthDate; // Optional birthdate of the user
@@ -20,6 +21,7 @@ class User {
       required this.bio,
       required this.email,
       required this.friends,
+      required this.teams,
       required this.profilePictureUrl,
       required this.location,
       required this.birthDate,
@@ -33,6 +35,7 @@ class User {
         "bio": bio,
         "email": email,
         "friends": friends,
+        "teams": teams,
         "profilePictureUrl": profilePictureUrl,
         "location": location,
         "birthDate": birthDate
@@ -51,6 +54,7 @@ class User {
       bio: snapshot['bio'],
       email: snapshot['email'],
       friends: snapshot['friends'],
+      teams: snapshot['teams'],
       profilePictureUrl: snapshot['profilePictureUrl'],
       location: snapshot['location'],
       birthDate: snapshot['birthDate'] != null
