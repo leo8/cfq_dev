@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/screens/add_cfq_screen.dart';
+import 'package:cfq_dev/screens/create_cfq_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 
 class CfqButton extends StatelessWidget {
