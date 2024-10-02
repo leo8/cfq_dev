@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
-import '../utils/styles/string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateTeamViewModel extends ChangeNotifier {
