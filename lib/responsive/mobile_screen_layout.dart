@@ -1,11 +1,13 @@
+import 'package:cfq_dev/widgets/atoms/buttons/cfq_button.dart';
+import 'package:cfq_dev/widgets/atoms/buttons/turn_button.dart';
+import 'package:flutter/material.dart';
 import 'package:cfq_dev/screens/map_screen.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
-import 'package:cfq_dev/utils/logger.dart';
-import 'package:flutter/material.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
+
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -18,23 +20,17 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   // State variables for managing the state of the plus button and navigation
   bool isClicked = false; // Prevent multiple rapid clicks
   bool isOpen = false; // Track if the floating button is expanded
-  bool _showButtons =
-      false; // Show additional buttons (edit, camera) when expanded
+  bool _showButtons = false; // Show additional buttons when expanded
   int currentPageIndex = 0; // Track the current page selected
-  double _yPositionPlusButton =
-      0.95; // Y position of the plus button (floating action button)
+  double _yPositionPlusButton = 0.95; // Y position of the plus button
   double _width = 45.0; // Initial width of the plus button
-  final double _height = 45.0; // Height of the plus button
+  final double _height = 35.0; // Reduced height of the plus button
   final double _yPositionPlusButtonClose = 0.95; // Y position when closed
-  final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
-  final Duration durationAnimation200 =
-      const Duration(milliseconds: 200); // Short animation duration
-  final Duration durationAnimation500 =
-      const Duration(milliseconds: 500); // Longer animation duration
-  final double paddingTopIcon =
-      10; // Top padding for icons in the bottom navigation bar
-  final double paddinghorizontal =
-      40; // Horizontal padding for icons in the navigation bar
+  final double _yPositionPlusButtonOpen = 0.85; // Adjusted Y position when opened
+  final Duration durationAnimation200 = const Duration(milliseconds: 200); // Short animation duration
+  final Duration durationAnimation500 = const Duration(milliseconds: 500); // Longer animation duration
+  final double paddingTopIcon = 10; // Top padding for icons in the bottom navigation bar
+  final double paddinghorizontal = 40; // Horizontal padding for icons in the navigation bar
   final double sizeIcon = 30; // Size of icons
 
   // Handle the tap on the plus button
@@ -78,38 +74,32 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      extendBody:
-          true, // Extend the body to allow floating action button over content
-      floatingActionButtonLocation: FloatingActionButtonLocation
-          .centerDocked, // Position the floating button at the bottom center
+      extendBody: true, // Allow floating action button over content
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Stack(
         children: [
-          // Floating action button (plus button) with animation for position and size
+          // Floating action button with animation
           AnimatedAlign(
-            alignment: Alignment(
-                0, _yPositionPlusButton), // Change position dynamically
+            alignment: Alignment(0, _yPositionPlusButton),
             duration: durationAnimation500,
-            curve: Curves.easeInOut, // Smooth animation curve
+            curve: Curves.easeInOut,
             child: GestureDetector(
-              onTap: _handleTap, // Handle tap to toggle open/close state
+              onTap: _handleTap,
               child: AnimatedContainer(
-                width: _width, // Width changes based on open/close state
-                height: _height, // Fixed height
+                width: _width,
+                height: _height,
                 decoration: BoxDecoration(
-                  color: CustomColor.black, // Button background color
-                  borderRadius: BorderRadius.circular(
-                      isOpen ? 10.0 : 0.0), // Rounded corners when open
+                  color: CustomColor.black,
+                  borderRadius: BorderRadius.circular(isOpen ? 10.0 : 0.0),
                 ),
-                duration:
-                    durationAnimation500, // Duration for container width change
-                curve: Curves.easeInOut, // Smooth transition curve
+                duration: durationAnimation500,
+                curve: Curves.easeInOut,
                 child: Transform.rotate(
-                  alignment: Alignment.center, // Rotate the plus icon when open
+                  alignment: Alignment.center,
                   angle: isOpen ? 0.75 : 0,
                   child: Icon(
-                    Icons.add, // Plus icon
+                    Icons.add,
                     color: CustomColor.white,
                     size: sizeIcon,
                   ),
@@ -117,68 +107,53 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               ),
             ),
           ),
-          // Buttons (edit, camera) that appear when the plus button is open
-          Align(
-            alignment: Alignment(0,
-                _yPositionPlusButton), // Align the buttons to the floating action button
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isOpen) // Show only when the button is open
-                  AnimatedOpacity(
-                    duration: durationAnimation200,
-                    curve: Curves.fastOutSlowIn,
-                    opacity: _showButtons ? 1 : 0, // Fade in/out animation
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.edit,
-                        color: CustomColor.white,
-                      ),
-                      splashColor:
-                          CustomColor.transparent, // Disable splash effect
-                      onPressed: () {
-                        AppLogger.debug("click edit");
-                      },
-                    ),
+          // Custom buttons that appear when the plus button is open
+          if (isOpen)
+            Align(
+              alignment: Alignment(0, _yPositionPlusButton),
+              child: AnimatedOpacity(
+                duration: durationAnimation200,
+                curve: Curves.fastOutSlowIn,
+                opacity: _showButtons ? 1 : 0,
+                child: Container(
+                  width: _width,
+                  height: _height,
+                  decoration: BoxDecoration(
+                    color: CustomColor.black,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                const SizedBox(
-                    width: 90), // Space between edit and camera buttons
-                if (isOpen)
-                  AnimatedOpacity(
-                    duration: durationAnimation200,
-                    curve: Curves.fastOutSlowIn,
-                    opacity: _showButtons ? 1 : 0, // Fade in/out animation
-                    child: IconButton(
-                      splashColor: CustomColor.transparent,
-                      focusColor:
-                          CustomColor.transparent, // Disable focus effect
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: CustomColor.white,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Left Button (CFQ Button)
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: CfqButton(),
                       ),
-                      onPressed: () {
-                        AppLogger.debug("click photo");
-                      },
-                    ),
+                      // Right Button (Turn Button)
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0),
+                        child: TurnButton(),
+                      ),
+                    ],
                   ),
-              ],
+                ),
+              ),
             ),
-          ),
         ],
       ),
       // Bottom navigation bar
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
-            currentPageIndex =
-                index; // Update page index on navigation selection
+            currentPageIndex = index;
           });
         },
-        indicatorColor: CustomColor.transparent, // Disable indicator color
-        overlayColor: WidgetStateProperty.resolveWith<Color>(
-          (_) => CustomColor.transparent, // Disable overlay effect
+        indicatorColor: CustomColor.transparent,
+        overlayColor: MaterialStateProperty.resolveWith<Color>(
+          (_) => CustomColor.transparent,
         ),
-        selectedIndex: currentPageIndex, // Track current page
+        selectedIndex: currentPageIndex,
         destinations: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
@@ -193,12 +168,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '', // No label
+              label: '',
             ),
           ),
           Padding(
-            padding:
-                EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
+            padding: EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.locationOnOutlined,
@@ -210,12 +184,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '', // No label
+              label: '',
             ),
           ),
           Padding(
-            padding:
-                EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
+            padding: EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.group,
@@ -227,7 +200,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '', // No label
+              label: '',
             ),
           ),
           Padding(
@@ -243,18 +216,18 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '', // No label
+              label: '',
             ),
           ),
         ],
       ),
       // Main body content based on current page index
       body: <Widget>[
-        const ThreadScreen(), // Home thread screen
-        const MapScreen(), // Map screen
-        const TeamsScreen(), // Friends screen
-        const ProfileScreen(), // Profile screen
-      ][currentPageIndex], // Display content based on selected page
+        const ThreadScreen(),
+        const MapScreen(),
+        const TeamsScreen(),
+        const ProfileScreen(),
+      ][currentPageIndex],
     );
   }
 }
