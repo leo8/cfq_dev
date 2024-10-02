@@ -1,3 +1,4 @@
+import 'package:cfq_dev/background.dart';
 import 'package:cfq_dev/providers/user_provider.dart'; // User provider for state management
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart'; // Mobile layout
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart'; // Responsive layout
@@ -48,34 +49,36 @@ class MyApp extends StatelessWidget {
         title: 'cfq_dev', // App title
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor:
-              CustomColor.mobileBackgroundColor, // Set the background color
+              CustomColor.transparent, // Set the background color
         ),
-        home: StreamBuilder(
-          stream: FirebaseAuth.instance
-              .authStateChanges(), // Listen for authentication state changes
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              if (snapshot.hasData) {
-                // User is logged in
-                return const RepsonsiveLayout(
-                  mobileScreenLayout: MobileScreenLayout(), // Mobile layout
-                  webScreenLayout: WebScreenLayout(), // Web layout
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                    child: Text('${snapshot.error}')); // Show error message
+        home: Background(
+          child: StreamBuilder(
+            stream: FirebaseAuth.instance
+                .authStateChanges(), // Listen for authentication state changes
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.hasData) {
+                  // User is logged in
+                  return const RepsonsiveLayout(
+                    mobileScreenLayout: MobileScreenLayout(), // Mobile layout
+                    webScreenLayout: WebScreenLayout(), // Web layout
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                      child: Text('${snapshot.error}')); // Show error message
+                }
               }
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Waiting for authentication state
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: CustomColor.white, // Loading indicator color
-                ),
-              );
-            }
-            return LoginScreen(); // Show login screen if not authenticated
-          },
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Waiting for authentication state
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: CustomColor.white, // Loading indicator color
+                  ),
+                );
+              }
+              return LoginScreen(); // Show login screen if not authenticated
+            },
+          ),
         ),
       ),
     );

@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Image.asset(
             'assets/logo_white.png',
             height: 250,
-            color: CustomColor.deepPurpleAccent,
+            color: CustomColor.white,
           ),
           const SizedBox(height: 64),
           // Login form that includes email and password fields
