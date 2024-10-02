@@ -222,6 +222,15 @@ class CreateTeamViewModel extends ChangeNotifier {
           .doc(teamId)
           .set(team.toJson());
 
+      // Update teams list for members
+      await _updateUsersTeams(memberUids, teamId);
+
+      // Save team to Firestore
+      await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .set(team.toJson());
+
       // Update teams list for current user and selected friends
       await _updateUsersTeams(memberUids, teamId);
 
@@ -241,17 +250,22 @@ class CreateTeamViewModel extends ChangeNotifier {
 
   // Update 'teams' field for users
   Future<void> _updateUsersTeams(List<String> userIds, String teamId) async {
-    WriteBatch batch = FirebaseFirestore.instance.batch();
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
 
-    for (String uid in userIds) {
-      DocumentReference userRef =
-          FirebaseFirestore.instance.collection('users').doc(uid);
-      batch.update(userRef, {
-        'teams': FieldValue.arrayUnion([teamId])
-      });
+      for (String uid in userIds) {
+        DocumentReference userRef =
+            FirebaseFirestore.instance.collection('users').doc(uid);
+        batch.update(userRef, {
+          'teams': FieldValue.arrayUnion([teamId])
+        });
+      }
+
+      await batch.commit();
+    } catch (e) {
+      AppLogger.error('Error updating users\' teams: $e');
+      throw e; // Re-throw the error to be caught in createTeam()
     }
-
-    await batch.commit();
   }
 
   // Method to reset status messages
