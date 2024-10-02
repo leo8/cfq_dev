@@ -6,8 +6,8 @@ class User {
   final String uid; // Unique user ID
   final String bio; // User bio or description
   final String email; // User email address
-  final List<String> friends; // List of friends 'uid
-  final List<String> teams; // List of teams 'uid
+  final List friends; // List of friends 'uid
+  final List teams; // List of teams 'uid
   final String profilePictureUrl; // URL for the user's profile picture
   final String location; // User's location
   final DateTime? birthDate; // Optional birthdate of the user

@@ -1,7 +1,8 @@
-// teams_view_model.dart
-
 import 'package:flutter/material.dart';
 import '../models/team.dart';
+import '../models/user.dart' as model;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TeamsViewModel extends ChangeNotifier {
   bool _isLoading = true;
@@ -16,11 +17,15 @@ class TeamsViewModel extends ChangeNotifier {
 
   Future<void> fetchTeams() async {
     try {
-      // Simulate data fetching with a delay
-      await Future.delayed(const Duration(seconds: 1));
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      // No teams available at the moment
-      _teams = []; // Empty list indicates no teams
+      // Fetch teams where the current user is a member
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('members', arrayContains: currentUserId)
+          .get();
+
+      _teams = snapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
 
       _isLoading = false;
       notifyListeners();
