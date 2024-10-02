@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/map_screen.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
@@ -250,7 +251,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       // Main body content based on current page index
       body: <Widget>[
         const ThreadScreen(), // Home thread screen
-        const Center(child: Text('Map')), // Map screen
+        const MapScreen(), // Map screen
         const TeamsScreen(), // Friends screen
         const ProfileScreen(), // Profile screen
       ][currentPageIndex], // Display content based on selected page
