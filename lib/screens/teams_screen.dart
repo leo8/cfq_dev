@@ -1,5 +1,3 @@
-// teams_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/teams_view_model.dart';
@@ -7,10 +5,10 @@ import 'create_team_screen.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../widgets/atoms/buttons/outlined_icon_button.dart'; // Import the OutlinedIconButton
-import '../utils/styles/colors.dart'; // Import your custom colors
-import '../utils/styles/fonts.dart'; // Import your custom fonts
-import 'team_details_screen.dart'; // Import the TeamDetailsScreen
+import '../widgets/atoms/buttons/outlined_icon_button.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/fonts.dart';
+import 'team_details_screen.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -44,8 +42,7 @@ class TeamsScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateTeamScreen(),
+                                  builder: (context) => const CreateTeamScreen(),
                                 ),
                               ).then((_) {
                                 // Refresh teams after returning
@@ -69,10 +66,10 @@ class TeamsScreen extends StatelessWidget {
                   // Conditional rendering of teams list or message
                   Expanded(
                     child: viewModel.teams.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: Text(
                               'Vous n\'avez pas encore de teams.',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
                               ),
@@ -100,13 +97,24 @@ class TeamsScreen extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: Colors.black,
                                     borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 1.0, // White border to highlight the team card
+                                    ),
                                   ),
                                   child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
+                                      // Team Image (Larger)
+                                      CircleAvatar(
+                                        radius: 35, // Larger radius for the team image
+                                        backgroundImage: NetworkImage(
+                                            team.imageUrl), // Team image URL
+                                      ),
+                                      const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
                                             // Team Name
                                             Text(
@@ -114,19 +122,17 @@ class TeamsScreen extends StatelessWidget {
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
                                                 color: Colors.white,
-                                                fontSize:
-                                                    24, // Larger font size
+                                                fontSize: 24, // Larger font size
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             const SizedBox(height: 10),
-                                            // Members Avatars and Count
+                                            // Members Avatars and Count in a Single Row
                                             FutureBuilder(
                                               future: _fetchTeamMembers(
                                                   team.members),
                                               builder: (context,
-                                                  AsyncSnapshot<
-                                                          List<model.User>>
+                                                  AsyncSnapshot<List<model.User>>
                                                       snapshot) {
                                                 if (snapshot.connectionState ==
                                                     ConnectionState.waiting) {
@@ -139,53 +145,55 @@ class TeamsScreen extends StatelessWidget {
 
                                                   return Column(
                                                     children: [
-                                                      // Overlapping Avatars
-                                                      Center(
-                                                        child: SizedBox(
-                                                          height: 30,
-                                                          child: Stack(
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            children: members
-                                                                .take(3)
-                                                                .asMap()
-                                                                .entries
-                                                                .map((entry) {
-                                                              int idx =
-                                                                  entry.key;
-                                                              model.User
-                                                                  member =
-                                                                  entry.value;
-                                                              return Positioned(
-                                                                left:
-                                                                    idx * 20.0,
+                                                      // Row with Avatars and Member Count
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment.center,
+                                                        children: [
+                                                          // Overlapping Avatars
+                                                          ...members
+                                                              .take(3)
+                                                              .toList()
+                                                              .asMap()
+                                                              .entries
+                                                              .map((entry) {
+                                                            int idx =
+                                                                entry.key;
+                                                            model.User member =
+                                                                entry.value;
+                                                            return Padding(
+                                                              padding:
+                                                                  EdgeInsets.only(
+                                                                      left: idx *
+                                                                          15.0),
+                                                              child:
+                                                                  CircleAvatar(
+                                                                radius: 15,
+                                                                backgroundColor:
+                                                                    CustomColor
+                                                                        .white,
                                                                 child:
                                                                     CircleAvatar(
-                                                                  radius: 15,
-                                                                  backgroundColor:
-                                                                      CustomColor
-                                                                          .white,
-                                                                  child:
-                                                                      CircleAvatar(
-                                                                    radius: 13,
-                                                                    backgroundImage:
-                                                                        NetworkImage(
-                                                                            member.profilePictureUrl),
-                                                                  ),
+                                                                  radius: 13,
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          member.profilePictureUrl),
                                                                 ),
-                                                              );
-                                                            }).toList(),
+                                                              ),
+                                                            );
+                                                          }).toList(),
+                                                          const SizedBox(
+                                                              width: 10),
+                                                          // Total Members Count
+                                                          Text(
+                                                            '$totalMembers membres',
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors.white70,
+                                                              fontSize: 14,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      // Total Members Count
-                                                      Text(
-                                                        '$totalMembers membres',
-                                                        style: const TextStyle(
-                                                          color: Colors.white70,
-                                                          fontSize: 14,
-                                                        ),
+                                                        ],
                                                       ),
                                                     ],
                                                   );
