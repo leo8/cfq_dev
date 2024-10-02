@@ -5,9 +5,11 @@ import 'package:cfq_dev/screens/map_screen.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
+import 'package:cfq_dev/screens/add_cfq_screen.dart';
+import 'package:cfq_dev/screens/add_turn_screen.dart';
+import 'package:cfq_dev/utils/logger.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
-
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -24,9 +26,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   int currentPageIndex = 0; // Track the current page selected
   double _yPositionPlusButton = 0.95; // Y position of the plus button
   double _width = 45.0; // Initial width of the plus button
-  final double _height = 35.0; // Reduced height of the plus button
+  final double _height = 45.0; // Height of the plus button
   final double _yPositionPlusButtonClose = 0.95; // Y position when closed
-  final double _yPositionPlusButtonOpen = 0.85; // Adjusted Y position when opened
+  final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
   final Duration durationAnimation200 = const Duration(milliseconds: 200); // Short animation duration
   final Duration durationAnimation500 = const Duration(milliseconds: 500); // Longer animation duration
   final double paddingTopIcon = 10; // Top padding for icons in the bottom navigation bar
@@ -108,38 +110,29 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             ),
           ),
           // Custom buttons that appear when the plus button is open
-          if (isOpen)
-            Align(
-              alignment: Alignment(0, _yPositionPlusButton),
-              child: AnimatedOpacity(
-                duration: durationAnimation200,
-                curve: Curves.fastOutSlowIn,
-                opacity: _showButtons ? 1 : 0,
-                child: Container(
-                  width: _width,
-                  height: _height,
-                  decoration: BoxDecoration(
-                    color: CustomColor.black,
-                    borderRadius: BorderRadius.circular(10.0),
+          Align(
+            alignment: Alignment(0, _yPositionPlusButton),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isOpen)
+                  AnimatedOpacity(
+                    duration: durationAnimation200,
+                    curve: Curves.fastOutSlowIn,
+                    opacity: _showButtons ? 1 : 0,
+                    child: CfqButton(),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Left Button (CFQ Button)
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: CfqButton(),
-                      ),
-                      // Right Button (Turn Button)
-                      Padding(
-                        padding: EdgeInsets.only(right: 10.0),
-                        child: TurnButton(),
-                      ),
-                    ],
+                const SizedBox(width: 30),
+                if (isOpen)
+                  AnimatedOpacity(
+                    duration: durationAnimation200,
+                    curve: Curves.fastOutSlowIn,
+                    opacity: _showButtons ? 1 : 0,
+                    child: TurnButton(),
                   ),
-                ),
-              ),
+              ],
             ),
+          ),
         ],
       ),
       // Bottom navigation bar
