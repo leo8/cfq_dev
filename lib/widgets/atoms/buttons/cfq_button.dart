@@ -11,7 +11,7 @@ class CfqButton extends StatelessWidget {
       onTap: () {
         AppLogger.debug("Navigating to AddCfqScreen");
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const AddCfqScreen()),
+          MaterialPageRoute(builder: (context) => const CreateCfqScreen()),
         );
       },
       child: Image.asset(

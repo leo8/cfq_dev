@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../screens/add_cfq_screen.dart'; // Screen for adding CFQ
-import '../../screens/add_turn_screen.dart'; // Screen for adding Turn
+import '../../screens/create_turn_screen.dart'; // Screen for adding Turn
 import '../../utils/styles/string.dart'; // String constants
 import '../molecules/image_button.dart'; // Custom button with image
 
@@ -36,7 +36,7 @@ class SelectionButtons extends StatelessWidget {
             // Navigate to AddTurnScreen when button is tapped
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const AddTurnScreen(),
+                builder: (context) => const CreateTurnScreen(),
               ),
             );
           },
