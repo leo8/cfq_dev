@@ -87,6 +87,7 @@ class AuthMethods {
           bio: bio ?? CustomString.emptyString,
           email: email,
           friends: [],
+          teams: [],
           profilePictureUrl: profilePictureUrl,
           location: location ?? CustomString.emptyString,
           birthDate: birthDate,

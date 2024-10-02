@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+// custom_text_field.dart
 
+import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -8,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText; // Toggle to hide or show the text (for passwords)
   final Widget? suffixIcon; // Optional suffix icon, e.g., a visibility toggle
   final int maxLines; // The maximum number of lines the text field can have
+  final ValueChanged<String>? onChanged; // Optional onChanged callback
 
   const CustomTextField({
     required this.controller,
@@ -17,6 +19,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon, // Optional widget for suffix icon
     this.maxLines =
         1, // Defaults to 1, making it a single-line text field by default
+    this.onChanged, // Optional onChanged callback
     super.key,
   });
 
@@ -40,6 +43,7 @@ class CustomTextField extends StatelessWidget {
             maxLines, // Controls how many lines the text field can expand to
         style: const TextStyle(
             color: CustomColor.white), // Text color inside the field
+        onChanged: onChanged, // Calls the onChanged callback when text changes
         decoration: InputDecoration(
           hintText: hintText, // Hint text shown when the field is empty
           hintStyle: const TextStyle(

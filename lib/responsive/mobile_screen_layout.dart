@@ -1,4 +1,5 @@
 import 'package:cfq_dev/screens/profile_screen.dart';
+import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
@@ -216,12 +217,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
-                CustomIcon.calendarTodayOutlined,
+                CustomIcon.group,
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
-                CustomIcon.calendarTodayOutlined,
+                CustomIcon.group,
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
@@ -250,7 +251,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       body: <Widget>[
         const ThreadScreen(), // Home thread screen
         const Center(child: Text('Map')), // Map screen
-        const Center(child: Text('Friends')), // Friends screen
+        const TeamsScreen(), // Friends screen
         const ProfileScreen(), // Profile screen
       ][currentPageIndex], // Display content based on selected page
     );
