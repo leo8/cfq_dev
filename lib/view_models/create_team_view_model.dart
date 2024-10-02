@@ -6,7 +6,6 @@ import '../models/user.dart' as model;
 import '../models/team.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
-import 'dart:io';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import '../utils/styles/string.dart';
@@ -41,9 +40,56 @@ class CreateTeamViewModel extends ChangeNotifier {
   String? _successMessage;
   String? get successMessage => _successMessage;
 
-  // Constructor
+  // Current User
+  model.User? _currentUser;
+  model.User? get currentUser => _currentUser;
+
+  // Friends List
+  List<model.User> _friendsList = [];
+  List<model.User> get friendsList => _friendsList;
+
+  bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
+
   CreateTeamViewModel() {
+    _initializeCurrentUser();
     searchController.addListener(_onSearchChanged);
+  }
+
+  Future<void> _initializeCurrentUser() async {
+    try {
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Fetch current user data
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+      _currentUser = model.User.fromSnap(userSnapshot);
+
+      // Add current user to selected friends
+      _selectedFriends.add(_currentUser!);
+
+      // Fetch friends data
+      List friendsUids = _currentUser!.friends;
+      if (friendsUids.isNotEmpty) {
+        QuerySnapshot friendsSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('uid', whereIn: friendsUids)
+            .get();
+
+        _friendsList = friendsSnapshot.docs
+            .map((doc) => model.User.fromSnap(doc))
+            .toList();
+      } else {
+        _friendsList = [];
+      }
+
+      _isInitialized = true;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error initializing current user: $e');
+    }
   }
 
   @override
@@ -85,21 +131,15 @@ class CreateTeamViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Query Firestore for users matching the search query
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('searchKey', isGreaterThanOrEqualTo: query.toLowerCase())
-          .where('searchKey',
-              isLessThanOrEqualTo: '${query.toLowerCase()}\uf8ff')
-          .get();
+      final queryLower = query.toLowerCase();
 
-      List<model.User> users =
-          snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
-
-      // Remove already selected friends
-      _searchResults = users
-          .where((user) => !_selectedFriends.any((f) => f.uid == user.uid))
-          .toList();
+      // Filter friends list based on 'searchKey'
+      _searchResults = _friendsList.where((user) {
+        final searchKeyLower = user.searchKey;
+        // Exclude already selected friends
+        return searchKeyLower.startsWith(queryLower) &&
+            !_selectedFriends.any((f) => f.uid == user.uid);
+      }).toList();
     } catch (e) {
       AppLogger.error('Error while searching users: $e');
     }
@@ -117,8 +157,10 @@ class CreateTeamViewModel extends ChangeNotifier {
 
   // Remove Friend from Selected List
   void removeFriend(model.User friend) {
-    _selectedFriends.removeWhere((user) => user.uid == friend.uid);
-    notifyListeners();
+    if (friend.uid != _currentUser?.uid) {
+      _selectedFriends.removeWhere((user) => user.uid == friend.uid);
+      notifyListeners();
+    }
   }
 
   // Create Team
@@ -149,7 +191,8 @@ class CreateTeamViewModel extends ChangeNotifier {
             .uploadImageToStorage('teamImages', _teamImage!, false);
       } else {
         // Use a default image URL or handle accordingly
-        teamImageUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx-RLO1096Hkl10EA9jQ6Il5_hQ3HtB2iIyg&s';
+        teamImageUrl =
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQx-RLO1096Hkl10EA9jQ6Il5_hQ3HtB2iIyg&s';
       }
 
       // Generate unique team ID
