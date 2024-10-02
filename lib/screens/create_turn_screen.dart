@@ -80,10 +80,10 @@ class CreateTurnScreen extends StatelessWidget {
                 onSelectMoods: () => viewModel.selectMoods(context),
                 dateTimeDisplay: viewModel.selectedDateTime != null
                     ? '${viewModel.selectedDateTime!.day}/${viewModel.selectedDateTime!.month}/${viewModel.selectedDateTime!.year}'
-                    : CustomString.ajouterUneDate,
+                    : CustomString.laDate,
                 moodsDisplay: viewModel.selectedMoods != null && viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
-                    : CustomString.selectionnerLesMoodsDeVotreTurn,
+                    : CustomString.tonMood,
                 isLoading: viewModel.isLoading,
                 onSubmit: viewModel.createTurn,
                 inviteeSearchController: viewModel.searchController,

@@ -98,7 +98,7 @@ class TurnForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Date & Time: $dateTimeDisplay',
+                'Date: $dateTimeDisplay',
                 style: const TextStyle(fontSize: 16),
               ),
               TextButton(

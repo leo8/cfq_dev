@@ -32,6 +32,7 @@ class CustomString {
   static const jeMeConnecte = "Je me connecte";
   static const jemInscris = "Je m'inscris";
   static const jeSuisLa = "Je suis là";
+  static const laDate = "La date";
   static const logOut = "Log out";
   static const mesAmis = "Mes amis";
   static const moods = "Mood(s)";
@@ -69,6 +70,7 @@ class CustomString {
   static const tAsPasEncoreDeCompte = "T'as pas encore de compte ?";
   static const thisIsWeb = "This is web";
   static const tonMail = "Ton mail";
+  static const tonMood = "Ton mood";
   static const tonMotDePasse = "Ton mot de passe";
   static const turn = "Turn";
   static const uneHeure = "1h";
