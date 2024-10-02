@@ -18,4 +18,5 @@ class CustomIcon {
   static const send = Icons.send;
   static const share = Icons.share;
   static const visibility = Icons.visibility;
+  static const group = Icons.groups_2_outlined;
 }
