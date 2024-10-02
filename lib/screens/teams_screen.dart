@@ -1,14 +1,12 @@
-import 'package:cfq_dev/models/team.dart';
-import 'package:cfq_dev/models/user.dart' as model;
-import 'package:cfq_dev/screens/create_team_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// teams_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/teams_view_model.dart';
-import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
-import '../widgets/atoms/texts/custom_text.dart';
-import '../widgets/atoms/buttons/outlined_icon_button.dart';
+import 'create_team_screen.dart';
+import '../models/team.dart';
+import '../models/user.dart' as model;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -26,38 +24,14 @@ class TeamsScreen extends StatelessWidget {
             if (viewModel.isLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (viewModel.teams.isEmpty) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 60),
-                  // Centered Outlined "+" Button
-                  Center(
-                    child: OutlinedIconButton(
-                      icon: Icons.add,
-                      onPressed: () {
-                        // Navigate to CreateTeamScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateTeamScreen(),
-                          ),
-                        ).then((_) {
-                          // Refresh teams after returning
-                          viewModel.fetchTeams();
-                        });
-                      },
-                    ),
+              return Center(
+                child: Text(
+                  'Vous n\'avez pas encore de teams.',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 20),
-                  // Message when no teams are available
-                  Center(
-                    child: CustomText(
-                      text: 'Vous n\'avez pas encore de teams.',
-                      fontSize: CustomFont.fontSize18,
-                      color: CustomColor.white,
-                    ),
-                  ),
-                ],
+                ),
               );
             } else {
               return ListView.builder(
@@ -66,7 +40,7 @@ class TeamsScreen extends StatelessWidget {
                   Team team = viewModel.teams[index];
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to team screen (not implemented)
+                      // Navigate to team details screen (not implemented)
                     },
                     child: Container(
                       margin: const EdgeInsets.symmetric(
@@ -153,7 +127,7 @@ class TeamsScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CreateTeamScreen(),
+                builder: (context) => const CreateTeamScreen(),
               ),
             ).then((_) {
               // Refresh teams after returning
