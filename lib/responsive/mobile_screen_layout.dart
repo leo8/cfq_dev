@@ -5,9 +5,6 @@ import 'package:cfq_dev/screens/map_screen.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
-import 'package:cfq_dev/screens/add_cfq_screen.dart';
-import 'package:cfq_dev/screens/add_turn_screen.dart';
-import 'package:cfq_dev/utils/logger.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 
@@ -120,7 +117,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                     duration: durationAnimation200,
                     curve: Curves.fastOutSlowIn,
                     opacity: _showButtons ? 1 : 0,
-                    child: CfqButton(),
+                    child: const CfqButton(),
                   ),
                 const SizedBox(width: 30),
                 if (isOpen)
@@ -128,7 +125,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                     duration: durationAnimation200,
                     curve: Curves.fastOutSlowIn,
                     opacity: _showButtons ? 1 : 0,
-                    child: TurnButton(),
+                    child: const TurnButton(),
                   ),
               ],
             ),

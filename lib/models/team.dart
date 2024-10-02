@@ -1,6 +1,3 @@
-// team.dart
-
-import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Team {

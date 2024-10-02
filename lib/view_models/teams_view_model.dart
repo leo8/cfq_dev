@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/team.dart';
-import '../models/user.dart' as model;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
