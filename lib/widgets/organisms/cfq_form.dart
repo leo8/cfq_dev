@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:cfq_dev/widgets/molecules/icon_date_time_selector.dart';
 import 'package:cfq_dev/widgets/molecules/icon_moods_selector.dart';
 import 'package:flutter/material.dart';
 import '../molecules/custom_icon_text_field.dart';
@@ -14,9 +13,7 @@ class CfqForm extends StatelessWidget {
   final TextEditingController descriptionController;
   final TextEditingController locationController;
   final TextEditingController whenController;
-  final VoidCallback onSelectDateTime;
   final VoidCallback onSelectMoods;
-  final String dateTimeDisplay;
   final String moodsDisplay;
   final bool isLoading;
   final VoidCallback onSubmit;
@@ -34,9 +31,7 @@ class CfqForm extends StatelessWidget {
     required this.descriptionController,
     required this.locationController,
     required this.whenController,
-    required this.onSelectDateTime,
     required this.onSelectMoods,
-    required this.dateTimeDisplay,
     required this.moodsDisplay,
     required this.isLoading,
     required this.onSubmit,
@@ -66,7 +61,7 @@ class CfqForm extends StatelessWidget {
         CustomIconTextField(
           icon: Icons.person,
           controller: nameController,
-          hintText: 'Enter TURN name',
+          hintText: 'Enter CFQ name',
           height: 35.0,
         ),
         const SizedBox(height: 10),
@@ -75,7 +70,7 @@ class CfqForm extends StatelessWidget {
         CustomIconTextField(
           icon: Icons.description,
           controller: descriptionController,
-          hintText: 'Enter TURN description',
+          hintText: 'Enter CFQ description',
           maxLines: 3,
           height: 120.0,
         ),

@@ -9,7 +9,7 @@ import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
 import '../templates/standard_form_template.dart';
 
-/// Screen for creating a new TURN event.
+/// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
   const CreateCfqScreen({super.key});
 
@@ -70,17 +70,13 @@ class CreateCfqScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               body: CfqForm(
-                image: viewModel.turnImage,
+                image: viewModel.cfqImage,
                 onSelectImage: viewModel.pickCfqImage,
-                nameController: viewModel.turnNameController,
+                nameController: viewModel.cfqNameController,
                 descriptionController: viewModel.descriptionController,
                 locationController: viewModel.locationController,
                 whenController: viewModel.whenController,
-                onSelectDateTime: () => viewModel.selectDateTime(context),
                 onSelectMoods: () => viewModel.selectMoods(context),
-                dateTimeDisplay: viewModel.selectedDateTime != null
-                    ? '${viewModel.selectedDateTime!.day}/${viewModel.selectedDateTime!.month}/${viewModel.selectedDateTime!.year}'
-                    : CustomString.laDate,
                 moodsDisplay: viewModel.selectedMoods != null && viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
                     : CustomString.tonMood,

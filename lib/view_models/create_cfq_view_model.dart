@@ -1,5 +1,3 @@
-// lib/view_models/create_turn_view_model.dart
-
 import 'dart:typed_data';
 import 'package:cfq_dev/enums/moods.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
@@ -15,14 +13,14 @@ import '../providers/storage_methods.dart';
 
 class CreateCfqViewModel extends ChangeNotifier {
   // Controllers for form fields
-  final TextEditingController turnNameController = TextEditingController();
+  final TextEditingController cfqNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
 
   // Image
-  Uint8List? _turnImage;
-  Uint8List? get turnImage => _turnImage;
+  Uint8List? _cfqImage;
+  Uint8List? get cfqImage => _cfqImage;
 
   // Invitees
   List<model.User> _selectedInvitees = [];
@@ -35,10 +33,7 @@ class CreateCfqViewModel extends ChangeNotifier {
   bool _isSearching = false;
   bool get isSearching => _isSearching;
 
-  // Selected DateTime and Moods
-  DateTime? _selectedDateTime;
-  DateTime? get selectedDateTime => _selectedDateTime;
-
+  // Selected Moods
   List<String>? _selectedMoods;
   List<String>? get selectedMoods => _selectedMoods;
 
@@ -107,7 +102,7 @@ class CreateCfqViewModel extends ChangeNotifier {
   void dispose() {
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
-    turnNameController.dispose();
+    cfqNameController.dispose();
     descriptionController.dispose();
     locationController.dispose();
     whenController.dispose();
@@ -123,11 +118,11 @@ class CreateCfqViewModel extends ChangeNotifier {
       if (image != null) {
         Uint8List imageBytes = await image.readAsBytes();
         // Optionally compress the image here if needed
-        _turnImage = imageBytes;
+        _cfqImage = imageBytes;
         notifyListeners();
       }
     } catch (e) {
-      AppLogger.error('Error picking turn image: $e');
+      AppLogger.error('Error picking cfq image: $e');
       _errorMessage = 'Failed to pick image.';
       notifyListeners();
     }
@@ -192,34 +187,6 @@ class CreateCfqViewModel extends ChangeNotifier {
     }
   }
 
-  // Date-Time Picker
-  Future<void> selectDateTime(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: _selectedDateTime != null
-            ? TimeOfDay.fromDateTime(_selectedDateTime!)
-            : TimeOfDay.now(),
-      );
-      if (pickedTime != null) {
-        _selectedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        notifyListeners();
-      }
-    }
-  }
-
   // Moods Selection
   Future<void> selectMoods(BuildContext context) async {
     List<String> tempSelectedMoods = List<String>.from(_selectedMoods ?? []);
@@ -269,23 +236,17 @@ class CreateCfqViewModel extends ChangeNotifier {
     });
   }
 
-  // Create TURN
+  // Create cfq
   Future<void> createCfq() async {
     // Validate required fields
-    if (_turnImage == null) {
+    if (_cfqImage == null) {
       _errorMessage = 'Please select an image.';
       notifyListeners();
       return;
     }
 
-    if (turnNameController.text.isEmpty || descriptionController.text.isEmpty) {
+    if (cfqNameController.text.isEmpty || descriptionController.text.isEmpty) {
       _errorMessage = 'Please fill all required fields.';
-      notifyListeners();
-      return;
-    }
-
-    if (_selectedDateTime == null) {
-      _errorMessage = 'Please select date and time.';
       notifyListeners();
       return;
     }
@@ -301,11 +262,11 @@ class CreateCfqViewModel extends ChangeNotifier {
 
     try {
       // Upload image to Firebase Storage
-      String turnImageUrl = await StorageMethods()
-          .uploadImageToStorage('turnImages', _turnImage!, false);
+      String cfqImageUrl = await StorageMethods()
+          .uploadImageToStorage('cfqImages', _cfqImage!, false);
 
-      // Generate unique TURN ID
-      String turnId = const Uuid().v1();
+      // Generate unique cfq ID
+      String cfqId = const Uuid().v1();
 
       // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -319,44 +280,44 @@ class CreateCfqViewModel extends ChangeNotifier {
         inviteeUids.add(currentUserId);
       }
 
-      // Create TURN object
-      Cfq turn = Cfq(
-        name: turnNameController.text.trim(),
+      // Create cfq object
+      Cfq cfq = Cfq(
+        name: cfqNameController.text.trim(),
         description: descriptionController.text.trim(),
         moods: _selectedMoods!,
         uid: currentUserId,
         username: _currentUser!.username,
-        eventId: turnId,
+        eventId: cfqId,
         datePublished: DateTime.now(),
         when: whenController.text.trim(),
-        imageUrl: turnImageUrl,
+        imageUrl: cfqImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
         organizers: [currentUserId],
       );
 
-      // Save TURN to Firestore
+      // Save cfq to Firestore
       await FirebaseFirestore.instance
-          .collection('turns')
-          .doc(turnId)
-          .set(turn.toJson());
+          .collection('cfqs')
+          .doc(cfqId)
+          .set(cfq.toJson());
 
-      // Update users' TURN lists
-      await _updateUsersCfqs(inviteeUids, turnId);
+      // Update users' cfq lists
+      await _updateUsersCfqs(inviteeUids, cfqId);
 
-      _successMessage = 'TURN created successfully!';
+      _successMessage = 'CFQ created successfully!';
       _isLoading = false;
       notifyListeners();
     } catch (e) {
-      AppLogger.error('Error creating TURN: $e');
-      _errorMessage = 'Failed to create TURN. Please try again.';
+      AppLogger.error('Error creating cfq: $e');
+      _errorMessage = 'Failed to create cfq. Please try again.';
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  // Update 'turns' field for users
-  Future<void> _updateUsersCfqs(List<String> userIds, String turnId) async {
+  // Update 'cfqs' field for users
+  Future<void> _updateUsersCfqs(List<String> userIds, String cfqId) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -364,13 +325,13 @@ class CreateCfqViewModel extends ChangeNotifier {
         DocumentReference userRef =
             FirebaseFirestore.instance.collection('users').doc(uid);
         batch.update(userRef, {
-          'turns': FieldValue.arrayUnion([turnId])
+          'cfqs': FieldValue.arrayUnion([cfqId])
         });
       }
 
       await batch.commit();
     } catch (e) {
-      AppLogger.error('Error updating users\' turns: $e');
+      AppLogger.error('Error updating users\' cfqs: $e');
       throw e; // Re-throw the error to be caught in createCfq()
     }
   }
