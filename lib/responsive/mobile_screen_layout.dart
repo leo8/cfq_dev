@@ -26,10 +26,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   final double _height = 45.0; // Height of the plus button
   final double _yPositionPlusButtonClose = 0.95; // Y position when closed
   final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
-  final Duration durationAnimation200 = const Duration(milliseconds: 200); // Short animation duration
-  final Duration durationAnimation500 = const Duration(milliseconds: 500); // Longer animation duration
-  final double paddingTopIcon = 10; // Top padding for icons in the bottom navigation bar
-  final double paddinghorizontal = 40; // Horizontal padding for icons in the navigation bar
+  final Duration durationAnimation200 =
+      const Duration(milliseconds: 200); // Short animation duration
+  final Duration durationAnimation500 =
+      const Duration(milliseconds: 500); // Longer animation duration
+  final double paddingTopIcon =
+      10; // Top padding for icons in the bottom navigation bar
+  final double paddinghorizontal =
+      40; // Horizontal padding for icons in the navigation bar
   final double sizeIcon = 30; // Size of icons
 
   // Handle the tap on the plus button
@@ -137,6 +141,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
+            if (isOpen) {
+              _handleTap();
+            }
           });
         },
         indicatorColor: CustomColor.transparent,
@@ -162,7 +169,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
+            padding:
+                EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.locationOnOutlined,
@@ -178,7 +186,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
+            padding:
+                EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
                 CustomIcon.group,
@@ -212,12 +221,27 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         ],
       ),
       // Main body content based on current page index
-      body: <Widget>[
-        const ThreadScreen(),
-        const MapScreen(),
-        const TeamsScreen(),
-        const ProfileScreen(),
-      ][currentPageIndex],
+      body: Stack(
+        children: [
+          // Corps principal de l'application (hors de la barre de navigation)
+          GestureDetector(
+            onTap: () {
+              if (isOpen) {
+                _handleTap();
+              }
+            }, // Capture les taps en dehors de la barre de navigation
+            child: IndexedStack(
+              index: currentPageIndex,
+              children: [
+                const ThreadScreen(),
+                const MapScreen(),
+                const TeamsScreen(),
+                const ProfileScreen(),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
