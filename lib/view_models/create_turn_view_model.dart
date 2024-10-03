@@ -1,3 +1,5 @@
+// lib/view_models/create_turn_view_model.dart
+
 import 'dart:typed_data';
 import 'package:cfq_dev/enums/moods.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
@@ -77,9 +79,6 @@ class CreateTurnViewModel extends ChangeNotifier {
           .get();
       _currentUser = model.User.fromSnap(userSnapshot);
 
-      // Add current user to selected invitees
-      _selectedInvitees.add(_currentUser!);
-
       // Fetch friends data
       List friendsUids = _currentUser!.friends;
       if (friendsUids.isNotEmpty) {
@@ -140,33 +139,42 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   Future<void> performSearch(String query) async {
+  _isSearching = true;
+  notifyListeners();
+
+  try {
+    final queryLower = query.toLowerCase();
+
+    // If query is empty, display all friends not already selected and not the current user
     if (query.isEmpty) {
-      _searchResults = [];
-      notifyListeners();
-      return;
-    }
-
-    _isSearching = true;
-    notifyListeners();
-
-    try {
-      final queryLower = query.toLowerCase();
-
+      _searchResults = _friendsList.where((user) =>
+          !_selectedInvitees.any((f) => f.uid == user.uid) &&
+          user.uid != _currentUser?.uid).toList();
+    } else {
       // Filter friends list based on 'searchKey'
       _searchResults = _friendsList.where((user) {
         final searchKeyLower = user.searchKey.toLowerCase();
-        // Exclude already selected invitees
+        // Exclude already selected invitees and current user
         return searchKeyLower.startsWith(queryLower) &&
-            !_selectedInvitees.any((f) => f.uid == user.uid);
+            !_selectedInvitees.any((f) => f.uid == user.uid) &&
+            user.uid != _currentUser?.uid;
       }).toList();
-    } catch (e) {
-      AppLogger.error('Error while searching users: $e');
-      _errorMessage = 'Failed to perform search.';
     }
 
-    _isSearching = false;
-    notifyListeners();
+    // Debug: Print all search results
+    print('Search Results:');
+    for (var user in _searchResults) {
+      print('Username: ${user.username}, UID: ${user.uid}');
+    }
+  } catch (e) {
+    AppLogger.error('Error while searching users: $e');
+    _errorMessage = 'Failed to perform search.';
   }
+
+  _isSearching = false;
+  notifyListeners();
+}
+
 
   // Add Invitee to Selected List
   void addInvitee(model.User invitee) {
@@ -301,9 +309,11 @@ class CreateTurnViewModel extends ChangeNotifier {
       // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      // Collect invitee UIDs (including current user)
+      // Collect invitee UIDs (excluding current user)
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
+
+      // Ensure current user is included
       if (!inviteeUids.contains(currentUserId)) {
         inviteeUids.add(currentUserId);
       }

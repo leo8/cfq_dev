@@ -57,10 +57,10 @@ class TurnForm extends StatelessWidget {
         EventImageSelector(
           image: image,
           onSelectImage: onSelectImage,
-          width: double.infinity, // Full width
-          height: 200, // Adjust height as needed
+          width: 300, // Full width
+          height: 120, // Adjust height as needed
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
 
         // Name Field with Icon (e.g., person icon)
         CustomIconTextField(
@@ -69,7 +69,7 @@ class TurnForm extends StatelessWidget {
           hintText: 'Enter TURN name',
           height: 35.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Description Field with Icon (e.g., description icon)
         CustomIconTextField(
@@ -79,7 +79,7 @@ class TurnForm extends StatelessWidget {
           maxLines: 3,
           height: 120.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Location Field with Icon (e.g., location_on icon)
         CustomIconTextField(
@@ -88,7 +88,7 @@ class TurnForm extends StatelessWidget {
           hintText: 'Enter location',
           height: 35.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Address Field with Icon (e.g., home icon)
         CustomIconTextField(
@@ -97,7 +97,7 @@ class TurnForm extends StatelessWidget {
           hintText: 'Enter address',
           height: 35.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Date and Time Selector Molecule
         IconDateTimeSelector(
@@ -105,7 +105,7 @@ class TurnForm extends StatelessWidget {
           onTap: onSelectDateTime,
           height: 35.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Moods Selector Molecule
         IconMoodsSelector(
@@ -113,7 +113,7 @@ class TurnForm extends StatelessWidget {
           onTap: onSelectMoods,
           height: 35.0,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
 
         // Invitees Field
         InviteesField(
@@ -124,7 +124,7 @@ class TurnForm extends StatelessWidget {
           onAddInvitee: onAddInvitee,
           onRemoveInvitee: onRemoveInvitee,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
       ],
     );
   }

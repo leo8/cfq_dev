@@ -1,3 +1,5 @@
+// lib/widgets/molecules/invitees_field.dart
+
 import 'package:flutter/material.dart';
 import '../atoms/chips/invitee_chip.dart';
 import '../molecules/invitee_search_result_item.dart';
@@ -53,23 +55,34 @@ class InviteesField extends StatelessWidget {
         // Display Search Results
         if (isSearching)
           const CircularProgressIndicator()
-        else if (searchResults.isNotEmpty)
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: searchResults.length,
-            itemBuilder: (context, index) {
-              final user = searchResults[index];
-              return InviteeSearchResultItem(
-                user: user,
-                onAdd: () => onAddInvitee(user),
-              );
-            },
-          )
-        else if (searchController.text.isNotEmpty)
-          const Text(
-            'No users found.',
-            style: TextStyle(color: Colors.grey),
+        else
+          // Make the search results list scrollable with a constrained height
+          Container(
+            constraints: const BoxConstraints(
+              maxHeight: 150.0, // Set a maximum height for the list
+            ),
+            child: searchResults.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      final user = searchResults[index];
+                      return InviteeSearchResultItem(
+                        user: user,
+                        onAdd: () => onAddInvitee(user),
+                      );
+                    },
+                  )
+                : searchController.text.isNotEmpty
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          'No users found.',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
           ),
       ],
     );
