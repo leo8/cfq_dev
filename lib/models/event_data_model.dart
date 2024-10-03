@@ -11,7 +11,6 @@ class EventDataModel {
   final String where; // General location (e.g., "at home", "at a park")
   final List<String> organizers; // List of co-organizers for the event
   final String profilePictureUrl; // Profile picture URL of the creator
-  final List<String> comments; // List of comments related to the event
 
   // Constructor to initialize the event data model
   EventDataModel({
@@ -26,6 +25,5 @@ class EventDataModel {
     required this.profilePictureUrl,
     required this.where,
     required this.organizers,
-    required this.comments, // Includes comments in the constructor
   });
 }
