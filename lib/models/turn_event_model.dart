@@ -30,7 +30,6 @@ class Turn extends EventDataModel {
     required super.profilePictureUrl,
     required super.where,
     required super.organizers,
-    required super.comments,
   });
 
   // Convert Turn object to JSON format for storage
@@ -54,7 +53,6 @@ class Turn extends EventDataModel {
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
       'notAnswered': notAnswered,
-      'comments': comments, // Include comments in JSON
     };
   }
 
@@ -79,8 +77,6 @@ class Turn extends EventDataModel {
       notSureAttending: List<String>.from(json['notSureAttending']),
       notAttending: List<String>.from(json['notAttending']),
       notAnswered: List<String>.from(json['notAnswered']),
-      comments: List<String>.from(
-          json['comments'] ?? []), // Safely handle missing comments
     );
   }
 }
