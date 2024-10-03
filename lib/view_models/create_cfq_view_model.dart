@@ -6,19 +6,19 @@ import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/user.dart' as model;
-import '../models/turn_event_model.dart';
+import '../models/cfq_event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 
-class CreateTurnViewModel extends ChangeNotifier {
+class CreateCfqViewModel extends ChangeNotifier {
   // Controllers for form fields
   final TextEditingController turnNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
+  final TextEditingController whenController = TextEditingController();
 
   // Image
   Uint8List? _turnImage;
@@ -63,7 +63,7 @@ class CreateTurnViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-  CreateTurnViewModel() {
+  CreateCfqViewModel() {
     _initializeCurrentUser();
     searchController.addListener(_onSearchChanged);
   }
@@ -110,12 +110,12 @@ class CreateTurnViewModel extends ChangeNotifier {
     turnNameController.dispose();
     descriptionController.dispose();
     locationController.dispose();
-    addressController.dispose();
+    whenController.dispose();
     super.dispose();
   }
 
   // Image Picker
-  Future<void> pickTurnImage() async {
+  Future<void> pickCfqImage() async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -139,42 +139,43 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   Future<void> performSearch(String query) async {
-  _isSearching = true;
-  notifyListeners();
+    _isSearching = true;
+    notifyListeners();
 
-  try {
-    final queryLower = query.toLowerCase();
+    try {
+      final queryLower = query.toLowerCase();
 
-    // If query is empty, display all friends not already selected and not the current user
-    if (query.isEmpty) {
-      _searchResults = _friendsList.where((user) =>
-          !_selectedInvitees.any((f) => f.uid == user.uid) &&
-          user.uid != _currentUser?.uid).toList();
-    } else {
-      // Filter friends list based on 'searchKey'
-      _searchResults = _friendsList.where((user) {
-        final searchKeyLower = user.searchKey.toLowerCase();
-        // Exclude already selected invitees and current user
-        return searchKeyLower.startsWith(queryLower) &&
-            !_selectedInvitees.any((f) => f.uid == user.uid) &&
-            user.uid != _currentUser?.uid;
-      }).toList();
+      // If query is empty, display all friends not already selected and not the current user
+      if (query.isEmpty) {
+        _searchResults = _friendsList
+            .where((user) =>
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid)
+            .toList();
+      } else {
+        // Filter friends list based on 'searchKey'
+        _searchResults = _friendsList.where((user) {
+          final searchKeyLower = user.searchKey.toLowerCase();
+          // Exclude already selected invitees and current user
+          return searchKeyLower.startsWith(queryLower) &&
+              !_selectedInvitees.any((f) => f.uid == user.uid) &&
+              user.uid != _currentUser?.uid;
+        }).toList();
+      }
+
+      // Debug: Print all search results
+      print('Search Results:');
+      for (var user in _searchResults) {
+        print('Username: ${user.username}, UID: ${user.uid}');
+      }
+    } catch (e) {
+      AppLogger.error('Error while searching users: $e');
+      _errorMessage = 'Failed to perform search.';
     }
 
-    // Debug: Print all search results
-    print('Search Results:');
-    for (var user in _searchResults) {
-      print('Username: ${user.username}, UID: ${user.uid}');
-    }
-  } catch (e) {
-    AppLogger.error('Error while searching users: $e');
-    _errorMessage = 'Failed to perform search.';
+    _isSearching = false;
+    notifyListeners();
   }
-
-  _isSearching = false;
-  notifyListeners();
-}
-
 
   // Add Invitee to Selected List
   void addInvitee(model.User invitee) {
@@ -269,7 +270,7 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   // Create TURN
-  Future<void> createTurn() async {
+  Future<void> createCfq() async {
     // Validate required fields
     if (_turnImage == null) {
       _errorMessage = 'Please select an image.';
@@ -319,7 +320,7 @@ class CreateTurnViewModel extends ChangeNotifier {
       }
 
       // Create TURN object
-      Turn turn = Turn(
+      Cfq turn = Cfq(
         name: turnNameController.text.trim(),
         description: descriptionController.text.trim(),
         moods: _selectedMoods!,
@@ -327,17 +328,11 @@ class CreateTurnViewModel extends ChangeNotifier {
         username: _currentUser!.username,
         eventId: turnId,
         datePublished: DateTime.now(),
-        eventDateTime: _selectedDateTime!,
+        when: whenController.text.trim(),
         imageUrl: turnImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
-        address: addressController.text.trim(),
-        organizers: [currentUserId], // Assuming current user is the organizer
-        invitees: inviteeUids,
-        attending: [],
-        notSureAttending: [],
-        notAttending: [],
-        notAnswered: [],
+        organizers: [currentUserId],
       );
 
       // Save TURN to Firestore
@@ -347,7 +342,7 @@ class CreateTurnViewModel extends ChangeNotifier {
           .set(turn.toJson());
 
       // Update users' TURN lists
-      await _updateUsersTurns(inviteeUids, turnId);
+      await _updateUsersCfqs(inviteeUids, turnId);
 
       _successMessage = 'TURN created successfully!';
       _isLoading = false;
@@ -361,7 +356,7 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   // Update 'turns' field for users
-  Future<void> _updateUsersTurns(List<String> userIds, String turnId) async {
+  Future<void> _updateUsersCfqs(List<String> userIds, String turnId) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -376,7 +371,7 @@ class CreateTurnViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' turns: $e');
-      throw e; // Re-throw the error to be caught in createTurn()
+      throw e; // Re-throw the error to be caught in createCfq()
     }
   }
 
