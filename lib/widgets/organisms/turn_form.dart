@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/widgets/molecules/icon_date_time_selector.dart';
+import 'package:cfq_dev/widgets/molecules/icon_moods_selector.dart';
 import 'package:flutter/material.dart';
-import '../atoms/texts/custom_text_field.dart';
+import '../molecules/custom_icon_text_field.dart';
 import '../molecules/invitees_field.dart';
-import '../../utils/styles/colors.dart';
+import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 
 class TurnForm extends StatelessWidget {
@@ -49,101 +51,81 @@ class TurnForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // Image Selector
-          GestureDetector(
-            onTap: onSelectImage,
-            child: image != null
-                ? CircleAvatar(
-                    radius: 50,
-                    backgroundImage: MemoryImage(image!),
-                  )
-                : const CircleAvatar(
-                    radius: 50,
-                    backgroundColor: CustomColor.white,
-                    child: Icon(Icons.add_a_photo, color: CustomColor.white),
-                  ),
-          ),
-          const SizedBox(height: 20),
-          // Name Field
-          CustomTextField(
-            controller: nameController,
-            hintText: 'Enter TURN name',
-          ),
-          const SizedBox(height: 20),
-          // Description Field
-          CustomTextField(
-            controller: descriptionController,
-            hintText: 'Enter TURN description',
-            maxLines: 3,
-          ),
-          const SizedBox(height: 20),
-          // Location Field
-          CustomTextField(
-            controller: locationController,
-            hintText: 'Enter location',
-          ),
-          const SizedBox(height: 20),
-          // Address Field
-          CustomTextField(
-            controller: addressController,
-            hintText: 'Enter address',
-          ),
-          const SizedBox(height: 20),
-          // Date and Time Selector
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Date: $dateTimeDisplay',
-                style: const TextStyle(fontSize: 16),
-              ),
-              TextButton(
-                onPressed: onSelectDateTime,
-                child: const Text('Select'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          // Moods Selector
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Moods: $moodsDisplay',
-                style: const TextStyle(fontSize: 16),
-              ),
-              TextButton(
-                onPressed: onSelectMoods,
-                child: const Text('Select'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          // Invitees Field
-          InviteesField(
-            searchController: inviteeSearchController,
-            selectedInvitees: selectedInvitees,
-            searchResults: searchResults,
-            isSearching: isSearching,
-            onAddInvitee: onAddInvitee,
-            onRemoveInvitee: onRemoveInvitee,
-          ),
-          const SizedBox(height: 20),
-          // Submit Button
-          ElevatedButton(
-            onPressed: isLoading ? null : onSubmit,
-            child: isLoading
-                ? const CircularProgressIndicator(
-                    color: CustomColor.white,
-                  )
-                : const Text('Create TURN'),
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        // Event Image Selector
+        EventImageSelector(
+          image: image,
+          onSelectImage: onSelectImage,
+          width: double.infinity, // Full width
+          height: 200, // Adjust height as needed
+        ),
+        const SizedBox(height: 8),
+
+        // Name Field with Icon (e.g., person icon)
+        CustomIconTextField(
+          icon: Icons.person,
+          controller: nameController,
+          hintText: 'Enter TURN name',
+          height: 35.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Description Field with Icon (e.g., description icon)
+        CustomIconTextField(
+          icon: Icons.description,
+          controller: descriptionController,
+          hintText: 'Enter TURN description',
+          maxLines: 3,
+          height: 120.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Location Field with Icon (e.g., location_on icon)
+        CustomIconTextField(
+          icon: Icons.location_on,
+          controller: locationController,
+          hintText: 'Enter location',
+          height: 35.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Address Field with Icon (e.g., home icon)
+        CustomIconTextField(
+          icon: Icons.home,
+          controller: addressController,
+          hintText: 'Enter address',
+          height: 35.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Date and Time Selector Molecule
+        IconDateTimeSelector(
+          dateTimeText: dateTimeDisplay,
+          onTap: onSelectDateTime,
+          height: 35.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Moods Selector Molecule
+        IconMoodsSelector(
+          moodsText: moodsDisplay,
+          onTap: onSelectMoods,
+          height: 35.0,
+        ),
+        const SizedBox(height: 8),
+
+        // Invitees Field
+        InviteesField(
+          searchController: inviteeSearchController,
+          selectedInvitees: selectedInvitees,
+          searchResults: searchResults,
+          isSearching: isSearching,
+          onAddInvitee: onAddInvitee,
+          onRemoveInvitee: onRemoveInvitee,
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 }
