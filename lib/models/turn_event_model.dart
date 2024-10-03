@@ -63,7 +63,7 @@ class Turn extends EventDataModel {
     return Turn(
       name: json['turnName'],
       description: json['description'],
-      moods: json['moods'],
+      moods: List<String>.from(json['moods']),
       uid: json['uid'],
       username: json['username'],
       eventId: json['turnId'],
