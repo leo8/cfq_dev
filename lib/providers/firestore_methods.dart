@@ -54,7 +54,6 @@ class FirestoreMethods {
         notSureAttending: [], // Initialize not sure attending list as empty
         notAttending: [], // Initialize not attending list as empty
         notAnswered: [], // Initialize not answered list as empty
-        comments: [], // Initialize comments list as empty
       );
 
       // Save the TURN object to Firestore under the 'turns' collection
@@ -78,7 +77,8 @@ class FirestoreMethods {
     String username,
     Uint8List file,
     String profilePictureUrl,
-    String where, // General location of the CFQ event (e.g., "online")
+    String where, // General location of the CFQ event
+    String when // General date as a string ("ce soir", "13/02/2025", "cet été", etc)
   ) async {
     String res = CustomString.someErrorOccurred;
 
@@ -102,9 +102,8 @@ class FirestoreMethods {
         imageUrl: cfqImageUrl,
         profilePictureUrl: profilePictureUrl,
         where: where, // General location of the CFQ event
+        when: when,
         organizers: organizers,
-        followers: [], // Initialize followers list as empty
-        comments: [], // Initialize comments list as empty
       );
 
       // Save the CFQ object to Firestore under the 'cfqs' collection
