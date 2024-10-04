@@ -1,6 +1,5 @@
-// profile_content.dart
-
 import 'package:cfq_dev/utils/styles/string.dart';
+import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
 import 'package:cfq_dev/widgets/molecules/friends_count.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -25,6 +24,7 @@ class ProfileContent extends StatelessWidget {
     this.onAddFriendTap,
     this.onRemoveFriendTap,
     this.onFriendsTap,
+    super.key, // Ensure key is passed
   });
 
   @override
@@ -32,12 +32,19 @@ class ProfileContent extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Profile Picture
-          CircleAvatar(
-            radius: 50,
-            backgroundImage: NetworkImage(user.profilePictureUrl),
-          ),
-          SizedBox(height: 10),
+          if (isCurrentUser)
+            AvatarNeonSwitch(
+              imageUrl: user.profilePictureUrl,
+              isActive: user.isActive, // Pass the current active status
+              onChanged: onActiveChanged,
+            )
+          else
+            // Profile Picture
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(user.profilePictureUrl),
+            ),
+          SizedBox(height: 30),
           // Username
           Text(
             user.username,
@@ -57,13 +64,6 @@ class ProfileContent extends StatelessWidget {
             onFriendsTap: onFriendsTap ?? () {},
           ),
           SizedBox(height: 20),
-          // On/Off Switch for Current User
-          if (onActiveChanged != null)
-            SwitchListTile(
-              title: Text('Active Status'),
-              value: user.isActive,
-              onChanged: onActiveChanged,
-            ),
           // Logout Button for Current User
           if (onLogoutTap != null)
             ElevatedButton(
