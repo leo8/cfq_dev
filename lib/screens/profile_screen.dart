@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
+import '../screens/parameters_screen.dart';
 import 'friends_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
+  
 
   const ProfileScreen({super.key, this.userId});
 
@@ -69,6 +71,17 @@ class ProfileScreen extends StatelessWidget {
                     // Refresh the profile data upon returning
                     viewModel.fetchUserData();
                   },
+                  onParametersTap: viewModel.isCurrentUser
+                    ? () {
+                        // Navigate to the parameters screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ParametersScreen(viewModel: viewModel),
+                          ),
+                        );
+                      }
+                    : null,
                   onLogoutTap:
                       viewModel.isCurrentUser ? () => viewModel.logOut() : null,
                   onAddFriendTap:

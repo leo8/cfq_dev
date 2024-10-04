@@ -14,6 +14,7 @@ class ProfileContent extends StatelessWidget {
   final VoidCallback? onAddFriendTap;
   final VoidCallback? onRemoveFriendTap;
   final VoidCallback? onFriendsTap;
+  final VoidCallback? onParametersTap;
 
   const ProfileContent({
     required this.user,
@@ -24,6 +25,7 @@ class ProfileContent extends StatelessWidget {
     this.onAddFriendTap,
     this.onRemoveFriendTap,
     this.onFriendsTap,
+    this.onParametersTap,
     super.key, // Ensure key is passed
   });
 
@@ -64,6 +66,13 @@ class ProfileContent extends StatelessWidget {
             onFriendsTap: onFriendsTap ?? () {},
           ),
           SizedBox(height: 20),
+          // Parameters Button for Current User
+          if (isCurrentUser && onParametersTap != null)
+            ElevatedButton.icon(
+              onPressed: onParametersTap,
+              icon: Icon(Icons.settings),
+              label: Text('Parameters'),
+            ),
           // Logout Button for Current User
           if (onLogoutTap != null)
             ElevatedButton(
