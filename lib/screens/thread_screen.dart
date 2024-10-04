@@ -28,7 +28,7 @@ class ThreadScreen extends StatelessWidget {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: CustomColor.transparent,
+          backgroundColor: CustomColor.mobileBackgroundColor,
           elevation: 0,
           title: Consumer<ThreadViewModel>(
             builder: (context, viewModel, child) {
@@ -116,14 +116,6 @@ class ThreadScreen extends StatelessWidget {
             } else {
               // Display the regular content
               return Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      'https://images.unsplash.com/photo-1617957772002-57adde1156fa?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
