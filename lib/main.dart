@@ -9,9 +9,14 @@ import 'package:firebase_core/firebase_core.dart'; // Firebase core
 import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
 import 'package:flutter/material.dart'; // Flutter material components
 import 'package:provider/provider.dart'; // State management using Provider
+import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure bindings are initialized
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure bindings are initialized
+  FlutterNativeSplash.preserve(
+      widgetsBinding: widgetsBinding); // Preserve splash screen until ready
+
   // Initialize Firebase for web
   if (kIsWeb) {
     await Firebase.initializeApp(
@@ -27,11 +32,30 @@ void main() async {
     // Initialize Firebase for mobile platforms
     await Firebase.initializeApp();
   }
-  runApp(const MyApp()); // Run the application
+
+  runApp(const CFQ()); // Run the application
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CFQ extends StatefulWidget {
+  const CFQ({super.key});
+
+  @override
+  State<CFQ> createState() => _CFQState();
+}
+
+class _CFQState extends State<CFQ> {
+  @override
+  void initState() {
+    super.initState();
+    _removeSplashScreen(); // Remove splash screen after initialization
+  }
+
+  // Remove splash screen when app is ready
+  Future<void> _removeSplashScreen() async {
+    await Future.delayed(
+        const Duration(seconds: 2)); // Optionally delay for some time
+    FlutterNativeSplash.remove(); // Remove the splash screen
+  }
 
   // Root widget of the application
   @override
