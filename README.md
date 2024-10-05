@@ -13,7 +13,15 @@ To set up this project follow these steps:
 When the projext is clone, run 
 `flutter pub get`
 
+-------------------------------------------------------------------------------------------------------------------------------------------------
 
+## Architecture 
+
+Atomique programation 
+![image](https://github.com/user-attachments/assets/081c6132-7b58-4d28-a97d-5c0490c4246d)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## Techicals details
 
 ### Change Splash Screen 
 
@@ -29,4 +37,4 @@ App icon with an icon background, as shown on the right: This should be 960×960
 
 All modifications are made in the pubspec.yaml file
 `dart run flutter_launcher_icons`
-`./scripts/gen-App-Icon.sh`
+`./scripts/gen-app-icon.sh`
