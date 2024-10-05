@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart'; // Firebase core
 import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
 import 'package:flutter/material.dart'; // Flutter material components
 import 'package:provider/provider.dart'; // State management using Provider
+import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 
 void main() async {
@@ -20,12 +21,12 @@ void main() async {
   // Initialize Firebase for web
   if (kIsWeb) {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBcr5WVuZxga_98ZFohPuJ4assvOdDXjC4", // Your API key
-        appId: "1:160341522687:web:10b0092c6c1c7ba9e574ca", // Your app ID
-        messagingSenderId: "160341522687", // Sender ID
-        projectId: "cfq-dev-11498", // Project ID
-        storageBucket: "cfq-dev-11498.appspot.com", // Storage bucket
+      options: FirebaseOptions(
+        apiKey: apiKey, // Your API key
+        appId: appId, // Your app ID
+        messagingSenderId: messagingSenderId, // Sender ID
+        projectId: projectId, // Project ID
+        storageBucket: storageBucket, // Storage bucket
       ),
     );
   } else {
