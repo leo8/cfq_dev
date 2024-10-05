@@ -102,6 +102,9 @@ class _CFQState extends State<CFQ> {
             return LoginScreen(); // Show login screen if not authenticated
           },
         ),
+        routes: {
+          '/login': (context) => LoginScreen(),
+        },
       ),
     );
   }

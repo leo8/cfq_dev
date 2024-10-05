@@ -78,13 +78,14 @@ class _SignupScreenState extends State<SignupScreen> {
       showSnackBar(res, context); // Show error message if signup fails
     } else {
       // Navigate to the main layout on successful signup
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const RepsonsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
           ),
         ),
+        (route) => false,  
       );
     }
   }

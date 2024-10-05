@@ -5,6 +5,7 @@ import 'package:cfq_dev/models/turn_event_model.dart';
 import 'package:cfq_dev/providers/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cfq_dev/utils/logger.dart';
 
 import '../utils/styles/string.dart';
 
@@ -115,5 +116,18 @@ class FirestoreMethods {
     }
 
     return res;
+  }
+
+  Future<void> updateUserProfile(String uid, String username, String email, String bio) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'username': username,
+        'email': email,
+        'bio': bio,
+      });
+    } catch (e) {
+      AppLogger.error('Error updating user profile in Firestore: $e');
+      throw e;
+    }
   }
 }

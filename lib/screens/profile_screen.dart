@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
+import '../screens/parameters_screen.dart';
 import 'friends_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
+  
 
   const ProfileScreen({super.key, this.userId});
 
@@ -56,19 +58,29 @@ class ProfileScreen extends StatelessWidget {
                           viewModel.fetchUserData();
                         }
                       : null,
-                  onFriendsTap: () async {
-                    // Navigate to FriendsListScreen
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FriendsListScreen(
-                          currentUserId: viewModel.user!.uid,
-                        ),
-                      ),
-                    );
-                    // Refresh the profile data upon returning
-                    viewModel.fetchUserData();
-                  },
+                  onFriendsTap: viewModel.isCurrentUser
+                      ? () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FriendsListScreen(
+                                currentUserId: viewModel.user!.uid,
+                              ),
+                            ),
+                          );
+                          viewModel.fetchUserData();
+                        }
+                      : null,
+                  onParametersTap: viewModel.isCurrentUser
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ParametersScreen(viewModel: viewModel, onLogoutTap: () => viewModel.logOut()),
+                            ),
+                          );
+                        }
+                      : null,
                   onLogoutTap:
                       viewModel.isCurrentUser ? () => viewModel.logOut() : null,
                   onAddFriendTap:

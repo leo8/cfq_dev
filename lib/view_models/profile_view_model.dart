@@ -4,6 +4,8 @@ import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
+import '../providers/storage_methods.dart';
+import 'dart:typed_data';
 
 class ProfileViewModel extends ChangeNotifier {
   final String? userId;
@@ -182,4 +184,78 @@ class ProfileViewModel extends ChangeNotifier {
     if (!_isCurrentUser) return;
     await AuthMethods().logOutUser();
   }
+
+  Future<void> updateUserProfile(String username, String bio, String location, DateTime? birthDate) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Update Firestore
+      await FirebaseFirestore.instance.collection('users').doc(_user!.uid).update({
+        'username': username,
+        'bio': bio,
+        'location': location,
+        'birthDate': birthDate?.toIso8601String(),
+      });
+
+      // Update local user object
+      _user = model.User(
+        username: username,
+        email: _user!.email,
+        bio: bio,
+        uid: _user!.uid,
+        friends: _user!.friends,
+        teams: _user!.teams,
+        profilePictureUrl: _user!.profilePictureUrl,
+        location: location,
+        birthDate: birthDate,
+        isActive: _user!.isActive,
+        searchKey: username.toLowerCase(),
+      );
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      AppLogger.error(e.toString());
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfilePicture(Uint8List file) async {
+  try {
+    _isLoading = true;
+    notifyListeners();
+
+    // Upload new profile picture to storage
+    String profilePictureUrl = await StorageMethods().uploadImageToStorage('profilePicture', file, false);
+
+    // Update Firestore
+    await FirebaseFirestore.instance.collection('users').doc(_user!.uid).update({
+      'profilePictureUrl': profilePictureUrl,
+    });
+
+    // Update local user object
+    _user = model.User(
+      username: _user!.username,
+      email: _user!.email,
+      bio: _user!.bio,
+      uid: _user!.uid,
+      friends: _user!.friends,
+      teams: _user!.teams,
+      profilePictureUrl: profilePictureUrl,
+      location: _user!.location,
+      birthDate: _user!.birthDate,
+      isActive: _user!.isActive,
+      searchKey: _user!.username.toLowerCase(),
+    );
+
+    _isLoading = false;
+    notifyListeners();
+  } catch (e) {
+    _isLoading = false;
+    AppLogger.error(e.toString());
+    notifyListeners();
+  }
+}
 }

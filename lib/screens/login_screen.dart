@@ -49,13 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (res == CustomString.success) {
       // Navigate to the appropriate layout after successful login
-      Navigator.of(context).pushReplacement(
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const RepsonsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
           ),
         ),
+        (route) => false,  
       );
     } else {
       // Show error message if login fails
