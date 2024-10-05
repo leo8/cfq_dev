@@ -106,11 +106,9 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
-            // Display the app logo
             Image.asset(
               'assets/logo_white.png',
-              height: 250,
+              height: 200,
               color: CustomColor.white,
             ),
             const SizedBox(height: 20),
