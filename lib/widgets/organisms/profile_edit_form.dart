@@ -172,13 +172,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   }
 
   Widget _buildProfileImage() {
-    if (_isImageLoading) {
-      return CircularProgressIndicator();
-    } else {
-      return ProfileImageAvatar(
-        image: _selectedImage,
-        onImageSelected: _selectImage,
-      );
-    }
-  }
+  return ProfileImageAvatar(
+    image: _selectedImage,
+    onImageSelected: _selectImage,
+    isLoading: _isImageLoading,
+  );
+}
 }
