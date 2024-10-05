@@ -4,6 +4,7 @@ import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
+import '../providers/firestore_methods.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   final String? userId;
@@ -182,4 +183,40 @@ class ProfileViewModel extends ChangeNotifier {
     if (!_isCurrentUser) return;
     await AuthMethods().logOutUser();
   }
+
+  Future<void> updateUserProfile(String username, String email, String bio) async {
+  try {
+    _isLoading = true;
+    notifyListeners();
+
+    // Update Firestore
+    await FirebaseFirestore.instance.collection('users').doc(_user!.uid).update({
+      'username': username,
+      'email': email,
+      'bio': bio,
+    });
+
+    // Update local user object
+    _user = model.User(
+      username: username,
+      email: email,
+      bio: bio,
+      uid: _user!.uid,
+      friends: _user!.friends,
+      teams: _user!.teams,
+      profilePictureUrl: _user!.profilePictureUrl,
+      location: _user!.location,
+      birthDate: _user!.birthDate,
+      isActive: _user!.isActive,
+      searchKey: username.toLowerCase(),
+    );
+
+    _isLoading = false;
+    notifyListeners();
+  } catch (e) {
+    _isLoading = false;
+    AppLogger.error(e.toString());
+    notifyListeners();
+  }
+}
 }

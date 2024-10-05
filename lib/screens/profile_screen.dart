@@ -58,30 +58,29 @@ class ProfileScreen extends StatelessWidget {
                           viewModel.fetchUserData();
                         }
                       : null,
-                  onFriendsTap: () async {
-                    // Navigate to FriendsListScreen
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FriendsListScreen(
-                          currentUserId: viewModel.user!.uid,
-                        ),
-                      ),
-                    );
-                    // Refresh the profile data upon returning
-                    viewModel.fetchUserData();
-                  },
+                  onFriendsTap: viewModel.isCurrentUser
+                      ? () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FriendsListScreen(
+                                currentUserId: viewModel.user!.uid,
+                              ),
+                            ),
+                          );
+                          viewModel.fetchUserData();
+                        }
+                      : null,
                   onParametersTap: viewModel.isCurrentUser
-                    ? () {
-                        // Navigate to the parameters screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ParametersScreen(viewModel: viewModel, onLogoutTap: () => viewModel.logOut()),
-                          ),
-                        );
-                      }
-                    : null,
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ParametersScreen(viewModel: viewModel, onLogoutTap: () => viewModel.logOut()),
+                            ),
+                          );
+                        }
+                      : null,
                   onLogoutTap:
                       viewModel.isCurrentUser ? () => viewModel.logOut() : null,
                   onAddFriendTap:

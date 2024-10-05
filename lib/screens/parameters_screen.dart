@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/styles/colors.dart';
 import '../view_models/profile_view_model.dart';
+import '../screens/edit_profile_screen.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -25,7 +26,12 @@ class ParametersScreen extends StatelessWidget {
             leading: const Icon(Icons.person),
             title: const Text('Edit Profile'),
             onTap: () {
-              // Navigate to edit profile screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfileScreen(viewModel: viewModel),
+                ),
+              );
             },
           ),
           ListTile(
