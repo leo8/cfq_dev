@@ -74,11 +74,6 @@ class ProfileContent extends StatelessWidget {
               label: Text('Parameters'),
             ),
           // Logout Button for Current User
-          if (onLogoutTap != null)
-            ElevatedButton(
-              onPressed: onLogoutTap,
-              child: Text('Logout'),
-            ),
           // 'Ajouter' Button for Other Users (only if not friends)
           if (onAddFriendTap != null)
             ElevatedButton(

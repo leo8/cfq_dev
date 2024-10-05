@@ -77,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ParametersScreen(viewModel: viewModel),
+                            builder: (context) => ParametersScreen(viewModel: viewModel, onLogoutTap: () => viewModel.logOut()),
                           ),
                         );
                       }
