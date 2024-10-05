@@ -79,12 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-          // App logo
           Image.asset(
             'assets/logo_white.png',
-            height: 250,
-            color: CustomColor.deepPurpleAccent,
+            height: 200,
+            color: CustomColor.white,
           ),
           const SizedBox(height: 64),
           // Login form that includes email and password fields
