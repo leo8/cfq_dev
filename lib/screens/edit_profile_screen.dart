@@ -1,6 +1,8 @@
+import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:flutter/material.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_edit_form.dart';
+import '../templates/auth_template.dart';
 import '../utils/styles/colors.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -10,24 +12,47 @@ class EditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit profile'),
-        backgroundColor: CustomColor.mobileBackgroundColor,
-      ),
+    return AuthTemplate(
       body: Builder(
         builder: (context) {
           if (viewModel.isLoading) {
             return Center(child: CircularProgressIndicator());
           }
-          return ProfileEditForm(
-            initialUsername: viewModel.user!.username,
-            initialEmail: viewModel.user!.email,
-            initialBio: viewModel.user!.bio,
-            onSave: (username, email, bio) async {
-              await viewModel.updateUserProfile(username, email, bio);
-              Navigator.of(context).pop();
-            },
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    ProfileEditForm(
+                      initialUsername: viewModel.user!.username,
+                      initialBio: viewModel.user!.bio,
+                      initialLocation: viewModel.user!.location,
+                      initialBirthDate: viewModel.user!.birthDate,
+                      initialProfilePictureUrl: viewModel.user!.profilePictureUrl,
+                      onSave: (username, bio, location, birthDate, newProfilePicture) async {
+                        if (newProfilePicture != null) {
+                          await viewModel.updateProfilePicture(newProfilePicture);
+                        }
+                        await viewModel.updateUserProfile(username, bio, location, birthDate);                      // Pop twice to go back to the profile screen
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+
+                      },
+                    )
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  icon: Icon(Icons.close, color: CustomColor.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ],
           );
         },
       ),
