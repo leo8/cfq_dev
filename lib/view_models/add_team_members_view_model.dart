@@ -6,8 +6,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AddTeamMembersViewModel extends ChangeNotifier {
   final String teamId;
+
   bool _isLoading = true;
   bool get isLoading => _isLoading;
+
+  bool _hasChanges = false;
+  bool get hasChanges => _hasChanges;
 
   List<model.User> _friends = [];
   List<model.User> get friends => _friends;
@@ -73,6 +77,7 @@ class AddTeamMembersViewModel extends ChangeNotifier {
       });
 
       _teamMembers.add(userId);
+      _hasChanges = true;
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error adding member to team: $e');

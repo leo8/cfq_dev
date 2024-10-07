@@ -27,7 +27,9 @@ class TeamDetailsScreen extends StatelessWidget {
               elevation: 0,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: CustomColor.white),
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  Navigator.of(context).pop(viewModel.hasChanges);
+                },
               ),
             ),
             body: SafeArea(

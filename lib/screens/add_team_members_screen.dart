@@ -13,38 +13,43 @@ class AddTeamMembersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AddTeamMembersViewModel(teamId: teamId),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Ajouter des membres'),
-        ),
-        body: Consumer<AddTeamMembersViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return ListView.builder(
-                itemCount: viewModel.friends.length,
-                itemBuilder: (context, index) {
-                  model.User friend = viewModel.friends[index];
-                  bool isTeamMember = viewModel.isTeamMember(friend.uid);
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(friend.profilePictureUrl),
-                    ),
-                    title: Text(friend.username),
-                    trailing: isTeamMember
-                        ? null
-                        : ElevatedButton(
-                            onPressed: () =>
-                                viewModel.addMemberToTeam(friend.uid),
-                            child: const Text('Ajouter'),
-                          ),
-                  );
+      child: Consumer<AddTeamMembersViewModel>(
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Ajouter des membres'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop(viewModel.hasChanges);
                 },
-              );
-            }
-          },
-        ),
+              ),
+            ),
+            body: viewModel.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    itemCount: viewModel.friends.length,
+                    itemBuilder: (context, index) {
+                      model.User friend = viewModel.friends[index];
+                      bool isTeamMember = viewModel.isTeamMember(friend.uid);
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(friend.profilePictureUrl),
+                        ),
+                        title: Text(friend.username),
+                        trailing: isTeamMember
+                            ? null
+                            : ElevatedButton(
+                                onPressed: () =>
+                                    viewModel.addMemberToTeam(friend.uid),
+                                child: const Text('Ajouter'),
+                              ),
+                      );
+                    },
+                  ),
+          );
+        },
       ),
     );
   }

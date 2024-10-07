@@ -24,13 +24,16 @@ class TeamOptions extends StatelessWidget {
           context,
           icon: Icons.person_add,
           label: 'Ajouter',
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final bool? result = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => AddTeamMembersScreen(teamId: team.uid),
               ),
             );
+            if (result == true) {
+              await viewModel.refreshTeamDetails();
+            }
           },
         ),
         TurnButton(),

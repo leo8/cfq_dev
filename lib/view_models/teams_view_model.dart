@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/team.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../utils/logger.dart';
 
 class TeamsViewModel extends ChangeNotifier {
   List<Team> _teams = [];
@@ -23,11 +24,12 @@ class TeamsViewModel extends ChangeNotifier {
       QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
           .collection('teams')
           .where('members', arrayContains: userId)
-          .get();
+          .get(GetOptions(source: Source.server)); // Force fetch from server
 
       _teams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
     } catch (e) {
       // Handle error
+      AppLogger.error('Error fetching teams: $e');
     }
 
     _isLoading = false;

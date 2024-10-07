@@ -8,7 +8,10 @@ class TeamDetailsViewModel extends ChangeNotifier {
   Team _team;
   List<model.User> _members = [];
   bool _isLoading = true;
+  bool _hasChanges = false;
+
   bool get isLoading => _isLoading;
+  bool get hasChanges => _hasChanges;
 
   TeamDetailsViewModel({required Team team}) : _team = team {
     _fetchTeamMembers();
@@ -47,12 +50,21 @@ class TeamDetailsViewModel extends ChangeNotifier {
   }
 
   Future<void> refreshTeamDetails() async {
+    _isLoading = true;
+    notifyListeners();
+
     DocumentSnapshot teamDoc = await FirebaseFirestore.instance
         .collection('teams')
         .doc(_team.uid)
         .get();
-    _team = Team.fromSnap(teamDoc);
+    Team newTeam = Team.fromSnap(teamDoc);
+    if (_team != newTeam) {
+      _team = newTeam;
+      _hasChanges = true;
+    }
     await _fetchTeamMembers();
+
+    _isLoading = false;
     notifyListeners();
   }
 }
