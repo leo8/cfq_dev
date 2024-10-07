@@ -3,20 +3,26 @@ import 'package:flutter/material.dart';
 class CustomAvatar extends StatelessWidget {
   final String imageUrl;
   final double radius;
+  final Color? borderColor;
+  final double borderWidth;
 
-  // Constructor to accept the avatar image URL and radius (with a default value).
   const CustomAvatar({
-    required this.imageUrl, // URL for the avatar image
-    this.radius = 30, // Default radius is set to 30, can be customized
-    super.key,
-  });
+    Key? key,
+    required this.imageUrl,
+    this.radius = 20,
+    this.borderColor,
+    this.borderWidth = 0,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: radius, // Set the radius of the avatar
-      backgroundImage:
-          NetworkImage(imageUrl), // Fetch the image from the provided URL
+      radius: radius + borderWidth,
+      backgroundColor: borderColor,
+      child: CircleAvatar(
+        radius: radius,
+        backgroundImage: NetworkImage(imageUrl),
+      ),
     );
   }
 }
