@@ -11,7 +11,7 @@ import '../widgets/organisms/team_members.dart';
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
 
-  const TeamDetailsScreen({super.key, required this.team});
+  const TeamDetailsScreen({Key? key, required this.team}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,34 +33,35 @@ class TeamDetailsScreen extends StatelessWidget {
               ),
             ),
             body: SafeArea(
-              child: SingleChildScrollView(
-                child: Consumer<TeamDetailsViewModel>(
-                  builder: (context, viewModel, child) {
-                    return Column(
-                      children: [
-                        TeamHeader(team: team),
-                        const SizedBox(height: 20),
-                        TeamOptions(team: team),
-                        const SizedBox(height: 20),
-                        viewModel.isLoading
-                            ? const CircularProgressIndicator()
-                            : TeamMembersList(members: viewModel.members),
-                        const SizedBox(height: 20),
-                        const Center(
-                          child: Text(
-                            'Team feed',
-                            style: TextStyle(
-                              color: CustomColor.white,
-                              fontSize: CustomFont.fontSize20,
-                              fontWeight: CustomFont.fontWeightBold,
+              child: viewModel.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          TeamHeader(team: viewModel.team),
+                          const SizedBox(height: 20),
+                          TeamOptions(
+                            team: viewModel.team,
+                            onTeamLeft: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          TeamMembersList(members: viewModel.members),
+                          const SizedBox(height: 20),
+                          const Center(
+                            child: Text(
+                              'Team feed',
+                              style: TextStyle(
+                                color: CustomColor.white,
+                                fontSize: CustomFont.fontSize20,
+                                fontWeight: CustomFont.fontWeightBold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+                        ],
+                      ),
+                    ),
             ),
           );
         },

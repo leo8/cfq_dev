@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 import '../utils/logger.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TeamDetailsViewModel extends ChangeNotifier {
   Team _team;
@@ -66,5 +67,38 @@ class TeamDetailsViewModel extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> leaveTeam() async {
+    try {
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Remove user from team
+      await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(_team.uid)
+          .update({
+        'members': FieldValue.arrayRemove([currentUserId])
+      });
+
+      // Remove team from user's teams
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .update({
+        'teams': FieldValue.arrayRemove([_team.uid])
+      });
+
+      // Update local team object
+      _team.members.remove(currentUserId);
+      _members.removeWhere((member) => member.uid == currentUserId);
+
+      _hasChanges = true;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      AppLogger.error('Error leaving team: $e');
+      return false;
+    }
   }
 }
