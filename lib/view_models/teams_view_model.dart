@@ -1,37 +1,36 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/team.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TeamsViewModel extends ChangeNotifier {
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
-
   List<Team> _teams = [];
+  bool _isLoading = true;
+
   List<Team> get teams => _teams;
+  bool get isLoading => _isLoading;
 
   TeamsViewModel() {
     fetchTeams();
   }
 
   Future<void> fetchTeams() async {
-    try {
-      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    _isLoading = true;
+    notifyListeners();
 
-      // Fetch teams where the current user is a member
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
           .collection('teams')
-          .where('members', arrayContains: currentUserId)
+          .where('members', arrayContains: userId)
           .get();
 
-      _teams = snapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
-
-      _isLoading = false;
-      notifyListeners();
+      _teams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
     } catch (e) {
-      // Handle errors if needed
-      _isLoading = false;
-      notifyListeners();
+      // Handle error
     }
+
+    _isLoading = false;
+    notifyListeners();
   }
 }

@@ -5,18 +5,19 @@ import '../models/user.dart' as model;
 import '../utils/logger.dart';
 
 class TeamDetailsViewModel extends ChangeNotifier {
-  final Team team;
+  Team _team;
+  List<model.User> _members = [];
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
-  List<model.User> _members = [];
-  List<model.User> get members => _members;
-
-  TeamDetailsViewModel({required this.team}) {
-    fetchTeamMembers();
+  TeamDetailsViewModel({required Team team}) : _team = team {
+    _fetchTeamMembers();
   }
 
-  Future<void> fetchTeamMembers() async {
+  Team get team => _team;
+  List<model.User> get members => _members;
+
+  Future<void> _fetchTeamMembers() async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -45,7 +46,13 @@ class TeamDetailsViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshTeamMembers() async {
-    await fetchTeamMembers();
+  Future<void> refreshTeamDetails() async {
+    DocumentSnapshot teamDoc = await FirebaseFirestore.instance
+        .collection('teams')
+        .doc(_team.uid)
+        .get();
+    _team = Team.fromSnap(teamDoc);
+    await _fetchTeamMembers();
+    notifyListeners();
   }
 }
