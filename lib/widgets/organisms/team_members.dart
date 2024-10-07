@@ -1,38 +1,42 @@
 import 'package:flutter/material.dart';
 import '../molecules/team_member_item.dart';
 import '../../models/user.dart' as model;
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
 
 class TeamMembersList extends StatelessWidget {
-  final List members;
+  final List<model.User> members;
 
   const TeamMembersList({super.key, required this.members});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: members.length,
-        itemBuilder: (context, index) {
-          // Here you would fetch the user data based on the member ID
-          // For now, we'll use placeholder data
-          model.User user = model.User(
-            username: 'User $index',
-            profilePictureUrl: 'https://placeholder.com/150',
-            uid: members[index],
-            email: '',
-            bio: '',
-            friends: [],
-            teams: [],
-            location: '',
-            birthDate: DateTime.now(),
-            searchKey: '',
-            isActive: true,
-          );
-          return TeamMemberItem(user: user);
-        },
-      ),
+    return Column(
+      children: [
+        const Text(
+          'Team Members',
+          style: TextStyle(
+            color: CustomColor.white,
+            fontSize: CustomFont.fontSize20,
+            fontWeight: CustomFont.fontWeightBold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 120,
+          child: Center(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: members.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                model.User user = members[index];
+                return TeamMemberItem(user: user);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

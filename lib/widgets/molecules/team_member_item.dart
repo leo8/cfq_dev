@@ -16,6 +16,7 @@ class TeamMemberItem extends StatelessWidget {
       width: 80,
       margin: const EdgeInsets.symmetric(horizontal: 5),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CustomAvatar(
             imageUrl: user.profilePictureUrl,
