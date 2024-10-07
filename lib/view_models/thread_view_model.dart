@@ -6,7 +6,6 @@ import 'package:rxdart/rxdart.dart';
 import '../models/user.dart' as model;
 
 class ThreadViewModel extends ChangeNotifier {
-  // Existing variables
   final String currentUserUid;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
@@ -17,7 +16,6 @@ class ThreadViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  // New variables
   model.User? _currentUser;
   model.User? get currentUser => _currentUser;
 
@@ -26,7 +24,6 @@ class ThreadViewModel extends ChangeNotifier {
 
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
-    // Fetch current user and active friends
     fetchCurrentUserAndActiveFriends();
   }
 
@@ -40,10 +37,8 @@ class ThreadViewModel extends ChangeNotifier {
 
   // Existing methods (performSearch, parseDate, fetchCombinedEvents)
 
-  /// Fetches the current user's data and their active friends.
   Future<void> fetchCurrentUserAndActiveFriends() async {
     try {
-      // Fetch current user's data
       DocumentSnapshot currentUserSnap = await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserUid)
@@ -51,21 +46,16 @@ class ThreadViewModel extends ChangeNotifier {
 
       _currentUser = model.User.fromSnap(currentUserSnap);
 
-      // Get friends UIDs
       List<dynamic> friendsUids = _currentUser!.friends;
 
-      // If no friends, set activeFriends to empty and return
       if (friendsUids.isEmpty) {
         _activeFriends = [];
         notifyListeners();
         return;
       }
 
-      // Fetch friends who are active (isActive == true)
-      // Firestore 'in' query supports up to 10 items
       List<model.User> activeFriends = [];
 
-      // Chunk friendsUids into batches of 10
       int batchSize = 10;
       for (int i = 0; i < friendsUids.length; i += batchSize) {
         List<dynamic> batch = friendsUids.sublist(
@@ -93,17 +83,14 @@ class ThreadViewModel extends ChangeNotifier {
     }
   }
 
-  /// Updates the current user's active status.
   Future<void> updateIsActiveStatus(bool newValue) async {
     if (_currentUser == null) return;
     try {
-      // Update the active status in Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(_currentUser!.uid)
           .update({'isActive': newValue});
 
-      // Update the local model
       _currentUser!.isActive = newValue;
       notifyListeners();
     } catch (e) {
