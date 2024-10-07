@@ -35,7 +35,7 @@ class TeamDetailsScreen extends StatelessWidget {
                   children: [
                     TeamHeader(team: team),
                     const SizedBox(height: 20),
-                    TeamOptions(),
+                    TeamOptions(team: team),
                     const SizedBox(height: 20),
                     viewModel.isLoading
                         ? const CircularProgressIndicator()

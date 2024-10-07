@@ -44,4 +44,8 @@ class TeamDetailsViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> refreshTeamMembers() async {
+    await fetchTeamMembers();
+  }
 }
