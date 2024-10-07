@@ -81,12 +81,10 @@ class TeamsScreen extends StatelessWidget {
                               Team team = viewModel.teams[index];
                               return GestureDetector(
                                 onTap: () {
-                                  // Navigate to TeamDetailsScreen
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          TeamDetailsScreen(team: team),
+                                      builder: (context) => TeamDetailsScreen(team: team),
                                     ),
                                   );
                                 },
