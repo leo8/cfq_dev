@@ -27,30 +27,56 @@ class AddTeamMembersScreen extends StatelessWidget {
             ),
             body: viewModel.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: viewModel.friends.length,
-                    itemBuilder: (context, index) {
-                      model.User friend = viewModel.friends[index];
-                      bool isTeamMember = viewModel.isTeamMember(friend.uid);
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(friend.profilePictureUrl),
-                        ),
-                        title: Text(friend.username),
-                        trailing: isTeamMember
-                            ? null
-                            : ElevatedButton(
-                                onPressed: () =>
-                                    viewModel.addMemberToTeam(friend.uid),
-                                child: const Text('Ajouter'),
-                              ),
-                      );
-                    },
+                : ListView(
+                    children: [
+                      _buildMembersList(
+                        'Membres de l\'équipe',
+                        viewModel.teamMembers,
+                        viewModel,
+                        true,
+                      ),
+                      _buildMembersList(
+                        'Autres amis',
+                        viewModel.nonTeamMembers,
+                        viewModel,
+                        false,
+                      ),
+                    ],
                   ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildMembersList(String title, List<model.User> users,
+      AddTeamMembersViewModel viewModel, bool isTeamMember) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        ...users.map((user) => ListTile(
+              leading: CircleAvatar(
+                backgroundImage: NetworkImage(user.profilePictureUrl),
+              ),
+              title: Text(user.username),
+              trailing: isTeamMember
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : ElevatedButton(
+                      onPressed: () => viewModel.addMemberToTeam(user.uid),
+                      child: const Text('Ajouter'),
+                    ),
+            )),
+      ],
     );
   }
 }

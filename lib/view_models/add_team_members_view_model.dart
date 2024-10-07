@@ -16,7 +16,22 @@ class AddTeamMembersViewModel extends ChangeNotifier {
   List<model.User> _friends = [];
   List<model.User> get friends => _friends;
 
-  List<String> _teamMembers = [];
+  List<String> _teamMemberIds = [];
+  List<model.User> _teamMembers = [];
+  List<model.User> _nonTeamMembers = [];
+
+  List<model.User> get teamMembers => _teamMembers;
+  List<model.User> get nonTeamMembers => _nonTeamMembers;
+
+  void _sortUsers() {
+    _teamMembers = _friends
+        .where((friend) => _teamMemberIds.contains(friend.uid))
+        .toList();
+    _nonTeamMembers = _friends
+        .where((friend) => !_teamMemberIds.contains(friend.uid))
+        .toList();
+    notifyListeners();
+  }
 
   AddTeamMembersViewModel({required this.teamId}) {
     _initializeData();
@@ -49,7 +64,9 @@ class AddTeamMembersViewModel extends ChangeNotifier {
           .doc(teamId)
           .get();
 
-      _teamMembers = List<String>.from(teamDoc['members']);
+      _teamMemberIds = List<String>.from(teamDoc['members']);
+
+      _sortUsers();
 
       _isLoading = false;
       notifyListeners();
@@ -61,7 +78,7 @@ class AddTeamMembersViewModel extends ChangeNotifier {
   }
 
   bool isTeamMember(String userId) {
-    return _teamMembers.contains(userId);
+    return _teamMemberIds.contains(userId);
   }
 
   Future<void> addMemberToTeam(String userId) async {
@@ -76,8 +93,9 @@ class AddTeamMembersViewModel extends ChangeNotifier {
         'teams': FieldValue.arrayUnion([teamId])
       });
 
-      _teamMembers.add(userId);
+      _teamMemberIds.add(userId);
       _hasChanges = true;
+      _sortUsers();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error adding member to team: $e');
