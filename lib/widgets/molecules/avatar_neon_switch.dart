@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/switches/neon_switch.dart';
+import '../../utils/styles/colors.dart';
 
 class AvatarNeonSwitch extends StatelessWidget {
   final String imageUrl;
@@ -24,12 +25,30 @@ class AvatarNeonSwitch extends StatelessWidget {
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
-        CustomAvatar(
-          imageUrl: imageUrl,
-          radius: avatarRadius,
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isActive ? Colors.cyanAccent : Colors.purpleAccent,
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isActive
+                    ? Colors.cyanAccent.withOpacity(0.5)
+                    : Colors.purpleAccent.withOpacity(0.5),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: CustomAvatar(
+            imageUrl: imageUrl,
+            radius: avatarRadius,
+          ),
         ),
         Positioned(
-          bottom: -avatarRadius * 0.25,
+          bottom: -avatarRadius * 0.2,
           child: NeonSwitch(
             size: switchSize,
             value: isActive,
