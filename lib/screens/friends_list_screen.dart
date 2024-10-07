@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/user.dart' as model;
 import 'package:provider/provider.dart';
 import '../view_models/friends_list_view_model.dart';
-import 'profile_screen.dart'; // To navigate to friend's profile
+import 'profile_screen.dart';
+import '../widgets/atoms/avatars/clickable_avatar.dart';
 
 class FriendsListScreen extends StatelessWidget {
   final String currentUserId;
@@ -47,19 +48,20 @@ class FriendsListScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   model.User friend = viewModel.friends[index];
                   return ListTile(
-                    leading: GestureDetector(
+                    leading: ClickableAvatar(
+                      userId: friend.uid,
+                      imageUrl: friend.profilePictureUrl,
+                      radius: 20, // Adjust as needed
                       onTap: () {
                         // Navigate to friend's profile
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileScreen(userId: friend.uid),
+                            builder: (context) =>
+                                ProfileScreen(userId: friend.uid),
                           ),
                         );
                       },
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(friend.profilePictureUrl),
-                      ),
                     ),
                     title: Text(friend.username),
                     trailing: ElevatedButton(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../models/user.dart' as model;
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
+import '../atoms/avatars/clickable_avatar.dart';
+import '../../screens/profile_screen.dart';
 
 class TeamMemberItem extends StatelessWidget {
   final model.User user;
@@ -18,7 +19,16 @@ class TeamMemberItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomAvatar(
+          ClickableAvatar(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(userId: user.uid),
+                ),
+              );
+            },
+            userId: user.uid,
             imageUrl: user.profilePictureUrl,
             radius: 30,
           ),

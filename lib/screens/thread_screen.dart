@@ -14,6 +14,7 @@ import '../widgets/molecules/custom_search_bar.dart';
 import '../widgets/organisms/cfq_card_content.dart';
 import '../widgets/organisms/turn_card_content.dart';
 import '../models/user.dart' as model;
+import '../widgets/atoms/avatars/clickable_avatar.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -129,30 +130,18 @@ class ThreadScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            // Current User's Avatar with Switch
+                            // Current User's Avatar with Switch (not clickable)
                             if (viewModel.currentUser != null)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12.0),
                                 child: Column(
                                   children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Navigate to the current user's profile
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                ProfileScreen(),
-                                          ),
-                                        );
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(
-                                          viewModel
-                                              .currentUser!.profilePictureUrl,
-                                        ),
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                        viewModel
+                                            .currentUser!.profilePictureUrl,
                                       ),
                                     ),
                                     const SizedBox(height: 5),
@@ -176,9 +165,11 @@ class ThreadScreen extends StatelessWidget {
                                     horizontal: 12.0),
                                 child: Column(
                                   children: [
-                                    GestureDetector(
+                                    ClickableAvatar(
+                                      userId: friend.uid,
+                                      imageUrl: friend.profilePictureUrl,
+                                      radius: 30,
                                       onTap: () {
-                                        // Navigate to the friend's profile
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -187,12 +178,6 @@ class ThreadScreen extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(
-                                          friend.profilePictureUrl,
-                                        ),
-                                      ),
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
