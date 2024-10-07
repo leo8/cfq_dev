@@ -1,42 +1,58 @@
-import 'package:cfq_dev/widgets/atoms/avatars/custom_avatar.dart';
-import 'package:cfq_dev/widgets/atoms/switches/neon_switch.dart';
 import 'package:flutter/material.dart';
+import '../atoms/avatars/custom_avatar.dart';
+import '../atoms/switches/neon_switch.dart';
+import '../../utils/styles/colors.dart';
 
 class AvatarNeonSwitch extends StatelessWidget {
-  final String imageUrl; // Avatar image URL
-  final double avatarRadius; // Avatar radius
-  final double switchSize; // NeonSwitch size factor
-  final bool isActive; // Current value for the NeonSwitch (active status)
-  final Function(bool)?
-      onChanged; // Callback to handle switch value changes, nullable
+  final String imageUrl;
+  final double avatarRadius;
+  final double switchSize;
+  final bool isActive;
+  final Function(bool)? onChanged;
 
   const AvatarNeonSwitch({
+    Key? key,
     required this.imageUrl,
-    this.onChanged, // Nullable onChanged
-    this.avatarRadius = 75, // Default radius for the avatar
-    this.switchSize = 0.65, // Default size for the NeonSwitch
-    this.isActive = false, // Default active status is OFF
-    super.key,
-  });
+    this.onChanged,
+    this.avatarRadius = 40,
+    this.switchSize = 1,
+    this.isActive = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
-      clipBehavior: Clip.none, // Allows overlap of the NeonSwitch
+      clipBehavior: Clip.none,
       children: [
-        // Custom Avatar
-        CustomAvatar(
-          imageUrl: imageUrl,
-          radius: avatarRadius, // Avatar size
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isActive ? Colors.cyanAccent : Colors.purpleAccent,
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: isActive
+                    ? Colors.cyanAccent.withOpacity(0.5)
+                    : Colors.purpleAccent.withOpacity(0.5),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: CustomAvatar(
+            imageUrl: imageUrl,
+            radius: avatarRadius,
+          ),
         ),
-        // Positioned NeonSwitch at the bottom
         Positioned(
-          bottom: -avatarRadius * 0.35, // Adjust this to overlap the switch
+          bottom: -avatarRadius * 0.2,
           child: NeonSwitch(
-            size: switchSize, // NeonSwitch size
-            value: isActive, // Pass active status to NeonSwitch
-            onChanged: onChanged, // Handle switch value changes
+            size: switchSize,
+            value: isActive,
+            onChanged: onChanged,
           ),
         ),
       ],

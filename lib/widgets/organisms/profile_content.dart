@@ -31,7 +31,8 @@ class ProfileContent extends StatefulWidget {
   _ProfileContentState createState() => _ProfileContentState();
 }
 
-class _ProfileContentState extends State<ProfileContent> with SingleTickerProviderStateMixin {
+class _ProfileContentState extends State<ProfileContent>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 0;
 
@@ -64,6 +65,8 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                   isActive: widget.user.isActive,
                   onChanged: widget.onActiveChanged,
                   imageUrl: widget.user.profilePictureUrl,
+                  avatarRadius: 70,
+                  switchSize: 1.4,
                 )
               else
                 CircleAvatar(
@@ -73,7 +76,10 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
               SizedBox(height: 40),
               Text(
                 widget.user.username,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               SizedBox(height: 8),
               Text(
@@ -115,8 +121,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                           child: Text(
                             'SES TURNS',
                             style: TextStyle(
-                              color: _selectedIndex == 0 ? Colors.white : Colors.grey,
-                              fontWeight: _selectedIndex == 0 ? FontWeight.bold : FontWeight.normal,
+                              color: _selectedIndex == 0
+                                  ? Colors.white
+                                  : Colors.grey,
+                              fontWeight: _selectedIndex == 0
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -124,8 +134,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                           child: Text(
                             'ÇA VA TURN',
                             style: TextStyle(
-                              color: _selectedIndex == 1 ? Colors.white : Colors.grey,
-                              fontWeight: _selectedIndex == 1 ? FontWeight.bold : FontWeight.normal,
+                              color: _selectedIndex == 1
+                                  ? Colors.white
+                                  : Colors.grey,
+                              fontWeight: _selectedIndex == 1
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -136,8 +150,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                       child: TabBarView(
                         controller: _tabController,
                         children: [
-                          Center(child: Text('Ses turns feed', style: TextStyle(color: Colors.white))),
-                          Center(child: Text('Ça va turn feed', style: TextStyle(color: Colors.white))),
+                          Center(
+                              child: Text('Ses turns feed',
+                                  style: TextStyle(color: Colors.white))),
+                          Center(
+                              child: Text('Ça va turn feed',
+                                  style: TextStyle(color: Colors.white))),
                         ],
                       ),
                     ),
@@ -154,8 +172,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                           child: Text(
                             'MES POSTS',
                             style: TextStyle(
-                              color: _selectedIndex == 0 ? Colors.white : Colors.grey,
-                              fontWeight: _selectedIndex == 0 ? FontWeight.bold : FontWeight.normal,
+                              color: _selectedIndex == 0
+                                  ? Colors.white
+                                  : Colors.grey,
+                              fontWeight: _selectedIndex == 0
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -163,8 +185,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                           child: Text(
                             'ÇA VA TURN',
                             style: TextStyle(
-                              color: _selectedIndex == 1 ? Colors.white : Colors.grey,
-                              fontWeight: _selectedIndex == 1 ? FontWeight.bold : FontWeight.normal,
+                              color: _selectedIndex == 1
+                                  ? Colors.white
+                                  : Colors.grey,
+                              fontWeight: _selectedIndex == 1
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -175,8 +201,12 @@ class _ProfileContentState extends State<ProfileContent> with SingleTickerProvid
                       child: TabBarView(
                         controller: _tabController,
                         children: [
-                          Center(child: Text('Mes posts feed', style: TextStyle(color: Colors.white))),
-                          Center(child: Text('Ça va turn feed', style: TextStyle(color: Colors.white))),
+                          Center(
+                              child: Text('Mes posts feed',
+                                  style: TextStyle(color: Colors.white))),
+                          Center(
+                              child: Text('Ça va turn feed',
+                                  style: TextStyle(color: Colors.white))),
                         ],
                       ),
                     ),
