@@ -70,6 +70,7 @@ class CreateCfqScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               body: CfqForm(
+                currentUser: viewModel.currentUser!,
                 image: viewModel.cfqImage,
                 onSelectImage: viewModel.pickCfqImage,
                 nameController: viewModel.cfqNameController,
@@ -77,7 +78,8 @@ class CreateCfqScreen extends StatelessWidget {
                 locationController: viewModel.locationController,
                 whenController: viewModel.whenController,
                 onSelectMoods: () => viewModel.selectMoods(context),
-                moodsDisplay: viewModel.selectedMoods != null && viewModel.selectedMoods!.isNotEmpty
+                moodsDisplay: viewModel.selectedMoods != null &&
+                        viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
                     : CustomString.tonMood,
                 isLoading: viewModel.isLoading,

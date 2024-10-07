@@ -1,10 +1,13 @@
 import 'dart:typed_data';
-import 'package:cfq_dev/widgets/molecules/icon_moods_selector.dart';
 import 'package:flutter/material.dart';
-import '../molecules/custom_icon_text_field.dart';
 import '../molecules/invitees_field.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
+import '../atoms/texts/bordered_icon_text_field.dart';
+import '../atoms/avatars/custom_avatar.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/fonts.dart';
+import '../atoms/texts/custom_text.dart';
 
 class CfqForm extends StatelessWidget {
   final Uint8List? image;
@@ -23,6 +26,7 @@ class CfqForm extends StatelessWidget {
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
+  final model.User currentUser;
 
   const CfqForm({
     required this.image,
@@ -41,78 +45,106 @@ class CfqForm extends StatelessWidget {
     required this.isSearching,
     required this.onAddInvitee,
     required this.onRemoveInvitee,
+    required this.currentUser,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Event Image Selector
-        EventImageSelector(
-          image: image,
-          onSelectImage: onSelectImage,
-          width: 300, // Full width
-          height: 120, // Adjust height as needed
-        ),
-        const SizedBox(height: 20),
-
-        // Name Field with Icon (e.g., person icon)
-        CustomIconTextField(
-          icon: Icons.person,
-          controller: nameController,
-          hintText: 'Enter CFQ name',
-          height: 35.0,
-        ),
-        const SizedBox(height: 10),
-
-        // Description Field with Icon (e.g., description icon)
-        CustomIconTextField(
-          icon: Icons.description,
-          controller: descriptionController,
-          hintText: 'Enter CFQ description',
-          maxLines: 3,
-          height: 120.0,
-        ),
-        const SizedBox(height: 10),
-
-        // Location Field with Icon (e.g., location_on icon)
-        CustomIconTextField(
-          icon: Icons.location_on,
-          controller: locationController,
-          hintText: 'Enter location',
-          height: 35.0,
-        ),
-        const SizedBox(height: 10),
-
-        // Address Field with Icon (e.g., home icon)
-        CustomIconTextField(
-          icon: Icons.home,
-          controller: whenController,
-          hintText: 'Quand ?',
-          height: 35.0,
-        ),
-        const SizedBox(height: 10),
-
-        // Moods Selector Molecule
-        IconMoodsSelector(
-          moodsText: moodsDisplay,
-          onTap: onSelectMoods,
-          height: 35.0,
-        ),
-        const SizedBox(height: 10),
-
-        // Invitees Field
-        InviteesField(
-          searchController: inviteeSearchController,
-          selectedInvitees: selectedInvitees,
-          searchResults: searchResults,
-          isSearching: isSearching,
-          onAddInvitee: onAddInvitee,
-          onRemoveInvitee: onRemoveInvitee,
-        ),
-        const SizedBox(height: 10),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          EventImageSelector(
+            image: image,
+            onSelectImage: onSelectImage,
+            width: MediaQuery.of(context).size.width * 0.60,
+            height: MediaQuery.of(context).size.height * 0.15,
+          ),
+          const SizedBox(height: 8),
+          BorderedIconTextField(
+            icon: Icons.title,
+            controller: nameController,
+            hintText: 'Titre de l\'event',
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: CustomColor.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.bolt,
+                          color: CustomColor.white, size: 16),
+                      const SizedBox(width: 8),
+                      CustomText(
+                        text: 'Organisé par',
+                        color: CustomColor.white,
+                        fontSize: CustomFont.fontSize16,
+                      ),
+                      const SizedBox(width: 30),
+                      CustomAvatar(
+                        imageUrl: currentUser.profilePictureUrl,
+                        radius: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      CustomText(
+                        text: currentUser.username,
+                        color: CustomColor.white,
+                        fontSize: CustomFont.fontSize16,
+                        fontWeight: CustomFont.fontWeightBold,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          BorderedIconTextField(
+            icon: Icons.mood,
+            controller: TextEditingController(text: moodsDisplay),
+            hintText: 'Quel mood ?',
+            readOnly: true,
+            onTap: onSelectMoods,
+          ),
+          const SizedBox(height: 8),
+          BorderedIconTextField(
+            icon: Icons.calendar_today,
+            controller: whenController,
+            hintText: 'Quand ?',
+          ),
+          const SizedBox(height: 8),
+          BorderedIconTextField(
+            icon: Icons.location_on,
+            controller: locationController,
+            hintText: 'Où ? (un lieu, un nom, mets ce que tu veux)',
+          ),
+          const SizedBox(height: 8),
+          BorderedIconTextField(
+            icon: Icons.description,
+            controller: descriptionController,
+            hintText: 'Décris juste l\'event, raconte pas ta vie',
+            maxLines: 50,
+            height: 80,
+          ),
+          const SizedBox(height: 8),
+          InviteesField(
+            searchController: inviteeSearchController,
+            selectedInvitees: selectedInvitees,
+            searchResults: searchResults,
+            isSearching: isSearching,
+            onAddInvitee: onAddInvitee,
+            onRemoveInvitee: onRemoveInvitee,
+          ),
+        ],
+      ),
     );
   }
 }
