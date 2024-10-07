@@ -9,6 +9,8 @@ import '../widgets/atoms/buttons/outlined_icon_button.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import 'team_details_screen.dart';
+import '../widgets/molecules/team_card.dart';
+import '../widgets/atoms/texts/custom_text.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -31,7 +33,7 @@ class TeamsScreen extends StatelessWidget {
                 } else {
                   return Column(
                     children: [
-                      // Create Team Button with OutlinedIconButton
+                      // Create Team Button
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
@@ -57,181 +59,59 @@ class TeamsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             // Text 'Créer une team' below the button
-                            const Text(
-                              'Créer une team',
-                              style: TextStyle(
-                                fontSize: CustomFont.fontSize18,
-                                color: CustomColor.white,
-                              ),
+                            const CustomText(
+                              text: 'Créer une team',
+                              fontSize: CustomFont.fontSize18,
+                              color: CustomColor.white,
                             ),
                           ],
                         ),
                       ),
-                      // Conditional rendering of teams list or message
+                      // Teams List
                       Expanded(
                         child: viewModel.teams.isEmpty
                             ? const Center(
-                                child: Text(
-                                  'Vous n\'avez pas encore de teams.',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                  ),
+                                child: CustomText(
+                                  text: 'Vous n\'avez pas encore de teams.',
+                                  color: CustomColor.white,
+                                  fontSize: CustomFont.fontSize18,
                                 ),
                               )
                             : ListView.builder(
                                 itemCount: viewModel.teams.length,
                                 itemBuilder: (context, index) {
                                   Team team = viewModel.teams[index];
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      final bool? result = await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              TeamDetailsScreen(team: team),
-                                        ),
-                                      );
-                                      if (result == true) {
-                                        await viewModel.fetchTeams();
+                                  return FutureBuilder<List<model.User>>(
+                                    future: _fetchTeamMembers(team.members),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const SizedBox();
+                                      } else if (snapshot.hasData) {
+                                        List<model.User> members =
+                                            snapshot.data!;
+                                        return TeamCard(
+                                          team: team,
+                                          members: members,
+                                          onTap: () async {
+                                            final bool? result =
+                                                await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TeamDetailsScreen(
+                                                        team: team),
+                                              ),
+                                            );
+                                            if (result == true) {
+                                              await viewModel.fetchTeams();
+                                            }
+                                          },
+                                        );
+                                      } else {
+                                        return const SizedBox();
                                       }
                                     },
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 16.0),
-                                      padding: const EdgeInsets.all(16.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width:
-                                              1.0, // White border to highlight the team card
-                                        ),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          // Team Image (Larger)
-                                          CircleAvatar(
-                                            radius:
-                                                35, // Larger radius for the team image
-                                            backgroundImage: NetworkImage(team
-                                                .imageUrl), // Team image URL
-                                          ),
-                                          const SizedBox(width: 16),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                // Team Name
-                                                Text(
-                                                  team.name,
-                                                  textAlign: TextAlign.center,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        24, // Larger font size
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 10),
-                                                // Members Avatars and Count in a Single Row
-                                                FutureBuilder(
-                                                  future: _fetchTeamMembers(
-                                                      team.members),
-                                                  builder: (context,
-                                                      AsyncSnapshot<
-                                                              List<model.User>>
-                                                          snapshot) {
-                                                    if (snapshot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return const SizedBox();
-                                                    } else if (snapshot
-                                                        .hasData) {
-                                                      List<model.User> members =
-                                                          snapshot.data!;
-                                                      int totalMembers =
-                                                          members.length;
-
-                                                      return Column(
-                                                        children: [
-                                                          // Row with Avatars and Member Count
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              // Overlapping Avatars
-                                                              ...members
-                                                                  .take(3)
-                                                                  .toList()
-                                                                  .asMap()
-                                                                  .entries
-                                                                  .map((entry) {
-                                                                int idx =
-                                                                    entry.key;
-                                                                model.User
-                                                                    member =
-                                                                    entry.value;
-                                                                return Padding(
-                                                                  padding: EdgeInsets.only(
-                                                                      left: idx *
-                                                                          15.0),
-                                                                  child:
-                                                                      CircleAvatar(
-                                                                    radius: 15,
-                                                                    backgroundColor:
-                                                                        CustomColor
-                                                                            .white,
-                                                                    child:
-                                                                        CircleAvatar(
-                                                                      radius:
-                                                                          13,
-                                                                      backgroundImage:
-                                                                          NetworkImage(
-                                                                              member.profilePictureUrl),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }).toList(),
-                                                              const SizedBox(
-                                                                  width: 10),
-                                                              // Total Members Count
-                                                              Text(
-                                                                '$totalMembers membres',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .white70,
-                                                                  fontSize: 14,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      );
-                                                    } else {
-                                                      return const SizedBox();
-                                                    }
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          // Arrow Icon
-                                          const Icon(
-                                            Icons.arrow_forward_ios,
-                                            color: Colors.white,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   );
                                 },
                               ),
