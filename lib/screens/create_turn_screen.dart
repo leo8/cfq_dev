@@ -70,6 +70,7 @@ class CreateTurnScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               body: TurnForm(
+                currentUser: viewModel.currentUser!,
                 image: viewModel.turnImage,
                 onSelectImage: viewModel.pickTurnImage,
                 nameController: viewModel.turnNameController,
@@ -81,7 +82,8 @@ class CreateTurnScreen extends StatelessWidget {
                 dateTimeDisplay: viewModel.selectedDateTime != null
                     ? '${viewModel.selectedDateTime!.day}/${viewModel.selectedDateTime!.month}/${viewModel.selectedDateTime!.year}'
                     : CustomString.laDate,
-                moodsDisplay: viewModel.selectedMoods != null && viewModel.selectedMoods!.isNotEmpty
+                moodsDisplay: viewModel.selectedMoods != null &&
+                        viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
                     : CustomString.tonMood,
                 isLoading: viewModel.isLoading,
