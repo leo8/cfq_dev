@@ -55,7 +55,8 @@ class TurnForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
@@ -156,6 +157,6 @@ class TurnForm extends StatelessWidget {
           onRemoveInvitee: onRemoveInvitee,
         ),
       ],
-    );
+    ));
   }
 }
