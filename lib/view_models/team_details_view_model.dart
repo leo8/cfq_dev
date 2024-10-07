@@ -41,6 +41,7 @@ class TeamDetailsViewModel extends ChangeNotifier {
       }
 
       _members = fetchedMembers;
+      sortMembersWithCurrentUserFirst();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -100,5 +101,15 @@ class TeamDetailsViewModel extends ChangeNotifier {
       AppLogger.error('Error leaving team: $e');
       return false;
     }
+  }
+
+  void sortMembersWithCurrentUserFirst() {
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    _members.sort((a, b) {
+      if (a.uid == currentUserId) return -1;
+      if (b.uid == currentUserId) return 1;
+      return 0;
+    });
+    notifyListeners();
   }
 }
