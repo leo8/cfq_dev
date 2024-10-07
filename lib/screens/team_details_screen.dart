@@ -6,7 +6,7 @@ import '../widgets/organisms/team_header.dart';
 import '../widgets/organisms/team_options.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
-import '../widgets/organisms/team_members.dart';
+import '../widgets/organisms/team_members_list.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
@@ -22,7 +22,7 @@ class TeamDetailsScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: CustomColor.mobileBackgroundColor,
             appBar: AppBar(
-              title: Text(team.name),
+              title: Text(viewModel.team.name),
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(

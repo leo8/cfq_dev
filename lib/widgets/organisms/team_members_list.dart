@@ -31,7 +31,10 @@ class TeamMembersList extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 model.User user = members[index];
-                return TeamMemberItem(user: user);
+                return TeamMemberItem(
+                  user: user,
+                  isCurrentUser: index == 0,
+                );
               },
             ),
           ),

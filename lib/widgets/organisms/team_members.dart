@@ -6,8 +6,10 @@ import '../../utils/styles/fonts.dart';
 
 class TeamMembersList extends StatelessWidget {
   final List<model.User> members;
+  final bool isCurrentUser;
 
-  const TeamMembersList({super.key, required this.members});
+  const TeamMembersList(
+      {super.key, required this.members, required this.isCurrentUser});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class TeamMembersList extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 model.User user = members[index];
-                return TeamMemberItem(user: user);
+                return TeamMemberItem(user: user, isCurrentUser: isCurrentUser);
               },
             ),
           ),
