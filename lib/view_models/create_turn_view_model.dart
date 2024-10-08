@@ -90,9 +90,12 @@ class CreateTurnViewModel extends ChangeNotifier {
   void _initializePrefillData() {
     if (prefillTeam != null) {
       _selectedTeamInvitees.add(prefillTeam!);
-      _selectedInvitees.addAll(
-          prefillMembers?.where((member) => member.uid != _currentUser?.uid) ??
-              []);
+      for (var member in prefillMembers ?? []) {
+        if (member.uid != _currentUser?.uid &&
+            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
     }
   }
 
@@ -263,20 +266,29 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   void addTeam(Team team) {
-    _selectedTeamInvitees.add(team);
-    _searchResults
-        .removeWhere((result) => result is Team && result.uid == team.uid);
+    if (!_selectedTeamInvitees.contains(team)) {
+      _selectedTeamInvitees.add(team);
+      _searchResults
+          .removeWhere((result) => result is Team && result.uid == team.uid);
 
-    // Convert member IDs to User objects and add them to _selectedInvitees
-    List<model.User> teamMembers = _friendsList
-        .where((friend) => team.members.contains(friend.uid))
-        .toList();
-    _selectedInvitees.addAll(
-        teamMembers.where((member) => !_selectedInvitees.contains(member)));
+      // Convert member IDs to User objects and add them to _selectedInvitees
+      List<model.User> teamMembers = _friendsList
+          .where((friend) =>
+              team.members.contains(friend.uid) &&
+              friend.uid != _currentUser?.uid)
+          .toList();
 
-    _searchResults.removeWhere(
-        (result) => result is model.User && team.members.contains(result.uid));
-    notifyListeners();
+      // Add team members to _selectedInvitees without duplicates
+      for (var member in teamMembers) {
+        if (!_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
+
+      _searchResults.removeWhere((result) =>
+          result is model.User && team.members.contains(result.uid));
+      notifyListeners();
+    }
   }
 
   void removeTeam(Team team) {
