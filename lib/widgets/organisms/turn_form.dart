@@ -25,7 +25,7 @@ class TurnForm extends StatelessWidget {
   final VoidCallback onSubmit;
   final TextEditingController inviteeSearchController;
   final List<model.User> selectedInvitees;
-  final List<model.User> searchResults;
+  final List<dynamic> searchResults;
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
@@ -34,6 +34,7 @@ class TurnForm extends StatelessWidget {
   final List<Team> selectedTeams;
   final Function(Team) onAddTeam;
   final Function(Team) onRemoveTeam;
+  final Function(String) onSearch;
 
   const TurnForm({
     required this.image,
@@ -59,6 +60,7 @@ class TurnForm extends StatelessWidget {
     required this.selectedTeams,
     required this.onAddTeam,
     required this.onRemoveTeam,
+    required this.onSearch,
     Key? key,
   }) : super(key: key);
 
@@ -160,15 +162,14 @@ class TurnForm extends StatelessWidget {
         InviteesField(
           searchController: inviteeSearchController,
           selectedInvitees: selectedInvitees,
+          selectedTeams: selectedTeams,
           searchResults: searchResults,
           isSearching: isSearching,
           onAddInvitee: onAddInvitee,
           onRemoveInvitee: onRemoveInvitee,
-          userTeams: userTeams,
-          selectedTeams: selectedTeams,
           onAddTeam: onAddTeam,
           onRemoveTeam: onRemoveTeam,
-          onSelectEverybody: () {},
+          onSearch: onSearch,
         ),
       ],
     ));

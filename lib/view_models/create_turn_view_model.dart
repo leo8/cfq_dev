@@ -1,10 +1,7 @@
-// lib/view_models/create_turn_view_model.dart
-
 import 'dart:typed_data';
 import 'package:cfq_dev/enums/moods.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/user.dart' as model;
 import '../models/turn_event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +10,7 @@ import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import '../models/team.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateTurnViewModel extends ChangeNotifier {
   // Controllers for form fields
@@ -37,8 +35,8 @@ class CreateTurnViewModel extends ChangeNotifier {
 
   // Search
   final TextEditingController searchController = TextEditingController();
-  List<model.User> _searchResults = [];
-  List<model.User> get searchResults => _searchResults;
+  List<dynamic> _searchResults = [];
+  List<dynamic> get searchResults => _searchResults;
   bool _isSearching = false;
   bool get isSearching => _isSearching;
 
@@ -112,18 +110,6 @@ class CreateTurnViewModel extends ChangeNotifier {
     }
   }
 
-  @override
-  void dispose() {
-    searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
-    turnNameController.dispose();
-    descriptionController.dispose();
-    locationController.dispose();
-    addressController.dispose();
-    super.dispose();
-  }
-
-  // Image Picker
   Future<void> pickTurnImage() async {
     try {
       final ImagePicker picker = ImagePicker();
@@ -136,67 +122,8 @@ class CreateTurnViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      AppLogger.error('Error picking turn image: $e');
+      AppLogger.error('Error picking cfq image: $e');
       _errorMessage = 'Failed to pick image.';
-      notifyListeners();
-    }
-  }
-
-  // Search Functionality
-  void _onSearchChanged() {
-    performSearch(searchController.text);
-  }
-
-  Future<void> performSearch(String query) async {
-    _isSearching = true;
-    notifyListeners();
-
-    try {
-      final queryLower = query.toLowerCase();
-
-      // If query is empty, display all friends not already selected and not the current user
-      if (query.isEmpty) {
-        _searchResults = _friendsList
-            .where((user) =>
-                !_selectedInvitees.any((f) => f.uid == user.uid) &&
-                user.uid != _currentUser?.uid)
-            .toList();
-      } else {
-        // Filter friends list based on 'searchKey'
-        _searchResults = _friendsList.where((user) {
-          final searchKeyLower = user.searchKey.toLowerCase();
-          // Exclude already selected invitees and current user
-          return searchKeyLower.startsWith(queryLower) &&
-              !_selectedInvitees.any((f) => f.uid == user.uid) &&
-              user.uid != _currentUser?.uid;
-        }).toList();
-      }
-
-      // Debug: Print all search results
-      print('Search Results:');
-      for (var user in _searchResults) {
-        print('Username: ${user.username}, UID: ${user.uid}');
-      }
-    } catch (e) {
-      AppLogger.error('Error while searching users: $e');
-      _errorMessage = 'Failed to perform search.';
-    }
-
-    _isSearching = false;
-    notifyListeners();
-  }
-
-  // Add Invitee to Selected List
-  void addInvitee(model.User invitee) {
-    _selectedInvitees.add(invitee);
-    _searchResults.removeWhere((user) => user.uid == invitee.uid);
-    notifyListeners();
-  }
-
-  // Remove Invitee from Selected List
-  void removeInvitee(model.User invitee) {
-    if (invitee.uid != _currentUser?.uid) {
-      _selectedInvitees.removeWhere((user) => user.uid == invitee.uid);
       notifyListeners();
     }
   }
@@ -217,15 +144,83 @@ class CreateTurnViewModel extends ChangeNotifier {
     }
   }
 
-  void addTeam(Team inviteeTeam) {
-    _selectedTeamInvitees.add(inviteeTeam);
-    _searchResults.removeWhere((team) => team.uid == inviteeTeam.uid);
+  void _onSearchChanged() {
+    performSearch(searchController.text);
+  }
+
+  Future<void> performSearch(String query) async {
+    _isSearching = true;
+    notifyListeners();
+
+    try {
+      final queryLower = query.toLowerCase();
+
+      if (query.isEmpty) {
+        _searchResults = [
+          ..._userTeams,
+          ..._friendsList.where((user) =>
+              !_selectedInvitees.any((f) => f.uid == user.uid) &&
+              user.uid != _currentUser?.uid)
+        ];
+      } else {
+        List<Team> filteredTeams = _userTeams
+            .where((team) =>
+                team.name.toLowerCase().startsWith(queryLower) &&
+                !_selectedTeamInvitees.contains(team))
+            .toList();
+
+        List<model.User> filteredUsers = _friendsList.where((user) {
+          final searchKeyLower = user.searchKey.toLowerCase();
+          return searchKeyLower.startsWith(queryLower) &&
+              !_selectedInvitees.any((f) => f.uid == user.uid) &&
+              user.uid != _currentUser?.uid;
+        }).toList();
+
+        _searchResults = [...filteredTeams, ...filteredUsers];
+      }
+    } catch (e) {
+      AppLogger.error('Error while searching: $e');
+      _errorMessage = 'Failed to perform search.';
+    }
+
+    _isSearching = false;
     notifyListeners();
   }
 
-  void removeTeam(Team inviteeTeam) {
-    _selectedTeamInvitees.removeWhere((team) => team.uid == inviteeTeam.uid);
+  void addInvitee(model.User invitee) {
+    _selectedInvitees.add(invitee);
+    _searchResults.removeWhere(
+        (result) => result is model.User && result.uid == invitee.uid);
     notifyListeners();
+  }
+
+  void removeInvitee(model.User invitee) {
+    _selectedInvitees.remove(invitee);
+    performSearch(searchController.text);
+  }
+
+  void addTeam(Team team) {
+    _selectedTeamInvitees.add(team);
+    _searchResults
+        .removeWhere((result) => result is Team && result.uid == team.uid);
+
+    // Convert member IDs to User objects and add them to _selectedInvitees
+    List<model.User> teamMembers = _friendsList
+        .where((friend) => team.members.contains(friend.uid))
+        .toList();
+    _selectedInvitees.addAll(
+        teamMembers.where((member) => !_selectedInvitees.contains(member)));
+
+    _searchResults.removeWhere(
+        (result) => result is model.User && team.members.contains(result.uid));
+    notifyListeners();
+  }
+
+  void removeTeam(Team team) {
+    _selectedTeamInvitees.remove(team);
+    _selectedInvitees.removeWhere(
+        (invitee) => team.members.any((member) => member.uid == invitee.uid));
+    performSearch(searchController.text);
   }
 
   // Date-Time Picker

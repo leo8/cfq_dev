@@ -23,7 +23,7 @@ class CfqForm extends StatelessWidget {
   final VoidCallback onSubmit;
   final TextEditingController inviteeSearchController;
   final List<model.User> selectedInvitees;
-  final List<model.User> searchResults;
+  final List<dynamic> searchResults;
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
@@ -32,7 +32,7 @@ class CfqForm extends StatelessWidget {
   final List<Team> selectedTeams;
   final Function(Team) onAddTeam;
   final Function(Team) onRemoveTeam;
-
+  final Function(String) onSearch;
   const CfqForm({
     required this.image,
     required this.onSelectImage,
@@ -55,6 +55,7 @@ class CfqForm extends StatelessWidget {
     required this.selectedTeams,
     required this.onAddTeam,
     required this.onRemoveTeam,
+    required this.onSearch,
     Key? key,
   }) : super(key: key);
 
@@ -147,15 +148,14 @@ class CfqForm extends StatelessWidget {
           InviteesField(
             searchController: inviteeSearchController,
             selectedInvitees: selectedInvitees,
+            selectedTeams: selectedTeams,
             searchResults: searchResults,
             isSearching: isSearching,
             onAddInvitee: onAddInvitee,
             onRemoveInvitee: onRemoveInvitee,
-            userTeams: userTeams,
             onAddTeam: onAddTeam,
             onRemoveTeam: onRemoveTeam,
-            selectedTeams: selectedTeams,
-            onSelectEverybody: () {},
+            onSearch: onSearch,
           ),
         ],
       ),

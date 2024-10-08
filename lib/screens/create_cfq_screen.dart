@@ -94,6 +94,7 @@ class CreateCfqScreen extends StatelessWidget {
                 selectedTeams: viewModel.selectedTeamInvitees,
                 onAddTeam: viewModel.addTeam,
                 onRemoveTeam: viewModel.removeTeam,
+                onSearch: viewModel.performSearch,
               ),
             );
           }

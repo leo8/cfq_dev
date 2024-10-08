@@ -1,23 +1,23 @@
 import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
-import '../../molecules/team_selection_dropdown.dart';
 import '../../../models/team.dart';
+import '../../../models/user.dart' as model;
 
 class InviteeSearchBar extends StatelessWidget {
   final TextEditingController controller;
-  final VoidCallback onSearch;
+  final Function(String) onSearch;
   final String hintText;
-  final List<Team> userTeams;
-  final Function(Team) onTeamSelected;
-  final VoidCallback onSelectEverybody;
+  final List<dynamic> searchResults;
+  final Function(model.User) onAddInvitee;
+  final Function(Team) onAddTeam;
 
   const InviteeSearchBar({
     required this.controller,
     required this.onSearch,
-    this.hintText = 'Search friends to invite',
-    required this.userTeams,
-    required this.onTeamSelected,
-    required this.onSelectEverybody,
+    this.hintText = 'Search friends or teams to invite',
+    required this.searchResults,
+    required this.onAddInvitee,
+    required this.onAddTeam,
     Key? key,
   }) : super(key: key);
 
@@ -27,7 +27,7 @@ class InviteeSearchBar extends StatelessWidget {
       children: [
         TextField(
           controller: controller,
-          onChanged: (value) => onSearch(),
+          onChanged: onSearch,
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search, color: CustomColor.white),
             hintText: hintText,
@@ -39,21 +39,41 @@ class InviteeSearchBar extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TeamSelectionDropdown(
-              teams: userTeams,
-              onTeamSelected: onTeamSelected,
+        if (searchResults.isNotEmpty)
+          Container(
+            height: 200,
+            child: ListView.builder(
+              itemCount: searchResults.length,
+              itemBuilder: (context, index) {
+                final result = searchResults[index];
+                if (result is Team) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(result.imageUrl),
+                    ),
+                    title: Text(result.name),
+                    subtitle: Text('Team'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () => onAddTeam(result),
+                    ),
+                  );
+                } else if (result is model.User) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(result.profilePictureUrl),
+                    ),
+                    title: Text(result.username),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () => onAddInvitee(result),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
             ),
-            TextButton(
-              onPressed: onSelectEverybody,
-              child: const Text('Everybody',
-                  style: TextStyle(color: CustomColor.white)),
-            ),
-          ],
-        ),
+          ),
       ],
     );
   }
