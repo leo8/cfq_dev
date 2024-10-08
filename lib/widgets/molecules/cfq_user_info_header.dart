@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/avatars/custom_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
-import 'package:cfq_dev/widgets/atoms/buttons/custom_elevated_button.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
-import '../../utils/styles/string.dart';
+import '../../utils/date_time_utils.dart';
 
 class CfqUserInfoHeader extends StatelessWidget {
-  final String profilePictureUrl; // User's profile picture URL
-  final String username; // User's username
-  final List<String> organizers; // List of organizers
-  final DateTime datePublished; // Event publication date
-  final VoidCallback onFollowPressed; // Callback for follow button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final DateTime datePublished;
+  final VoidCallback onFollowPressed;
 
   const CfqUserInfoHeader({
-    required this.profilePictureUrl, // User profile picture URL
-    required this.username, // Username of the event creator
-    required this.organizers, // Organizers of the CFQ event
-    required this.datePublished, // Publication date of the CFQ event
-    required this.onFollowPressed, // Action triggered when the follow button is pressed
+    required this.profilePictureUrl,
+    required this.username,
+    required this.organizers,
+    required this.datePublished,
+    required this.onFollowPressed,
     super.key,
   });
 
@@ -26,20 +25,17 @@ class CfqUserInfoHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Profile Picture Avatar
         CustomAvatar(
-          imageUrl: profilePictureUrl, // User's profile picture
-          radius: 28, // Circle avatar size
+          imageUrl: profilePictureUrl,
+          radius: 20,
         ),
-        const SizedBox(width: 12), // Space between avatar and username
-        // Username and Additional Information
+        const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  // Username Text
                   CustomText(
                     text: username,
                     color: CustomColor.white,
@@ -47,38 +43,34 @@ class CfqUserInfoHeader extends StatelessWidget {
                     fontSize: CustomFont.fontSize16,
                   ),
                   const SizedBox(width: 4),
-                  // Organizers Information
                   CustomText(
-                    text: 'à ${organizers.join(', ')}', // Organizers names
-                    color: CustomColor.blueAccent,
-                    fontWeight: CustomFont.fontWeight600,
-                    fontSize: CustomFont.fontSize14,
+                    text: DateTimeUtils.getTimeAgo(datePublished),
+                    color: CustomColor.white54,
+                    fontSize: CustomFont.fontSize12,
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
-              // Date of Publication
-              CustomText(
-                text:
-                    '${datePublished.day}/${datePublished.month}/${datePublished.year}', // Date formatted as dd/mm/yyyy
-                color: CustomColor.white54,
-                fontSize: CustomFont.fontSize12,
+              const CustomText(
+                text: 'CFQ ?',
+                color: CustomColor.white,
+                fontSize: CustomFont.fontSize18,
+                fontWeight: CustomFont.fontWeightBold,
               ),
             ],
           ),
         ),
-        // Follow Button
-        CustomElevatedButton(
-          onPressed: onFollowPressed, // Follow button callback
-          backgroundColor: CustomColor.personnalizedPurple, // Button color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12), // Button border radius
-          ),
-          child: const CustomText(
-            text: CustomString.follow, // Button label
-            color: CustomColor.white,
-            fontSize: CustomFont.fontSize14,
-          ),
+        Column(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.notifications_none,
+                  color: CustomColor.white),
+              onPressed: onFollowPressed,
+            ),
+            IconButton(
+              icon: const Icon(Icons.message, color: CustomColor.white),
+              onPressed: () {/* Implement messaging functionality */},
+            ),
+          ],
         ),
       ],
     );
