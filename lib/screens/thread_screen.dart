@@ -178,6 +178,7 @@ class ThreadScreen extends StatelessWidget {
                 address: event['address'] ?? CustomString.emptyString,
                 attendeesCount: (event['attending'] as List?)?.length ?? 0,
                 datePublished: viewModel.parseDate(event['datePublished']),
+                turnImageUrl: event['turnImageUrl'] ?? CustomString.emptyString,
                 onAttendingPressed: () {
                   // Add attending functionality
                 },
@@ -202,6 +203,7 @@ class ThreadScreen extends StatelessWidget {
                 datePublished: viewModel.parseDate(event['datePublished']),
                 location: event['where'] ?? CustomString.emptyString,
                 when: event['when'] ?? CustomString.emptyString,
+                cfqImageUrl: event['cfqImageUrl'] ?? CustomString.emptyString,
                 onFollowPressed: () {
                   // Add follow functionality
                 },

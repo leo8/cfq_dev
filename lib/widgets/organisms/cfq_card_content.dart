@@ -5,7 +5,6 @@ import '../molecules/cfq_location_info.dart';
 import '../molecules/cfq_user_info_header.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../utils/styles/fonts.dart';
-import '../../utils/date_time_utils.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -14,6 +13,7 @@ class CFQCardContent extends StatelessWidget {
   final String cfqName;
   final String description;
   final DateTime datePublished;
+  final String cfqImageUrl;
   final String location;
   final String when;
   final VoidCallback onFollowPressed;
@@ -28,6 +28,7 @@ class CFQCardContent extends StatelessWidget {
     required this.cfqName,
     required this.description,
     required this.datePublished,
+    required this.cfqImageUrl,
     required this.location,
     required this.when,
     required this.onFollowPressed,
@@ -58,7 +59,7 @@ class CFQCardContent extends StatelessWidget {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
-                  profilePictureUrl,
+                  cfqImageUrl,
                   width: double.infinity,
                   height: 150,
                   fit: BoxFit.cover,

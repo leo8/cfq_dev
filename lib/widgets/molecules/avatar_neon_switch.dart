@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/switches/neon_switch.dart';
-import '../../utils/styles/colors.dart';
 
 class AvatarNeonSwitch extends StatelessWidget {
   final String imageUrl;

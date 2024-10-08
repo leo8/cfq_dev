@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/models/cfq_event_model.dart';
-import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/turn_event_model.dart';
 import 'package:cfq_dev/providers/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

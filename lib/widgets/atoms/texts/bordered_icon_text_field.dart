@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
-import '../../../utils/styles/fonts.dart';
 
 class BorderedIconTextField extends StatelessWidget {
   final IconData icon;

@@ -58,6 +58,7 @@ class EventsList extends StatelessWidget {
 
             if (isTurn) {
               return TurnCardContent(
+                turnImageUrl: event['turnImageUrl'] ?? '',
                 profilePictureUrl: event['profilePictureUrl'] ?? '',
                 username: event['username'] ?? '',
                 organizers: List<String>.from(event['organizers'] ?? []),
@@ -83,6 +84,7 @@ class EventsList extends StatelessWidget {
               );
             } else {
               return CFQCardContent(
+                cfqImageUrl: event['cfqImageUrl'] ?? '',
                 profilePictureUrl: event['profilePictureUrl'] ?? '',
                 username: event['username'] ?? '',
                 organizers: List<String>.from(event['organizers'] ?? []),
