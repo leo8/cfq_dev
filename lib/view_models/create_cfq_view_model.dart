@@ -18,6 +18,8 @@ class CreateCfqViewModel extends ChangeNotifier {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
+  final Team? prefillTeam;
+  final List<model.User>? prefillMembers;
 
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
@@ -68,9 +70,41 @@ class CreateCfqViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-  CreateCfqViewModel() {
-    _initializeCurrentUser();
-    searchController.addListener(_onSearchChanged);
+  CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
+    _initializeViewModel();
+  }
+
+  Future<void> _initializeViewModel() async {
+    await _initializeCurrentUser();
+    await fetchUserTeams();
+    performSearch('');
+    if (prefillTeam != null) {
+      _initializePrefillData();
+      _removePrefillDataFromSearchResults();
+    }
+  }
+
+  void _initializePrefillData() {
+    if (prefillTeam != null) {
+      _selectedTeamInvitees.add(prefillTeam!);
+      for (var member in prefillMembers ?? []) {
+        if (member.uid != _currentUser?.uid &&
+            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
+    }
+  }
+
+  void _removePrefillDataFromSearchResults() {
+    if (prefillTeam != null) {
+      _searchResults.removeWhere(
+          (result) => result is Team && result.uid == prefillTeam!.uid);
+      _searchResults.removeWhere((result) =>
+          result is model.User &&
+          prefillMembers!.map((member) => member.uid).contains(result.uid));
+      notifyListeners();
+    }
   }
 
   Future<void> _initializeCurrentUser() async {
@@ -193,20 +227,29 @@ class CreateCfqViewModel extends ChangeNotifier {
   }
 
   void addTeam(Team team) {
-    _selectedTeamInvitees.add(team);
-    _searchResults
-        .removeWhere((result) => result is Team && result.uid == team.uid);
+    if (!_selectedTeamInvitees.contains(team)) {
+      _selectedTeamInvitees.add(team);
+      _searchResults
+          .removeWhere((result) => result is Team && result.uid == team.uid);
 
-    // Convert member IDs to User objects and add them to _selectedInvitees
-    List<model.User> teamMembers = _friendsList
-        .where((friend) => team.members.contains(friend.uid))
-        .toList();
-    _selectedInvitees.addAll(
-        teamMembers.where((member) => !_selectedInvitees.contains(member)));
+      // Convert member IDs to User objects and add them to _selectedInvitees
+      List<model.User> teamMembers = _friendsList
+          .where((friend) =>
+              team.members.contains(friend.uid) &&
+              friend.uid != _currentUser?.uid)
+          .toList();
 
-    _searchResults.removeWhere(
-        (result) => result is model.User && team.members.contains(result.uid));
-    notifyListeners();
+      // Add team members to _selectedInvitees without duplicates
+      for (var member in teamMembers) {
+        if (!_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
+
+      _searchResults.removeWhere((result) =>
+          result is model.User && team.members.contains(result.uid));
+      notifyListeners();
+    }
   }
 
   void removeTeam(Team team) {
