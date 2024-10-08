@@ -1,93 +1,130 @@
 import 'package:flutter/material.dart';
-
-import '../../utils/styles/colors.dart'; // Import color styles
-import '../molecules/action_buttons_row.dart'; // Import action buttons row
-import '../molecules/description_section.dart'; // Import description section
-import '../molecules/turn_event_details.dart'; // Import turn event details
-import '../molecules/turn_location_info.dart'; // Import turn location info
-import '../molecules/turn_user_info_header.dart'; // Import user info header
+import '../../utils/styles/colors.dart';
+import '../molecules/turn_event_details.dart';
+import '../molecules/turn_location_info.dart';
+import '../molecules/turn_user_info_header.dart';
+import '../atoms/texts/custom_text.dart';
+import '../../utils/styles/fonts.dart';
+import '../../utils/date_time_utils.dart';
 
 class TurnCardContent extends StatelessWidget {
-  final String profilePictureUrl; // URL of the user's profile picture
-  final String username; // Username of the user
-  final List<String> organizers; // List of event organizers
-  final String timeInfo; // Information about event timing
-  final String turnName; // Name of the turn event
-  final String description; // Description of the turn event
-  final DateTime eventDateTime; // Date and time of the event
-  final String where; // Location of the event
-  final String address; // Address of the event
-  final VoidCallback onAttendingPressed; // Callback for attending button
-  final VoidCallback onSharePressed; // Callback for share button
-  final VoidCallback onSendPressed; // Callback for send button
-  final VoidCallback onCommentPressed; // Callback for comment button
+  final String profilePictureUrl;
+  final String username;
+  final List<String> organizers;
+  final String turnName;
+  final String description;
+  final DateTime eventDateTime;
+  final DateTime datePublished;
+  final String where;
+  final String address;
+  final int attendeesCount;
+  final VoidCallback onAttendingPressed;
+  final VoidCallback onSharePressed;
+  final VoidCallback onSendPressed;
+  final VoidCallback onCommentPressed;
 
   const TurnCardContent({
     required this.profilePictureUrl,
     required this.username,
     required this.organizers,
-    required this.timeInfo,
     required this.turnName,
     required this.description,
     required this.eventDateTime,
     required this.where,
     required this.address,
+    required this.attendeesCount,
     required this.onAttendingPressed,
     required this.onSharePressed,
     required this.onSendPressed,
     required this.onCommentPressed,
+    required this.datePublished,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-          vertical: 8, horizontal: 16), // Margin around the card
-      padding: const EdgeInsets.all(16), // Padding inside the card
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0551), // Background color of the card
-        borderRadius: BorderRadius.circular(16), // Rounded corners for the card
-        border:
-            Border.all(color: CustomColor.white24), // Border color of the card
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.grey[900]!, Colors.grey[800]!],
+        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Align children to the start
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User info header section
-          TurnUserInfoHeader(
-            profilePictureUrl: profilePictureUrl, // Pass profile picture URL
-            username: username, // Pass username
-            organizers: organizers, // Pass list of organizers
-            timeInfo: timeInfo, // Pass time info
-            onAttendingPressed:
-                onAttendingPressed, // Action for attending button
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.network(
+                  profilePictureUrl,
+                  width: double.infinity,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: CustomText(
+                    text:
+                        '${eventDateTime.day} ${DateTimeUtils.getMonthAbbreviation(eventDateTime.month)}',
+                    color: CustomColor.white,
+                    fontSize: CustomFont.fontSize14,
+                    fontWeight: CustomFont.fontWeightBold,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16), // Space between sections
-          // Event details section
-          TurnEventDetails(
-            where: where, // Pass event location
-            turnName: turnName, // Pass turn name
-            eventDateTime: eventDateTime, // Pass event date and time
-          ),
-          const SizedBox(height: 8), // Space between sections
-          // Description section
-          DescriptionSection(
-            description: description, // Pass event description
-          ),
-          const SizedBox(height: 16), // Space between sections
-          // Location information section
-          TurnLocationInfo(
-            where: where, // Pass location
-            address: address, // Pass address
-          ),
-          const SizedBox(height: 16), // Space between sections
-          // Action buttons row
-          ActionButtonsRow(
-            onSharePressed: onSharePressed, // Action for share button
-            onSendPressed: onSendPressed, // Action for send button
-            onCommentPressed: onCommentPressed, // Action for comment button
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TurnUserInfoHeader(
+                  profilePictureUrl: profilePictureUrl,
+                  username: username,
+                  organizers: organizers,
+                  timeInfo: DateTimeUtils.getTimeAgo(datePublished),
+                  onAttendingPressed: onAttendingPressed,
+                  datePublished: datePublished,
+                ),
+                const SizedBox(height: 16),
+                TurnEventDetails(
+                  turnName: turnName,
+                  eventDateTime: eventDateTime,
+                ),
+                const SizedBox(height: 8),
+                CustomText(
+                  text: '$attendeesCount y vont',
+                  color: CustomColor.white,
+                  fontSize: CustomFont.fontSize14,
+                ),
+                const SizedBox(height: 8),
+                TurnLocationInfo(
+                  address: address,
+                ),
+                const SizedBox(height: 8),
+                CustomText(
+                  text: description,
+                  color: CustomColor.white70,
+                  fontSize: CustomFont.fontSize14,
+                ),
+              ],
+            ),
           ),
         ],
       ),

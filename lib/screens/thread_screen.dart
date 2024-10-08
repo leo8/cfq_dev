@@ -13,6 +13,7 @@ import '../widgets/organisms/turn_card_content.dart';
 import '../models/user.dart' as model;
 import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
+import '../widgets/organisms/events_list.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -45,10 +46,8 @@ class ThreadScreen extends StatelessWidget {
         body: Consumer<ThreadViewModel>(
           builder: (context, viewModel, child) {
             if (viewModel.searchController.text.isNotEmpty) {
-              // Display search results (keep existing code)
               return _buildSearchResults(context, viewModel);
             } else {
-              // Display the regular content
               return _buildRegularContent(context, viewModel);
             }
           },
@@ -117,7 +116,7 @@ class ThreadScreen extends StatelessWidget {
         _buildActiveFriendsList(context, viewModel),
         const SizedBox(height: 20),
         Expanded(
-          child: _buildEventsList(context, viewModel),
+          child: EventsList(eventsStream: viewModel.fetchCombinedEvents()),
         ),
       ],
     );
@@ -172,12 +171,13 @@ class ThreadScreen extends StatelessWidget {
                     event['profilePictureUrl'] ?? CustomString.emptyString,
                 username: event['username'] ?? CustomString.emptyString,
                 organizers: List<String>.from(event['organizers'] ?? []),
-                timeInfo: 'une heure', // Placeholder for time info
                 turnName: event['turnName'] ?? CustomString.emptyString,
                 description: event['description'] ?? CustomString.emptyString,
                 eventDateTime: viewModel.parseDate(event['eventDateTime']),
                 where: event['where'] ?? CustomString.emptyString,
                 address: event['address'] ?? CustomString.emptyString,
+                attendeesCount: (event['attending'] as List?)?.length ?? 0,
+                datePublished: viewModel.parseDate(event['datePublished']),
                 onAttendingPressed: () {
                   // Add attending functionality
                 },
@@ -201,6 +201,7 @@ class ThreadScreen extends StatelessWidget {
                 description: event['description'] ?? CustomString.emptyString,
                 datePublished: viewModel.parseDate(event['datePublished']),
                 location: event['where'] ?? CustomString.emptyString,
+                when: event['when'] ?? CustomString.emptyString,
                 onFollowPressed: () {
                   // Add follow functionality
                 },
