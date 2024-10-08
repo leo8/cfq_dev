@@ -70,11 +70,13 @@ class CfqForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          EventImageSelector(
-            image: image,
-            onSelectImage: onSelectImage,
-            width: MediaQuery.of(context).size.width * 0.60,
-            height: MediaQuery.of(context).size.height * 0.15,
+          Center(
+            child: EventImageSelector(
+              image: image,
+              onSelectImage: onSelectImage,
+              width: MediaQuery.of(context).size.width * 0.60,
+              height: MediaQuery.of(context).size.height * 0.15,
+            ),
           ),
           const SizedBox(height: 8),
           BorderedIconTextField(
