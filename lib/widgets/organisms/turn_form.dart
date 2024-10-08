@@ -35,6 +35,8 @@ class TurnForm extends StatelessWidget {
   final Function(Team) onAddTeam;
   final Function(Team) onRemoveTeam;
   final Function(String) onSearch;
+  final VoidCallback onSelectEverybody;
+  final bool isEverybodySelected;
 
   const TurnForm({
     required this.image,
@@ -61,6 +63,8 @@ class TurnForm extends StatelessWidget {
     required this.onAddTeam,
     required this.onRemoveTeam,
     required this.onSearch,
+    required this.onSelectEverybody,
+    required this.isEverybodySelected,
     Key? key,
   }) : super(key: key);
 
@@ -170,6 +174,8 @@ class TurnForm extends StatelessWidget {
           onAddTeam: onAddTeam,
           onRemoveTeam: onRemoveTeam,
           onSearch: onSearch,
+          onSelectEverybody: onSelectEverybody,
+          isEverybodySelected: isEverybodySelected,
         ),
       ],
     ));

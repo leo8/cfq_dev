@@ -10,6 +10,8 @@ class InviteeSearchBar extends StatelessWidget {
   final List<dynamic> searchResults;
   final Function(model.User) onAddInvitee;
   final Function(Team) onAddTeam;
+  final VoidCallback onSelectEverybody;
+  final bool isEverybodySelected;
 
   const InviteeSearchBar({
     required this.controller,
@@ -18,34 +20,51 @@ class InviteeSearchBar extends StatelessWidget {
     required this.searchResults,
     required this.onAddInvitee,
     required this.onAddTeam,
+    required this.onSelectEverybody,
+    required this.isEverybodySelected,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: controller,
-          onChanged: onSearch,
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.search, color: CustomColor.white),
-            hintText: hintText,
-            filled: true,
-            fillColor: CustomColor.white.withOpacity(0.1),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
-              borderSide: BorderSide.none,
-            ),
+    return Column(children: [
+      TextField(
+        controller: controller,
+        onChanged: onSearch,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search, color: CustomColor.white),
+          hintText: hintText,
+          filled: true,
+          fillColor: CustomColor.white.withOpacity(0.1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: BorderSide.none,
           ),
         ),
-        if (searchResults.isNotEmpty)
-          Container(
-            height: 200,
-            child: ListView.builder(
-              itemCount: searchResults.length,
-              itemBuilder: (context, index) {
-                final result = searchResults[index];
+      ),
+      if (searchResults.isNotEmpty)
+        Container(
+          height: 200,
+          child: ListView.builder(
+            itemCount: searchResults.length + (isEverybodySelected ? 0 : 1),
+            itemBuilder: (context, index) {
+              if (!isEverybodySelected && index == 0) {
+                // "Tout le monde" option
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage:
+                        AssetImage('assets/images/turn_button.png'),
+                  ),
+                  title: Text('Tout le monde'),
+                  trailing: IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: onSelectEverybody,
+                  ),
+                );
+              } else {
+                final result = isEverybodySelected
+                    ? searchResults[index]
+                    : searchResults[index - 1];
                 if (result is Team) {
                   return ListTile(
                     leading: CircleAvatar(
@@ -70,11 +89,11 @@ class InviteeSearchBar extends StatelessWidget {
                     ),
                   );
                 }
-                return SizedBox.shrink();
-              },
-            ),
+              }
+              return SizedBox.shrink();
+            },
           ),
-      ],
-    );
+        )
+    ]);
   }
 }

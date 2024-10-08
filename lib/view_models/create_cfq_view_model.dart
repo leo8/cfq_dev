@@ -19,6 +19,9 @@ class CreateCfqViewModel extends ChangeNotifier {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
 
+  bool _isEverybodySelected = false;
+  bool get isEverybodySelected => _isEverybodySelected;
+
   // Image
   Uint8List? _cfqImage;
   Uint8List? get cfqImage => _cfqImage;
@@ -134,28 +137,37 @@ class CreateCfqViewModel extends ChangeNotifier {
     try {
       final queryLower = query.toLowerCase();
 
-      if (query.isEmpty) {
-        _searchResults = [
-          ..._userTeams,
-          ..._friendsList.where((user) =>
-              !_selectedInvitees.any((f) => f.uid == user.uid) &&
-              user.uid != _currentUser?.uid)
-        ];
-      } else {
-        List<Team> filteredTeams = _userTeams
+      if (_isEverybodySelected) {
+        // If everybody is selected, only show teams in search results
+        _searchResults = _userTeams
             .where((team) =>
                 team.name.toLowerCase().startsWith(queryLower) &&
                 !_selectedTeamInvitees.contains(team))
             .toList();
+      } else {
+        if (query.isEmpty) {
+          _searchResults = [
+            ..._userTeams,
+            ..._friendsList.where((user) =>
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid)
+          ];
+        } else {
+          List<Team> filteredTeams = _userTeams
+              .where((team) =>
+                  team.name.toLowerCase().startsWith(queryLower) &&
+                  !_selectedTeamInvitees.contains(team))
+              .toList();
 
-        List<model.User> filteredUsers = _friendsList.where((user) {
-          final searchKeyLower = user.searchKey.toLowerCase();
-          return searchKeyLower.startsWith(queryLower) &&
-              !_selectedInvitees.any((f) => f.uid == user.uid) &&
-              user.uid != _currentUser?.uid;
-        }).toList();
+          List<model.User> filteredUsers = _friendsList.where((user) {
+            final searchKeyLower = user.searchKey.toLowerCase();
+            return searchKeyLower.startsWith(queryLower) &&
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid;
+          }).toList();
 
-        _searchResults = [...filteredTeams, ...filteredUsers];
+          _searchResults = [...filteredTeams, ...filteredUsers];
+        }
       }
     } catch (e) {
       AppLogger.error('Error while searching: $e');
@@ -166,6 +178,7 @@ class CreateCfqViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Update the addInvitee method
   void addInvitee(model.User invitee) {
     _selectedInvitees.add(invitee);
     _searchResults.removeWhere(
@@ -173,6 +186,7 @@ class CreateCfqViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Update the removeInvitee method
   void removeInvitee(model.User invitee) {
     _selectedInvitees.remove(invitee);
     performSearch(searchController.text);
@@ -200,6 +214,24 @@ class CreateCfqViewModel extends ChangeNotifier {
     _selectedInvitees
         .removeWhere((invitee) => team.members.contains(invitee.uid));
     performSearch(searchController.text);
+  }
+
+  void selectEverybody() {
+    if (!_isEverybodySelected) {
+      _selectedInvitees = List.from(_friendsList);
+      _isEverybodySelected = true;
+    } else {
+      removeEverybody();
+    }
+    performSearch(searchController.text);
+    notifyListeners();
+  }
+
+  void removeEverybody() {
+    _selectedInvitees.clear();
+    _isEverybodySelected = false;
+    performSearch(searchController.text);
+    notifyListeners();
   }
 
   @override

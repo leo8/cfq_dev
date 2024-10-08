@@ -1,9 +1,7 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_turn_view_model.dart';
 import '../widgets/organisms/turn_form.dart';
-import '../utils/utils.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
@@ -99,6 +97,8 @@ class CreateTurnScreen extends StatelessWidget {
                 onAddTeam: viewModel.addTeam,
                 onRemoveTeam: viewModel.removeTeam,
                 onSearch: viewModel.performSearch,
+                onSelectEverybody: viewModel.selectEverybody,
+                isEverybodySelected: viewModel.isEverybodySelected,
               ),
             );
           }

@@ -33,6 +33,9 @@ class CfqForm extends StatelessWidget {
   final Function(Team) onAddTeam;
   final Function(Team) onRemoveTeam;
   final Function(String) onSearch;
+  final VoidCallback onSelectEverybody;
+  final bool isEverybodySelected;
+
   const CfqForm({
     required this.image,
     required this.onSelectImage,
@@ -56,6 +59,8 @@ class CfqForm extends StatelessWidget {
     required this.onAddTeam,
     required this.onRemoveTeam,
     required this.onSearch,
+    required this.onSelectEverybody,
+    required this.isEverybodySelected,
     Key? key,
   }) : super(key: key);
 
@@ -155,7 +160,9 @@ class CfqForm extends StatelessWidget {
             onRemoveInvitee: onRemoveInvitee,
             onAddTeam: onAddTeam,
             onRemoveTeam: onRemoveTeam,
+            onSelectEverybody: onSelectEverybody,
             onSearch: onSearch,
+            isEverybodySelected: isEverybodySelected,
           ),
         ],
       ),
