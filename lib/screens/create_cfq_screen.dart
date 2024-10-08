@@ -1,9 +1,7 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_cfq_view_model.dart';
 import '../widgets/organisms/cfq_form.dart';
-import '../utils/utils.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
@@ -90,6 +88,13 @@ class CreateCfqScreen extends StatelessWidget {
                 isSearching: viewModel.isSearching,
                 onAddInvitee: viewModel.addInvitee,
                 onRemoveInvitee: viewModel.removeInvitee,
+                userTeams: viewModel.userTeams,
+                selectedTeams: viewModel.selectedTeamInvitees,
+                onAddTeam: viewModel.addTeam,
+                onRemoveTeam: viewModel.removeTeam,
+                onSearch: viewModel.performSearch,
+                onSelectEverybody: viewModel.selectEverybody,
+                isEverybodySelected: viewModel.isEverybodySelected,
               ),
             );
           }

@@ -24,6 +24,8 @@ class FirestoreMethods {
     String profilePictureUrl,
     String where, // General location for the event (e.g., "at home")
     String address, // Precise address for the event
+    List<String> invitees,
+    List<String> teamInvitees,
   ) async {
     String res = CustomString.someErrorOccurred;
 
@@ -50,11 +52,12 @@ class FirestoreMethods {
         where: where, // General location of the event
         address: address, // Precise address of the event
         organizers: organizers,
-        invitees: [], // Initialize invitees list as empty
         attending: [], // Initialize attending list as empty
         notSureAttending: [], // Initialize not sure attending list as empty
         notAttending: [], // Initialize not attending list as empty
         notAnswered: [], // Initialize not answered list as empty
+        invitees: invitees,
+        teamInvitees: teamInvitees,
       );
 
       // Save the TURN object to Firestore under the 'turns' collection
@@ -79,7 +82,10 @@ class FirestoreMethods {
     Uint8List file,
     String profilePictureUrl,
     String where, // General location of the CFQ event
-    String when // General date as a string ("ce soir", "13/02/2025", "cet été", etc)
+    String
+        when, // General date as a string ("ce soir", "13/02/2025", "cet été", etc)
+    List<String> invitees,
+    List<String> teamInvitees,
   ) async {
     String res = CustomString.someErrorOccurred;
 
@@ -105,6 +111,8 @@ class FirestoreMethods {
         where: where, // General location of the CFQ event
         when: when,
         organizers: organizers,
+        invitees: invitees,
+        teamInvitees: teamInvitees,
       );
 
       // Save the CFQ object to Firestore under the 'cfqs' collection
@@ -118,7 +126,8 @@ class FirestoreMethods {
     return res;
   }
 
-  Future<void> updateUserProfile(String uid, String username, String email, String bio) async {
+  Future<void> updateUserProfile(
+      String uid, String username, String email, String bio) async {
     try {
       await _firestore.collection('users').doc(uid).update({
         'username': username,

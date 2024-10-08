@@ -8,6 +8,7 @@ import '../atoms/avatars/custom_avatar.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../atoms/texts/custom_text.dart';
+import '../../models/team.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -24,11 +25,18 @@ class TurnForm extends StatelessWidget {
   final VoidCallback onSubmit;
   final TextEditingController inviteeSearchController;
   final List<model.User> selectedInvitees;
-  final List<model.User> searchResults;
+  final List<dynamic> searchResults;
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
   final model.User currentUser;
+  final List<Team> userTeams;
+  final List<Team> selectedTeams;
+  final Function(Team) onAddTeam;
+  final Function(Team) onRemoveTeam;
+  final Function(String) onSearch;
+  final VoidCallback onSelectEverybody;
+  final bool isEverybodySelected;
 
   const TurnForm({
     required this.image,
@@ -50,6 +58,13 @@ class TurnForm extends StatelessWidget {
     required this.onAddInvitee,
     required this.onRemoveInvitee,
     required this.currentUser,
+    required this.userTeams,
+    required this.selectedTeams,
+    required this.onAddTeam,
+    required this.onRemoveTeam,
+    required this.onSearch,
+    required this.onSelectEverybody,
+    required this.isEverybodySelected,
     Key? key,
   }) : super(key: key);
 
@@ -151,10 +166,16 @@ class TurnForm extends StatelessWidget {
         InviteesField(
           searchController: inviteeSearchController,
           selectedInvitees: selectedInvitees,
+          selectedTeams: selectedTeams,
           searchResults: searchResults,
           isSearching: isSearching,
           onAddInvitee: onAddInvitee,
           onRemoveInvitee: onRemoveInvitee,
+          onAddTeam: onAddTeam,
+          onRemoveTeam: onRemoveTeam,
+          onSearch: onSearch,
+          onSelectEverybody: onSelectEverybody,
+          isEverybodySelected: isEverybodySelected,
         ),
       ],
     ));

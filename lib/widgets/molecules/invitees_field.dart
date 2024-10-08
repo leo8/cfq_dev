@@ -1,89 +1,77 @@
-// lib/widgets/molecules/invitees_field.dart
-
 import 'package:flutter/material.dart';
 import '../atoms/chips/invitee_chip.dart';
-import '../molecules/invitee_search_result_item.dart';
+import '../atoms/chips/team_chip.dart';
+import '../atoms/search_bars/invitee_search_bar.dart';
 import '../../models/user.dart' as model;
+import '../../models/team.dart';
 
 class InviteesField extends StatelessWidget {
   final List<model.User> selectedInvitees;
-  final List<model.User> searchResults;
+  final List<Team> selectedTeams;
+  final List<dynamic> searchResults;
   final TextEditingController searchController;
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
+  final Function(Team) onAddTeam;
+  final Function(Team) onRemoveTeam;
+  final Function(String) onSearch;
+  final VoidCallback onSelectEverybody;
+  final bool isEverybodySelected;
 
   const InviteesField({
     required this.selectedInvitees,
+    required this.selectedTeams,
     required this.searchResults,
     required this.searchController,
     required this.isSearching,
     required this.onAddInvitee,
     required this.onRemoveInvitee,
+    required this.onAddTeam,
+    required this.onRemoveTeam,
+    required this.onSearch,
+    required this.onSelectEverybody,
+    required this.isEverybodySelected,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Search Bar
-        TextField(
+        InviteeSearchBar(
           controller: searchController,
-          decoration: InputDecoration(
-            labelText: 'Search friends',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
+          onSearch: onSearch,
+          searchResults: searchResults,
+          onAddInvitee: onAddInvitee,
+          onAddTeam: onAddTeam,
+          onSelectEverybody: onSelectEverybody,
+          isEverybodySelected: isEverybodySelected,
         ),
         const SizedBox(height: 10),
-        // Display Selected Invitees
-        if (selectedInvitees.isNotEmpty)
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: selectedInvitees.map((invitee) {
-              return InviteeChip(
-                invitee: invitee,
-                onDelete: () => onRemoveInvitee(invitee),
-              );
-            }).toList(),
-          ),
-        const SizedBox(height: 10),
-        // Display Search Results
-        if (isSearching)
-          const CircularProgressIndicator()
-        else
-          // Make the search results list scrollable with a constrained height
-          Container(
-            constraints: const BoxConstraints(
-              maxHeight: 150.0, // Set a maximum height for the list
-            ),
-            child: searchResults.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: searchResults.length,
-                    itemBuilder: (context, index) {
-                      final user = searchResults[index];
-                      return InviteeSearchResultItem(
-                        user: user,
-                        onAdd: () => onAddInvitee(user),
-                      );
-                    },
-                  )
-                : searchController.text.isNotEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          'No users found.',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-          ),
+        Wrap(
+          spacing: 8.0,
+          children: [
+            if (isEverybodySelected)
+              Chip(
+                avatar: CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/turn_button.png'),
+                ),
+                label: Text('Tout le monde'),
+                onDeleted: onSelectEverybody,
+              ),
+            ...selectedTeams.map((teamInvitee) => TeamChip(
+                  team: teamInvitee,
+                  onDelete: () => onRemoveTeam(teamInvitee),
+                )),
+            ...selectedInvitees.map((invitee) => InviteeChip(
+                  invitee: invitee,
+                  onDelete: () => onRemoveInvitee(invitee),
+                )),
+          ],
+        ),
+        if (isSearching) const CircularProgressIndicator(),
       ],
     );
   }

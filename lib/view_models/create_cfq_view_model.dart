@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
+import '../models/team.dart';
 
 class CreateCfqViewModel extends ChangeNotifier {
   // Controllers for form fields
@@ -17,6 +18,9 @@ class CreateCfqViewModel extends ChangeNotifier {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
+
+  bool _isEverybodySelected = false;
+  bool get isEverybodySelected => _isEverybodySelected;
 
   // Image
   Uint8List? _cfqImage;
@@ -26,10 +30,16 @@ class CreateCfqViewModel extends ChangeNotifier {
   List<model.User> _selectedInvitees = [];
   List<model.User> get selectedInvitees => _selectedInvitees;
 
+  List<Team> _userTeams = [];
+  List<Team> get userTeams => _userTeams;
+
+  List<Team> _selectedTeamInvitees = [];
+  List<Team> get selectedTeamInvitees => _selectedTeamInvitees;
+
   // Search
   final TextEditingController searchController = TextEditingController();
-  List<model.User> _searchResults = [];
-  List<model.User> get searchResults => _searchResults;
+  List<dynamic> _searchResults = [];
+  List<dynamic> get searchResults => _searchResults;
   bool _isSearching = false;
   bool get isSearching => _isSearching;
 
@@ -74,6 +84,8 @@ class CreateCfqViewModel extends ChangeNotifier {
           .get();
       _currentUser = model.User.fromSnap(userSnapshot);
 
+      await fetchUserTeams();
+
       // Fetch friends data
       List friendsUids = _currentUser!.friends;
       if (friendsUids.isNotEmpty) {
@@ -96,6 +108,130 @@ class CreateCfqViewModel extends ChangeNotifier {
       _errorMessage = 'Failed to initialize user data.';
       notifyListeners();
     }
+  }
+
+  Future<void> fetchUserTeams() async {
+    try {
+      QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('members', arrayContains: _currentUser!.uid)
+          .get();
+
+      _userTeams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching user teams: $e');
+      _errorMessage = 'Failed to fetch user teams.';
+      notifyListeners();
+    }
+  }
+
+  void _onSearchChanged() {
+    performSearch(searchController.text);
+  }
+
+  Future<void> performSearch(String query) async {
+    _isSearching = true;
+    notifyListeners();
+
+    try {
+      final queryLower = query.toLowerCase();
+
+      if (_isEverybodySelected) {
+        // If everybody is selected, only show teams in search results
+        _searchResults = _userTeams
+            .where((team) =>
+                team.name.toLowerCase().startsWith(queryLower) &&
+                !_selectedTeamInvitees.contains(team))
+            .toList();
+      } else {
+        if (query.isEmpty) {
+          _searchResults = [
+            ..._userTeams,
+            ..._friendsList.where((user) =>
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid)
+          ];
+        } else {
+          List<Team> filteredTeams = _userTeams
+              .where((team) =>
+                  team.name.toLowerCase().startsWith(queryLower) &&
+                  !_selectedTeamInvitees.contains(team))
+              .toList();
+
+          List<model.User> filteredUsers = _friendsList.where((user) {
+            final searchKeyLower = user.searchKey.toLowerCase();
+            return searchKeyLower.startsWith(queryLower) &&
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid;
+          }).toList();
+
+          _searchResults = [...filteredTeams, ...filteredUsers];
+        }
+      }
+    } catch (e) {
+      AppLogger.error('Error while searching: $e');
+      _errorMessage = 'Failed to perform search.';
+    }
+
+    _isSearching = false;
+    notifyListeners();
+  }
+
+  // Update the addInvitee method
+  void addInvitee(model.User invitee) {
+    _selectedInvitees.add(invitee);
+    _searchResults.removeWhere(
+        (result) => result is model.User && result.uid == invitee.uid);
+    notifyListeners();
+  }
+
+  // Update the removeInvitee method
+  void removeInvitee(model.User invitee) {
+    _selectedInvitees.remove(invitee);
+    performSearch(searchController.text);
+  }
+
+  void addTeam(Team team) {
+    _selectedTeamInvitees.add(team);
+    _searchResults
+        .removeWhere((result) => result is Team && result.uid == team.uid);
+
+    // Convert member IDs to User objects and add them to _selectedInvitees
+    List<model.User> teamMembers = _friendsList
+        .where((friend) => team.members.contains(friend.uid))
+        .toList();
+    _selectedInvitees.addAll(
+        teamMembers.where((member) => !_selectedInvitees.contains(member)));
+
+    _searchResults.removeWhere(
+        (result) => result is model.User && team.members.contains(result.uid));
+    notifyListeners();
+  }
+
+  void removeTeam(Team team) {
+    _selectedTeamInvitees.remove(team);
+    _selectedInvitees
+        .removeWhere((invitee) => team.members.contains(invitee.uid));
+    performSearch(searchController.text);
+  }
+
+  void selectEverybody() {
+    if (!_isEverybodySelected) {
+      _selectedInvitees = List.from(_friendsList);
+      _isEverybodySelected = true;
+    } else {
+      removeEverybody();
+    }
+    performSearch(searchController.text);
+    notifyListeners();
+  }
+
+  void removeEverybody() {
+    _selectedInvitees.clear();
+    _isEverybodySelected = false;
+    performSearch(searchController.text);
+    notifyListeners();
   }
 
   @override
@@ -124,65 +260,6 @@ class CreateCfqViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error picking cfq image: $e');
       _errorMessage = 'Failed to pick image.';
-      notifyListeners();
-    }
-  }
-
-  // Search Functionality
-  void _onSearchChanged() {
-    performSearch(searchController.text);
-  }
-
-  Future<void> performSearch(String query) async {
-    _isSearching = true;
-    notifyListeners();
-
-    try {
-      final queryLower = query.toLowerCase();
-
-      // If query is empty, display all friends not already selected and not the current user
-      if (query.isEmpty) {
-        _searchResults = _friendsList
-            .where((user) =>
-                !_selectedInvitees.any((f) => f.uid == user.uid) &&
-                user.uid != _currentUser?.uid)
-            .toList();
-      } else {
-        // Filter friends list based on 'searchKey'
-        _searchResults = _friendsList.where((user) {
-          final searchKeyLower = user.searchKey.toLowerCase();
-          // Exclude already selected invitees and current user
-          return searchKeyLower.startsWith(queryLower) &&
-              !_selectedInvitees.any((f) => f.uid == user.uid) &&
-              user.uid != _currentUser?.uid;
-        }).toList();
-      }
-
-      // Debug: Print all search results
-      print('Search Results:');
-      for (var user in _searchResults) {
-        print('Username: ${user.username}, UID: ${user.uid}');
-      }
-    } catch (e) {
-      AppLogger.error('Error while searching users: $e');
-      _errorMessage = 'Failed to perform search.';
-    }
-
-    _isSearching = false;
-    notifyListeners();
-  }
-
-  // Add Invitee to Selected List
-  void addInvitee(model.User invitee) {
-    _selectedInvitees.add(invitee);
-    _searchResults.removeWhere((user) => user.uid == invitee.uid);
-    notifyListeners();
-  }
-
-  // Remove Invitee from Selected List
-  void removeInvitee(model.User invitee) {
-    if (invitee.uid != _currentUser?.uid) {
-      _selectedInvitees.removeWhere((user) => user.uid == invitee.uid);
       notifyListeners();
     }
   }
@@ -294,6 +371,8 @@ class CreateCfqViewModel extends ChangeNotifier {
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
         organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
       );
 
       // Save cfq to Firestore

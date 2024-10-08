@@ -4,7 +4,6 @@ import 'package:cfq_dev/models/event_data_model.dart';
 class Turn extends EventDataModel {
   final DateTime eventDateTime; // Date and time when the event occurs
   final String address; // Precise address of the event
-  final List<String> invitees; // List of invited people
   final List<String> attending; // List of people confirmed to attend
   final List<String> notSureAttending; // List of people unsure about attending
   final List<String> notAttending; // List of people who declined the invitation
@@ -14,7 +13,6 @@ class Turn extends EventDataModel {
   Turn({
     required this.eventDateTime,
     required this.address,
-    required this.invitees,
     required this.attending,
     required this.notSureAttending,
     required this.notAttending,
@@ -30,6 +28,8 @@ class Turn extends EventDataModel {
     required super.profilePictureUrl,
     required super.where,
     required super.organizers,
+    required super.teamInvitees,
+    required super.invitees,
   });
 
   // Convert Turn object to JSON format for storage
@@ -49,6 +49,7 @@ class Turn extends EventDataModel {
       'address': address,
       'organizers': organizers,
       'invitees': invitees,
+      'teamInvitees': teamInvitees,
       'attending': attending,
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
@@ -73,6 +74,7 @@ class Turn extends EventDataModel {
       address: json['address'],
       organizers: List<String>.from(json['organizers']),
       invitees: List<String>.from(json['invitees']),
+      teamInvitees: List<String>.from(json['teamInvitees']),
       attending: List<String>.from(json['attending']),
       notSureAttending: List<String>.from(json['notSureAttending']),
       notAttending: List<String>.from(json['notAttending']),
