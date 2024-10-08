@@ -82,10 +82,23 @@ class _ProfileContentState extends State<ProfileContent>
                     color: Colors.white),
               ),
               SizedBox(height: 8),
-              Text(
-                widget.user.bio,
-                style: TextStyle(fontSize: 16, color: Colors.white70),
-                textAlign: TextAlign.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 16,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    widget.user.location.isNotEmpty
+                        ? widget.user.location[0].toUpperCase() +
+                            widget.user.location.substring(1)
+                        : 'No location set',
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                  ),
+                ],
               ),
               SizedBox(height: 16),
               if (widget.isCurrentUser)
