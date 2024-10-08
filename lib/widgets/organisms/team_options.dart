@@ -41,8 +41,8 @@ class TeamOptions extends StatelessWidget {
             }
           },
         ),
-        TurnButton(),
         CfqButton(),
+        TurnButton(),
         _buildOptionButton(
           context,
           icon: Icons.exit_to_app,
