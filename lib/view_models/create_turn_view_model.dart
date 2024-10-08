@@ -218,8 +218,8 @@ class CreateTurnViewModel extends ChangeNotifier {
 
   void removeTeam(Team team) {
     _selectedTeamInvitees.remove(team);
-    _selectedInvitees.removeWhere(
-        (invitee) => team.members.any((member) => member.uid == invitee.uid));
+    _selectedInvitees
+        .removeWhere((invitee) => team.members.contains(invitee.uid));
     performSearch(searchController.text);
   }
 

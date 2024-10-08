@@ -46,9 +46,9 @@ class InviteesField extends StatelessWidget {
         Wrap(
           spacing: 8.0,
           children: [
-            ...selectedTeams.map((team) => TeamChip(
-                  team: team,
-                  onDelete: () => onRemoveTeam(team),
+            ...selectedTeams.map((teamInvitee) => TeamChip(
+                  team: teamInvitee,
+                  onDelete: () => onRemoveTeam(teamInvitee),
                 )),
             ...selectedInvitees.map((invitee) => InviteeChip(
                   invitee: invitee,
