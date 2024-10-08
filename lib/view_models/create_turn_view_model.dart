@@ -377,11 +377,6 @@ class CreateTurnViewModel extends ChangeNotifier {
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Ensure current user is included
-      if (!inviteeUids.contains(currentUserId)) {
-        inviteeUids.add(currentUserId);
-      }
-
       // Create TURN object
       Turn turn = Turn(
         name: turnNameController.text.trim(),
