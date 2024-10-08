@@ -6,15 +6,23 @@ import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
 import '../templates/standard_form_template.dart';
+import '../models/team.dart';
+import '../models/user.dart' as model;
 
 /// Screen for creating a new TURN event.
 class CreateTurnScreen extends StatelessWidget {
-  const CreateTurnScreen({super.key});
+  final Team? prefillTeam;
+  final List<model.User>? prefillMembers;
+
+  const CreateTurnScreen({super.key, this.prefillTeam, this.prefillMembers});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CreateTurnViewModel>(
-      create: (_) => CreateTurnViewModel(),
+      create: (_) => CreateTurnViewModel(
+        prefillTeam: prefillTeam,
+        prefillMembers: prefillMembers,
+      ),
       child: Consumer<CreateTurnViewModel>(
         builder: (context, viewModel, child) {
           if (!viewModel.isInitialized) {

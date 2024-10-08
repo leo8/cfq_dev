@@ -18,6 +18,8 @@ class CreateTurnViewModel extends ChangeNotifier {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final Team? prefillTeam;
+  final List<model.User>? prefillMembers;
 
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
@@ -71,9 +73,38 @@ class CreateTurnViewModel extends ChangeNotifier {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-  CreateTurnViewModel() {
-    _initializeCurrentUser();
-    searchController.addListener(_onSearchChanged);
+  CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
+    _initializeViewModel();
+  }
+
+  Future<void> _initializeViewModel() async {
+    await _initializeCurrentUser();
+    await fetchUserTeams();
+    performSearch('');
+    if (prefillTeam != null) {
+      _initializePrefillData();
+      _removePrefillDataFromSearchResults();
+    }
+  }
+
+  void _initializePrefillData() {
+    if (prefillTeam != null) {
+      _selectedTeamInvitees.add(prefillTeam!);
+      _selectedInvitees.addAll(
+          prefillMembers?.where((member) => member.uid != _currentUser?.uid) ??
+              []);
+    }
+  }
+
+  void _removePrefillDataFromSearchResults() {
+    if (prefillTeam != null) {
+      _searchResults.removeWhere(
+          (result) => result is Team && result.uid == prefillTeam!.uid);
+      _searchResults.removeWhere((result) =>
+          result is model.User &&
+          prefillMembers!.map((member) => member.uid).contains(result.uid));
+      notifyListeners();
+    }
   }
 
   Future<void> _initializeCurrentUser() async {

@@ -6,15 +6,23 @@ import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
 import '../templates/standard_form_template.dart';
+import '../models/team.dart';
+import '../models/user.dart' as model;
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
-  const CreateCfqScreen({super.key});
+  final Team? prefillTeam;
+  final List<model.User>? prefillMembers;
+
+  const CreateCfqScreen({super.key, this.prefillTeam, this.prefillMembers});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<CreateCfqViewModel>(
-      create: (_) => CreateCfqViewModel(),
+      create: (_) => CreateCfqViewModel(
+        prefillTeam: prefillTeam,
+        prefillMembers: prefillMembers,
+      ),
       child: Consumer<CreateCfqViewModel>(
         builder: (context, viewModel, child) {
           if (!viewModel.isInitialized) {

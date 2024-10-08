@@ -1,21 +1,25 @@
 import 'package:cfq_dev/widgets/atoms/buttons/turn_button.dart';
 import '../atoms/buttons/cfq_button.dart';
 import 'package:flutter/material.dart';
-import '../molecules/team_option_button.dart';
 import '../../utils/styles/colors.dart';
 import '../../screens/add_team_members_screen.dart';
 import '../../models/team.dart';
 import '../../view_models/team_details_view_model.dart';
 import 'package:provider/provider.dart';
+import '../../models/user.dart' as model;
 
 class TeamOptions extends StatelessWidget {
   final Team team;
   final VoidCallback onTeamLeft;
+  final List<model.User>? prefillMembers;
+  final Team? prefillTeam;
 
   const TeamOptions({
     super.key,
     required this.team,
     required this.onTeamLeft,
+    this.prefillMembers,
+    this.prefillTeam,
   });
 
   @override
@@ -41,8 +45,14 @@ class TeamOptions extends StatelessWidget {
             }
           },
         ),
-        CfqButton(),
-        TurnButton(),
+        CfqButton(
+          prefillTeam: team,
+          prefillMembers: viewModel.members,
+        ),
+        TurnButton(
+          prefillTeam: team,
+          prefillMembers: viewModel.members,
+        ),
         _buildOptionButton(
           context,
           icon: Icons.exit_to_app,

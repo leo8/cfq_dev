@@ -45,6 +45,8 @@ class TeamDetailsScreen extends StatelessWidget {
                             onTeamLeft: () {
                               Navigator.of(context).pop(true);
                             },
+                            prefillMembers: viewModel.members,
+                            prefillTeam: viewModel.team,
                           ),
                           const SizedBox(height: 20),
                           TeamMembersList(members: viewModel.members),
