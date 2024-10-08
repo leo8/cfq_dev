@@ -56,7 +56,7 @@ class InviteesField extends StatelessWidget {
             if (isEverybodySelected)
               Chip(
                 avatar: CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/turn_button.png'),
+                  backgroundImage: AssetImage('assets/turn_button.png'),
                 ),
                 label: Text('Tout le monde'),
                 onDeleted: onSelectEverybody,
