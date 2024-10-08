@@ -1,25 +1,36 @@
-// lib/widgets/molecules/invitees_field.dart
-
 import 'package:flutter/material.dart';
 import '../atoms/chips/invitee_chip.dart';
+import '../atoms/chips/team_chip.dart';
 import '../molecules/invitee_search_result_item.dart';
+import '../atoms/search_bars/invitee_search_bar.dart';
 import '../../models/user.dart' as model;
+import '../../models/team.dart';
 
 class InviteesField extends StatelessWidget {
   final List<model.User> selectedInvitees;
+  final List<Team> selectedTeams;
   final List<model.User> searchResults;
   final TextEditingController searchController;
   final bool isSearching;
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
+  final Function(Team) onAddTeam;
+  final Function(Team) onRemoveTeam;
+  final List<Team> userTeams;
+  final VoidCallback onSelectEverybody;
 
   const InviteesField({
     required this.selectedInvitees,
+    required this.selectedTeams,
     required this.searchResults,
     required this.searchController,
     required this.isSearching,
     required this.onAddInvitee,
     required this.onRemoveInvitee,
+    required this.onAddTeam,
+    required this.onRemoveTeam,
+    required this.userTeams,
+    required this.onSelectEverybody,
     Key? key,
   }) : super(key: key);
 
@@ -27,39 +38,42 @@ class InviteesField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search Bar
-        TextField(
+        // Search Bar with Team Selection and Everybody option
+        InviteeSearchBar(
           controller: searchController,
-          decoration: InputDecoration(
-            labelText: 'Search friends',
-            prefixIcon: const Icon(Icons.search),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
+          onSearch: () {},
+          userTeams: userTeams,
+          onTeamSelected: onAddTeam,
+          onSelectEverybody: onSelectEverybody,
         ),
         const SizedBox(height: 10),
-        // Display Selected Invitees
-        if (selectedInvitees.isNotEmpty)
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: selectedInvitees.map((invitee) {
+        // Display Selected Invitees and Teams
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 4.0,
+          children: [
+            ...selectedInvitees.map((invitee) {
               return InviteeChip(
                 invitee: invitee,
                 onDelete: () => onRemoveInvitee(invitee),
               );
-            }).toList(),
-          ),
+            }),
+            ...selectedTeams.map((team) {
+              return TeamChip(
+                team: team,
+                onDelete: () => onRemoveTeam(team),
+              );
+            }),
+          ],
+        ),
         const SizedBox(height: 10),
         // Display Search Results
         if (isSearching)
           const CircularProgressIndicator()
         else
-          // Make the search results list scrollable with a constrained height
           Container(
             constraints: const BoxConstraints(
-              maxHeight: 150.0, // Set a maximum height for the list
+              maxHeight: 150.0,
             ),
             child: searchResults.isNotEmpty
                 ? ListView.builder(

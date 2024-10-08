@@ -18,6 +18,8 @@ class Cfq extends EventDataModel {
     required super.profilePictureUrl,
     required super.where,
     required super.organizers,
+    required super.invitees,
+    required super.teamInvitees,
   });
 
   // Convert CFQ object into a JSON map
@@ -35,6 +37,8 @@ class Cfq extends EventDataModel {
       'where': where,
       'organizers': organizers,
       'when': when,
+      'invitees': invitees,
+      'teamInvitees': teamInvitees,
     };
   }
 
@@ -53,6 +57,8 @@ class Cfq extends EventDataModel {
       where: json['where'],
       organizers: List<String>.from(json['organizers']),
       when: json['when'],
+      invitees: List<String>.from(json['invitees']),
+      teamInvitees: List<String>.from(json['teamInvitees']),
     );
   }
 }

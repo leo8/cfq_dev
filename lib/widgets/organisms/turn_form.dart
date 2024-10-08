@@ -8,6 +8,7 @@ import '../atoms/avatars/custom_avatar.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../atoms/texts/custom_text.dart';
+import '../../models/team.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -29,6 +30,10 @@ class TurnForm extends StatelessWidget {
   final Function(model.User) onAddInvitee;
   final Function(model.User) onRemoveInvitee;
   final model.User currentUser;
+  final List<Team> userTeams;
+  final List<Team> selectedTeams;
+  final Function(Team) onAddTeam;
+  final Function(Team) onRemoveTeam;
 
   const TurnForm({
     required this.image,
@@ -50,6 +55,10 @@ class TurnForm extends StatelessWidget {
     required this.onAddInvitee,
     required this.onRemoveInvitee,
     required this.currentUser,
+    required this.userTeams,
+    required this.selectedTeams,
+    required this.onAddTeam,
+    required this.onRemoveTeam,
     Key? key,
   }) : super(key: key);
 
@@ -155,6 +164,11 @@ class TurnForm extends StatelessWidget {
           isSearching: isSearching,
           onAddInvitee: onAddInvitee,
           onRemoveInvitee: onRemoveInvitee,
+          userTeams: userTeams,
+          selectedTeams: selectedTeams,
+          onAddTeam: onAddTeam,
+          onRemoveTeam: onRemoveTeam,
+          onSelectEverybody: () {},
         ),
       ],
     ));

@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
+import '../models/team.dart';
 
 class CreateTurnViewModel extends ChangeNotifier {
   // Controllers for form fields
@@ -27,6 +28,12 @@ class CreateTurnViewModel extends ChangeNotifier {
   // Invitees
   List<model.User> _selectedInvitees = [];
   List<model.User> get selectedInvitees => _selectedInvitees;
+
+  List<Team> _userTeams = [];
+  List<Team> get userTeams => _userTeams;
+
+  List<Team> _selectedTeamInvitees = [];
+  List<Team> get selectedTeamInvitees => _selectedTeamInvitees;
 
   // Search
   final TextEditingController searchController = TextEditingController();
@@ -78,6 +85,8 @@ class CreateTurnViewModel extends ChangeNotifier {
           .doc(currentUserId)
           .get();
       _currentUser = model.User.fromSnap(userSnapshot);
+
+      await fetchUserTeams();
 
       // Fetch friends data
       List friendsUids = _currentUser!.friends;
@@ -139,42 +148,43 @@ class CreateTurnViewModel extends ChangeNotifier {
   }
 
   Future<void> performSearch(String query) async {
-  _isSearching = true;
-  notifyListeners();
+    _isSearching = true;
+    notifyListeners();
 
-  try {
-    final queryLower = query.toLowerCase();
+    try {
+      final queryLower = query.toLowerCase();
 
-    // If query is empty, display all friends not already selected and not the current user
-    if (query.isEmpty) {
-      _searchResults = _friendsList.where((user) =>
-          !_selectedInvitees.any((f) => f.uid == user.uid) &&
-          user.uid != _currentUser?.uid).toList();
-    } else {
-      // Filter friends list based on 'searchKey'
-      _searchResults = _friendsList.where((user) {
-        final searchKeyLower = user.searchKey.toLowerCase();
-        // Exclude already selected invitees and current user
-        return searchKeyLower.startsWith(queryLower) &&
-            !_selectedInvitees.any((f) => f.uid == user.uid) &&
-            user.uid != _currentUser?.uid;
-      }).toList();
+      // If query is empty, display all friends not already selected and not the current user
+      if (query.isEmpty) {
+        _searchResults = _friendsList
+            .where((user) =>
+                !_selectedInvitees.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid)
+            .toList();
+      } else {
+        // Filter friends list based on 'searchKey'
+        _searchResults = _friendsList.where((user) {
+          final searchKeyLower = user.searchKey.toLowerCase();
+          // Exclude already selected invitees and current user
+          return searchKeyLower.startsWith(queryLower) &&
+              !_selectedInvitees.any((f) => f.uid == user.uid) &&
+              user.uid != _currentUser?.uid;
+        }).toList();
+      }
+
+      // Debug: Print all search results
+      print('Search Results:');
+      for (var user in _searchResults) {
+        print('Username: ${user.username}, UID: ${user.uid}');
+      }
+    } catch (e) {
+      AppLogger.error('Error while searching users: $e');
+      _errorMessage = 'Failed to perform search.';
     }
 
-    // Debug: Print all search results
-    print('Search Results:');
-    for (var user in _searchResults) {
-      print('Username: ${user.username}, UID: ${user.uid}');
-    }
-  } catch (e) {
-    AppLogger.error('Error while searching users: $e');
-    _errorMessage = 'Failed to perform search.';
+    _isSearching = false;
+    notifyListeners();
   }
-
-  _isSearching = false;
-  notifyListeners();
-}
-
 
   // Add Invitee to Selected List
   void addInvitee(model.User invitee) {
@@ -189,6 +199,33 @@ class CreateTurnViewModel extends ChangeNotifier {
       _selectedInvitees.removeWhere((user) => user.uid == invitee.uid);
       notifyListeners();
     }
+  }
+
+  Future<void> fetchUserTeams() async {
+    try {
+      QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('members', arrayContains: _currentUser!.uid)
+          .get();
+
+      _userTeams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching user teams: $e');
+      _errorMessage = 'Failed to fetch user teams.';
+      notifyListeners();
+    }
+  }
+
+  void addTeam(Team inviteeTeam) {
+    _selectedTeamInvitees.add(inviteeTeam);
+    _searchResults.removeWhere((team) => team.uid == inviteeTeam.uid);
+    notifyListeners();
+  }
+
+  void removeTeam(Team inviteeTeam) {
+    _selectedTeamInvitees.removeWhere((team) => team.uid == inviteeTeam.uid);
+    notifyListeners();
   }
 
   // Date-Time Picker
@@ -334,6 +371,7 @@ class CreateTurnViewModel extends ChangeNotifier {
         address: addressController.text.trim(),
         organizers: [currentUserId], // Assuming current user is the organizer
         invitees: inviteeUids,
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         attending: [],
         notSureAttending: [],
         notAttending: [],

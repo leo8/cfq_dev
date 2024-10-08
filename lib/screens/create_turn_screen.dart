@@ -94,6 +94,10 @@ class CreateTurnScreen extends StatelessWidget {
                 isSearching: viewModel.isSearching,
                 onAddInvitee: viewModel.addInvitee,
                 onRemoveInvitee: viewModel.removeInvitee,
+                userTeams: viewModel.userTeams,
+                selectedTeams: viewModel.selectedTeamInvitees,
+                onAddTeam: viewModel.addTeam,
+                onRemoveTeam: viewModel.removeTeam,
               ),
             );
           }

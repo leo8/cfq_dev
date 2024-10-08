@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
+import '../models/team.dart';
 
 class CreateCfqViewModel extends ChangeNotifier {
   // Controllers for form fields
@@ -25,6 +26,12 @@ class CreateCfqViewModel extends ChangeNotifier {
   // Invitees
   List<model.User> _selectedInvitees = [];
   List<model.User> get selectedInvitees => _selectedInvitees;
+
+  List<Team> _userTeams = [];
+  List<Team> get userTeams => _userTeams;
+
+  List<Team> _selectedTeamInvitees = [];
+  List<Team> get selectedTeamInvitees => _selectedTeamInvitees;
 
   // Search
   final TextEditingController searchController = TextEditingController();
@@ -74,6 +81,8 @@ class CreateCfqViewModel extends ChangeNotifier {
           .get();
       _currentUser = model.User.fromSnap(userSnapshot);
 
+      await fetchUserTeams();
+
       // Fetch friends data
       List friendsUids = _currentUser!.friends;
       if (friendsUids.isNotEmpty) {
@@ -96,6 +105,33 @@ class CreateCfqViewModel extends ChangeNotifier {
       _errorMessage = 'Failed to initialize user data.';
       notifyListeners();
     }
+  }
+
+  Future<void> fetchUserTeams() async {
+    try {
+      QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
+          .collection('teams')
+          .where('members', arrayContains: _currentUser!.uid)
+          .get();
+
+      _userTeams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching user teams: $e');
+      _errorMessage = 'Failed to fetch user teams.';
+      notifyListeners();
+    }
+  }
+
+  void addTeam(Team inviteeTeam) {
+    _selectedTeamInvitees.add(inviteeTeam);
+    _searchResults.removeWhere((team) => team.uid == inviteeTeam.uid);
+    notifyListeners();
+  }
+
+  void removeTeam(Team inviteeTeam) {
+    _selectedTeamInvitees.removeWhere((team) => team.uid == inviteeTeam.uid);
+    notifyListeners();
   }
 
   @override
@@ -294,6 +330,8 @@ class CreateCfqViewModel extends ChangeNotifier {
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
         organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
       );
 
       // Save cfq to Firestore
