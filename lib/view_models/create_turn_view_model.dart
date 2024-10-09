@@ -449,8 +449,11 @@ class CreateTurnViewModel extends ChangeNotifier {
           .doc(turnId)
           .set(turn.toJson());
 
-      // Update users' TURN lists
-      await _updateUsersTurns(inviteeUids, turnId);
+      // Update users' postedTurns
+      await _updateUserPosts(currentUserId, turnId);
+
+      // Update users' invitedTurns
+      await _updateInviteesTurns(inviteeUids, turnId);
 
       _successMessage = 'TURN created successfully!';
       _isLoading = false;
@@ -463,16 +466,35 @@ class CreateTurnViewModel extends ChangeNotifier {
     }
   }
 
-  // Update 'turns' field for users
-  Future<void> _updateUsersTurns(List<String> userIds, String turnId) async {
+  // Update 'posted_turns' field for user
+  Future<void> _updateUserPosts(String currentUserId, String turnId) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
-      for (String uid in userIds) {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(currentUserId);
+      batch.update(userRef, {
+        'postedTurns': FieldValue.arrayUnion([turnId])
+      });
+
+      await batch.commit();
+    } catch (e) {
+      AppLogger.error('Error updating users\' turns: $e');
+      throw e; // Re-throw the error to be caught in createTurn()
+    }
+  }
+
+  // Update 'turns' field for invitees
+  Future<void> _updateInviteesTurns(
+      List<String> inviteesIds, String turnId) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (String uid in inviteesIds) {
         DocumentReference userRef =
             FirebaseFirestore.instance.collection('users').doc(uid);
         batch.update(userRef, {
-          'turns': FieldValue.arrayUnion([turnId])
+          'invitedTurns': FieldValue.arrayUnion([turnId])
         });
       }
 
