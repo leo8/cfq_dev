@@ -455,6 +455,10 @@ class CreateTurnViewModel extends ChangeNotifier {
       // Update users' invitedTurns
       await _updateInviteesTurns(inviteeUids, turnId);
 
+      // Update teams' invitedTurns
+      await _updateTeamInviteesTurns(
+          _selectedTeamInvitees.map((team) => team.uid).toList(), turnId);
+
       _successMessage = 'TURN created successfully!';
       _isLoading = false;
       notifyListeners();
@@ -502,6 +506,26 @@ class CreateTurnViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error updating users\' turns: $e');
       throw e; // Re-throw the error to be caught in createTurn()
+    }
+  }
+
+  // Update 'invitedTurns' field for team invitees
+  Future<void> _updateTeamInviteesTurns(
+      List<String> teamInviteesIds, String turnId) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      for (String teamId in teamInviteesIds) {
+        DocumentReference userRef =
+            FirebaseFirestore.instance.collection('teams').doc(teamId);
+        batch.update(userRef, {
+          'invitedTurns': FieldValue.arrayUnion([turnId])
+        });
+      }
+
+      await batch.commit();
+    } catch (e) {
+      AppLogger.error('Error updating users\' cfqs: $e');
+      throw e; // Re-throw the error to be caught in createCfq()
     }
   }
 

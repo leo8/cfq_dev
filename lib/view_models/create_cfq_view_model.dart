@@ -430,6 +430,10 @@ class CreateCfqViewModel extends ChangeNotifier {
       // Update users' invitedCfqs
       await _updateInviteesCfqs(inviteeUids, cfqId);
 
+      // Update teams' invitedCfqs
+      await _updateTeamInviteesCfqs(
+          _selectedTeamInvitees.map((team) => team.uid).toList(), cfqId);
+
       _successMessage = 'CFQ created successfully!';
       _isLoading = false;
       notifyListeners();
@@ -468,6 +472,26 @@ class CreateCfqViewModel extends ChangeNotifier {
       for (String uid in inviteesIds) {
         DocumentReference userRef =
             FirebaseFirestore.instance.collection('users').doc(uid);
+        batch.update(userRef, {
+          'invitedCfqs': FieldValue.arrayUnion([cfqId])
+        });
+      }
+
+      await batch.commit();
+    } catch (e) {
+      AppLogger.error('Error updating users\' cfqs: $e');
+      throw e; // Re-throw the error to be caught in createCfq()
+    }
+  }
+
+  // Update 'invitedCfqs' field for team invitees
+  Future<void> _updateTeamInviteesCfqs(
+      List<String> teamInviteesIds, String cfqId) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      for (String teamId in teamInviteesIds) {
+        DocumentReference userRef =
+            FirebaseFirestore.instance.collection('teams').doc(teamId);
         batch.update(userRef, {
           'invitedCfqs': FieldValue.arrayUnion([cfqId])
         });
