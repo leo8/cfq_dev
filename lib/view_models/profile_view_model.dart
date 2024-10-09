@@ -213,6 +213,10 @@ class ProfileViewModel extends ChangeNotifier {
         birthDate: birthDate,
         isActive: _user!.isActive,
         searchKey: username.toLowerCase(),
+        postedTurns: _user!.postedTurns,
+        invitedTurns: _user!.invitedTurns,
+        postedCfqs: _user!.postedCfqs,
+        invitedCfqs: _user!.invitedCfqs,
       );
 
       _isLoading = false;
@@ -253,6 +257,10 @@ class ProfileViewModel extends ChangeNotifier {
         birthDate: _user!.birthDate,
         isActive: _user!.isActive,
         searchKey: _user!.username.toLowerCase(),
+        postedTurns: _user!.postedTurns,
+        invitedTurns: _user!.invitedTurns,
+        postedCfqs: _user!.postedCfqs,
+        invitedCfqs: _user!.invitedCfqs,
       );
 
       _isLoading = false;

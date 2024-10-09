@@ -90,6 +90,10 @@ class AuthMethods {
           birthDate: birthDate,
           isActive: false,
           searchKey: username.toLowerCase(), // New users start as inactive
+          postedTurns: [],
+          invitedTurns: [],
+          postedCfqs: [],
+          invitedCfqs: [],
         );
 
         // Save the user data to Firestore under 'users' collection

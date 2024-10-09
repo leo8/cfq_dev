@@ -12,6 +12,10 @@ class User {
   final DateTime? birthDate; // Optional birthdate of the user
   bool isActive; // User's active status
   final String searchKey; // Used to facilitate user search
+  final List postedTurns; // List of turns 'uid
+  final List invitedTurns; // List of turns 'uid
+  final List postedCfqs; // List of cfqs 'uid
+  final List invitedCfqs; // List of cfqs 'uid
 
   // Constructor for initializing a User object
   User(
@@ -24,7 +28,11 @@ class User {
       required this.location,
       required this.birthDate,
       required this.isActive,
-      required this.searchKey});
+      required this.searchKey,
+      required this.postedTurns,
+      required this.invitedTurns,
+      required this.postedCfqs,
+      required this.invitedCfqs});
 
   // Convert User object to a JSON format for storage
   Map<String, dynamic> toJson() => {
@@ -39,6 +47,10 @@ class User {
             ?.toIso8601String(), // Convert birthDate to string if it's not null
         "isActive": isActive,
         "searchKey": searchKey,
+        "postedTurns": postedTurns,
+        "invitedTurns": invitedTurns,
+        "postedCfqs": postedCfqs,
+        "invitedCfqs": invitedCfqs,
       };
 
   // Create a User object from a Firestore snapshot
@@ -58,6 +70,10 @@ class User {
           : null, // Parse birthDate if it's not null
       isActive: snapshot['isActive'],
       searchKey: snapshot['searchKey'],
+      postedTurns: snapshot['postedTurns'],
+      invitedTurns: snapshot['invitedTurns'],
+      postedCfqs: snapshot['postedCfqs'],
+      invitedCfqs: snapshot['invitedCfqs'],
     );
   }
 }
