@@ -185,15 +185,18 @@ class ProfileViewModel extends ChangeNotifier {
     await AuthMethods().logOutUser();
   }
 
-  Future<void> updateUserProfile(String username, String bio, String location, DateTime? birthDate) async {
+  Future<void> updateUserProfile(
+      String username, String location, DateTime? birthDate) async {
     try {
       _isLoading = true;
       notifyListeners();
 
       // Update Firestore
-      await FirebaseFirestore.instance.collection('users').doc(_user!.uid).update({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user!.uid)
+          .update({
         'username': username,
-        'bio': bio,
         'location': location,
         'birthDate': birthDate?.toIso8601String(),
       });
@@ -202,7 +205,6 @@ class ProfileViewModel extends ChangeNotifier {
       _user = model.User(
         username: username,
         email: _user!.email,
-        bio: bio,
         uid: _user!.uid,
         friends: _user!.friends,
         teams: _user!.teams,
@@ -223,39 +225,42 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   Future<void> updateProfilePicture(Uint8List file) async {
-  try {
-    _isLoading = true;
-    notifyListeners();
+    try {
+      _isLoading = true;
+      notifyListeners();
 
-    // Upload new profile picture to storage
-    String profilePictureUrl = await StorageMethods().uploadImageToStorage('profilePicture', file, false);
+      // Upload new profile picture to storage
+      String profilePictureUrl = await StorageMethods()
+          .uploadImageToStorage('profilePicture', file, false);
 
-    // Update Firestore
-    await FirebaseFirestore.instance.collection('users').doc(_user!.uid).update({
-      'profilePictureUrl': profilePictureUrl,
-    });
+      // Update Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user!.uid)
+          .update({
+        'profilePictureUrl': profilePictureUrl,
+      });
 
-    // Update local user object
-    _user = model.User(
-      username: _user!.username,
-      email: _user!.email,
-      bio: _user!.bio,
-      uid: _user!.uid,
-      friends: _user!.friends,
-      teams: _user!.teams,
-      profilePictureUrl: profilePictureUrl,
-      location: _user!.location,
-      birthDate: _user!.birthDate,
-      isActive: _user!.isActive,
-      searchKey: _user!.username.toLowerCase(),
-    );
+      // Update local user object
+      _user = model.User(
+        username: _user!.username,
+        email: _user!.email,
+        uid: _user!.uid,
+        friends: _user!.friends,
+        teams: _user!.teams,
+        profilePictureUrl: profilePictureUrl,
+        location: _user!.location,
+        birthDate: _user!.birthDate,
+        isActive: _user!.isActive,
+        searchKey: _user!.username.toLowerCase(),
+      );
 
-    _isLoading = false;
-    notifyListeners();
-  } catch (e) {
-    _isLoading = false;
-    AppLogger.error(e.toString());
-    notifyListeners();
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      AppLogger.error(e.toString());
+      notifyListeners();
+    }
   }
-}
 }

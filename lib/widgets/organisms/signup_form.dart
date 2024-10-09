@@ -16,7 +16,6 @@ class SignUpForm extends StatelessWidget {
       usernameController; // Controller for username input
   final TextEditingController
       locationController; // Controller for location input
-  final TextEditingController bioController; // Controller for bio input
   final Uint8List? image; // Selected image for profile
   final TextEditingController
       birthDateController; // Controller for birth date input
@@ -33,7 +32,6 @@ class SignUpForm extends StatelessWidget {
     required this.passwordController,
     required this.usernameController,
     required this.locationController,
-    required this.bioController,
     this.image,
     required this.birthDateController,
     this.selectedBirthDate, // Pass the currently selected date
@@ -70,12 +68,6 @@ class SignUpForm extends StatelessWidget {
         UsernameLocationFields(
           usernameController: usernameController,
           locationController: locationController,
-        ),
-        const SizedBox(height: 8),
-        // Bio input field
-        CustomTextField(
-          controller: bioController,
-          hintText: CustomString.taBio, // "Your Bio"
         ),
         const SizedBox(height: 8),
         // Birth date input field

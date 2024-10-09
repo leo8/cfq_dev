@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class User {
   final String username; // Username of the user
   final String uid; // Unique user ID
-  final String bio; // User bio or description
   final String email; // User email address
   final List friends; // List of friends 'uid
   final List teams; // List of teams 'uid
@@ -18,7 +17,6 @@ class User {
   User(
       {required this.username,
       required this.uid,
-      required this.bio,
       required this.email,
       required this.friends,
       required this.teams,
@@ -32,7 +30,6 @@ class User {
   Map<String, dynamic> toJson() => {
         "username": username,
         "uid": uid,
-        "bio": bio,
         "email": email,
         "friends": friends,
         "teams": teams,
@@ -51,7 +48,6 @@ class User {
     return User(
       username: snapshot['username'],
       uid: snapshot['uid'],
-      bio: snapshot['bio'],
       email: snapshot['email'],
       friends: snapshot['friends'],
       teams: snapshot['teams'],
