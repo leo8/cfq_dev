@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../utils/styles/string.dart';
 import '../atoms/avatars/profile_image_avatar.dart';
 import '../molecules/username_location_field.dart';
-import '../atoms/texts/custom_text_field.dart';
 import '../atoms/dates/custom_date_field.dart';
 import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
