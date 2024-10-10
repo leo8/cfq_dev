@@ -25,8 +25,7 @@ class AuthMethods {
   // Fetch any user's details from Firestore by userId
   Future<model.User> getUserDetailsById(String uid) async {
     // Retrieve user document from 'users' collection
-    DocumentSnapshot snap =
-        await _firestore.collection('users').doc(uid).get();
+    DocumentSnapshot snap = await _firestore.collection('users').doc(uid).get();
 
     // Return User model created from Firestore snapshot
     return model.User.fromSnap(snap);
@@ -52,7 +51,6 @@ class AuthMethods {
     required String password,
     required String username,
     String? location,
-    String? bio,
     Uint8List? profilePicture,
     DateTime? birthDate,
   }) async {
@@ -84,7 +82,6 @@ class AuthMethods {
         model.User user = model.User(
           username: username,
           uid: userCredential.user!.uid,
-          bio: bio ?? CustomString.emptyString,
           email: email,
           friends: [],
           teams: [],
@@ -93,6 +90,10 @@ class AuthMethods {
           birthDate: birthDate,
           isActive: false,
           searchKey: username.toLowerCase(), // New users start as inactive
+          postedTurns: [],
+          invitedTurns: [],
+          postedCfqs: [],
+          invitedCfqs: [],
         );
 
         // Save the user data to Firestore under 'users' collection

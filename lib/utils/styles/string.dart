@@ -63,7 +63,6 @@ class CustomString {
       "Sélectionnez le(s) mood(s) de votre turn";
   static const someErrorOccurred = "Some error occurred";
   static const success = "success";
-  static const taBio = "Ta bio";
   static const taDateDeNaissance = "Ta date de naissance";
   static const taLocalisation = "Ta localisation";
   static const tAsOublieTonMotDePasse = "T’as oublié ton mot de passe ?";

@@ -126,12 +126,11 @@ class FirestoreMethods {
   }
 
   Future<void> updateUserProfile(
-      String uid, String username, String email, String bio) async {
+      String uid, String username, String email) async {
     try {
       await _firestore.collection('users').doc(uid).update({
         'username': username,
         'email': email,
-        'bio': bio,
       });
     } catch (e) {
       AppLogger.error('Error updating user profile in Firestore: $e');

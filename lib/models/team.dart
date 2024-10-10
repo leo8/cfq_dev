@@ -5,12 +5,16 @@ class Team {
   final String name;
   final String imageUrl;
   final List members;
+  final List invitedCfqs;
+  final List invitedTurns;
 
   Team({
     required this.uid,
     required this.name,
     required this.imageUrl,
     required this.members,
+    required this.invitedCfqs,
+    required this.invitedTurns,
   });
 
   // Convert Team object to JSON format for Firestore
@@ -19,6 +23,8 @@ class Team {
         "name": name,
         "imageUrl": imageUrl,
         "members": members,
+        "invitedCfqs": invitedCfqs,
+        "invitedTurns": invitedTurns,
       };
 
   // Create a Team object from a Firestore snapshot
@@ -30,6 +36,8 @@ class Team {
       name: snapshot['name'],
       imageUrl: snapshot['imageUrl'],
       members: snapshot['members'],
+      invitedCfqs: snapshot['invitedCfqs'],
+      invitedTurns: snapshot['invitedTurns'],
     );
   }
 }

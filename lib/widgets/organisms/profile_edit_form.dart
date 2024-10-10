@@ -11,16 +11,14 @@ import 'package:http/http.dart' as http;
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
-  final String initialBio;
   final String initialLocation;
   final DateTime? initialBirthDate;
   final String initialProfilePictureUrl;
-  final Future<void> Function(String, String, String, DateTime?, Uint8List?) onSave;
+  final Future<void> Function(String, String, DateTime?, Uint8List?) onSave;
 
   const ProfileEditForm({
     Key? key,
     required this.initialUsername,
-    required this.initialBio,
     required this.initialLocation,
     this.initialBirthDate,
     required this.initialProfilePictureUrl,
@@ -33,7 +31,6 @@ class ProfileEditForm extends StatefulWidget {
 
 class _ProfileEditFormState extends State<ProfileEditForm> {
   late TextEditingController _usernameController;
-  late TextEditingController _bioController;
   late TextEditingController _locationController;
   late TextEditingController _birthDateController;
   DateTime? _selectedDate;
@@ -45,7 +42,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   void initState() {
     super.initState();
     _usernameController = TextEditingController(text: widget.initialUsername);
-    _bioController = TextEditingController(text: widget.initialBio);
     _locationController = TextEditingController(text: widget.initialLocation);
     _birthDateController = TextEditingController(
       text: widget.initialBirthDate?.toLocal().toString().split(' ')[0] ?? '',
@@ -84,7 +80,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   @override
   void dispose() {
     _usernameController.dispose();
-    _bioController.dispose();
     _locationController.dispose();
     _birthDateController.dispose();
     super.dispose();
@@ -115,7 +110,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     try {
       await widget.onSave(
         _usernameController.text,
-        _bioController.text,
         _locationController.text,
         _selectedDate,
         _selectedImage,
@@ -145,10 +139,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
             locationController: _locationController,
           ),
           const SizedBox(height: 16),
-          CustomTextField(
-            controller: _bioController,
-            hintText: CustomString.taBio,
-          ),
           const SizedBox(height: 16),
           CustomDateField(
             controller: _birthDateController,
@@ -172,10 +162,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   }
 
   Widget _buildProfileImage() {
-  return ProfileImageAvatar(
-    image: _selectedImage,
-    onImageSelected: _selectImage,
-    isLoading: _isImageLoading,
-  );
-}
+    return ProfileImageAvatar(
+      image: _selectedImage,
+      onImageSelected: _selectImage,
+      isLoading: _isImageLoading,
+    );
+  }
 }

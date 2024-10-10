@@ -25,7 +25,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _birthDateController =
       TextEditingController(); // Birth date input controller
@@ -40,7 +39,6 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _usernameController.dispose();
-    _bioController.dispose();
     _locationController.dispose();
     _birthDateController.dispose();
   }
@@ -64,7 +62,6 @@ class _SignupScreenState extends State<SignupScreen> {
       email: _emailController.text,
       password: _passwordController.text,
       username: _usernameController.text,
-      bio: _bioController.text,
       profilePicture: _image != null ? _image! : null,
       location: _locationController.text,
       birthDate: _selectedBirthDate, // Pass selected birth date
@@ -85,7 +82,7 @@ class _SignupScreenState extends State<SignupScreen> {
             webScreenLayout: WebScreenLayout(),
           ),
         ),
-        (route) => false,  
+        (route) => false,
       );
     }
   }
@@ -118,7 +115,6 @@ class _SignupScreenState extends State<SignupScreen> {
               passwordController: _passwordController,
               usernameController: _usernameController,
               locationController: _locationController,
-              bioController: _bioController,
               birthDateController:
                   _birthDateController, // Pass the birth date controller
               selectedBirthDate:

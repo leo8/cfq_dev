@@ -7,7 +7,8 @@ import '../utils/styles/colors.dart';
 class EditProfileScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
 
-  const EditProfileScreen({Key? key, required this.viewModel}) : super(key: key);
+  const EditProfileScreen({Key? key, required this.viewModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,20 @@ class EditProfileScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     ProfileEditForm(
                       initialUsername: viewModel.user!.username,
-                      initialBio: viewModel.user!.bio,
                       initialLocation: viewModel.user!.location,
                       initialBirthDate: viewModel.user!.birthDate,
-                      initialProfilePictureUrl: viewModel.user!.profilePictureUrl,
-                      onSave: (username, bio, location, birthDate, newProfilePicture) async {
+                      initialProfilePictureUrl:
+                          viewModel.user!.profilePictureUrl,
+                      onSave: (username, location, birthDate,
+                          newProfilePicture) async {
                         if (newProfilePicture != null) {
-                          await viewModel.updateProfilePicture(newProfilePicture);
+                          await viewModel
+                              .updateProfilePicture(newProfilePicture);
                         }
-                        await viewModel.updateUserProfile(username, bio, location, birthDate);                      // Pop twice to go back to the profile screen
+                        await viewModel.updateUserProfile(username, location,
+                            birthDate); // Pop twice to go back to the profile screen
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
-
                       },
                     )
                   ],
