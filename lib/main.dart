@@ -12,6 +12,7 @@ import 'package:provider/provider.dart'; // State management using Provider
 import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding
       .ensureInitialized(); // Ensure bindings are initialized
@@ -69,40 +70,40 @@ class _CFQState extends State<CFQ> {
         ),
       ],
       child: MaterialApp(
-  debugShowCheckedModeBanner: false,
-  title: 'cfq_dev',
-  theme: ThemeData.dark().copyWith(
-    scaffoldBackgroundColor: Colors.transparent,
-  ),
-  home: NeonBackground(
-    child: StreamBuilder(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          if (snapshot.hasData) {
-            return const RepsonsiveLayout(
-              mobileScreenLayout: MobileScreenLayout(),
-              webScreenLayout: WebScreenLayout(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(child: Text('${snapshot.error}'));
-          }
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: CustomColor.white,
-            ),
-          );
-        }
-        return LoginScreen();
-      },
-    ),
-  ),
-  routes: {
-    '/login': (context) => NeonBackground(child: LoginScreen()),
-  },
-),
+        debugShowCheckedModeBanner: false,
+        title: 'cfq_dev',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: Colors.transparent,
+        ),
+        home: NeonBackground(
+          child: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.active) {
+                if (snapshot.hasData) {
+                  return const RepsonsiveLayout(
+                    mobileScreenLayout: MobileScreenLayout(),
+                    webScreenLayout: WebScreenLayout(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('${snapshot.error}'));
+                }
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: CustomColor.white,
+                  ),
+                );
+              }
+              return const LoginScreen();
+            },
+          ),
+        ),
+        routes: {
+          '/login': (context) => const NeonBackground(child: LoginScreen()),
+        },
+      ),
     );
   }
 }

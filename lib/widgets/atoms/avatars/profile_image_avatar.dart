@@ -24,8 +24,9 @@ class ProfileImageAvatar extends StatelessWidget {
           radius: 64,
           backgroundColor: CustomColor.black,
           child: isLoading
-              ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(CustomColor.white70),
+              ? const CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(CustomColor.white70),
                 )
               : CircleAvatar(
                   radius: 62,

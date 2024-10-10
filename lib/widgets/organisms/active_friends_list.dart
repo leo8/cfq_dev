@@ -12,16 +12,16 @@ class ActiveFriendsList extends StatelessWidget {
   final Function(String) onFriendTap;
 
   const ActiveFriendsList({
-    Key? key,
+    super.key,
     required this.currentUser,
     required this.activeFriends,
     required this.onActiveChanged,
     required this.onFriendTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 120,
       child: ListView(
         scrollDirection: Axis.horizontal,
@@ -61,10 +61,10 @@ class ActiveFriendsList extends StatelessWidget {
             radius: 45,
             onTap: () => onFriendTap(friend.uid),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             friend.username,
-            style: TextStyle(
+            style: const TextStyle(
               color: CustomColor.white70,
               fontSize: CustomFont.fontSize12,
             ),

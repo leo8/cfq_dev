@@ -134,7 +134,7 @@ class FirestoreMethods {
       });
     } catch (e) {
       AppLogger.error('Error updating user profile in Firestore: $e');
-      throw e;
+      rethrow;
     }
   }
 }

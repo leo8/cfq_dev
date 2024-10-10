@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class NeonBackground extends StatelessWidget {
   final Widget child;
 
-  const NeonBackground({Key? key, required this.child}) : super(key: key);
+  const NeonBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

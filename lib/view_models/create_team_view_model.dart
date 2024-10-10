@@ -265,7 +265,7 @@ class CreateTeamViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' teams: $e');
-      throw e; // Re-throw the error to be caught in createTeam()
+      rethrow; // Re-throw the error to be caught in createTeam()
     }
   }
 

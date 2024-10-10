@@ -24,7 +24,8 @@ class TeamsViewModel extends ChangeNotifier {
       QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
           .collection('teams')
           .where('members', arrayContains: userId)
-          .get(GetOptions(source: Source.server)); // Force fetch from server
+          .get(const GetOptions(
+              source: Source.server)); // Force fetch from server
 
       _teams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList();
     } catch (e) {

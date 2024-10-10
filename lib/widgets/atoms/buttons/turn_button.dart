@@ -9,10 +9,10 @@ class TurnButton extends StatelessWidget {
   final List<model.User>? prefillMembers;
 
   const TurnButton({
-    Key? key,
+    super.key,
     this.prefillTeam,
     this.prefillMembers,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

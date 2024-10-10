@@ -39,6 +39,7 @@ class TurnForm extends StatelessWidget {
   final bool isEverybodySelected;
 
   const TurnForm({
+    super.key,
     required this.image,
     required this.onSelectImage,
     required this.nameController,
@@ -65,8 +66,7 @@ class TurnForm extends StatelessWidget {
     required this.onSearch,
     required this.onSelectEverybody,
     required this.isEverybodySelected,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class TurnForm extends StatelessWidget {
                   children: [
                     const Icon(Icons.bolt, color: CustomColor.white, size: 16),
                     const SizedBox(width: 8),
-                    CustomText(
+                    const CustomText(
                       text: 'Organisé par',
                       color: CustomColor.white,
                       fontSize: CustomFont.fontSize16,

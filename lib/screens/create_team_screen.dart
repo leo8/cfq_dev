@@ -117,7 +117,7 @@ class CreateTeamScreen extends StatelessWidget {
                           ),
                         ] else if (!viewModel.isSearching &&
                             viewModel.searchController.text.isNotEmpty) ...[
-                          Center(
+                          const Center(
                             child: Text(
                               'No users found.',
                               style: TextStyle(color: Colors.white70),

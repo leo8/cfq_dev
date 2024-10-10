@@ -20,6 +20,7 @@ class InviteesField extends StatelessWidget {
   final bool isEverybodySelected;
 
   const InviteesField({
+    super.key,
     required this.selectedInvitees,
     required this.selectedTeams,
     required this.searchResults,
@@ -32,8 +33,7 @@ class InviteesField extends StatelessWidget {
     required this.onSearch,
     required this.onSelectEverybody,
     required this.isEverybodySelected,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +55,10 @@ class InviteesField extends StatelessWidget {
           children: [
             if (isEverybodySelected)
               Chip(
-                avatar: CircleAvatar(
+                avatar: const CircleAvatar(
                   backgroundImage: AssetImage('assets/turn_button.png'),
                 ),
-                label: Text('Tout le monde'),
+                label: const Text('Tout le monde'),
                 onDeleted: onSelectEverybody,
               ),
             ...selectedTeams.map((teamInvitee) => TeamChip(

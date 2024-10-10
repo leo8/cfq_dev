@@ -6,8 +6,7 @@ import '../../view_models/add_team_members_view_model.dart';
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
 
-  const AddTeamMembersScreen({Key? key, required this.teamId})
-      : super(key: key);
+  const AddTeamMembersScreen({super.key, required this.teamId});
 
   @override
   Widget build(BuildContext context) {

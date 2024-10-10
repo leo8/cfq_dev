@@ -8,7 +8,6 @@ import 'friends_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
-  
 
   const ProfileScreen({super.key, this.userId});
 
@@ -26,13 +25,13 @@ class ProfileScreen extends StatelessWidget {
               // Show back button if viewing another user's profile
               if (!viewModel.isCurrentUser) {
                 return IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 );
               } else {
-                return SizedBox.shrink(); // No back button
+                return const SizedBox.shrink(); // No back button
               }
             },
           ),
@@ -76,7 +75,9 @@ class ProfileScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ParametersScreen(viewModel: viewModel, onLogoutTap: () => viewModel.logOut()),
+                              builder: (context) => ParametersScreen(
+                                  viewModel: viewModel,
+                                  onLogoutTap: () => viewModel.logOut()),
                             ),
                           );
                         }

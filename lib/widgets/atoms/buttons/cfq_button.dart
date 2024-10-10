@@ -9,10 +9,10 @@ class CfqButton extends StatelessWidget {
   final List<model.User>? prefillMembers;
 
   const CfqButton({
-    Key? key,
+    super.key,
     this.prefillTeam,
     this.prefillMembers,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -8,12 +8,12 @@ class ClickableAvatar extends StatelessWidget {
   final double radius;
   final VoidCallback onTap;
   const ClickableAvatar({
-    Key? key,
+    super.key,
     required this.userId,
     required this.imageUrl,
     required this.onTap,
     this.radius = 30,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,13 +9,13 @@ class OutlinedIconButton extends StatelessWidget {
   final Color color;
 
   const OutlinedIconButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.onPressed,
     this.size = 60.0,
     this.iconSize = 30.0,
     this.color = CustomColor.white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class OutlinedIconButton extends StatelessWidget {
       height: size,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
           side: BorderSide(color: color),
           padding: EdgeInsets.zero, // Remove default padding
         ),

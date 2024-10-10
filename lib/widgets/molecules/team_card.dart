@@ -12,11 +12,11 @@ class TeamCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const TeamCard({
-    Key? key,
+    super.key,
     required this.team,
     required this.members,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

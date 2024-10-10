@@ -459,7 +459,7 @@ class CreateCfqViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' turns: $e');
-      throw e; // Re-throw the error to be caught in createTurn()
+      rethrow; // Re-throw the error to be caught in createTurn()
     }
   }
 
@@ -480,7 +480,7 @@ class CreateCfqViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' cfqs: $e');
-      throw e; // Re-throw the error to be caught in createCfq()
+      rethrow; // Re-throw the error to be caught in createCfq()
     }
   }
 
@@ -500,7 +500,7 @@ class CreateCfqViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' cfqs: $e');
-      throw e; // Re-throw the error to be caught in createCfq()
+      rethrow; // Re-throw the error to be caught in createCfq()
     }
   }
 

@@ -17,7 +17,7 @@ class FriendsListScreen extends StatelessWidget {
       create: (_) => FriendsListViewModel(currentUserId: currentUserId),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(CustomString.mesAmis),
+          title: const Text(CustomString.mesAmis),
         ),
         body: Consumer<FriendsListViewModel>(
           builder: (context, viewModel, child) {
@@ -68,7 +68,7 @@ class FriendsListScreen extends StatelessWidget {
                       onPressed: () {
                         viewModel.removeFriend(friend.uid);
                       },
-                      child: Text(CustomString.retirer),
+                      child: const Text(CustomString.retirer),
                     ),
                   );
                 },
