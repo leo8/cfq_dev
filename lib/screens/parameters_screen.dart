@@ -8,10 +8,10 @@ class ParametersScreen extends StatelessWidget {
   final VoidCallback? onLogoutTap;
 
   const ParametersScreen({
-    Key? key,
+    super.key,
     required this.viewModel,
     required this.onLogoutTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,8 @@ class ParametersScreen extends StatelessWidget {
             title: const Text('Logout', style: TextStyle(color: Colors.red)),
             onTap: () async {
               await viewModel.logOut();
-              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login', (route) => false);
             },
           ),
         ],

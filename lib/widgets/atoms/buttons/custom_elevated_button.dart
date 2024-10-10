@@ -21,15 +21,11 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed, // Define the onPressed function
-      style: ButtonStyle(
+      style: ElevatedButton.styleFrom(
         // Set the background color if provided
-        backgroundColor: backgroundColor != null
-            ? MaterialStateProperty.all<Color>(backgroundColor!)
-            : null,
+        backgroundColor: backgroundColor,
         // Set the shape if provided
-        shape: shape != null
-            ? MaterialStateProperty.all<OutlinedBorder>(shape!)
-            : null,
+        shape: shape,
       ),
       child: child, // Button content (text, icon, or any widget)
     );

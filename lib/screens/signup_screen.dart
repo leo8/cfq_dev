@@ -62,7 +62,7 @@ class _SignupScreenState extends State<SignupScreen> {
       email: _emailController.text,
       password: _passwordController.text,
       username: _usernameController.text,
-      profilePicture: _image != null ? _image! : null,
+      profilePicture: _image,
       location: _locationController.text,
       birthDate: _selectedBirthDate, // Pass selected birth date
     );

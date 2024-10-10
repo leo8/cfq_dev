@@ -6,11 +6,11 @@ class NeonSwitch extends StatelessWidget {
   final Function(bool)? onChanged;
 
   const NeonSwitch({
-    Key? key,
+    super.key,
     this.onChanged,
     this.size = 0.3,
     this.value = false,
-  }) : super(key: key);
+  });
 
   void toggleSwitch() {
     if (onChanged != null) {
@@ -39,7 +39,7 @@ class NeonSwitch extends StatelessWidget {
         child: Stack(
           children: [
             AnimatedPositioned(
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
               left: toggleLeftPosition,
               top: 2,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MapScreen extends StatelessWidget {
-  const MapScreen({Key? key}) : super(key: key);
+  const MapScreen({super.key});
 
   static const String _imageUrl =
       'https://cdn.vectorstock.com/i/1000v/58/83/abstract-city-map-with-blurred-edge-vector-21245883.jpg';
@@ -22,7 +22,7 @@ class MapScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               },
               errorBuilder: (context, error, stackTrace) {
-                return Center(
+                return const Center(
                   child: Text(
                     'Failed to load image',
                     style: TextStyle(color: Colors.red),

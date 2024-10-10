@@ -10,13 +10,13 @@ class AvatarNeonSwitch extends StatelessWidget {
   final Function(bool)? onChanged;
 
   const AvatarNeonSwitch({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.onChanged,
     this.avatarRadius = 40,
     this.switchSize = 1,
     this.isActive = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

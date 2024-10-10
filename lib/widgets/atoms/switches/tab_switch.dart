@@ -5,7 +5,8 @@ class CustomTabSwitch extends StatelessWidget {
   final List<Widget> tabViews;
   final TabController? controller;
 
-  CustomTabSwitch({
+  const CustomTabSwitch({
+    super.key,
     required this.tabs,
     required this.tabViews,
     this.controller,
@@ -22,7 +23,7 @@ class CustomTabSwitch extends StatelessWidget {
           elevation: 0,
           bottom: TabBar(
             controller: controller,
-            indicator: UnderlineTabIndicator(
+            indicator: const UnderlineTabIndicator(
               borderSide: BorderSide(width: 2.0, color: Colors.white),
               insets: EdgeInsets.symmetric(horizontal: 40.0),
             ),

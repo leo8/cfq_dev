@@ -6,10 +6,10 @@ class InviteeChip extends StatelessWidget {
   final VoidCallback onDelete;
 
   const InviteeChip({
+    super.key,
     required this.invitee,
     required this.onDelete,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

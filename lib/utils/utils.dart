@@ -8,14 +8,14 @@ import 'package:image_picker/image_picker.dart';
 /// If an image is picked, it returns the image as a Uint8List.
 /// If no image is selected, it logs a debug message.
 Future<Uint8List?> pickImage(ImageSource source) async {
-  final ImagePicker _imagePicker = ImagePicker();
+  final ImagePicker imagePicker = ImagePicker();
 
   // Let user pick an image from the specified source
-  XFile? _file = await _imagePicker.pickImage(source: source);
+  XFile? file = await imagePicker.pickImage(source: source);
 
-  if (_file != null) {
+  if (file != null) {
     // Read image bytes and return
-    return await _file.readAsBytes();
+    return await file.readAsBytes();
   }
 
   // Log when no image is selected

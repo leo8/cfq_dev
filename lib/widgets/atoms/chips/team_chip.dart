@@ -7,10 +7,10 @@ class TeamChip extends StatelessWidget {
   final VoidCallback onDelete;
 
   const TeamChip({
-    Key? key,
+    super.key,
     required this.team,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

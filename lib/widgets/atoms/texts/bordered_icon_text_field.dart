@@ -11,7 +11,7 @@ class BorderedIconTextField extends StatelessWidget {
   final VoidCallback? onTap;
 
   const BorderedIconTextField({
-    Key? key,
+    super.key,
     required this.icon,
     required this.controller,
     required this.hintText,
@@ -19,7 +19,7 @@ class BorderedIconTextField extends StatelessWidget {
     this.maxLines = 1,
     this.height = 40.0,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

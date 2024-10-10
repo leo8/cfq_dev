@@ -147,6 +147,17 @@ class CreateTurnViewModel extends ChangeNotifier {
     }
   }
 
+  @override
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    turnNameController.dispose();
+    descriptionController.dispose();
+    locationController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
   Future<void> pickTurnImage() async {
     try {
       final ImagePicker picker = ImagePicker();
@@ -484,7 +495,7 @@ class CreateTurnViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' turns: $e');
-      throw e; // Re-throw the error to be caught in createTurn()
+      rethrow; // Re-throw the error to be caught in createTurn()
     }
   }
 
@@ -505,7 +516,7 @@ class CreateTurnViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' turns: $e');
-      throw e; // Re-throw the error to be caught in createTurn()
+      rethrow; // Re-throw the error to be caught in createTurn()
     }
   }
 
@@ -525,7 +536,7 @@ class CreateTurnViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error updating users\' cfqs: $e');
-      throw e; // Re-throw the error to be caught in createCfq()
+      rethrow; // Re-throw the error to be caught in createCfq()
     }
   }
 

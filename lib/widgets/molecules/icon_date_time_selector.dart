@@ -9,11 +9,11 @@ class IconDateTimeSelector extends StatelessWidget {
   final double? height; // Optional height parameter
 
   const IconDateTimeSelector({
+    super.key,
     required this.dateTimeText,
     required this.onTap,
     this.height, // Optional height
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

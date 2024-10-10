@@ -7,8 +7,7 @@ import '../utils/styles/colors.dart';
 class EditProfileScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
 
-  const EditProfileScreen({Key? key, required this.viewModel})
-      : super(key: key);
+  const EditProfileScreen({super.key, required this.viewModel});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class EditProfileScreen extends StatelessWidget {
       body: Builder(
         builder: (context) {
           if (viewModel.isLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           return Stack(
             children: [
@@ -50,7 +49,7 @@ class EditProfileScreen extends StatelessWidget {
                 top: 10,
                 right: 10,
                 child: IconButton(
-                  icon: Icon(Icons.close, color: CustomColor.white),
+                  icon: const Icon(Icons.close, color: CustomColor.white),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),

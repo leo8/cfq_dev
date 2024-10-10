@@ -1,15 +1,11 @@
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
-import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
 import '../widgets/atoms/texts/custom_text.dart';
-import '../widgets/organisms/cfq_card_content.dart';
-import '../widgets/organisms/turn_card_content.dart';
 import '../models/user.dart' as model;
 import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
@@ -136,89 +132,6 @@ class ThreadScreen extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => ProfileScreen(userId: friendId),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildEventsList(BuildContext context, ThreadViewModel viewModel) {
-    return StreamBuilder<List<DocumentSnapshot>>(
-      stream: viewModel.fetchCombinedEvents(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          AppLogger.error("Error fetching events: ${snapshot.error}");
-          return const Center(child: Text(CustomString.errorFetchingEvents));
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final events = snapshot.data!;
-
-        if (events.isEmpty) {
-          return const Center(child: Text(CustomString.noEventsAvailable));
-        }
-
-        return ListView.builder(
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            final event = events[index];
-            final isTurn = event.reference.parent.id == 'turns';
-
-            if (isTurn) {
-              return TurnCardContent(
-                profilePictureUrl:
-                    event['profilePictureUrl'] ?? CustomString.emptyString,
-                username: event['username'] ?? CustomString.emptyString,
-                organizers: List<String>.from(event['organizers'] ?? []),
-                turnName: event['turnName'] ?? CustomString.emptyString,
-                description: event['description'] ?? CustomString.emptyString,
-                eventDateTime: viewModel.parseDate(event['eventDateTime']),
-                where: event['where'] ?? CustomString.emptyString,
-                address: event['address'] ?? CustomString.emptyString,
-                attendeesCount: (event['attending'] as List?)?.length ?? 0,
-                datePublished: viewModel.parseDate(event['datePublished']),
-                turnImageUrl: event['turnImageUrl'] ?? CustomString.emptyString,
-                onAttendingPressed: () {
-                  // Add attending functionality
-                },
-                onSharePressed: () {
-                  // Add share functionality
-                },
-                onSendPressed: () {
-                  // Add send functionality
-                },
-                onCommentPressed: () {
-                  // Add comment functionality
-                },
-              );
-            } else {
-              return CFQCardContent(
-                profilePictureUrl:
-                    event['profilePictureUrl'] ?? CustomString.emptyString,
-                username: event['username'] ?? CustomString.emptyString,
-                organizers: List<String>.from(event['organizers'] ?? []),
-                cfqName: event['cfqName'] ?? CustomString.emptyString,
-                description: event['description'] ?? CustomString.emptyString,
-                datePublished: viewModel.parseDate(event['datePublished']),
-                location: event['where'] ?? CustomString.emptyString,
-                when: event['when'] ?? CustomString.emptyString,
-                cfqImageUrl: event['cfqImageUrl'] ?? CustomString.emptyString,
-                onFollowPressed: () {
-                  // Add follow functionality
-                },
-                onSharePressed: () {
-                  // Add share functionality
-                },
-                onSendPressed: () {
-                  // Add send functionality
-                },
-                onCommentPressed: () {
-                  // Add comment functionality
-                },
-              );
-            }
-          },
         );
       },
     );

@@ -6,10 +6,10 @@ class InviteeSearchResultItem extends StatelessWidget {
   final VoidCallback onAdd;
 
   const InviteeSearchResultItem({
+    super.key,
     required this.user,
     required this.onAdd,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

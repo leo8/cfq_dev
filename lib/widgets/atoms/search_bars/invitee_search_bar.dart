@@ -14,6 +14,7 @@ class InviteeSearchBar extends StatelessWidget {
   final bool isEverybodySelected;
 
   const InviteeSearchBar({
+    super.key,
     required this.controller,
     required this.onSearch,
     this.hintText = 'Search friends or teams to invite',
@@ -22,8 +23,7 @@ class InviteeSearchBar extends StatelessWidget {
     required this.onAddTeam,
     required this.onSelectEverybody,
     required this.isEverybodySelected,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class InviteeSearchBar extends StatelessWidget {
         ),
       ),
       if (searchResults.isNotEmpty)
-        Container(
+        SizedBox(
           height: 200,
           child: ListView.builder(
             itemCount: searchResults.length + (isEverybodySelected ? 0 : 1),
@@ -51,12 +51,12 @@ class InviteeSearchBar extends StatelessWidget {
               if (!isEverybodySelected && index == 0) {
                 // "Tout le monde" option
                 return ListTile(
-                  leading: CircleAvatar(
+                  leading: const CircleAvatar(
                     backgroundImage: AssetImage('assets/turn_button.png'),
                   ),
-                  title: Text('Tout le monde'),
+                  title: const Text('Tout le monde'),
                   trailing: IconButton(
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     onPressed: onSelectEverybody,
                   ),
                 );
@@ -70,9 +70,9 @@ class InviteeSearchBar extends StatelessWidget {
                       backgroundImage: NetworkImage(result.imageUrl),
                     ),
                     title: Text(result.name),
-                    subtitle: Text('Team'),
+                    subtitle: const Text('Team'),
                     trailing: IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () => onAddTeam(result),
                     ),
                   );
@@ -83,13 +83,13 @@ class InviteeSearchBar extends StatelessWidget {
                     ),
                     title: Text(result.username),
                     trailing: IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () => onAddInvitee(result),
                     ),
                   );
                 }
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
         )

@@ -7,10 +7,10 @@ class TeamSelectionDropdown extends StatelessWidget {
   final Function(Team) onTeamSelected;
 
   const TeamSelectionDropdown({
-    Key? key,
+    super.key,
     required this.teams,
     required this.onTeamSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

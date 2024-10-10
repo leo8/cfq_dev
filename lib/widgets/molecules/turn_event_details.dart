@@ -27,7 +27,7 @@ class TurnEventDetails extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CustomText(
-          text: '${DateTimeUtils.formatEventTime(eventDateTime)}',
+          text: DateTimeUtils.formatEventTime(eventDateTime),
           color: CustomColor.pinkAccent,
           fontWeight: CustomFont.fontWeight500,
           fontSize: CustomFont.fontSize14,

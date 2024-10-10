@@ -7,12 +7,12 @@ class CustomAvatar extends StatelessWidget {
   final double borderWidth;
 
   const CustomAvatar({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.radius = 20,
     this.borderColor,
     this.borderWidth = 0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

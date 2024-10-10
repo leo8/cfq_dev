@@ -147,7 +147,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           });
         },
         indicatorColor: CustomColor.transparent,
-        overlayColor: MaterialStateProperty.resolveWith<Color>(
+        overlayColor: WidgetStateProperty.resolveWith<Color>(
           (_) => CustomColor.transparent,
         ),
         selectedIndex: currentPageIndex,
@@ -232,11 +232,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             }, // Capture les taps en dehors de la barre de navigation
             child: IndexedStack(
               index: currentPageIndex,
-              children: [
-                const ThreadScreen(),
-                const MapScreen(),
-                const TeamsScreen(),
-                const ProfileScreen(),
+              children: const [
+                ThreadScreen(),
+                MapScreen(),
+                TeamsScreen(),
+                ProfileScreen(),
               ],
             ),
           ),

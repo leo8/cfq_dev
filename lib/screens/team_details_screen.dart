@@ -11,7 +11,7 @@ import '../widgets/organisms/team_members_list.dart';
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
 
-  const TeamDetailsScreen({Key? key, required this.team}) : super(key: key);
+  const TeamDetailsScreen({super.key, required this.team});
 
   @override
   Widget build(BuildContext context) {

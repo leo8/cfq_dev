@@ -27,9 +27,9 @@ class _RepsonsiveLayoutState extends State<RepsonsiveLayout> {
   // Method to refresh and load user data using the UserProvider
   addData() async {
     // Fetch the UserProvider instance without rebuilding the widget
-    UserProvider _userProvider = Provider.of(context, listen: false);
+    UserProvider userProvider = Provider.of(context, listen: false);
     // Asynchronously refresh the current user's data
-    await _userProvider.refreshUser();
+    await userProvider.refreshUser();
   }
 
   @override

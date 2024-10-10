@@ -10,11 +10,11 @@ class ThreadHeader extends StatelessWidget {
   final VoidCallback onMessageTap;
 
   const ThreadHeader({
-    Key? key,
+    super.key,
     required this.searchController,
     required this.onNotificationTap,
     required this.onMessageTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

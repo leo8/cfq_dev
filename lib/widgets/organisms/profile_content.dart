@@ -15,7 +15,7 @@ class ProfileContent extends StatefulWidget {
   final VoidCallback? onParametersTap;
 
   const ProfileContent({
-    Key? key,
+    super.key,
     required this.user,
     required this.isFriend,
     required this.isCurrentUser,
@@ -25,7 +25,7 @@ class ProfileContent extends StatefulWidget {
     this.onRemoveFriendTap,
     this.onFriendsTap,
     this.onParametersTap,
-  }) : super(key: key);
+  });
 
   @override
   _ProfileContentState createState() => _ProfileContentState();
@@ -73,52 +73,52 @@ class _ProfileContentState extends State<ProfileContent>
                   radius: 70,
                   backgroundImage: NetworkImage(widget.user.profilePictureUrl),
                 ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Text(
                 widget.user.username,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.location_on,
                     color: Colors.red,
                     size: 16,
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     widget.user.location.isNotEmpty
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
                         : 'No location set',
-                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               if (widget.isCurrentUser)
                 ElevatedButton(
                   onPressed: widget.onFriendsTap,
-                  child: Text('Mes Amis'),
+                  child: const Text('Mes Amis'),
                 )
               else if (!widget.isFriend)
                 ElevatedButton(
                   onPressed: widget.onAddFriendTap,
-                  child: Text(CustomString.ajouter),
+                  child: const Text(CustomString.ajouter),
                 )
               else
                 ElevatedButton(
                   onPressed: widget.onRemoveFriendTap,
-                  child: Text(CustomString.retirer),
+                  child: const Text(CustomString.retirer),
                 ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               if (!widget.isCurrentUser && !widget.isFriend)
-                Icon(
+                const Icon(
                   Icons.lock,
                   size: 100,
                   color: Colors.white,
@@ -162,7 +162,7 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: [
+                        children: const [
                           Center(
                               child: Text('Ses turns feed',
                                   style: TextStyle(color: Colors.white))),
@@ -213,7 +213,7 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: [
+                        children: const [
                           Center(
                               child: Text('Mes posts feed',
                                   style: TextStyle(color: Colors.white))),
@@ -233,7 +233,7 @@ class _ProfileContentState extends State<ProfileContent>
             top: 10,
             right: 10,
             child: IconButton(
-              icon: Icon(Icons.settings, color: Colors.white, size: 30),
+              icon: const Icon(Icons.settings, color: Colors.white, size: 30),
               onPressed: widget.onParametersTap,
             ),
           ),

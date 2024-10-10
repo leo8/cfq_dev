@@ -7,6 +7,7 @@ import '../molecules/username_location_field.dart';
 import '../atoms/dates/custom_date_field.dart';
 import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
+import '../../utils/logger.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -16,13 +17,13 @@ class ProfileEditForm extends StatefulWidget {
   final Future<void> Function(String, String, DateTime?, Uint8List?) onSave;
 
   const ProfileEditForm({
-    Key? key,
+    super.key,
     required this.initialUsername,
     required this.initialLocation,
     this.initialBirthDate,
     required this.initialProfilePictureUrl,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _ProfileEditFormState createState() => _ProfileEditFormState();
@@ -57,7 +58,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         _isImageLoading = false;
       });
     } catch (e) {
-      print('Error loading initial image: $e');
+      AppLogger.error('Error loading initial image: $e');
       setState(() {
         _isImageLoading = false;
       });
@@ -71,7 +72,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         return response.bodyBytes;
       }
     } catch (e) {
-      print('Error fetching image: $e');
+      AppLogger.error('Error fetching image: $e');
     }
     return null;
   }
@@ -95,7 +96,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         });
       }
     } catch (e) {
-      print('Error selecting image: $e');
+      AppLogger.error('Error selecting image: $e');
     }
   }
 
@@ -114,7 +115,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
         _selectedImage,
       );
     } catch (e) {
-      print('Error saving profile: $e');
+      AppLogger.error('Error saving profile: $e');
       // You might want to show an error message to the user here
     } finally {
       if (mounted) {

@@ -37,6 +37,7 @@ class CfqForm extends StatelessWidget {
   final bool isEverybodySelected;
 
   const CfqForm({
+    super.key,
     required this.image,
     required this.onSelectImage,
     required this.nameController,
@@ -61,8 +62,7 @@ class CfqForm extends StatelessWidget {
     required this.onSearch,
     required this.onSelectEverybody,
     required this.isEverybodySelected,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class CfqForm extends StatelessWidget {
                       const Icon(Icons.bolt,
                           color: CustomColor.white, size: 16),
                       const SizedBox(width: 8),
-                      CustomText(
+                      const CustomText(
                         text: 'Organisé par',
                         color: CustomColor.white,
                         fontSize: CustomFont.fontSize16,
