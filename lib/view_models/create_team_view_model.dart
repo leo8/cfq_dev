@@ -213,6 +213,8 @@ class CreateTeamViewModel extends ChangeNotifier {
         name: teamNameController.text.trim(),
         imageUrl: teamImageUrl,
         members: memberUids,
+        invitedCfqs: [],
+        invitedTurns: [],
       );
 
       // Save team to Firestore

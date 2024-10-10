@@ -15,6 +15,7 @@ class TurnCardContent extends StatelessWidget {
   final String description;
   final DateTime eventDateTime;
   final DateTime datePublished;
+  final String turnImageUrl;
   final String where;
   final String address;
   final int attendeesCount;
@@ -37,6 +38,7 @@ class TurnCardContent extends StatelessWidget {
     required this.onSharePressed,
     required this.onSendPressed,
     required this.onCommentPressed,
+    required this.turnImageUrl,
     required this.datePublished,
     super.key,
   });
@@ -62,7 +64,7 @@ class TurnCardContent extends StatelessWidget {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
-                  profilePictureUrl,
+                  turnImageUrl,
                   width: double.infinity,
                   height: 150,
                   fit: BoxFit.cover,
