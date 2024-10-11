@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
+import '../utils/styles/string.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
 import '../screens/parameters_screen.dart';
@@ -44,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
             if (viewModel.isLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (viewModel.user == null) {
-              return const Center(child: Text('User not found'));
+              return const Center(child: Text(CustomString.userNotFound));
             } else {
               return Center(
                 child: ProfileContent(

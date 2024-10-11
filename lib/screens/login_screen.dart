@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
             webScreenLayout: WebScreenLayout(),
           ),
         ),
-        (route) => false,  
+        (route) => false,
       );
     } else {
       // Show error message if login fails
@@ -95,14 +95,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            CustomString.ouCapital,
+            CustomString.orCapital,
             style: TextStyle(color: CustomColor.white70),
           ),
           const SizedBox(height: 16),
           // Sign-up option below the form
           SignUpOption(
-            questionText: CustomString.tAsPasEncoreDeCompte,
-            actionText: CustomString.jemInscris,
+            questionText: CustomString.noAccountYet,
+            actionText: CustomString.signUp,
             onTap: navigateToSignUp,
           ),
         ],

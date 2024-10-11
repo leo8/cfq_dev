@@ -11,6 +11,7 @@ import '../utils/styles/fonts.dart';
 import 'team_details_screen.dart';
 import '../widgets/molecules/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
+import '../utils/styles/string.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -22,7 +23,7 @@ class TeamsScreen extends StatelessWidget {
       child: Consumer<TeamsViewModel>(builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Teams'),
+            title: const Text(CustomString.mesTeams),
           ),
           body: RefreshIndicator(
             onRefresh: () => viewModel.fetchTeams(),
@@ -60,7 +61,7 @@ class TeamsScreen extends StatelessWidget {
                             const SizedBox(height: 8),
                             // Text 'Créer une team' below the button
                             const CustomText(
-                              text: 'Créer une team',
+                              text: CustomString.createTeam,
                               fontSize: CustomFont.fontSize18,
                               color: CustomColor.white,
                             ),
@@ -72,7 +73,7 @@ class TeamsScreen extends StatelessWidget {
                         child: viewModel.teams.isEmpty
                             ? const Center(
                                 child: CustomText(
-                                  text: 'Vous n\'avez pas encore de teams.',
+                                  text: CustomString.noTeamsYet,
                                   color: CustomColor.white,
                                   fontSize: CustomFont.fontSize18,
                                 ),

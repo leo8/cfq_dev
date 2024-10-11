@@ -17,7 +17,7 @@ class FriendsListScreen extends StatelessWidget {
       create: (_) => FriendsListViewModel(currentUserId: currentUserId),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(CustomString.mesAmis),
+          title: const Text(CustomString.myFriends),
         ),
         body: Consumer<FriendsListViewModel>(
           builder: (context, viewModel, child) {
@@ -25,7 +25,7 @@ class FriendsListScreen extends StatelessWidget {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (viewModel.friendRemoved) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(CustomString.amiSupprime)),
+                  const SnackBar(content: Text(CustomString.friendDeleted)),
                 );
                 viewModel.resetStatus();
               } else if (viewModel.errorMessage != null) {
@@ -40,7 +40,7 @@ class FriendsListScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (viewModel.friends.isEmpty) {
               return const Center(
-                child: Text(CustomString.vousnAvezPasEncoredAmis),
+                child: Text(CustomString.noFriendsYet),
               );
             } else {
               return ListView.builder(
@@ -68,7 +68,7 @@ class FriendsListScreen extends StatelessWidget {
                       onPressed: () {
                         viewModel.removeFriend(friend.uid);
                       },
-                      child: const Text(CustomString.retirer),
+                      child: const Text(CustomString.removeFriend),
                     ),
                   );
                 },

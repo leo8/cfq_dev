@@ -14,7 +14,7 @@ class ImageSelector extends StatelessWidget {
   const ImageSelector({
     required this.image,
     required this.onSelectImage,
-    this.placeholderText = CustomString.veuillezSelectionnerUneImage,
+    this.placeholderText = CustomString.pleaseSelectAnImage,
     super.key,
   });
 

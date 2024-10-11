@@ -7,6 +7,7 @@ import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
+import '../utils/styles/string.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -165,7 +166,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
@@ -182,7 +183,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
@@ -199,7 +200,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
@@ -215,7 +216,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
         ],

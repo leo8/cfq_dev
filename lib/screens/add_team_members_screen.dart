@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
 import '../../view_models/add_team_members_view_model.dart';
+import '../../utils/styles/string.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -16,7 +17,7 @@ class AddTeamMembersScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Ajouter des membres'),
+              title: const Text(CustomString.addMembers),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
@@ -72,7 +73,7 @@ class AddTeamMembersScreen extends StatelessWidget {
                   ? const Icon(Icons.check_circle, color: Colors.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
-                      child: const Text('Ajouter'),
+                      child: const Text(CustomString.addFriend),
                     ),
             )),
       ],

@@ -132,14 +132,14 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(height: 8),
             // Display a separator for alternative options
             const Text(
-              CustomString.ouCapital,
+              CustomString.orCapital,
               style: TextStyle(color: CustomColor.white70),
             ),
             const SizedBox(height: 8),
             // Option to navigate to the login screen
             SignUpOption(
-              questionText: CustomString.dejaInscrit,
-              actionText: CustomString.jeMeConnecte,
+              questionText: CustomString.alreadySignedUp,
+              actionText: CustomString.logIn,
               onTap: navigateToLogIn,
             ),
           ],

@@ -2,6 +2,7 @@ import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../../../models/team.dart';
 import '../../../models/user.dart' as model;
+import '../../../utils/styles/string.dart';
 
 class InviteeSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -54,7 +55,7 @@ class InviteeSearchBar extends StatelessWidget {
                   leading: const CircleAvatar(
                     backgroundImage: AssetImage('assets/turn_button.png'),
                   ),
-                  title: const Text('Tout le monde'),
+                  title: const Text(CustomString.toutLeMonde),
                   trailing: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: onSelectEverybody,
@@ -70,7 +71,7 @@ class InviteeSearchBar extends StatelessWidget {
                       backgroundImage: NetworkImage(result.imageUrl),
                     ),
                     title: Text(result.name),
-                    subtitle: const Text('Team'),
+                    subtitle: const Text(CustomString.team),
                     trailing: IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () => onAddTeam(result),

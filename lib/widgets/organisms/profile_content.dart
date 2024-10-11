@@ -95,7 +95,7 @@ class _ProfileContentState extends State<ProfileContent>
                     widget.user.location.isNotEmpty
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
-                        : 'No location set',
+                        : CustomString.noLocation,
                     style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
@@ -104,17 +104,17 @@ class _ProfileContentState extends State<ProfileContent>
               if (widget.isCurrentUser)
                 ElevatedButton(
                   onPressed: widget.onFriendsTap,
-                  child: const Text('Mes Amis'),
+                  child: const Text(CustomString.myFriends),
                 )
               else if (!widget.isFriend)
                 ElevatedButton(
                   onPressed: widget.onAddFriendTap,
-                  child: const Text(CustomString.ajouter),
+                  child: const Text(CustomString.addFriend),
                 )
               else
                 ElevatedButton(
                   onPressed: widget.onRemoveFriendTap,
-                  child: const Text(CustomString.retirer),
+                  child: const Text(CustomString.removeFriend),
                 ),
               const SizedBox(height: 24),
               if (!widget.isCurrentUser && !widget.isFriend)
@@ -132,7 +132,7 @@ class _ProfileContentState extends State<ProfileContent>
                       tabs: [
                         Tab(
                           child: Text(
-                            'SES TURNS',
+                            CustomString.otherUserPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
                                   ? Colors.white
@@ -145,7 +145,7 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.otherUserCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.white
@@ -164,10 +164,10 @@ class _ProfileContentState extends State<ProfileContent>
                         controller: _tabController,
                         children: const [
                           Center(
-                              child: Text('Ses turns feed',
+                              child: Text(CustomString.otherUserPosts,
                                   style: TextStyle(color: Colors.white))),
                           Center(
-                              child: Text('Ça va turn feed',
+                              child: Text(CustomString.otherUserCalendar,
                                   style: TextStyle(color: Colors.white))),
                         ],
                       ),
@@ -183,7 +183,7 @@ class _ProfileContentState extends State<ProfileContent>
                       tabs: [
                         Tab(
                           child: Text(
-                            'MES POSTS',
+                            CustomString.myPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
                                   ? Colors.white
@@ -196,7 +196,7 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.myCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.white
@@ -215,10 +215,10 @@ class _ProfileContentState extends State<ProfileContent>
                         controller: _tabController,
                         children: const [
                           Center(
-                              child: Text('Mes posts feed',
+                              child: Text(CustomString.myPosts,
                                   style: TextStyle(color: Colors.white))),
                           Center(
-                              child: Text('Ça va turn feed',
+                              child: Text(CustomString.myCalendar,
                                   style: TextStyle(color: Colors.white))),
                         ],
                       ),
