@@ -6,6 +6,7 @@ import '../molecules/turn_user_info_header.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../utils/styles/fonts.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/styles/string.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -111,7 +112,9 @@ class TurnCardContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 CustomText(
-                  text: '$attendeesCount y vont',
+                  text: attendeesCount.toString() +
+                      CustomString.space +
+                      CustomString.going,
                   color: CustomColor.white,
                   fontSize: CustomFont.fontSize14,
                 ),

@@ -4,6 +4,7 @@ import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/styles/string.dart';
 
 class CfqUserInfoHeader extends StatelessWidget {
   final String profilePictureUrl;
@@ -51,7 +52,9 @@ class CfqUserInfoHeader extends StatelessWidget {
                 ],
               ),
               const CustomText(
-                text: 'CFQ ?',
+                text: CustomString.cfqCapital +
+                    CustomString.space +
+                    CustomString.interrogationMark,
                 color: CustomColor.white,
                 fontSize: CustomFont.fontSize18,
                 fontWeight: CustomFont.fontWeightBold,

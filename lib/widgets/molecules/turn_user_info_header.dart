@@ -3,6 +3,7 @@ import 'package:cfq_dev/widgets/atoms/avatars/custom_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 
 class TurnUserInfoHeader extends StatelessWidget {
   final String profilePictureUrl;
@@ -52,7 +53,7 @@ class TurnUserInfoHeader extends StatelessWidget {
                 ],
               ),
               const CustomText(
-                text: 'TURN',
+                text: CustomString.turnCapital,
                 color: CustomColor.white,
                 fontSize: CustomFont.fontSize18,
                 fontWeight: CustomFont.fontWeightBold,

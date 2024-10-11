@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/user.dart' as model;
@@ -9,6 +8,7 @@ import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../utils/styles/string.dart';
 
 class CreateTeamViewModel extends ChangeNotifier {
   // Team Name Controller
@@ -184,7 +184,7 @@ class CreateTeamViewModel extends ChangeNotifier {
       }
 
       // Upload team image if provided
-      String teamImageUrl = '';
+      String teamImageUrl = CustomString.emptyString;
       if (_teamImage != null) {
         teamImageUrl = await StorageMethods()
             .uploadImageToStorage('teamImages', _teamImage!, false);

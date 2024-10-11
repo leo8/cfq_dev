@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../view_models/create_team_view_model.dart';
 import '../widgets/molecules/custom_search_bar.dart';
 import '../widgets/atoms/texts/custom_text_field.dart';
+import '../utils/styles/string.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -13,7 +14,7 @@ class CreateTeamScreen extends StatelessWidget {
       create: (_) => CreateTeamViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create Team'),
+          title: const Text(CustomString.creerUneTeam),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -81,13 +82,13 @@ class CreateTeamScreen extends StatelessWidget {
                         // Team Name Input Field
                         CustomTextField(
                           controller: viewModel.teamNameController,
-                          hintText: 'Enter team name',
+                          hintText: CustomString.teamName,
                         ),
                         const SizedBox(height: 20),
                         // Search Bar for Friends
                         CustomSearchBar(
                           controller: viewModel.searchController,
-                          hintText: 'Search friends',
+                          hintText: CustomString.searchFriends,
                         ),
                         const SizedBox(height: 10),
                         // Display Search Results
@@ -156,7 +157,7 @@ class CreateTeamScreen extends StatelessWidget {
                                   // Implement create team functionality
                                   viewModel.createTeam();
                                 },
-                          child: const Text('Create Team'),
+                          child: const Text(CustomString.creerUneTeam),
                         ),
                       ],
                     ),

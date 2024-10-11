@@ -5,6 +5,7 @@ import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 
 class TeamCard extends StatelessWidget {
   final Team team;
@@ -53,7 +54,9 @@ class TeamCard extends StatelessWidget {
                       _buildMemberAvatars(),
                       const SizedBox(width: 8),
                       CustomText(
-                        text: '${members.length} membres',
+                        text: members.length.toString() +
+                            CustomString.space +
+                            CustomString.members,
                         color: CustomColor.white70,
                         fontSize: CustomFont.fontSize14,
                       ),

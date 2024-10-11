@@ -80,7 +80,7 @@ class CreateTurnViewModel extends ChangeNotifier {
   Future<void> _initializeViewModel() async {
     await _initializeCurrentUser();
     await fetchUserTeams();
-    performSearch('');
+    performSearch(CustomString.emptyString);
     if (prefillTeam != null) {
       _initializePrefillData();
       _removePrefillDataFromSearchResults();

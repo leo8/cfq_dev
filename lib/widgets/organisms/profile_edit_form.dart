@@ -44,7 +44,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     _usernameController = TextEditingController(text: widget.initialUsername);
     _locationController = TextEditingController(text: widget.initialLocation);
     _birthDateController = TextEditingController(
-      text: widget.initialBirthDate?.toLocal().toString().split(' ')[0] ?? '',
+      text: widget.initialBirthDate?.toLocal().toString().split(' ')[0] ??
+          CustomString.emptyString,
     );
     _selectedDate = widget.initialBirthDate;
     _loadInitialImage();

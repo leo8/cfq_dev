@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
+import '../../utils/styles/string.dart';
 
 class CfqEventDetails extends StatelessWidget {
   final String cfqName;
@@ -32,12 +33,14 @@ class CfqEventDetails extends StatelessWidget {
               fontSize: CustomFont.fontSize16,
             ),
             children: [
-              const TextSpan(text: 'CFQ '),
+              const TextSpan(text: CustomString.cfqCapital),
+              const TextSpan(text: CustomString.space),
               TextSpan(
                 text: when,
                 style: const TextStyle(color: CustomColor.pinkAccent),
               ),
-              const TextSpan(text: ' ?'),
+              const TextSpan(text: CustomString.space),
+              const TextSpan(text: CustomString.interrogationMark),
             ],
           ),
         ),

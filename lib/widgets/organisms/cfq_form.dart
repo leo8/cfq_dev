@@ -9,6 +9,7 @@ import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../models/team.dart';
+import '../../utils/styles/string.dart';
 
 class CfqForm extends StatelessWidget {
   final Uint8List? image;
@@ -82,7 +83,7 @@ class CfqForm extends StatelessWidget {
           BorderedIconTextField(
             icon: Icons.title,
             controller: nameController,
-            hintText: 'Titre de l\'event',
+            hintText: CustomString.eventTitle,
           ),
           const SizedBox(height: 8),
           Row(
@@ -101,7 +102,7 @@ class CfqForm extends StatelessWidget {
                           color: CustomColor.white, size: 16),
                       const SizedBox(width: 8),
                       const CustomText(
-                        text: 'Organisé par',
+                        text: CustomString.organizedBy,
                         color: CustomColor.white,
                         fontSize: CustomFont.fontSize16,
                       ),
@@ -127,7 +128,7 @@ class CfqForm extends StatelessWidget {
           BorderedIconTextField(
             icon: Icons.mood,
             controller: TextEditingController(text: moodsDisplay),
-            hintText: 'Quel mood ?',
+            hintText: CustomString.whatMood,
             readOnly: true,
             onTap: onSelectMoods,
           ),
@@ -135,19 +136,19 @@ class CfqForm extends StatelessWidget {
           BorderedIconTextField(
             icon: Icons.calendar_today,
             controller: whenController,
-            hintText: 'Quand ?',
+            hintText: CustomString.when,
           ),
           const SizedBox(height: 8),
           BorderedIconTextField(
             icon: Icons.location_on,
             controller: locationController,
-            hintText: 'Où ? (un lieu, un nom, mets ce que tu veux)',
+            hintText: CustomString.where,
           ),
           const SizedBox(height: 8),
           BorderedIconTextField(
             icon: Icons.description,
             controller: descriptionController,
-            hintText: 'Décris juste l\'event, raconte pas ta vie',
+            hintText: CustomString.describeEvent,
             maxLines: 50,
             height: 80,
           ),

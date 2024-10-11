@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/styles/colors.dart';
+import '../utils/styles/string.dart';
 import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
 
@@ -17,14 +18,14 @@ class ParametersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Parameters'),
+        title: const Text(CustomString.parametres),
         backgroundColor: CustomColor.mobileBackgroundColor,
       ),
       body: ListView(
         children: [
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Edit Profile'),
+            title: const Text(CustomString.editerLeProfil),
             onTap: () {
               Navigator.push(
                 context,
@@ -36,14 +37,14 @@ class ParametersScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.lock),
-            title: const Text('Privacy Settings'),
+            title: const Text(CustomString.confidentialite),
             onTap: () {
               // Navigate to privacy settings screen
             },
           ),
           ListTile(
             leading: const Icon(Icons.notifications),
-            title: const Text('Notification Settings'),
+            title: const Text(CustomString.notifications),
             onTap: () {
               // Navigate to notification settings screen
             },
@@ -52,7 +53,10 @@ class ParametersScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
+            title: const Text(
+              CustomString.seDeconnecter,
+              style: TextStyle(color: Colors.red),
+            ),
             onTap: () async {
               await viewModel.logOut();
               Navigator.of(context)

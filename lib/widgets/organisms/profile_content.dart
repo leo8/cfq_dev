@@ -95,7 +95,7 @@ class _ProfileContentState extends State<ProfileContent>
                     widget.user.location.isNotEmpty
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
-                        : 'No location set',
+                        : CustomString.aucuneLocalisation,
                     style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
@@ -104,7 +104,7 @@ class _ProfileContentState extends State<ProfileContent>
               if (widget.isCurrentUser)
                 ElevatedButton(
                   onPressed: widget.onFriendsTap,
-                  child: const Text('Mes Amis'),
+                  child: const Text(CustomString.mesAmis),
                 )
               else if (!widget.isFriend)
                 ElevatedButton(
@@ -132,7 +132,7 @@ class _ProfileContentState extends State<ProfileContent>
                       tabs: [
                         Tab(
                           child: Text(
-                            'SES TURNS',
+                            CustomString.sesPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
                                   ? Colors.white
@@ -164,10 +164,10 @@ class _ProfileContentState extends State<ProfileContent>
                         controller: _tabController,
                         children: const [
                           Center(
-                              child: Text('Ses turns feed',
+                              child: Text(CustomString.sesPosts,
                                   style: TextStyle(color: Colors.white))),
                           Center(
-                              child: Text('Ça va turn feed',
+                              child: Text(CustomString.sonCalendrier,
                                   style: TextStyle(color: Colors.white))),
                         ],
                       ),
@@ -183,7 +183,7 @@ class _ProfileContentState extends State<ProfileContent>
                       tabs: [
                         Tab(
                           child: Text(
-                            'MES POSTS',
+                            CustomString.sesPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
                                   ? Colors.white
@@ -196,7 +196,7 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.sonCalendrier,
                             style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.white
@@ -215,10 +215,10 @@ class _ProfileContentState extends State<ProfileContent>
                         controller: _tabController,
                         children: const [
                           Center(
-                              child: Text('Mes posts feed',
+                              child: Text(CustomString.mesPosts,
                                   style: TextStyle(color: Colors.white))),
                           Center(
-                              child: Text('Ça va turn feed',
+                              child: Text(CustomString.monCalendrier,
                                   style: TextStyle(color: Colors.white))),
                         ],
                       ),

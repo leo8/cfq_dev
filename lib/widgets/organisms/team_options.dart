@@ -7,6 +7,7 @@ import '../../models/team.dart';
 import '../../view_models/team_details_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
+import '../../utils/styles/string.dart';
 
 class TeamOptions extends StatelessWidget {
   final Team team;
@@ -62,16 +63,15 @@ class TeamOptions extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Quitter l\'équipe'),
-                  content: const Text(
-                      'Êtes-vous sûr de vouloir quitter cette équipe ?'),
+                  title: const Text(CustomString.leaveTeam),
+                  content: const Text(CustomString.sureToLeaveTeam),
                   actions: <Widget>[
                     TextButton(
-                      child: const Text('Annuler'),
+                      child: const Text(CustomString.cancel),
                       onPressed: () => Navigator.of(context).pop(false),
                     ),
                     TextButton(
-                      child: const Text('Quitter'),
+                      child: const Text(CustomString.leave),
                       onPressed: () => Navigator.of(context).pop(true),
                     ),
                   ],
@@ -86,7 +86,8 @@ class TeamOptions extends StatelessWidget {
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                      content: Text('Erreur lors de la sortie de l\'équipe')),
+                    content: Text(CustomString.errorLeavingTeam),
+                  ),
                 );
               }
             }
