@@ -6,6 +6,7 @@ import '../widgets/atoms/texts/custom_text_field.dart';
 import '../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -118,10 +119,10 @@ class CreateTeamScreen extends StatelessWidget {
                           ),
                         ] else if (!viewModel.isSearching &&
                             viewModel.searchController.text.isNotEmpty) ...[
-                          const Center(
+                          Center(
                             child: Text(
                               CustomString.noUsersFound,
-                              style: TextStyle(color: CustomColor.white70),
+                              style: CustomTextStyle.title3,
                             ),
                           ),
                         ],

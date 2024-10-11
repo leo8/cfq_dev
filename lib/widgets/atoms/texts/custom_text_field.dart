@@ -10,6 +10,7 @@ class CustomTextField extends StatelessWidget {
   final int maxLines; // The maximum number of lines the text field can have
   final ValueChanged<String>? onChanged; // Optional onChanged callback
   final double? height; // Optional height parameter
+  final TextStyle? textStyle; // New parameter for custom text style
 
   const CustomTextField({
     required this.controller,
@@ -22,6 +23,7 @@ class CustomTextField extends StatelessWidget {
         1, // Defaults to 1, making it a single-line text field by default
     this.onChanged, // Optional onChanged callback
     this.height, // Optional height parameter
+    this.textStyle,
     super.key,
   });
 
@@ -57,14 +59,16 @@ class CustomTextField extends StatelessWidget {
                   obscureText, // Hides text input when true (used for password fields)
               maxLines:
                   maxLines, // Controls how many lines the text field can expand to
-              style: const TextStyle(
-                  color: CustomColor.white), // Text color inside the field
+              style: textStyle ??
+                  const TextStyle(
+                      color: CustomColor.white), // Text color inside the field
               onChanged:
                   onChanged, // Calls the onChanged callback when text changes
               decoration: InputDecoration(
                 hintText: hintText, // Hint text shown when the field is empty
-                hintStyle: const TextStyle(
-                    color: CustomColor.white70), // Style of the hint text
+                hintStyle: textStyle ??
+                    const TextStyle(
+                        color: CustomColor.white70), // Style of the hint text
                 border:
                     InputBorder.none, // Removes the default underline border
                 suffixIcon:

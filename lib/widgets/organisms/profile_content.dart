@@ -4,6 +4,7 @@ import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
@@ -78,10 +79,7 @@ class _ProfileContentState extends State<ProfileContent>
               const SizedBox(height: 40),
               Text(
                 widget.user.username,
-                style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: CustomColor.white),
+                style: CustomTextStyle.title1,
               ),
               const SizedBox(height: 8),
               Row(
@@ -98,8 +96,7 @@ class _ProfileContentState extends State<ProfileContent>
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
                         : CustomString.noLocation,
-                    style: const TextStyle(
-                        fontSize: 16, color: CustomColor.white70),
+                    style: CustomTextStyle.title3,
                   ),
                 ],
               ),
@@ -162,13 +159,13 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: const [
+                        children: [
                           Center(
                               child: Text(CustomString.otherUserPosts,
-                                  style: TextStyle(color: CustomColor.white))),
+                                  style: CustomTextStyle.title3)),
                           Center(
                               child: Text(CustomString.otherUserCalendar,
-                                  style: TextStyle(color: CustomColor.white))),
+                                  style: CustomTextStyle.title3)),
                         ],
                       ),
                     ),
@@ -213,13 +210,13 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: const [
+                        children: [
                           Center(
                               child: Text(CustomString.myPosts,
-                                  style: TextStyle(color: CustomColor.white))),
+                                  style: CustomTextStyle.title3)),
                           Center(
                               child: Text(CustomString.myCalendar,
-                                  style: TextStyle(color: CustomColor.white))),
+                                  style: CustomTextStyle.title3)),
                         ],
                       ),
                     ),

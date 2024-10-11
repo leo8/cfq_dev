@@ -6,8 +6,7 @@ import '../models/team.dart';
 import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/atoms/buttons/outlined_icon_button.dart';
-import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
+import '../utils/styles/text_styles.dart';
 import 'team_details_screen.dart';
 import '../widgets/molecules/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
@@ -61,10 +60,9 @@ class TeamsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             // Text 'Créer une team' below the button
-                            const CustomText(
+                            CustomText(
                               text: CustomString.createTeam,
-                              fontSize: CustomFont.fontSize18,
-                              color: CustomColor.white,
+                              textStyle: CustomTextStyle.title3,
                             ),
                           ],
                         ),
@@ -72,11 +70,10 @@ class TeamsScreen extends StatelessWidget {
                       // Teams List
                       Expanded(
                         child: viewModel.teams.isEmpty
-                            ? const Center(
+                            ? Center(
                                 child: CustomText(
                                   text: CustomString.noTeamsYet,
-                                  color: CustomColor.white,
-                                  fontSize: CustomFont.fontSize18,
+                                  textStyle: CustomTextStyle.title3,
                                 ),
                               )
                             : ListView.builder(

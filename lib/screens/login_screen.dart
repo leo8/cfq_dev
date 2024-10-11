@@ -6,11 +6,11 @@ import 'package:cfq_dev/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/auth_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
-
 import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
 import '../widgets/molecules/signup_option.dart';
 import '../widgets/organisms/login_form.dart';
+import '../../utils/styles/text_styles.dart';
 
 /// Login screen where users can log in or navigate to the sign-up screen.
 class LoginScreen extends StatefulWidget {
@@ -94,9 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
             isLoading: _isLoading,
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             CustomString.orCapital,
-            style: TextStyle(color: CustomColor.white70),
+            style: CustomTextStyle.title3,
           ),
           const SizedBox(height: 16),
           // Sign-up option below the form

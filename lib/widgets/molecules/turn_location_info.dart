@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 
 class TurnLocationInfo extends StatelessWidget {
@@ -25,8 +25,7 @@ class TurnLocationInfo extends StatelessWidget {
         Expanded(
           child: CustomText(
             text: address,
-            color: CustomColor.white70,
-            fontSize: CustomFont.fontSize14,
+            textStyle: CustomTextStyle.body2,
           ),
         ),
       ],

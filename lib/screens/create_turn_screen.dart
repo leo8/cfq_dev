@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_turn_view_model.dart';
 import '../widgets/organisms/turn_form.dart';
-import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
 import '../templates/standard_form_template.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
+import '../../utils/styles/text_styles.dart';
 
 /// Screen for creating a new TURN event.
 class CreateTurnScreen extends StatelessWidget {
@@ -49,12 +48,9 @@ class CreateTurnScreen extends StatelessWidget {
             });
 
             return StandardFormTemplate(
-              appBarTitle: const Text(
+              appBarTitle: Text(
                 CustomString.createTurn,
-                style: TextStyle(
-                  fontWeight: CustomFont.fontWeightBold,
-                  fontSize: CustomFont.fontSize20,
-                ),
+                style: CustomTextStyle.title3,
               ),
               appBarActions: [
                 TextButton(
@@ -63,13 +59,8 @@ class CreateTurnScreen extends StatelessWidget {
                       : () {
                           viewModel.createTurn();
                         },
-                  child: const Text(
-                    CustomString.publier,
-                    style: TextStyle(
-                      color: CustomColor.white,
-                      fontWeight: CustomFont.fontWeightBold,
-                    ),
-                  ),
+                  child:
+                      Text(CustomString.publier, style: CustomTextStyle.title3),
                 ),
               ],
               onBackPressed: () {

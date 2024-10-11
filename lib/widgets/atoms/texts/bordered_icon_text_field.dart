@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class BorderedIconTextField extends StatelessWidget {
   final IconData icon;
@@ -40,10 +41,10 @@ class BorderedIconTextField extends StatelessWidget {
               controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: TextStyle(color: CustomColor.white.withOpacity(0.7)),
+                hintStyle: CustomTextStyle.miniBody,
                 border: InputBorder.none,
               ),
-              style: const TextStyle(color: CustomColor.white),
+              style: CustomTextStyle.body1,
               maxLines: maxLines,
               readOnly: readOnly,
               onTap: onTap,

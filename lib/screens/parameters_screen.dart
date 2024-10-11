@@ -4,6 +4,7 @@ import '../utils/styles/string.dart';
 import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/styles/text_styles.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -54,10 +55,7 @@ class ParametersScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
-            title: const Text(
-              CustomString.logOut,
-              style: TextStyle(color: CustomColor.red),
-            ),
+            title: Text(CustomString.logOut, style: CustomTextStyle.redtitle3),
             onTap: () async {
               await viewModel.logOut();
               Navigator.of(context)

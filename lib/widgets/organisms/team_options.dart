@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/styles/text_styles.dart';
 
 class TeamOptions extends StatelessWidget {
   final Team team;
@@ -110,7 +111,7 @@ class TeamOptions extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(color: CustomColor.white),
+          style: CustomTextStyle.body1,
         ),
       ],
     );
