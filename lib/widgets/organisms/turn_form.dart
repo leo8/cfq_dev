@@ -10,6 +10,7 @@ import '../../utils/styles/fonts.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -85,7 +86,7 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.title,
+          icon: CustomIcon.eventTitle,
           controller: nameController,
           hintText: CustomString.eventTitle,
         ),
@@ -102,7 +103,8 @@ class TurnForm extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.bolt, color: CustomColor.white, size: 16),
+                    const Icon(CustomIcon.eventOrganizer,
+                        color: CustomColor.white, size: 16),
                     const SizedBox(width: 8),
                     const CustomText(
                       text: CustomString.organizedBy,
@@ -129,7 +131,7 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.mood,
+          icon: CustomIcon.eventMood,
           controller: TextEditingController(text: moodsDisplay),
           hintText: CustomString.whatMood,
           readOnly: true,
@@ -137,7 +139,7 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.calendar_today,
+          icon: CustomIcon.calendar,
           controller: TextEditingController(text: dateTimeDisplay),
           hintText: CustomString.when,
           readOnly: true,
@@ -145,19 +147,19 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.location_on,
+          icon: CustomIcon.eventLocation,
           controller: locationController,
           hintText: CustomString.where,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.home,
+          icon: CustomIcon.eventAddress,
           controller: addressController,
           hintText: CustomString.address,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.description,
+          icon: CustomIcon.eventDescription,
           controller: descriptionController,
           hintText: CustomString.describeEvent,
           maxLines: 50,

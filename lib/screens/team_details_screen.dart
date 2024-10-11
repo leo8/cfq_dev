@@ -7,6 +7,7 @@ import '../widgets/organisms/team_options.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/fonts.dart';
 import '../widgets/organisms/team_members_list.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
@@ -26,7 +27,8 @@ class TeamDetailsScreen extends StatelessWidget {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: CustomColor.white),
+                icon:
+                    const Icon(CustomIcon.arrowBack, color: CustomColor.white),
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },

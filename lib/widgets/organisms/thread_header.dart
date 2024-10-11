@@ -33,7 +33,7 @@ class ThreadHeader extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         CustomIconButton(
-          icon: Icons.message,
+          icon: CustomIcon.inbox,
           color: CustomColor.white,
           onTap: onMessageTap,
         ),

@@ -12,6 +12,7 @@ import 'team_details_screen.dart';
 import '../widgets/molecules/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
 import '../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -42,7 +43,7 @@ class TeamsScreen extends StatelessWidget {
                             // Centered OutlinedIconButton
                             Center(
                               child: OutlinedIconButton(
-                                icon: Icons.add,
+                                icon: CustomIcon.add,
                                 onPressed: () {
                                   // Navigate to CreateTeamScreen
                                   Navigator.push(

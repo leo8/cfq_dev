@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../../../utils/styles/icons.dart';
 
-/// A reusable widget for selecting an event image.
-/// Displays a grey rectangle with a white photo upload icon at the bottom right corner.
-/// If an image is selected, it displays the image covering the rectangle.
 class EventImageSelector extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onSelectImage;
@@ -41,7 +39,7 @@ class EventImageSelector extends StatelessWidget {
             child: image == null
                 ? const Center(
                     child: Icon(
-                      Icons.photo,
+                      CustomIcon.addImage,
                       color: Colors.white,
                       size: 50,
                     ),
@@ -59,7 +57,7 @@ class EventImageSelector extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(8.0),
               child: const Icon(
-                Icons.add_a_photo,
+                CustomIcon.addImage,
                 color: Colors.grey,
               ),
             ),

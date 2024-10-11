@@ -3,6 +3,7 @@ import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
 import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
+import '../../utils/styles/icons.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -24,7 +25,7 @@ class ParametersScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(Icons.person),
+            leading: const Icon(CustomIcon.editProfile),
             title: const Text(CustomString.editProfile),
             onTap: () {
               Navigator.push(
@@ -36,14 +37,14 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.lock),
+            leading: const Icon(CustomIcon.confidentiality),
             title: const Text(CustomString.privacy),
             onTap: () {
               // Navigate to privacy settings screen
             },
           ),
           ListTile(
-            leading: const Icon(Icons.notifications),
+            leading: const Icon(CustomIcon.notificationsSettings),
             title: const Text(CustomString.notifications),
             onTap: () {
               // Navigate to notification settings screen
@@ -52,7 +53,7 @@ class ParametersScreen extends StatelessWidget {
           // Add more parameter options as needed
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.exit_to_app, color: Colors.red),
+            leading: const Icon(CustomIcon.logOut, color: Colors.red),
             title: const Text(
               CustomString.logOut,
               style: TextStyle(color: Colors.red),

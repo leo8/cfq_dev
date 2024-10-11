@@ -6,6 +6,7 @@ import '../atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamCard extends StatelessWidget {
   final Team team;
@@ -66,7 +67,7 @@ class TeamCard extends StatelessWidget {
               ),
             ),
             const Icon(
-              Icons.arrow_forward_ios,
+              CustomIcon.arrowForward,
               color: CustomColor.white,
             ),
           ],
