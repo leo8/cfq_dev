@@ -145,7 +145,7 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.sonCalendrier,
                             style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.white
