@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 
 class SignUpOption extends StatelessWidget {
   final String
@@ -25,19 +24,13 @@ class SignUpOption extends StatelessWidget {
         // Display the question text in a subtle color
         Text(
           questionText,
-          style: const TextStyle(color: CustomColor.white70),
+          style: CustomTextStyle.miniBody,
         ),
         // Display the action text, which is clickable and styled in a bold, accent color
         GestureDetector(
           onTap: onTap, // Calls the provided onTap function when tapped
-          child: Text(
-            actionText,
-            style: const TextStyle(
-              color: CustomColor
-                  .personnalizedPurple, // Accent color for the action text
-              fontWeight: CustomFont.fontWeightBold, // Bold text for emphasis
-            ),
-          ),
+          child: Text(actionText,
+              style: CustomTextStyle.personnalizedPurpleTitle1),
         ),
       ],
     );

@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../../../utils/styles/icons.dart';
+import '../../../utils/styles/colors.dart';
 
-/// A reusable widget for selecting an event image.
-/// Displays a grey rectangle with a white photo upload icon at the bottom right corner.
-/// If an image is selected, it displays the image covering the rectangle.
 class EventImageSelector extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onSelectImage;
@@ -29,7 +28,7 @@ class EventImageSelector extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: Colors.grey[300], // Grey background
+              color: CustomColor.grey300, // Grey background
               borderRadius: BorderRadius.circular(8.0), // Rounded corners
               image: image != null
                   ? DecorationImage(
@@ -41,8 +40,8 @@ class EventImageSelector extends StatelessWidget {
             child: image == null
                 ? const Center(
                     child: Icon(
-                      Icons.photo,
-                      color: Colors.white,
+                      CustomIcon.addImage,
+                      color: CustomColor.white,
                       size: 50,
                     ),
                   )
@@ -54,13 +53,14 @@ class EventImageSelector extends StatelessWidget {
             right: 10,
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white, // White background for the icon button
+                color:
+                    CustomColor.white, // White background for the icon button
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(8.0),
               child: const Icon(
-                Icons.add_a_photo,
-                color: Colors.grey,
+                CustomIcon.addImage,
+                color: CustomColor.grey,
               ),
             ),
           ),

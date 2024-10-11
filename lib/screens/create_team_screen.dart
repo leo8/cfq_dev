@@ -3,6 +3,10 @@ import 'package:provider/provider.dart';
 import '../view_models/create_team_view_model.dart';
 import '../widgets/molecules/custom_search_bar.dart';
 import '../widgets/atoms/texts/custom_text_field.dart';
+import '../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -13,9 +17,9 @@ class CreateTeamScreen extends StatelessWidget {
       create: (_) => CreateTeamViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create Team'),
+          title: const Text(CustomString.createTeam),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(CustomIcon.arrowBack),
             onPressed: () {
               Navigator.pop(context); // Go back to TeamsScreen
             },
@@ -66,10 +70,8 @@ class CreateTeamScreen extends StatelessWidget {
                               bottom: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(
-                                  Icons.add_a_photo,
-                                  color: Colors.white,
-                                ),
+                                icon: const Icon(CustomIcon.addImage,
+                                    color: CustomColor.white),
                                 onPressed: () {
                                   viewModel.pickTeamImage();
                                 },
@@ -81,13 +83,13 @@ class CreateTeamScreen extends StatelessWidget {
                         // Team Name Input Field
                         CustomTextField(
                           controller: viewModel.teamNameController,
-                          hintText: 'Enter team name',
+                          hintText: CustomString.teamName,
                         ),
                         const SizedBox(height: 20),
                         // Search Bar for Friends
                         CustomSearchBar(
                           controller: viewModel.searchController,
-                          hintText: 'Search friends',
+                          hintText: CustomString.searchFriends,
                         ),
                         const SizedBox(height: 10),
                         // Display Search Results
@@ -107,7 +109,7 @@ class CreateTeamScreen extends StatelessWidget {
                                 ),
                                 title: Text(user.username),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.add),
+                                  icon: const Icon(CustomIcon.add),
                                   onPressed: () {
                                     viewModel.addFriend(user);
                                   },
@@ -117,10 +119,10 @@ class CreateTeamScreen extends StatelessWidget {
                           ),
                         ] else if (!viewModel.isSearching &&
                             viewModel.searchController.text.isNotEmpty) ...[
-                          const Center(
+                          Center(
                             child: Text(
-                              'No users found.',
-                              style: TextStyle(color: Colors.white70),
+                              CustomString.noUsersFound,
+                              style: CustomTextStyle.title3,
                             ),
                           ),
                         ],
@@ -156,7 +158,7 @@ class CreateTeamScreen extends StatelessWidget {
                                   // Implement create team functionality
                                   viewModel.createTeam();
                                 },
-                          child: const Text('Create Team'),
+                          child: const Text(CustomString.createTeam),
                         ),
                       ],
                     ),

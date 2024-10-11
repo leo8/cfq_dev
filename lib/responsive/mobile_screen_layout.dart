@@ -2,11 +2,12 @@ import 'package:cfq_dev/widgets/atoms/buttons/cfq_button.dart';
 import 'package:cfq_dev/widgets/atoms/buttons/turn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/screens/map_screen.dart';
-import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
+import 'package:cfq_dev/screens/profile_screen.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
+import '../utils/styles/string.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -102,7 +103,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                   alignment: Alignment.center,
                   angle: isOpen ? 0.75 : 0,
                   child: Icon(
-                    Icons.add,
+                    CustomIcon.add,
                     color: CustomColor.white,
                     size: sizeIcon,
                   ),
@@ -156,16 +157,16 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
-                CustomIcon.languageOutlined,
+                CustomIcon.home,
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
-                CustomIcon.languageOutlined,
+                CustomIcon.home,
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
@@ -173,16 +174,16 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
-                CustomIcon.locationOnOutlined,
+                CustomIcon.map,
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
-                CustomIcon.locationOnOutlined,
+                CustomIcon.map,
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
@@ -190,32 +191,32 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
-                CustomIcon.group,
+                CustomIcon.teams,
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
-                CustomIcon.group,
+                CustomIcon.teams,
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: Icon(
-                CustomIcon.personOutlined,
+                CustomIcon.profile,
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
               icon: Icon(
-                CustomIcon.personOutlined,
+                CustomIcon.profile,
                 color: CustomColor.black,
                 size: sizeIcon,
               ),
-              label: '',
+              label: CustomString.emptyString,
             ),
           ),
         ],

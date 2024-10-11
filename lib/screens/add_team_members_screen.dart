@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
 import '../../view_models/add_team_members_view_model.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -16,9 +20,9 @@ class AddTeamMembersScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Ajouter des membres'),
+              title: const Text(CustomString.addMembers),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(CustomIcon.arrowBack),
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },
@@ -55,13 +59,7 @@ class AddTeamMembersScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Text(title, style: CustomTextStyle.title3),
         ),
         ...users.map((user) => ListTile(
               leading: CircleAvatar(
@@ -69,10 +67,10 @@ class AddTeamMembersScreen extends StatelessWidget {
               ),
               title: Text(user.username),
               trailing: isTeamMember
-                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  ? const Icon(CustomIcon.checkCircle, color: CustomColor.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
-                      child: const Text('Ajouter'),
+                      child: const Text(CustomString.addFriend),
                     ),
             )),
       ],

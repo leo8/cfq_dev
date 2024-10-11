@@ -6,11 +6,12 @@ import '../models/team.dart';
 import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/atoms/buttons/outlined_icon_button.dart';
-import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
+import '../utils/styles/text_styles.dart';
 import 'team_details_screen.dart';
 import '../widgets/molecules/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
+import '../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -22,7 +23,7 @@ class TeamsScreen extends StatelessWidget {
       child: Consumer<TeamsViewModel>(builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Teams'),
+            title: const Text(CustomString.mesTeams),
           ),
           body: RefreshIndicator(
             onRefresh: () => viewModel.fetchTeams(),
@@ -41,7 +42,7 @@ class TeamsScreen extends StatelessWidget {
                             // Centered OutlinedIconButton
                             Center(
                               child: OutlinedIconButton(
-                                icon: Icons.add,
+                                icon: CustomIcon.add,
                                 onPressed: () {
                                   // Navigate to CreateTeamScreen
                                   Navigator.push(
@@ -59,10 +60,9 @@ class TeamsScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             // Text 'Créer une team' below the button
-                            const CustomText(
-                              text: 'Créer une team',
-                              fontSize: CustomFont.fontSize18,
-                              color: CustomColor.white,
+                            CustomText(
+                              text: CustomString.createTeam,
+                              textStyle: CustomTextStyle.title3,
                             ),
                           ],
                         ),
@@ -70,11 +70,10 @@ class TeamsScreen extends StatelessWidget {
                       // Teams List
                       Expanded(
                         child: viewModel.teams.isEmpty
-                            ? const Center(
+                            ? Center(
                                 child: CustomText(
-                                  text: 'Vous n\'avez pas encore de teams.',
-                                  color: CustomColor.white,
-                                  fontSize: CustomFont.fontSize18,
+                                  text: CustomString.noTeamsYet,
+                                  textStyle: CustomTextStyle.title3,
                                 ),
                               )
                             : ListView.builder(

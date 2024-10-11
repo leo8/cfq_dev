@@ -2,6 +2,8 @@ import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../../../models/team.dart';
 import '../../../models/user.dart' as model;
+import '../../../utils/styles/string.dart';
+import '../../../utils/styles/icons.dart';
 
 class InviteeSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -32,7 +34,7 @@ class InviteeSearchBar extends StatelessWidget {
         controller: controller,
         onChanged: onSearch,
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search, color: CustomColor.white),
+          prefixIcon: const Icon(CustomIcon.search, color: CustomColor.white),
           hintText: hintText,
           filled: true,
           fillColor: CustomColor.white.withOpacity(0.1),
@@ -54,9 +56,9 @@ class InviteeSearchBar extends StatelessWidget {
                   leading: const CircleAvatar(
                     backgroundImage: AssetImage('assets/turn_button.png'),
                   ),
-                  title: const Text('Tout le monde'),
+                  title: const Text(CustomString.toutLeMonde),
                   trailing: IconButton(
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(CustomIcon.add),
                     onPressed: onSelectEverybody,
                   ),
                 );
@@ -70,9 +72,9 @@ class InviteeSearchBar extends StatelessWidget {
                       backgroundImage: NetworkImage(result.imageUrl),
                     ),
                     title: Text(result.name),
-                    subtitle: const Text('Team'),
+                    subtitle: const Text(CustomString.team),
                     trailing: IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(CustomIcon.add),
                       onPressed: () => onAddTeam(result),
                     ),
                   );
@@ -83,7 +85,7 @@ class InviteeSearchBar extends StatelessWidget {
                     ),
                     title: Text(result.username),
                     trailing: IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(CustomIcon.add),
                       onPressed: () => onAddInvitee(result),
                     ),
                   );

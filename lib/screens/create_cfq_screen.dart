@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_cfq_view_model.dart';
 import '../widgets/organisms/cfq_form.dart';
-import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
 import '../utils/styles/string.dart';
+import '../utils/styles/text_styles.dart';
 import '../templates/standard_form_template.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
@@ -49,13 +48,8 @@ class CreateCfqScreen extends StatelessWidget {
             });
 
             return StandardFormTemplate(
-              appBarTitle: const Text(
-                CustomString.creerUnCfq,
-                style: TextStyle(
-                  fontWeight: CustomFont.fontWeightBold,
-                  fontSize: CustomFont.fontSize20,
-                ),
-              ),
+              appBarTitle:
+                  Text(CustomString.createCfq, style: CustomTextStyle.title3),
               appBarActions: [
                 TextButton(
                   onPressed: viewModel.isLoading
@@ -63,13 +57,8 @@ class CreateCfqScreen extends StatelessWidget {
                       : () {
                           viewModel.createCfq();
                         },
-                  child: const Text(
-                    CustomString.publier,
-                    style: TextStyle(
-                      color: CustomColor.white,
-                      fontWeight: CustomFont.fontWeightBold,
-                    ),
-                  ),
+                  child:
+                      Text(CustomString.publier, style: CustomTextStyle.title3),
                 ),
               ],
               onBackPressed: () {
@@ -87,7 +76,7 @@ class CreateCfqScreen extends StatelessWidget {
                 moodsDisplay: viewModel.selectedMoods != null &&
                         viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
-                    : CustomString.tonMood,
+                    : CustomString.whatMood,
                 isLoading: viewModel.isLoading,
                 onSubmit: viewModel.createCfq,
                 inviteeSearchController: viewModel.searchController,

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/user.dart' as model;
 import '../molecules/avatar_neon_switch.dart';
 import '../atoms/avatars/clickable_avatar.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 
 class ActiveFriendsList extends StatelessWidget {
   final model.User currentUser;
@@ -62,13 +61,7 @@ class ActiveFriendsList extends StatelessWidget {
             onTap: () => onFriendTap(friend.uid),
           ),
           const SizedBox(height: 4),
-          Text(
-            friend.username,
-            style: const TextStyle(
-              color: CustomColor.white70,
-              fontSize: CustomFont.fontSize12,
-            ),
-          ),
+          Text(friend.username, style: CustomTextStyle.miniBody),
         ],
       ),
     );

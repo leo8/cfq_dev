@@ -12,6 +12,7 @@ import '../utils/styles/string.dart';
 import '../widgets/molecules/signup_option.dart';
 import '../widgets/organisms/signup_form.dart';
 import 'login_screen.dart';
+import '../utils/styles/text_styles.dart';
 
 /// Signup screen to register new users and collect necessary information.
 class SignupScreen extends StatefulWidget {
@@ -131,15 +132,12 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 8),
             // Display a separator for alternative options
-            const Text(
-              CustomString.ouCapital,
-              style: TextStyle(color: CustomColor.white70),
-            ),
+            Text(CustomString.orCapital, style: CustomTextStyle.body1),
             const SizedBox(height: 8),
             // Option to navigate to the login screen
             SignUpOption(
-              questionText: CustomString.dejaInscrit,
-              actionText: CustomString.jeMeConnecte,
+              questionText: CustomString.alreadySignedUp,
+              actionText: CustomString.logIn,
               onTap: navigateToLogIn,
             ),
           ],

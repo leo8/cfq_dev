@@ -58,15 +58,16 @@ class EventsList extends StatelessWidget {
 
             if (isTurn) {
               return TurnCardContent(
-                turnImageUrl: event['turnImageUrl'] ?? '',
-                profilePictureUrl: event['profilePictureUrl'] ?? '',
-                username: event['username'] ?? '',
+                turnImageUrl: event['turnImageUrl'] ?? CustomString.emptyString,
+                profilePictureUrl:
+                    event['profilePictureUrl'] ?? CustomString.emptyString,
+                username: event['username'] ?? CustomString.emptyString,
                 organizers: List<String>.from(event['organizers'] ?? []),
-                turnName: event['turnName'] ?? '',
-                description: event['description'] ?? '',
+                turnName: event['turnName'] ?? CustomString.emptyString,
+                description: event['description'] ?? CustomString.emptyString,
                 eventDateTime: parseDate(event['eventDateTime']),
-                where: event['where'] ?? '',
-                address: event['address'] ?? '',
+                where: event['where'] ?? CustomString.emptyString,
+                address: event['address'] ?? CustomString.emptyString,
                 attendeesCount: (event['attending'] as List?)?.length ?? 0,
                 datePublished: parseDate(event['datePublished']),
                 onAttendingPressed: () {
@@ -84,15 +85,16 @@ class EventsList extends StatelessWidget {
               );
             } else {
               return CFQCardContent(
-                cfqImageUrl: event['cfqImageUrl'] ?? '',
-                profilePictureUrl: event['profilePictureUrl'] ?? '',
-                username: event['username'] ?? '',
+                cfqImageUrl: event['cfqImageUrl'] ?? CustomString.emptyString,
+                profilePictureUrl:
+                    event['profilePictureUrl'] ?? CustomString.emptyString,
+                username: event['username'] ?? CustomString.emptyString,
                 organizers: List<String>.from(event['organizers'] ?? []),
-                cfqName: event['cfqName'] ?? '',
-                description: event['description'] ?? '',
+                cfqName: event['cfqName'] ?? CustomString.emptyString,
+                description: event['description'] ?? CustomString.emptyString,
                 datePublished: parseDate(event['datePublished']),
-                location: event['where'] ?? '',
-                when: event['when'] ?? '',
+                location: event['where'] ?? CustomString.emptyString,
+                when: event['when'] ?? CustomString.emptyString,
                 onFollowPressed: () {
                   // Handle follow action
                 },

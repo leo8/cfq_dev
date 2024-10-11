@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../utils/styles/icons.dart';
+import '../../../utils/styles/colors.dart';
 
 class NeonSwitch extends StatelessWidget {
   final double size;
@@ -34,7 +36,7 @@ class NeonSwitch extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 22, 1, 57),
           borderRadius: BorderRadius.circular(15 * size),
-          border: Border.all(color: Colors.white, width: 1 * size),
+          border: Border.all(color: CustomColor.white, width: 1 * size),
         ),
         child: Stack(
           children: [
@@ -50,12 +52,13 @@ class NeonSwitch extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: const Color.fromARGB(255, 22, 1, 57),
                   border: Border.all(
-                    color: value ? Colors.cyanAccent : Colors.purpleAccent,
+                    color: value ? CustomColor.turnColor : CustomColor.offColor,
                     width: 1 * size,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: value ? Colors.cyanAccent : Colors.purpleAccent,
+                      color:
+                          value ? CustomColor.turnColor : CustomColor.offColor,
                       blurRadius: 5 * size,
                       spreadRadius: 1 * size,
                     ),
@@ -63,8 +66,8 @@ class NeonSwitch extends StatelessWidget {
                 ),
                 child: Center(
                   child: Icon(
-                    value ? Icons.public : Icons.nights_stay_outlined,
-                    color: Colors.white,
+                    value ? CustomIcon.statusOn : CustomIcon.statusOff,
+                    color: CustomColor.white,
                     size: iconSize,
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 
 class ImageSelector extends StatelessWidget {
@@ -14,7 +14,7 @@ class ImageSelector extends StatelessWidget {
   const ImageSelector({
     required this.image,
     required this.onSelectImage,
-    this.placeholderText = CustomString.veuillezSelectionnerUneImage,
+    this.placeholderText = CustomString.pleaseSelectAnImage,
     super.key,
   });
 
@@ -41,10 +41,7 @@ class ImageSelector extends StatelessWidget {
               ? Center(
                   child: Text(
                     placeholderText, // Placeholder text when no image is selected
-                    style: const TextStyle(
-                      color: CustomColor.white70,
-                      fontSize: CustomFont.fontSize10,
-                    ),
+                    style: CustomTextStyle.xsBody,
                   ),
                 )
               : null, // No placeholder if the image is present
@@ -64,7 +61,7 @@ class ImageSelector extends StatelessWidget {
                 shape: BoxShape.circle, // Circular shape for the icon button
               ),
               child: const Icon(
-                CustomIcon.addAPhoto, // Photo icon for selecting a new image
+                CustomIcon.addImage, // Photo icon for selecting a new image
                 color: CustomColor.white,
                 size: 16, // Icon size
               ),

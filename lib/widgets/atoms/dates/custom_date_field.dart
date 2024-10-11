@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class CustomDateField extends StatelessWidget {
   final TextEditingController controller;
@@ -50,13 +52,13 @@ class CustomDateField extends StatelessWidget {
           child: TextField(
             controller:
                 controller, // Controller that holds the selected date text
-            style: const TextStyle(color: CustomColor.white70),
+            style: CustomTextStyle.xsBody,
             decoration: InputDecoration(
               hintText: hintText, // Placeholder text when no date is selected
-              hintStyle: const TextStyle(color: CustomColor.white70),
+              hintStyle: CustomTextStyle.xsBody,
               border: InputBorder.none,
               suffixIcon: suffixIcon ??
-                  const Icon(Icons.calendar_today,
+                  const Icon(CustomIcon.calendar,
                       color: CustomColor.white70), // Icon for date selection
             ),
             readOnly: true, // Disables manual input, making it read-only

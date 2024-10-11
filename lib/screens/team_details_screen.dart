@@ -5,8 +5,9 @@ import '../view_models/team_details_view_model.dart';
 import '../widgets/organisms/team_header.dart';
 import '../widgets/organisms/team_options.dart';
 import '../utils/styles/colors.dart';
-import '../utils/styles/fonts.dart';
 import '../widgets/organisms/team_members_list.dart';
+import '../../utils/styles/icons.dart';
+import '../utils/styles/text_styles.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
@@ -23,10 +24,11 @@ class TeamDetailsScreen extends StatelessWidget {
             backgroundColor: CustomColor.mobileBackgroundColor,
             appBar: AppBar(
               title: Text(viewModel.team.name),
-              backgroundColor: Colors.transparent,
+              backgroundColor: CustomColor.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: CustomColor.white),
+                icon:
+                    const Icon(CustomIcon.arrowBack, color: CustomColor.white),
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },
@@ -51,15 +53,9 @@ class TeamDetailsScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           TeamMembersList(members: viewModel.members),
                           const SizedBox(height: 20),
-                          const Center(
-                            child: Text(
-                              'Team feed',
-                              style: TextStyle(
-                                color: CustomColor.white,
-                                fontSize: CustomFont.fontSize20,
-                                fontWeight: CustomFont.fontWeightBold,
-                              ),
-                            ),
+                          Center(
+                            child: Text('Team feed',
+                                style: CustomTextStyle.pinkAccentMiniBody),
                           ),
                         ],
                       ),

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
+import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
@@ -76,18 +79,15 @@ class _ProfileContentState extends State<ProfileContent>
               const SizedBox(height: 40),
               Text(
                 widget.user.username,
-                style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: CustomTextStyle.title1,
               ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
+                    CustomIcon.userLocation,
+                    color: CustomColor.red,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
@@ -95,8 +95,8 @@ class _ProfileContentState extends State<ProfileContent>
                     widget.user.location.isNotEmpty
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
-                        : 'No location set',
-                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                        : CustomString.noLocation,
+                    style: CustomTextStyle.title3,
                   ),
                 ],
               ),
@@ -104,39 +104,36 @@ class _ProfileContentState extends State<ProfileContent>
               if (widget.isCurrentUser)
                 ElevatedButton(
                   onPressed: widget.onFriendsTap,
-                  child: const Text('Mes Amis'),
+                  child: const Text(CustomString.myFriends),
                 )
               else if (!widget.isFriend)
                 ElevatedButton(
                   onPressed: widget.onAddFriendTap,
-                  child: const Text(CustomString.ajouter),
+                  child: const Text(CustomString.addFriend),
                 )
               else
                 ElevatedButton(
                   onPressed: widget.onRemoveFriendTap,
-                  child: const Text(CustomString.retirer),
+                  child: const Text(CustomString.removeFriend),
                 ),
               const SizedBox(height: 24),
               if (!widget.isCurrentUser && !widget.isFriend)
-                const Icon(
-                  Icons.lock,
-                  size: 100,
-                  color: Colors.white,
-                )
+                const Icon(CustomIcon.privateProfile,
+                    size: 100, color: CustomColor.white)
               else if (!widget.isCurrentUser && widget.isFriend)
                 Column(
                   children: [
                     TabBar(
                       controller: _tabController,
-                      indicatorColor: Colors.transparent,
+                      indicatorColor: CustomColor.transparent,
                       tabs: [
                         Tab(
                           child: Text(
-                            'SES TURNS',
+                            CustomString.otherUserPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 0
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -145,11 +142,11 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.otherUserCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 1
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -162,13 +159,13 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: const [
+                        children: [
                           Center(
-                              child: Text('Ses turns feed',
-                                  style: TextStyle(color: Colors.white))),
+                              child: Text(CustomString.otherUserPosts,
+                                  style: CustomTextStyle.title3)),
                           Center(
-                              child: Text('Ça va turn feed',
-                                  style: TextStyle(color: Colors.white))),
+                              child: Text(CustomString.otherUserCalendar,
+                                  style: CustomTextStyle.title3)),
                         ],
                       ),
                     ),
@@ -179,15 +176,15 @@ class _ProfileContentState extends State<ProfileContent>
                   children: [
                     TabBar(
                       controller: _tabController,
-                      indicatorColor: Colors.transparent,
+                      indicatorColor: CustomColor.transparent,
                       tabs: [
                         Tab(
                           child: Text(
-                            'MES POSTS',
+                            CustomString.myPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 0
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -196,11 +193,11 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                         Tab(
                           child: Text(
-                            'ÇA VA TURN',
+                            CustomString.myCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 1
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -213,13 +210,13 @@ class _ProfileContentState extends State<ProfileContent>
                       height: 300,
                       child: TabBarView(
                         controller: _tabController,
-                        children: const [
+                        children: [
                           Center(
-                              child: Text('Mes posts feed',
-                                  style: TextStyle(color: Colors.white))),
+                              child: Text(CustomString.myPosts,
+                                  style: CustomTextStyle.title3)),
                           Center(
-                              child: Text('Ça va turn feed',
-                                  style: TextStyle(color: Colors.white))),
+                              child: Text(CustomString.myCalendar,
+                                  style: CustomTextStyle.title3)),
                         ],
                       ),
                     ),
@@ -233,7 +230,8 @@ class _ProfileContentState extends State<ProfileContent>
             top: 10,
             right: 10,
             child: IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white, size: 30),
+              icon: const Icon(CustomIcon.settings,
+                  color: CustomColor.white, size: 30),
               onPressed: widget.onParametersTap,
             ),
           ),

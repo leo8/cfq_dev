@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../molecules/team_member_item.dart';
 import '../../models/user.dart' as model;
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 
 class TeamMembersList extends StatelessWidget {
   final List<model.User> members;
@@ -13,14 +12,7 @@ class TeamMembersList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          'Team Members',
-          style: TextStyle(
-            color: CustomColor.white,
-            fontSize: CustomFont.fontSize20,
-            fontWeight: CustomFont.fontWeightBold,
-          ),
-        ),
+        Text('Team Members', style: CustomTextStyle.title3),
         const SizedBox(height: 10),
         SizedBox(
           height: 120,

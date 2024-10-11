@@ -3,8 +3,10 @@ import '../../models/team.dart';
 import '../../models/user.dart' as model;
 import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/Colors.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamCard extends StatelessWidget {
   final Team team;
@@ -26,7 +28,7 @@ class TeamCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: CustomColor.black,
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: CustomColor.white24, width: 1.0),
         ),
@@ -43,9 +45,7 @@ class TeamCard extends StatelessWidget {
                 children: [
                   CustomText(
                     text: team.name,
-                    color: CustomColor.white,
-                    fontSize: CustomFont.fontSize24,
-                    fontWeight: CustomFont.fontWeightBold,
+                    textStyle: CustomTextStyle.title1,
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -53,17 +53,17 @@ class TeamCard extends StatelessWidget {
                       _buildMemberAvatars(),
                       const SizedBox(width: 8),
                       CustomText(
-                        text: '${members.length} membres',
-                        color: CustomColor.white70,
-                        fontSize: CustomFont.fontSize14,
-                      ),
+                          text: members.length.toString() +
+                              CustomString.space +
+                              CustomString.members,
+                          textStyle: CustomTextStyle.body1),
                     ],
                   ),
                 ],
               ),
             ),
             const Icon(
-              Icons.arrow_forward_ios,
+              CustomIcon.arrowForward,
               color: CustomColor.white,
             ),
           ],

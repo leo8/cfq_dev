@@ -6,9 +6,11 @@ import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
 import '../atoms/avatars/custom_avatar.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../models/team.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -84,9 +86,9 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.title,
+          icon: CustomIcon.eventTitle,
           controller: nameController,
-          hintText: 'Titre de l\'event',
+          hintText: CustomString.eventTitle,
         ),
         const SizedBox(height: 8),
         Row(
@@ -101,12 +103,12 @@ class TurnForm extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.bolt, color: CustomColor.white, size: 16),
+                    const Icon(CustomIcon.eventOrganizer,
+                        color: CustomColor.white, size: 16),
                     const SizedBox(width: 8),
-                    const CustomText(
-                      text: 'Organisé par',
-                      color: CustomColor.white,
-                      fontSize: CustomFont.fontSize16,
+                    CustomText(
+                      text: CustomString.organizedBy,
+                      textStyle: CustomTextStyle.body1,
                     ),
                     const SizedBox(width: 30),
                     CustomAvatar(
@@ -117,8 +119,7 @@ class TurnForm extends StatelessWidget {
                     CustomText(
                       text: currentUser.username,
                       color: CustomColor.white,
-                      fontSize: CustomFont.fontSize16,
-                      fontWeight: CustomFont.fontWeightBold,
+                      textStyle: CustomTextStyle.body1,
                     ),
                   ],
                 ),
@@ -128,37 +129,37 @@ class TurnForm extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.mood,
+          icon: CustomIcon.eventMood,
           controller: TextEditingController(text: moodsDisplay),
-          hintText: 'Quel mood ?',
+          hintText: CustomString.whatMood,
           readOnly: true,
           onTap: onSelectMoods,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.calendar_today,
+          icon: CustomIcon.calendar,
           controller: TextEditingController(text: dateTimeDisplay),
-          hintText: 'Quand ?',
+          hintText: CustomString.when,
           readOnly: true,
           onTap: onSelectDateTime,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.location_on,
+          icon: CustomIcon.eventLocation,
           controller: locationController,
-          hintText: 'Où ? (un lieu, un nom, mets ce que tu veux)',
+          hintText: CustomString.where,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.home,
+          icon: CustomIcon.eventAddress,
           controller: addressController,
-          hintText: 'Adresse',
+          hintText: CustomString.address,
         ),
         const SizedBox(height: 8),
         BorderedIconTextField(
-          icon: Icons.description,
+          icon: CustomIcon.eventDescription,
           controller: descriptionController,
-          hintText: 'Décris juste l\'event, raconte pas ta vie',
+          hintText: CustomString.describeEvent,
           maxLines: 50,
           height: 80,
         ),

@@ -4,6 +4,7 @@ import '../atoms/chips/team_chip.dart';
 import '../atoms/search_bars/invitee_search_bar.dart';
 import '../../models/user.dart' as model;
 import '../../models/team.dart';
+import '../../utils/styles/string.dart';
 
 class InviteesField extends StatelessWidget {
   final List<model.User> selectedInvitees;
@@ -58,7 +59,7 @@ class InviteesField extends StatelessWidget {
                 avatar: const CircleAvatar(
                   backgroundImage: AssetImage('assets/turn_button.png'),
                 ),
-                label: const Text('Tout le monde'),
+                label: const Text(CustomString.toutLeMonde),
                 onDeleted: onSelectEverybody,
               ),
             ...selectedTeams.map((teamInvitee) => TeamChip(

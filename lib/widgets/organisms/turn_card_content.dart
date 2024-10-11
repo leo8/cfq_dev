@@ -4,8 +4,9 @@ import '../molecules/turn_event_details.dart';
 import '../molecules/turn_location_info.dart';
 import '../molecules/turn_user_info_header.dart';
 import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/styles/string.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -48,10 +49,10 @@ class TurnCardContent extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.grey[900]!, Colors.grey[800]!],
+          colors: [CustomColor.grey900, CustomColor.grey900],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -77,15 +78,14 @@ class TurnCardContent extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: CustomColor.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: CustomText(
                     text:
                         '${eventDateTime.day} ${DateTimeUtils.getMonthAbbreviation(eventDateTime.month)}',
                     color: CustomColor.white,
-                    fontSize: CustomFont.fontSize14,
-                    fontWeight: CustomFont.fontWeightBold,
+                    textStyle: CustomTextStyle.body2,
                   ),
                 ),
               ),
@@ -111,9 +111,10 @@ class TurnCardContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 CustomText(
-                  text: '$attendeesCount y vont',
-                  color: CustomColor.white,
-                  fontSize: CustomFont.fontSize14,
+                  text: attendeesCount.toString() +
+                      CustomString.space +
+                      CustomString.going,
+                  textStyle: CustomTextStyle.body2,
                 ),
                 const SizedBox(height: 8),
                 TurnLocationInfo(
@@ -122,8 +123,7 @@ class TurnCardContent extends StatelessWidget {
                 const SizedBox(height: 8),
                 CustomText(
                   text: description,
-                  color: CustomColor.white70,
-                  fontSize: CustomFont.fontSize14,
+                  textStyle: CustomTextStyle.body2,
                 ),
               ],
             ),

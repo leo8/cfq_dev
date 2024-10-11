@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../utils/styles/colors.dart';
+import '../../utils/styles/icons.dart';
 
 /// A standard template for form screens, providing a customizable app bar
 /// and body layout. This ensures consistency across different forms in the app.
@@ -31,7 +31,7 @@ class StandardFormTemplate extends StatelessWidget {
         centerTitle: true, // Centers the app bar title
         title: appBarTitle, // Custom app bar title passed in
         leading: IconButton(
-          icon: const Icon(Icons.close), // Close icon for back navigation
+          icon: const Icon(CustomIcon.close), // Close icon for back navigation
           onPressed: onBackPressed, // Calls the provided back button callback
         ),
         actions: appBarActions, // Adds the action buttons to the app bar
