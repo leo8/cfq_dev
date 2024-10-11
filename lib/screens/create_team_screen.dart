@@ -5,6 +5,7 @@ import '../widgets/molecules/custom_search_bar.dart';
 import '../widgets/atoms/texts/custom_text_field.dart';
 import '../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/styles/colors.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -68,10 +69,8 @@ class CreateTeamScreen extends StatelessWidget {
                               bottom: 0,
                               right: 0,
                               child: IconButton(
-                                icon: const Icon(
-                                  CustomIcon.addImage,
-                                  color: Colors.white,
-                                ),
+                                icon: const Icon(CustomIcon.addImage,
+                                    color: CustomColor.white),
                                 onPressed: () {
                                   viewModel.pickTeamImage();
                                 },
@@ -122,7 +121,7 @@ class CreateTeamScreen extends StatelessWidget {
                           const Center(
                             child: Text(
                               CustomString.noUsersFound,
-                              style: TextStyle(color: Colors.white70),
+                              style: TextStyle(color: CustomColor.white70),
                             ),
                           ),
                         ],

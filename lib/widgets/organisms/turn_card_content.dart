@@ -49,10 +49,10 @@ class TurnCardContent extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.grey[900]!, Colors.grey[800]!],
+          colors: [CustomColor.grey900, CustomColor.grey900],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -78,7 +78,7 @@ class TurnCardContent extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: CustomColor.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: CustomText(

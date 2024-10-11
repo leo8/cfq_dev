@@ -73,7 +73,7 @@ class _CFQState extends State<CFQ> {
         debugShowCheckedModeBanner: false,
         title: 'cfq_dev',
         theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: Colors.transparent,
+          scaffoldBackgroundColor: CustomColor.transparent,
         ),
         home: NeonBackground(
           child: StreamBuilder(

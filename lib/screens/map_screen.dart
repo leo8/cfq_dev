@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/styles/colors.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -9,7 +10,7 @@ class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: CustomColor.transparent,
       body: Stack(
         children: [
           // Background Image from Network
@@ -25,7 +26,7 @@ class MapScreen extends StatelessWidget {
                 return const Center(
                   child: Text(
                     'Failed to load image',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: CustomColor.red),
                   ),
                 );
               },
@@ -36,17 +37,16 @@ class MapScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.black
+                color: CustomColor.black
                     .withOpacity(0.5), // Semi-transparent background
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
                 'Upcoming Feature',
                 style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: CustomColor.white),
               ),
             ),
           ),

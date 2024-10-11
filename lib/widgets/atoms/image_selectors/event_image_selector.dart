@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../utils/styles/icons.dart';
+import '../../../utils/styles/colors.dart';
 
 class EventImageSelector extends StatelessWidget {
   final Uint8List? image;
@@ -27,7 +28,7 @@ class EventImageSelector extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: Colors.grey[300], // Grey background
+              color: CustomColor.grey300, // Grey background
               borderRadius: BorderRadius.circular(8.0), // Rounded corners
               image: image != null
                   ? DecorationImage(
@@ -40,7 +41,7 @@ class EventImageSelector extends StatelessWidget {
                 ? const Center(
                     child: Icon(
                       CustomIcon.addImage,
-                      color: Colors.white,
+                      color: CustomColor.white,
                       size: 50,
                     ),
                   )
@@ -52,13 +53,14 @@ class EventImageSelector extends StatelessWidget {
             right: 10,
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white, // White background for the icon button
+                color:
+                    CustomColor.white, // White background for the icon button
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(8.0),
               child: const Icon(
                 CustomIcon.addImage,
-                color: Colors.grey,
+                color: CustomColor.grey,
               ),
             ),
           ),

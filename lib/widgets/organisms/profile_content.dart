@@ -3,6 +3,7 @@ import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../../../utils/styles/colors.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
@@ -80,7 +81,7 @@ class _ProfileContentState extends State<ProfileContent>
                 style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: CustomColor.white),
               ),
               const SizedBox(height: 8),
               Row(
@@ -88,7 +89,7 @@ class _ProfileContentState extends State<ProfileContent>
                 children: [
                   const Icon(
                     CustomIcon.userLocation,
-                    color: Colors.red,
+                    color: CustomColor.red,
                     size: 16,
                   ),
                   const SizedBox(width: 4),
@@ -97,7 +98,8 @@ class _ProfileContentState extends State<ProfileContent>
                         ? widget.user.location[0].toUpperCase() +
                             widget.user.location.substring(1)
                         : CustomString.noLocation,
-                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                    style: const TextStyle(
+                        fontSize: 16, color: CustomColor.white70),
                   ),
                 ],
               ),
@@ -119,25 +121,22 @@ class _ProfileContentState extends State<ProfileContent>
                 ),
               const SizedBox(height: 24),
               if (!widget.isCurrentUser && !widget.isFriend)
-                const Icon(
-                  CustomIcon.privateProfile,
-                  size: 100,
-                  color: Colors.white,
-                )
+                const Icon(CustomIcon.privateProfile,
+                    size: 100, color: CustomColor.white)
               else if (!widget.isCurrentUser && widget.isFriend)
                 Column(
                   children: [
                     TabBar(
                       controller: _tabController,
-                      indicatorColor: Colors.transparent,
+                      indicatorColor: CustomColor.transparent,
                       tabs: [
                         Tab(
                           child: Text(
                             CustomString.otherUserPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 0
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -149,8 +148,8 @@ class _ProfileContentState extends State<ProfileContent>
                             CustomString.otherUserCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 1
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -166,10 +165,10 @@ class _ProfileContentState extends State<ProfileContent>
                         children: const [
                           Center(
                               child: Text(CustomString.otherUserPosts,
-                                  style: TextStyle(color: Colors.white))),
+                                  style: TextStyle(color: CustomColor.white))),
                           Center(
                               child: Text(CustomString.otherUserCalendar,
-                                  style: TextStyle(color: Colors.white))),
+                                  style: TextStyle(color: CustomColor.white))),
                         ],
                       ),
                     ),
@@ -180,15 +179,15 @@ class _ProfileContentState extends State<ProfileContent>
                   children: [
                     TabBar(
                       controller: _tabController,
-                      indicatorColor: Colors.transparent,
+                      indicatorColor: CustomColor.transparent,
                       tabs: [
                         Tab(
                           child: Text(
                             CustomString.myPosts,
                             style: TextStyle(
                               color: _selectedIndex == 0
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 0
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -200,8 +199,8 @@ class _ProfileContentState extends State<ProfileContent>
                             CustomString.myCalendar,
                             style: TextStyle(
                               color: _selectedIndex == 1
-                                  ? Colors.white
-                                  : Colors.grey,
+                                  ? CustomColor.white
+                                  : CustomColor.grey,
                               fontWeight: _selectedIndex == 1
                                   ? FontWeight.bold
                                   : FontWeight.normal,
@@ -217,10 +216,10 @@ class _ProfileContentState extends State<ProfileContent>
                         children: const [
                           Center(
                               child: Text(CustomString.myPosts,
-                                  style: TextStyle(color: Colors.white))),
+                                  style: TextStyle(color: CustomColor.white))),
                           Center(
                               child: Text(CustomString.myCalendar,
-                                  style: TextStyle(color: Colors.white))),
+                                  style: TextStyle(color: CustomColor.white))),
                         ],
                       ),
                     ),
@@ -235,7 +234,7 @@ class _ProfileContentState extends State<ProfileContent>
             right: 10,
             child: IconButton(
               icon: const Icon(CustomIcon.settings,
-                  color: Colors.white, size: 30),
+                  color: CustomColor.white, size: 30),
               onPressed: widget.onParametersTap,
             ),
           ),

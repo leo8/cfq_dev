@@ -43,10 +43,10 @@ class CFQCardContent extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.purple[900]!, Colors.purple[800]!],
+          colors: [CustomColor.deepPurpleAccent, CustomColor.purpleAccent],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
