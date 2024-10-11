@@ -50,7 +50,7 @@ class CreateCfqScreen extends StatelessWidget {
 
             return StandardFormTemplate(
               appBarTitle: const Text(
-                CustomString.creerUnCfq,
+                CustomString.createCfq,
                 style: TextStyle(
                   fontWeight: CustomFont.fontWeightBold,
                   fontSize: CustomFont.fontSize20,
@@ -87,7 +87,7 @@ class CreateCfqScreen extends StatelessWidget {
                 moodsDisplay: viewModel.selectedMoods != null &&
                         viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
-                    : CustomString.tonMood,
+                    : CustomString.whatMood,
                 isLoading: viewModel.isLoading,
                 onSubmit: viewModel.createCfq,
                 inviteeSearchController: viewModel.searchController,

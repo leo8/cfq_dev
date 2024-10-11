@@ -31,13 +31,12 @@ class LoginForm extends StatelessWidget {
       children: [
         CustomTextField(
           controller: emailController,
-          hintText: CustomString.tonMail, // Placeholder for email input
+          hintText: CustomString.yourEmail, // Placeholder for email input
         ),
         const SizedBox(height: 8),
         CustomTextField(
           controller: passwordController,
-          hintText:
-              CustomString.tonMotDePasse, // Placeholder for password input
+          hintText: CustomString.yourPassword, // Placeholder for password input
           obscureText: true, // Hides the password for security
           suffixIcon: const Icon(CustomIcon.visibility,
               color:
@@ -48,7 +47,7 @@ class LoginForm extends StatelessWidget {
             onTap: onForgotPassword), // Link to initiate password recovery
         const SizedBox(height: 64),
         CustomButton(
-          label: CustomString.connexionCapital, // Label for the login button
+          label: CustomString.logInCapital, // Label for the login button
           onTap: onLogin, // Function to call on button press
           isLoading: isLoading, // Show loading indicator if true
         ),

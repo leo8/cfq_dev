@@ -17,7 +17,7 @@ class AddTeamMembersScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(CustomString.ajouterDesMembres),
+              title: const Text(CustomString.addMembers),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
@@ -73,7 +73,7 @@ class AddTeamMembersScreen extends StatelessWidget {
                   ? const Icon(Icons.check_circle, color: Colors.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
-                      child: const Text(CustomString.ajouter),
+                      child: const Text(CustomString.addFriend),
                     ),
             )),
       ],

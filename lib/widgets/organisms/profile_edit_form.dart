@@ -143,7 +143,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
           const SizedBox(height: 16),
           CustomDateField(
             controller: _birthDateController,
-            hintText: CustomString.taDateDeNaissance,
+            hintText: CustomString.yourBirthdate,
             selectedDate: _selectedDate,
             onDateChanged: (DateTime? newDate) {
               setState(() {

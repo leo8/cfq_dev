@@ -18,14 +18,14 @@ class ParametersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(CustomString.parametres),
+        title: const Text(CustomString.parameters),
         backgroundColor: CustomColor.mobileBackgroundColor,
       ),
       body: ListView(
         children: [
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text(CustomString.editerLeProfil),
+            title: const Text(CustomString.editProfile),
             onTap: () {
               Navigator.push(
                 context,
@@ -37,7 +37,7 @@ class ParametersScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.lock),
-            title: const Text(CustomString.confidentialite),
+            title: const Text(CustomString.privacy),
             onTap: () {
               // Navigate to privacy settings screen
             },
@@ -54,7 +54,7 @@ class ParametersScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.exit_to_app, color: Colors.red),
             title: const Text(
-              CustomString.seDeconnecter,
+              CustomString.logOut,
               style: TextStyle(color: Colors.red),
             ),
             onTap: () async {

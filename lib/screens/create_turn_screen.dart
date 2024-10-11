@@ -50,7 +50,7 @@ class CreateTurnScreen extends StatelessWidget {
 
             return StandardFormTemplate(
               appBarTitle: const Text(
-                CustomString.creerUnTurn,
+                CustomString.createTurn,
                 style: TextStyle(
                   fontWeight: CustomFont.fontWeightBold,
                   fontSize: CustomFont.fontSize20,
@@ -87,11 +87,11 @@ class CreateTurnScreen extends StatelessWidget {
                 onSelectMoods: () => viewModel.selectMoods(context),
                 dateTimeDisplay: viewModel.selectedDateTime != null
                     ? '${viewModel.selectedDateTime!.day}/${viewModel.selectedDateTime!.month}/${viewModel.selectedDateTime!.year}'
-                    : CustomString.laDate,
+                    : CustomString.date,
                 moodsDisplay: viewModel.selectedMoods != null &&
                         viewModel.selectedMoods!.isNotEmpty
                     ? viewModel.selectedMoods!.join(', ')
-                    : CustomString.tonMood,
+                    : CustomString.whatMood,
                 isLoading: viewModel.isLoading,
                 onSubmit: viewModel.createTurn,
                 inviteeSearchController: viewModel.searchController,

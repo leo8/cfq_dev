@@ -14,7 +14,7 @@ class CreateTeamScreen extends StatelessWidget {
       create: (_) => CreateTeamViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(CustomString.creerUneTeam),
+          title: const Text(CustomString.createTeam),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -120,7 +120,7 @@ class CreateTeamScreen extends StatelessWidget {
                             viewModel.searchController.text.isNotEmpty) ...[
                           const Center(
                             child: Text(
-                              'No users found.',
+                              CustomString.noUsersFound,
                               style: TextStyle(color: Colors.white70),
                             ),
                           ),
@@ -157,7 +157,7 @@ class CreateTeamScreen extends StatelessWidget {
                                   // Implement create team functionality
                                   viewModel.createTeam();
                                 },
-                          child: const Text(CustomString.creerUneTeam),
+                          child: const Text(CustomString.createTeam),
                         ),
                       ],
                     ),

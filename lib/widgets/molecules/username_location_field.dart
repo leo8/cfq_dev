@@ -21,14 +21,14 @@ class UsernameLocationFields extends StatelessWidget {
         Expanded(
           child: CustomTextField(
             controller: usernameController, // Username input field
-            hintText: CustomString.unPetitNom, // Placeholder text
+            hintText: CustomString.yourUsername, // Placeholder text
           ),
         ),
         const SizedBox(width: 10), // Space between the two text fields
         Expanded(
           child: CustomTextField(
             controller: locationController, // Location input field
-            hintText: CustomString.taLocalisation, // Placeholder text
+            hintText: CustomString.yourLocation, // Placeholder text
           ),
         ),
       ],

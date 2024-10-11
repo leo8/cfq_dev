@@ -346,7 +346,7 @@ class CreateTurnViewModel extends ChangeNotifier {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text(CustomString.tonMood),
+              title: const Text(CustomString.whatMood),
               content: SingleChildScrollView(
                 child: Column(
                   children: CustomMood.moods.map((mood) {

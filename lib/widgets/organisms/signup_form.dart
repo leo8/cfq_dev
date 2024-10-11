@@ -54,13 +54,13 @@ class SignUpForm extends StatelessWidget {
         // Email input field
         CustomTextField(
           controller: emailController,
-          hintText: CustomString.tonMail, // "Your Email"
+          hintText: CustomString.yourEmail, // "Your Email"
         ),
         const SizedBox(height: 8),
         // Password input field
         CustomTextField(
           controller: passwordController,
-          hintText: CustomString.tonMotDePasse, // "Your Password"
+          hintText: CustomString.yourPassword, // "Your Password"
           obscureText: true, // Hides password input
         ),
         const SizedBox(height: 8),
@@ -73,7 +73,7 @@ class SignUpForm extends StatelessWidget {
         // Birth date input field
         CustomDateField(
           controller: birthDateController,
-          hintText: CustomString.taDateDeNaissance, // "Your Birth Date"
+          hintText: CustomString.yourBirthdate, // "Your Birth Date"
           selectedDate: selectedBirthDate, // Pass the currently selected date
           onDateChanged:
               onBirthDateChanged, // Trigger callback on date selection
@@ -81,7 +81,7 @@ class SignUpForm extends StatelessWidget {
         const SizedBox(height: 12),
         // Submit button for signing up
         CustomButton(
-          label: CustomString.inscriptionCapital, // "Sign Up"
+          label: CustomString.signUpCapital, // "Sign Up"
           onTap: onSignUp, // Trigger sign-up action
           isLoading: isLoading, // Show loading indicator if true
         ),

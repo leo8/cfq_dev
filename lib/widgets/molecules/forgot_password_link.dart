@@ -18,7 +18,7 @@ class ForgotPasswordLink extends StatelessWidget {
       child: TextButton(
         onPressed: onTap, // Triggers the provided onTap callback
         child: const Text(
-          CustomString.tAsOublieTonMotDePasse, // "Forgot Password" text
+          CustomString.forgotPassword, // "Forgot Password" text
           style: TextStyle(
             color: CustomColor.white70, // Semi-transparent white text color
             fontSize: CustomFont.fontSize12, // Small font size
