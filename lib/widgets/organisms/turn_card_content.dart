@@ -4,7 +4,7 @@ import '../molecules/turn_event_details.dart';
 import '../molecules/turn_location_info.dart';
 import '../molecules/turn_user_info_header.dart';
 import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
 
@@ -85,8 +85,7 @@ class TurnCardContent extends StatelessWidget {
                     text:
                         '${eventDateTime.day} ${DateTimeUtils.getMonthAbbreviation(eventDateTime.month)}',
                     color: CustomColor.white,
-                    fontSize: CustomFont.fontSize14,
-                    fontWeight: CustomFont.fontWeightBold,
+                    textStyle: CustomTextStyle.body2,
                   ),
                 ),
               ),
@@ -115,8 +114,7 @@ class TurnCardContent extends StatelessWidget {
                   text: attendeesCount.toString() +
                       CustomString.space +
                       CustomString.going,
-                  color: CustomColor.white,
-                  fontSize: CustomFont.fontSize14,
+                  textStyle: CustomTextStyle.body2,
                 ),
                 const SizedBox(height: 8),
                 TurnLocationInfo(
@@ -125,8 +123,7 @@ class TurnCardContent extends StatelessWidget {
                 const SizedBox(height: 8),
                 CustomText(
                   text: description,
-                  color: CustomColor.white70,
-                  fontSize: CustomFont.fontSize14,
+                  textStyle: CustomTextStyle.body2,
                 ),
               ],
             ),

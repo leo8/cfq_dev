@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/text_styles.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller; // Text editing controller for input
@@ -26,8 +27,7 @@ class CustomSearchBar extends StatelessWidget {
           color: CustomColor.white70,
         ),
         hintText: hintText, // Display hint text in the search bar
-        hintStyle:
-            const TextStyle(color: CustomColor.white70), // Hint text style
+        hintStyle: CustomTextStyle.miniBody, // Hint text style
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30), // Rounded borders
           borderSide: BorderSide.none, // No visible border

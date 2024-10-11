@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 
 class CfqLocationInfo extends StatelessWidget {
@@ -24,8 +24,7 @@ class CfqLocationInfo extends StatelessWidget {
         const SizedBox(width: 4),
         CustomText(
           text: location,
-          color: CustomColor.white70,
-          fontSize: CustomFont.fontSize14,
+          textStyle: CustomTextStyle.body2,
         ),
       ],
     );

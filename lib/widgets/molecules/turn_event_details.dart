@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 
 class TurnEventDetails extends StatelessWidget {
@@ -21,17 +20,12 @@ class TurnEventDetails extends StatelessWidget {
       children: [
         CustomText(
           text: turnName,
-          color: CustomColor.white,
-          fontSize: CustomFont.fontSize20,
-          fontWeight: CustomFont.fontWeightBold,
+          textStyle: CustomTextStyle.title3,
         ),
         const SizedBox(height: 8),
         CustomText(
-          text: DateTimeUtils.formatEventTime(eventDateTime),
-          color: CustomColor.pinkAccent,
-          fontWeight: CustomFont.fontWeight500,
-          fontSize: CustomFont.fontSize14,
-        ),
+            text: DateTimeUtils.formatEventTime(eventDateTime),
+            textStyle: CustomTextStyle.pinkAccentMiniBody),
       ],
     );
   }

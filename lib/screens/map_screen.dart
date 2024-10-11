@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -23,11 +24,9 @@ class MapScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               },
               errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Text(
-                    'Failed to load image',
-                    style: TextStyle(color: CustomColor.red),
-                  ),
+                return Center(
+                  child: Text('Failed to load image',
+                      style: CustomTextStyle.title3),
                 );
               },
             ),
@@ -41,12 +40,9 @@ class MapScreen extends StatelessWidget {
                     .withOpacity(0.5), // Semi-transparent background
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Text(
+              child: Text(
                 'Upcoming Feature',
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: CustomColor.white),
+                style: CustomTextStyle.hugeTitle2,
               ),
             ),
           ),

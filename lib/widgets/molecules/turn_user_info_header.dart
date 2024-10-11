@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/avatars/custom_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 
@@ -41,23 +41,18 @@ class TurnUserInfoHeader extends StatelessWidget {
                 children: [
                   CustomText(
                     text: username,
-                    color: CustomColor.white,
-                    fontWeight: CustomFont.fontWeightBold,
-                    fontSize: CustomFont.fontSize16,
+                    textStyle: CustomTextStyle.body1,
                   ),
                   const SizedBox(width: 4),
                   CustomText(
                     text: timeInfo,
-                    color: CustomColor.white54,
-                    fontSize: CustomFont.fontSize12,
+                    textStyle: CustomTextStyle.miniBody,
                   ),
                 ],
               ),
-              const CustomText(
+              CustomText(
                 text: CustomString.turnCapital,
-                color: CustomColor.white,
-                fontSize: CustomFont.fontSize18,
-                fontWeight: CustomFont.fontWeightBold,
+                textStyle: CustomTextStyle.title3,
               ),
             ],
           ),

@@ -1,8 +1,8 @@
+import 'package:cfq_dev/screens/test_fonts_screen.dart';
 import 'package:cfq_dev/widgets/atoms/buttons/cfq_button.dart';
 import 'package:cfq_dev/widgets/atoms/buttons/turn_button.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/screens/map_screen.dart';
-import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/screens/teams_screen.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import '../utils/styles/colors.dart';
@@ -237,7 +237,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 ThreadScreen(),
                 MapScreen(),
                 TeamsScreen(),
-                ProfileScreen(),
+                TestFontsScreen(),
               ],
             ),
           ),

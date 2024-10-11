@@ -7,7 +7,7 @@ class CustomColor {
   static const customPurple = Color(0xFFB098E6);
   static const customCyan = Color(0xFF47FFE6);
   static const turnBackground = Color(0xFF1D1D20);
-  static const cfqBackground =
+  static const cfqBackgroundGradient =
       LinearGradient(begin: Alignment.bottomRight, stops: [
     0,
     1
@@ -53,6 +53,12 @@ class CustomColor {
   static const purpleAccent = Colors.purpleAccent;
   static const deepPurpleAccent = Colors.deepPurpleAccent;
   static const personnalizedPurple = Color(0xFF7A00FF);
+  static const purpleGradient = LinearGradient(
+    colors: [
+      CustomColor.personnalizedPurple,
+      Color(0xFF7900F4)
+    ], // Gradient background
+  );
 
   //Pinks
   static const pinkAccent = Colors.pinkAccent;

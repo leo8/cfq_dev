@@ -6,7 +6,7 @@ import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
 import '../atoms/avatars/custom_avatar.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
@@ -102,10 +102,9 @@ class CfqForm extends StatelessWidget {
                       const Icon(CustomIcon.eventOrganizer,
                           color: CustomColor.white, size: 16),
                       const SizedBox(width: 8),
-                      const CustomText(
+                      CustomText(
                         text: CustomString.organizedBy,
-                        color: CustomColor.white,
-                        fontSize: CustomFont.fontSize16,
+                        textStyle: CustomTextStyle.miniBody,
                       ),
                       const SizedBox(width: 30),
                       CustomAvatar(
@@ -115,9 +114,7 @@ class CfqForm extends StatelessWidget {
                       const SizedBox(width: 8),
                       CustomText(
                         text: currentUser.username,
-                        color: CustomColor.white,
-                        fontSize: CustomFont.fontSize16,
-                        fontWeight: CustomFont.fontWeightBold,
+                        textStyle: CustomTextStyle.body1,
                       ),
                     ],
                   ),

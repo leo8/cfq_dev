@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/team.dart';
 import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 
 class TeamHeader extends StatelessWidget {
   final Team team;
@@ -21,9 +20,7 @@ class TeamHeader extends StatelessWidget {
         const SizedBox(height: 10),
         CustomText(
           text: team.name,
-          color: CustomColor.white,
-          fontSize: CustomFont.fontSize24,
-          fontWeight: CustomFont.fontWeightBold,
+          textStyle: CustomTextStyle.title1,
         ),
       ],
     );

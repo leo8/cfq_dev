@@ -4,7 +4,7 @@ import '../molecules/cfq_event_details.dart';
 import '../molecules/cfq_location_info.dart';
 import '../molecules/cfq_user_info_header.dart';
 import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/fonts.dart';
+import '../../utils/styles/text_styles.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -91,8 +91,7 @@ class CFQCardContent extends StatelessWidget {
                 const SizedBox(height: 8),
                 CustomText(
                   text: description,
-                  color: CustomColor.white70,
-                  fontSize: CustomFont.fontSize14,
+                  textStyle: CustomTextStyle.body2,
                 ),
               ],
             ),

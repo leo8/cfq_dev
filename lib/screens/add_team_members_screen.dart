@@ -5,6 +5,7 @@ import '../../view_models/add_team_members_view_model.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -58,13 +59,7 @@ class AddTeamMembersScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          child: Text(title, style: CustomTextStyle.title3),
         ),
         ...users.map((user) => ListTile(
               leading: CircleAvatar(
