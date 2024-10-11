@@ -24,7 +24,7 @@ class TeamDetailsScreen extends StatelessWidget {
             backgroundColor: CustomColor.mobileBackgroundColor,
             appBar: AppBar(
               title: Text(viewModel.team.name),
-              backgroundColor: Colors.transparent,
+              backgroundColor: CustomColor.transparent,
               elevation: 0,
               leading: IconButton(
                 icon:

@@ -28,7 +28,7 @@ class TeamCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: CustomColor.black,
           borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: CustomColor.white24, width: 1.0),
         ),

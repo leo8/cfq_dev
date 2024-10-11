@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/styles/neon_background.dart';
-
+import '../../utils/styles/colors.dart';
 
 class AuthTemplate extends StatelessWidget {
   final Widget body;
@@ -11,7 +11,7 @@ class AuthTemplate extends StatelessWidget {
   Widget build(BuildContext context) {
     return NeonBackground(
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: CustomColor.transparent,
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Container(

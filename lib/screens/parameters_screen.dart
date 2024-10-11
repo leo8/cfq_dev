@@ -53,10 +53,10 @@ class ParametersScreen extends StatelessWidget {
           // Add more parameter options as needed
           const Divider(),
           ListTile(
-            leading: const Icon(CustomIcon.logOut, color: Colors.red),
+            leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
             title: const Text(
               CustomString.logOut,
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: CustomColor.red),
             ),
             onTap: () async {
               await viewModel.logOut();

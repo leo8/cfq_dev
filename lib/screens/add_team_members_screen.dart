@@ -4,6 +4,7 @@ import '../../models/user.dart' as model;
 import '../../view_models/add_team_members_view_model.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/styles/colors.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -71,7 +72,7 @@ class AddTeamMembersScreen extends StatelessWidget {
               ),
               title: Text(user.username),
               trailing: isTeamMember
-                  ? const Icon(CustomIcon.checkCircle, color: Colors.green)
+                  ? const Icon(CustomIcon.checkCircle, color: CustomColor.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
                       child: const Text(CustomString.addFriend),
