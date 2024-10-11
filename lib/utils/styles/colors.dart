@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomColor {
-  //Figma colors
+  //CFQ Design System
   static const customBlack = Color(0xFF111113);
   static const customWhite = Color(0xFFFBFBFB);
   static const customPurple = Color(0xFFB098E6);
@@ -16,7 +16,7 @@ class CustomColor {
     Color(0xFF2A185C),
   ]);
 
-  //CFQ Theme
+  //Theme
   static const mobileBackgroundColor = Color.fromRGBO(0, 0, 0, 1);
   static const webBackgroundColor = Color.fromRGBO(18, 18, 18, 1);
   static const mobileSearchColor = Color.fromRGBO(38, 38, 38, 1);
@@ -25,7 +25,7 @@ class CustomColor {
   static const turnColor = Colors.cyanAccent;
   static const offColor = Colors.purpleAccent;
 
-  // Standard colors
+  //Standard colors
   static const transparent = Colors.transparent;
   static const white = Colors.white;
   static const black = Colors.black;
@@ -35,7 +35,7 @@ class CustomColor {
   static const blue = Colors.blue;
   static const purple = Colors.purple;
 
-  // Variants
+  //Variants
 
   //Whites
   static const white24 = Colors.white24;
