@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
 import '../../view_models/add_team_members_view_model.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -19,7 +20,7 @@ class AddTeamMembersScreen extends StatelessWidget {
             appBar: AppBar(
               title: const Text(CustomString.addMembers),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(CustomIcon.arrowBack),
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },
@@ -70,7 +71,7 @@ class AddTeamMembersScreen extends StatelessWidget {
               ),
               title: Text(user.username),
               trailing: isTeamMember
-                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  ? const Icon(CustomIcon.checkCircle, color: Colors.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
                       child: const Text(CustomString.addFriend),

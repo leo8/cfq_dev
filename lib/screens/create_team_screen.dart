@@ -4,6 +4,7 @@ import '../view_models/create_team_view_model.dart';
 import '../widgets/molecules/custom_search_bar.dart';
 import '../widgets/atoms/texts/custom_text_field.dart';
 import '../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -16,7 +17,7 @@ class CreateTeamScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text(CustomString.createTeam),
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(CustomIcon.arrowBack),
             onPressed: () {
               Navigator.pop(context); // Go back to TeamsScreen
             },
@@ -68,7 +69,7 @@ class CreateTeamScreen extends StatelessWidget {
                               right: 0,
                               child: IconButton(
                                 icon: const Icon(
-                                  Icons.add_a_photo,
+                                  CustomIcon.addImage,
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
@@ -108,7 +109,7 @@ class CreateTeamScreen extends StatelessWidget {
                                 ),
                                 title: Text(user.username),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.add),
+                                  icon: const Icon(CustomIcon.add),
                                   onPressed: () {
                                     viewModel.addFriend(user);
                                   },

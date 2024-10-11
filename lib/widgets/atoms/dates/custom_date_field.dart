@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 
 class CustomDateField extends StatelessWidget {
   final TextEditingController controller;
@@ -56,7 +57,7 @@ class CustomDateField extends StatelessWidget {
               hintStyle: const TextStyle(color: CustomColor.white70),
               border: InputBorder.none,
               suffixIcon: suffixIcon ??
-                  const Icon(Icons.calendar_today,
+                  const Icon(CustomIcon.calendar,
                       color: CustomColor.white70), // Icon for date selection
             ),
             readOnly: true, // Disables manual input, making it read-only

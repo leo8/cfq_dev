@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../utils/styles/icons.dart';
 
 class NeonSwitch extends StatelessWidget {
   final double size;
@@ -63,7 +64,7 @@ class NeonSwitch extends StatelessWidget {
                 ),
                 child: Center(
                   child: Icon(
-                    value ? Icons.public : Icons.nights_stay_outlined,
+                    value ? CustomIcon.statusOn : CustomIcon.statusOff,
                     color: Colors.white,
                     size: iconSize,
                   ),

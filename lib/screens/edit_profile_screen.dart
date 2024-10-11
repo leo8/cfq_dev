@@ -3,6 +3,7 @@ import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_edit_form.dart';
 import '../templates/auth_template.dart';
 import '../utils/styles/colors.dart';
+import '../../utils/styles/icons.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -49,7 +50,7 @@ class EditProfileScreen extends StatelessWidget {
                 top: 10,
                 right: 10,
                 child: IconButton(
-                  icon: const Icon(Icons.close, color: CustomColor.white),
+                  icon: const Icon(CustomIcon.close, color: CustomColor.white),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),

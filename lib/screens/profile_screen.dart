@@ -6,6 +6,7 @@ import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_content.dart';
 import '../screens/parameters_screen.dart';
 import 'friends_list_screen.dart';
+import '../../utils/styles/icons.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
@@ -26,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
               // Show back button if viewing another user's profile
               if (!viewModel.isCurrentUser) {
                 return IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(CustomIcon.arrowBack, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

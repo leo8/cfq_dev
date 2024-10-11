@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
@@ -86,7 +87,7 @@ class _ProfileContentState extends State<ProfileContent>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(
-                    Icons.location_on,
+                    CustomIcon.userLocation,
                     color: Colors.red,
                     size: 16,
                   ),
@@ -119,7 +120,7 @@ class _ProfileContentState extends State<ProfileContent>
               const SizedBox(height: 24),
               if (!widget.isCurrentUser && !widget.isFriend)
                 const Icon(
-                  Icons.lock,
+                  CustomIcon.privateProfile,
                   size: 100,
                   color: Colors.white,
                 )
@@ -233,7 +234,8 @@ class _ProfileContentState extends State<ProfileContent>
             top: 10,
             right: 10,
             child: IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white, size: 30),
+              icon: const Icon(CustomIcon.settings,
+                  color: Colors.white, size: 30),
               onPressed: widget.onParametersTap,
             ),
           ),

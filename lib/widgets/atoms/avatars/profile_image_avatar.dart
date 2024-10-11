@@ -43,7 +43,7 @@ class ProfileImageAvatar extends StatelessWidget {
           child: IconButton(
             onPressed: onImageSelected,
             icon: const Icon(
-              CustomIcon.addAPhoto,
+              CustomIcon.addImage,
               color: CustomColor.white70,
             ),
           ),

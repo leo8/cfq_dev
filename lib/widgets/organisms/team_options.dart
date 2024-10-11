@@ -8,6 +8,7 @@ import '../../view_models/team_details_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
 import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class TeamOptions extends StatelessWidget {
   final Team team;
@@ -32,7 +33,7 @@ class TeamOptions extends StatelessWidget {
       children: [
         _buildOptionButton(
           context,
-          icon: Icons.person_add,
+          icon: CustomIcon.addMember,
           label: 'Ajouter',
           onPressed: () async {
             final bool? result = await Navigator.push(
@@ -56,7 +57,7 @@ class TeamOptions extends StatelessWidget {
         ),
         _buildOptionButton(
           context,
-          icon: Icons.exit_to_app,
+          icon: CustomIcon.leaveTeam,
           label: 'Quitter',
           onPressed: () async {
             bool confirmed = await showDialog(

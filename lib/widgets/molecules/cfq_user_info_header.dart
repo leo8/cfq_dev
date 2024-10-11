@@ -5,6 +5,7 @@ import '../../utils/styles/colors.dart';
 import '../../utils/styles/fonts.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/icons.dart';
 
 class CfqUserInfoHeader extends StatelessWidget {
   final String profilePictureUrl;
@@ -70,7 +71,8 @@ class CfqUserInfoHeader extends StatelessWidget {
               onPressed: onFollowPressed,
             ),
             IconButton(
-              icon: const Icon(Icons.message, color: CustomColor.white),
+              icon: const Icon(CustomIcon.eventConversation,
+                  color: CustomColor.white),
               onPressed: () {/* Implement messaging functionality */},
             ),
           ],
