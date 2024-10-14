@@ -54,8 +54,12 @@ class TeamDetailsScreen extends StatelessWidget {
                           TeamMembersList(members: viewModel.members),
                           const SizedBox(height: 20),
                           Center(
-                            child: Text('Team feed',
-                                style: CustomTextStyle.pinkAccentMiniBody),
+                            child: Text(
+                              'Team feed',
+                              style: CustomTextStyle.getColoredTextStyle(
+                                  CustomTextStyle.miniBody,
+                                  CustomColor.pinkAccent),
+                            ),
                           ),
                         ],
                       ),

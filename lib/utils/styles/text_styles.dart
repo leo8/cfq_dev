@@ -76,24 +76,8 @@ class CustomTextStyle {
     color: CustomColor.customWhite,
   );
 
-  //Colored text styles
-
-  static TextStyle redtitle3 = GoogleFonts.robotoCondensed(
-    color: CustomColor.red,
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-  );
-
-  static TextStyle pinkAccentMiniBody = GoogleFonts.inter(
-    fontSize: 12,
-    fontWeight: FontWeight.normal,
-    color: CustomColor.pinkAccent,
-  );
-
-  static TextStyle personnalizedPurpleTitle1 = const TextStyle(
-    fontFamily: 'GigalypseTrialRegular',
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
-    color: CustomColor.personnalizedPurple,
-  );
+  //Methods
+  static TextStyle getColoredTextStyle(TextStyle baseStyle, Color color) {
+    return baseStyle.copyWith(color: color);
+  }
 }
