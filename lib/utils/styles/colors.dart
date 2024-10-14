@@ -6,6 +6,7 @@ class CustomColor {
   static const customWhite = Color(0xFFFBFBFB);
   static const customPurple = Color(0xFFB098E6);
   static const customCyan = Color(0xFF47FFE6);
+  static const customDarkGrey = Color(0xFF1D1D20);
   static const turnBackground = Color(0xFF1D1D20);
   static const cfqBackgroundGradient =
       LinearGradient(begin: Alignment.bottomRight, stops: [

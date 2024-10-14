@@ -65,8 +65,8 @@ class CustomTextStyle {
   );
 
   static TextStyle subButton = GoogleFonts.inter(
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 

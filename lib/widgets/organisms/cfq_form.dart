@@ -1,13 +1,12 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/widgets/atoms/buttons/custom_button.dart';
+import 'package:cfq_dev/widgets/molecules/event_organizer.dart';
 import 'package:flutter/material.dart';
 import '../molecules/invitees_field.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
-import '../atoms/avatars/custom_avatar.dart';
-import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
-import '../atoms/texts/custom_text.dart';
 import '../atoms/texts/custom_text_field.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
@@ -74,55 +73,30 @@ class CfqForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: EventImageSelector(
-              image: image,
-              onSelectImage: onSelectImage,
-              width: MediaQuery.of(context).size.width * 0.60,
-              height: MediaQuery.of(context).size.height * 0.15,
+            child: Text(
+              CustomString.cfqCapital,
+              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 28),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(
+            height: 15,
+          ),
+          Center(
+            child:
+                EventImageSelector(image: image, onSelectImage: onSelectImage),
+          ),
+          const SizedBox(height: 15),
+          EventOrganizer(
+            profilePictureUrl: currentUser.profilePictureUrl,
+            username: currentUser.username,
+          ),
+          const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.eventTitle,
             controller: nameController,
             hintText: CustomString.eventTitle,
           ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: CustomColor.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      CustomIcon.eventOrganizer.copyWith(size: 16),
-                      const SizedBox(width: 8),
-                      CustomText(
-                        text: CustomString.organizedBy,
-                        textStyle: CustomTextStyle.miniBody,
-                      ),
-                      const SizedBox(width: 30),
-                      CustomAvatar(
-                        imageUrl: currentUser.profilePictureUrl,
-                        radius: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      CustomText(
-                        text: currentUser.username,
-                        textStyle: CustomTextStyle.body1,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.eventMood,
             controller: TextEditingController(text: moodsDisplay),
@@ -130,39 +104,53 @@ class CfqForm extends StatelessWidget {
             readOnly: true,
             onTap: onSelectMoods,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.calendar,
             controller: whenController,
             hintText: CustomString.when,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.eventLocation,
             controller: locationController,
             hintText: CustomString.where,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 15),
           CustomTextField(
             controller: descriptionController,
             hintText: CustomString.describeEvent,
             maxLines: 50,
-            height: 80,
+            height: 100,
           ),
-          const SizedBox(height: 8),
-          InviteesField(
-            searchController: inviteeSearchController,
-            selectedInvitees: selectedInvitees,
-            selectedTeams: selectedTeams,
-            searchResults: searchResults,
-            isSearching: isSearching,
-            onAddInvitee: onAddInvitee,
-            onRemoveInvitee: onRemoveInvitee,
-            onAddTeam: onAddTeam,
-            onRemoveTeam: onRemoveTeam,
-            onSelectEverybody: onSelectEverybody,
-            onSearch: onSearch,
-            isEverybodySelected: isEverybodySelected,
+          const SizedBox(height: 15),
+          //InviteesField(
+          //  searchController: inviteeSearchController,
+          //  selectedInvitees: selectedInvitees,
+          //  selectedTeams: selectedTeams,
+          //  searchResults: searchResults,
+          //  isSearching: isSearching,
+          //  onAddInvitee: onAddInvitee,
+          //  onRemoveInvitee: onRemoveInvitee,
+          //  onAddTeam: onAddTeam,
+          //  onRemoveTeam: onRemoveTeam,
+          //  onSelectEverybody: onSelectEverybody,
+          //  onSearch: onSearch,
+          //  isEverybodySelected: isEverybodySelected,
+          //),
+
+          //TextButton(
+          //       onPressed: viewModel.isLoading
+          //           ? null
+          //           : () {
+          //               viewModel.createCfq();
+          //             },
+          //       child:
+          //           Text(CustomString.publier, style: CustomTextStyle.title3),
+          CustomButton(
+            label: CustomString.create,
+            onTap: isLoading ? () {} : onSubmit,
+            isLoading: isLoading,
           ),
         ],
       ),

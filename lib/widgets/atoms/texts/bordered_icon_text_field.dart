@@ -19,7 +19,7 @@ class BorderedIconTextField extends StatelessWidget {
     required this.hintText,
     this.readOnly = false,
     this.maxLines = 1,
-    this.height = 40.0,
+    this.height = 46.0,
     this.onTap,
   });
 
@@ -28,13 +28,15 @@ class BorderedIconTextField extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        border: Border.all(color: CustomColor.white, width: 0.8),
-        borderRadius: BorderRadius.circular(8),
+        color: CustomColor.customBlack,
+        border: Border.all(color: CustomColor.white, width: 0.5),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+          Container(
+            width: 48,
+            alignment: Alignment.center,
             child: icon,
           ),
           Expanded(
@@ -42,7 +44,8 @@ class BorderedIconTextField extends StatelessWidget {
               controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: CustomTextStyle.miniBody,
+                hintStyle:
+                    CustomTextStyle.body2.copyWith(color: CustomColor.grey),
                 border: InputBorder.none,
               ),
               style: CustomTextStyle.body1,

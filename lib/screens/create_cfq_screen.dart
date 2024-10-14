@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import '../view_models/create_cfq_view_model.dart';
 import '../widgets/organisms/cfq_form.dart';
 import '../utils/styles/string.dart';
-import '../utils/styles/text_styles.dart';
-import '../templates/standard_form_template.dart';
+import '../utils/styles/colors.dart';
+import '../utils/styles/icons.dart';
+import '../utils/styles/neon_background.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 
@@ -47,51 +48,71 @@ class CreateCfqScreen extends StatelessWidget {
               }
             });
 
-            return StandardFormTemplate(
-              appBarTitle:
-                  Text(CustomString.createCfq, style: CustomTextStyle.title3),
-              appBarActions: [
-                TextButton(
-                  onPressed: viewModel.isLoading
-                      ? null
-                      : () {
-                          viewModel.createCfq();
-                        },
-                  child:
-                      Text(CustomString.publier, style: CustomTextStyle.title3),
+            // return StandardFormTemplate(
+            //   appBarTitle:
+            //       Text(CustomString.createCfq, style: CustomTextStyle.title3),
+            //   appBarActions: [
+            //     TextButton(
+            //       onPressed: viewModel.isLoading
+            //           ? null
+            //           : () {
+            //               viewModel.createCfq();
+            //             },
+            //       child:
+            //           Text(CustomString.publier, style: CustomTextStyle.title3),
+            //     ),
+            //   ],
+            //   onBackPressed: () {
+            //     Navigator.of(context).pop();
+            //   },
+            return NeonBackground(
+              child: Scaffold(
+                backgroundColor:
+                    CustomColor.transparent, // Sets the background color
+                appBar: AppBar(
+                  toolbarHeight: 40,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: CustomColor.transparent,
+                  actions: [
+                    IconButton(
+                      icon: CustomIcon.close,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
                 ),
-              ],
-              onBackPressed: () {
-                Navigator.of(context).pop();
-              },
-              body: CfqForm(
-                currentUser: viewModel.currentUser!,
-                image: viewModel.cfqImage,
-                onSelectImage: viewModel.pickCfqImage,
-                nameController: viewModel.cfqNameController,
-                descriptionController: viewModel.descriptionController,
-                locationController: viewModel.locationController,
-                whenController: viewModel.whenController,
-                onSelectMoods: () => viewModel.selectMoods(context),
-                moodsDisplay: viewModel.selectedMoods != null &&
-                        viewModel.selectedMoods!.isNotEmpty
-                    ? viewModel.selectedMoods!.join(', ')
-                    : CustomString.whatMood,
-                isLoading: viewModel.isLoading,
-                onSubmit: viewModel.createCfq,
-                inviteeSearchController: viewModel.searchController,
-                selectedInvitees: viewModel.selectedInvitees,
-                searchResults: viewModel.searchResults,
-                isSearching: viewModel.isSearching,
-                onAddInvitee: viewModel.addInvitee,
-                onRemoveInvitee: viewModel.removeInvitee,
-                userTeams: viewModel.userTeams,
-                selectedTeams: viewModel.selectedTeamInvitees,
-                onAddTeam: viewModel.addTeam,
-                onRemoveTeam: viewModel.removeTeam,
-                onSearch: viewModel.performSearch,
-                onSelectEverybody: viewModel.selectEverybody,
-                isEverybodySelected: viewModel.isEverybodySelected,
+                body: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20), // Adds padding to the sides of the form
+                  child: CfqForm(
+                    currentUser: viewModel.currentUser!,
+                    image: viewModel.cfqImage,
+                    onSelectImage: viewModel.pickCfqImage,
+                    nameController: viewModel.cfqNameController,
+                    descriptionController: viewModel.descriptionController,
+                    locationController: viewModel.locationController,
+                    whenController: viewModel.whenController,
+                    onSelectMoods: () => viewModel.selectMoods(context),
+                    moodsDisplay: viewModel.selectedMoods != null &&
+                            viewModel.selectedMoods!.isNotEmpty
+                        ? viewModel.selectedMoods!.join(', ')
+                        : CustomString.whatMood,
+                    isLoading: viewModel.isLoading,
+                    onSubmit: viewModel.createCfq,
+                    inviteeSearchController: viewModel.searchController,
+                    selectedInvitees: viewModel.selectedInvitees,
+                    searchResults: viewModel.searchResults,
+                    isSearching: viewModel.isSearching,
+                    onAddInvitee: viewModel.addInvitee,
+                    onRemoveInvitee: viewModel.removeInvitee,
+                    userTeams: viewModel.userTeams,
+                    selectedTeams: viewModel.selectedTeamInvitees,
+                    onAddTeam: viewModel.addTeam,
+                    onRemoveTeam: viewModel.removeTeam,
+                    onSearch: viewModel.performSearch,
+                    onSelectEverybody: viewModel.selectEverybody,
+                    isEverybodySelected: viewModel.isEverybodySelected,
+                  ),
+                ),
               ),
             );
           }

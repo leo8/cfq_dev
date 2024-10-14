@@ -13,8 +13,8 @@ class EventImageSelector extends StatelessWidget {
     super.key,
     required this.image,
     required this.onSelectImage,
-    this.width = double.infinity,
-    this.height = 200.0,
+    this.width = 283,
+    this.height = 127,
   });
 
   @override
@@ -28,8 +28,8 @@ class EventImageSelector extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: CustomColor.grey300, // Grey background
-              borderRadius: BorderRadius.circular(8.0), // Rounded corners
+              color: CustomColor.customDarkGrey, // Grey background
+              //borderRadius: BorderRadius.circular(8.0), // Rounded corners
               image: image != null
                   ? DecorationImage(
                       image: MemoryImage(image!),
@@ -37,28 +37,15 @@ class EventImageSelector extends StatelessWidget {
                     )
                   : null,
             ),
-            child: image == null
-                ? Center(
-                    child: CustomIcon.addImage.copyWith(
-                      size: 50,
-                    ),
-                  )
-                : null,
           ),
           // White Photo Upload Icon Positioned at Bottom Right
           Positioned(
-            bottom: 10,
-            right: 10,
+            bottom: 6,
+            right: 6,
             child: Container(
-              decoration: const BoxDecoration(
-                color:
-                    CustomColor.white, // White background for the icon button
-                shape: BoxShape.circle,
-              ),
               padding: const EdgeInsets.all(8.0),
-              child: CustomIcon.addImage.copyWith(
-                color: CustomColor.grey,
-              ),
+              child: CustomIcon.addImage
+                  .copyWith(color: CustomColor.customWhite, size: 22),
             ),
           ),
         ],
