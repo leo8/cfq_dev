@@ -4,7 +4,8 @@ import 'colors.dart';
 
 class CustomTextStyle {
   // CFQ Theme
-  static TextStyle hugeTitle = GoogleFonts.oswald(
+  static TextStyle hugeTitle = const TextStyle(
+    fontFamily: 'GigalypseTrialRegular',
     fontSize: 48,
     fontWeight: FontWeight.bold,
     letterSpacing: 1.5,
@@ -18,55 +19,58 @@ class CustomTextStyle {
     color: CustomColor.customWhite,
   );
 
-  static TextStyle title1 = GoogleFonts.robotoCondensed(
+  static TextStyle title1 = const TextStyle(
+    fontFamily: 'GigalypseTrialRegular',
     fontSize: 24,
     fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle title2 = GoogleFonts.robotoCondensed(
+  static TextStyle title2 = const TextStyle(
+    fontFamily: 'GigalypseTrialRegular',
     fontSize: 22,
     fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle title3 = GoogleFonts.robotoCondensed(
+  static TextStyle title3 = const TextStyle(
+    fontFamily: 'GigalypseTrialRegular',
     fontSize: 20,
     fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle body1 = GoogleFonts.roboto(
+  static TextStyle body1 = GoogleFonts.inter(
     fontSize: 16,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle body2 = GoogleFonts.roboto(
+  static TextStyle body2 = GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle miniBody = GoogleFonts.roboto(
+  static TextStyle miniBody = GoogleFonts.inter(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle xsBody = GoogleFonts.roboto(
+  static TextStyle xsBody = GoogleFonts.inter(
     fontSize: 10,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle subButton = GoogleFonts.roboto(
+  static TextStyle subButton = GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );
 
-  static TextStyle miniButton = GoogleFonts.roboto(
+  static TextStyle miniButton = GoogleFonts.inter(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
@@ -80,13 +84,14 @@ class CustomTextStyle {
     fontWeight: FontWeight.bold,
   );
 
-  static TextStyle pinkAccentMiniBody = GoogleFonts.roboto(
+  static TextStyle pinkAccentMiniBody = GoogleFonts.inter(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     color: CustomColor.pinkAccent,
   );
 
-  static TextStyle personnalizedPurpleTitle1 = GoogleFonts.roboto(
+  static TextStyle personnalizedPurpleTitle1 = const TextStyle(
+    fontFamily: 'GigalypseTrialRegular',
     fontSize: 24,
     fontWeight: FontWeight.bold,
     color: CustomColor.personnalizedPurple,
