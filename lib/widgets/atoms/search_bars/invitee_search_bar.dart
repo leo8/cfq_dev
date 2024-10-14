@@ -54,7 +54,8 @@ class InviteeSearchBar extends StatelessWidget {
                 // "Tout le monde" option
                 return ListTile(
                   leading: const CircleAvatar(
-                    backgroundImage: AssetImage('assets/turn_button.png'),
+                    backgroundImage:
+                        AssetImage('assets/images/turn_button.png'),
                   ),
                   title: const Text(CustomString.toutLeMonde),
                   trailing: IconButton(

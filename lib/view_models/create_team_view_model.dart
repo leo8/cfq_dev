@@ -19,7 +19,7 @@ class CreateTeamViewModel extends ChangeNotifier {
   Uint8List? get teamImage => _teamImage;
 
   // Selected Friends
-  List<model.User> _selectedFriends = [];
+  final List<model.User> _selectedFriends = [];
   List<model.User> get selectedFriends => _selectedFriends;
 
   // Search

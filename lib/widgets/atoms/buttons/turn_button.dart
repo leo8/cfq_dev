@@ -28,7 +28,7 @@ class TurnButton extends StatelessWidget {
         );
       },
       child: Image.asset(
-        'assets/turn_button.png',
+        'assets/images/turn_button.png',
         width: 60,
         height: 60,
       ),
