@@ -1,122 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'colors.dart';
 
-class CustomIconData extends IconData {
+class CustomIcon extends StatelessWidget {
   final String assetName;
+  final Color? color;
+  final double size;
 
-  const CustomIconData(this.assetName) : super(0);
-}
+  const CustomIcon(this.assetName,
+      {Key? key, this.color = CustomColor.customWhite, this.size = 24})
+      : super(key: key);
 
-class CustomIcon {
-  // SVG icons
-  static const CustomIconData plusCircle = CustomIconData('plus_circle.svg');
-  static const CustomIconData streetIcon = CustomIconData('street_icon.svg');
-  static const CustomIconData homeParty = CustomIconData('home_party.svg');
-  static const CustomIconData team = CustomIconData('team.svg');
-  static const CustomIconData personCircle =
-      CustomIconData('person_circle.svg');
-  static const CustomIconData heart = CustomIconData('heart.svg');
-  static const CustomIconData star = CustomIconData('star.svg');
-  static const CustomIconData adress = CustomIconData('adress.svg');
-  static const CustomIconData sunHorizon = CustomIconData('sun_horizon.svg');
-  static const CustomIconData arrowRightCircle =
-      CustomIconData('arrow_right_circle.svg');
-  static const CustomIconData xmarkCircle = CustomIconData('xmark_circle.svg');
-  static const CustomIconData disco = CustomIconData('disco.svg');
-  static const CustomIconData forkKnife = CustomIconData('fork_knife.svg');
-  static const CustomIconData beer = CustomIconData('beer.svg');
-  static const CustomIconData partyPopper = CustomIconData('party_popper.svg');
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/icons/$assetName',
+      colorFilter:
+          color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+      width: size,
+      height: size,
+    );
+  }
+
+  CustomIcon copyWith({Color? color, double? size}) {
+    return CustomIcon(
+      assetName,
+      color: color ?? this.color,
+      size: size ?? this.size,
+    );
+  }
 
   //Navigation
-  static const arrowBack = Icons.arrow_back;
-  static const arrowForward = Icons.arrow_forward_ios;
-  static const close = Icons.close;
+  static const arrowBack = CustomIcon('arrow_left.svg');
+  static const arrowForward = CustomIcon('arrow_right_cirlce.svg');
+  static const close = CustomIcon('xmark.svg');
 
   //Auth
   static const visibilityOff = Icons.visibility_off;
   static const visibility = Icons.visibility;
 
   //General
-  static const checkCircle = Icons.check_circle;
+  static const checkCircle = CustomIcon('xmark_circle.svg');
   static const add = Icons.add;
-  static const search = Icons.search;
+  static const search = CustomIcon('magnifying_glass.svg');
+  static const plusCircle = CustomIcon('plus_circle.svg');
 
   //Image related
-  static const addImage = Icons.add_a_photo;
+  static const addImage = CustomIcon('photo.svg');
 
   //Date related
-  static const calendar = Icons.calendar_today;
-
-  //Location related
-  static const locationOn = Icons.location_on;
+  static const calendar = CustomIcon('calendar.svg');
 
   //Nav Bar & Features
-  static const CustomIconData home = CustomIconData('home.svg');
-  static const map = Icons.location_on_outlined;
-  static const profile = Icons.person_outlined;
-  static const teams = Icons.groups_2_outlined;
+  static const home = CustomIcon('home.svg');
+  static const map = CustomIcon('location.svg');
+  static const profile = CustomIcon('person_circle.svg');
+  static const team = CustomIcon('team.svg');
 
-  static const notifications = Icons.notifications;
-  static const inbox = Icons.message;
+  static const notifications = CustomIcon('bell.svg');
+  static const inbox = CustomIcon('message.svg');
 
   //User
-  static const statusOff = Icons.nights_stay_outlined;
-  static const statusOn = Icons.public;
-  static const userLocation = Icons.location_on;
+  static const statusOff = CustomIcon('moon.svg');
+  static const statusOn = CustomIcon('disco.svg');
+  static const userLocation = CustomIcon('location.svg');
   static const privateProfile = Icons.lock;
 
   //Teams
-  static const CustomIconData addMember = CustomIconData('add_member.svg');
-  static const leaveTeam = Icons.exit_to_app;
+  static const addMember = CustomIcon('add_member.svg');
+  static const leaveTeam = CustomIcon('open_door.svg');
 
   //Events Forms
-  static const eventTitle = Icons.title;
-  static const eventOrganizer = Icons.bolt;
-  static const eventMood = Icons.mood;
-  static const eventLocation = Icons.location_on;
-  static const eventDescription = Icons.description;
-  static const eventAddress = Icons.home;
+  static const eventTitle = CustomIcon('pencil.svg');
+  static const eventOrganizer = CustomIcon('bolt.svg');
+  static const eventMood = CustomIcon('moon2.svg');
+  static const eventLocation = CustomIcon('location.svg');
+  static const eventAddress = CustomIcon('address.svg');
 
   //Events Cards
-  static const eventConversation = Icons.message;
-  static const CustomIconData followUp = CustomIconData('bell.svg');
-  static const share = Icons.share;
+  static const eventConversation = CustomIcon('message.svg');
+  static const followUp = CustomIcon('bell.svg');
+  static const favorite = CustomIcon('heart.svg');
 
   //Moods
+  static const streetIcon = CustomIcon('street_icon.svg');
+  static const homeParty = CustomIcon('home_party.svg');
+  static const sunHorizon = CustomIcon('sun_horizon.svg');
+  static const forkKnife = CustomIcon('fork_knife.svg');
+  static const beer = CustomIcon('beer.svg');
+  static const partyPopper = CustomIcon('party_popper.svg');
 
   //Parameters
   static const settings = Icons.settings;
-  static const CustomIconData editProfile = CustomIconData('pencil.svg');
+  static const editProfile = CustomIcon('pencil.svg');
   static const confidentiality = Icons.lock;
-  static const notificationsSettings = Icons.notifications;
   static const logOut = Icons.exit_to_app;
-
-  //Methods
-  static Widget getColoredIcon(String assetName, Color color) {
-    // Method to get colorized icon
-    return SvgPicture.asset(
-      'assets/icons/$assetName.svg',
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-    );
-  }
-
-  static Widget getSvgIcon(CustomIconData icon, {Color? color, double? size}) {
-    // Method to get SvgPicture
-    return SvgPicture.asset(
-      'assets/icons/${icon.assetName}',
-      colorFilter:
-          color != null ? ColorFilter.mode(color, BlendMode.srcIn) : null,
-      width: size,
-      height: size,
-    );
-  }
-
-  static Widget getIcon(IconData icon, {Color? color, double? size}) {
-    // Method to get Icon (for use with IconData or CustomIconData)
-    if (icon is CustomIconData) {
-      return getSvgIcon(icon, color: color, size: size);
-    } else {
-      return Icon(icon, color: color, size: size);
-    }
-  }
 }
