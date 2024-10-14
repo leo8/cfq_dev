@@ -24,8 +24,8 @@ class CustomButton extends StatelessWidget {
           ? const Center(
               // Show a loading spinner if isLoading is true
               child: CircularProgressIndicator(
-                color:
-                    CustomColor.customDarkGrey, // White loading spinner color
+                strokeWidth: 5,
+                color: CustomColor.customWhite, // White loading spinner color
               ),
             )
           : Container(

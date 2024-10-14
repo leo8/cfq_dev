@@ -69,10 +69,11 @@ class CustomString {
   static const when = "Quand ?";
   static const date = "La date";
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
+  static const who = "À qui ?";
   static const address = "Adresse";
   static const whatMood = "Quel mood ?";
-  static const describeEvent =
-      "Raconte pas ta vie, dis-nous juste où tu sors...";
+  static const describeCfq = "Sois pertinent !";
+  static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
   static const invitees = "T'invites qui ?";
   static const toutLeMonde = "Tout le monde";
@@ -103,7 +104,7 @@ class CustomString {
 
   // Parameters
   static const parameters = "Paramètres";
-  static const editProfile = "Editer le profil";
+  static const editProfile = "Éditer le profil";
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 

@@ -111,6 +111,7 @@ class CreateCfqScreen extends StatelessWidget {
                     onSearch: viewModel.performSearch,
                     onSelectEverybody: viewModel.selectEverybody,
                     isEverybodySelected: viewModel.isEverybodySelected,
+                    inviteesController: viewModel.inviteesController,
                   ),
                 ),
               ),

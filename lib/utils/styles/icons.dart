@@ -76,6 +76,7 @@ class CustomIcon extends StatelessWidget {
   static const eventMood = CustomIcon('moon2.svg');
   static const eventLocation = CustomIcon('location.svg');
   static const eventAddress = CustomIcon('address.svg');
+  static const eventInvitees = CustomIcon('person.svg');
 
   //Events Cards
   static const eventConversation = CustomIcon('message.svg');

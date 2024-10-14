@@ -18,6 +18,7 @@ class CreateCfqViewModel extends ChangeNotifier {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
+  TextEditingController inviteesController = TextEditingController();
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
 

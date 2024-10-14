@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:cfq_dev/widgets/atoms/buttons/custom_button.dart';
 import 'package:cfq_dev/widgets/molecules/event_organizer.dart';
 import 'package:flutter/material.dart';
-import '../molecules/invitees_field.dart';
+import '../../screens/invitees_selector_screen.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
@@ -37,6 +37,7 @@ class CfqForm extends StatelessWidget {
   final Function(String) onSearch;
   final VoidCallback onSelectEverybody;
   final bool isEverybodySelected;
+  final TextEditingController inviteesController;
 
   const CfqForm({
     super.key,
@@ -64,6 +65,7 @@ class CfqForm extends StatelessWidget {
     required this.onSearch,
     required this.onSelectEverybody,
     required this.isEverybodySelected,
+    required this.inviteesController,
   });
 
   @override
@@ -75,7 +77,7 @@ class CfqForm extends StatelessWidget {
           Center(
             child: Text(
               CustomString.cfqCapital,
-              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 28),
+              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
             ),
           ),
           const SizedBox(
@@ -119,34 +121,38 @@ class CfqForm extends StatelessWidget {
           const SizedBox(height: 15),
           CustomTextField(
             controller: descriptionController,
-            hintText: CustomString.describeEvent,
+            hintText: CustomString.describeCfq,
             maxLines: 50,
             height: 100,
           ),
           const SizedBox(height: 15),
-          //InviteesField(
-          //  searchController: inviteeSearchController,
-          //  selectedInvitees: selectedInvitees,
-          //  selectedTeams: selectedTeams,
-          //  searchResults: searchResults,
-          //  isSearching: isSearching,
-          //  onAddInvitee: onAddInvitee,
-          //  onRemoveInvitee: onRemoveInvitee,
-          //  onAddTeam: onAddTeam,
-          //  onRemoveTeam: onRemoveTeam,
-          //  onSelectEverybody: onSelectEverybody,
-          //  onSearch: onSearch,
-          //  isEverybodySelected: isEverybodySelected,
-          //),
-
-          //TextButton(
-          //       onPressed: viewModel.isLoading
-          //           ? null
-          //           : () {
-          //               viewModel.createCfq();
-          //             },
-          //       child:
-          //           Text(CustomString.publier, style: CustomTextStyle.title3),
+          BorderedIconTextField(
+            icon: CustomIcon.eventInvitees,
+            controller: inviteesController,
+            hintText: CustomString.who,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InviteesSelectorScreen(
+                    selectedInvitees: selectedInvitees,
+                    selectedTeams: selectedTeams,
+                    searchResults: searchResults,
+                    searchController: inviteeSearchController,
+                    isSearching: isSearching,
+                    onAddInvitee: onAddInvitee,
+                    onRemoveInvitee: onRemoveInvitee,
+                    onAddTeam: onAddTeam,
+                    onRemoveTeam: onRemoveTeam,
+                    onSearch: onSearch,
+                    onSelectEverybody: onSelectEverybody,
+                    isEverybodySelected: isEverybodySelected,
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 15),
           CustomButton(
             label: CustomString.create,
             onTap: isLoading ? () {} : onSubmit,

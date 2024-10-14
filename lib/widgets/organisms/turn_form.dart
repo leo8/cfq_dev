@@ -158,7 +158,7 @@ class TurnForm extends StatelessWidget {
         const SizedBox(height: 8),
         CustomTextField(
           controller: descriptionController,
-          hintText: CustomString.describeEvent,
+          hintText: CustomString.describeTurn,
           maxLines: 50,
           height: 80,
         ),
