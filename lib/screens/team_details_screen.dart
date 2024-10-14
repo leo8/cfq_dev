@@ -27,8 +27,7 @@ class TeamDetailsScreen extends StatelessWidget {
               backgroundColor: CustomColor.transparent,
               elevation: 0,
               leading: IconButton(
-                icon:
-                    const Icon(CustomIcon.arrowBack, color: CustomColor.white),
+                icon: CustomIcon.arrowBack,
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },

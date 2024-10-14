@@ -22,7 +22,7 @@ class AddTeamMembersScreen extends StatelessWidget {
             appBar: AppBar(
               title: const Text(CustomString.addMembers),
               leading: IconButton(
-                icon: const Icon(CustomIcon.arrowBack),
+                icon: CustomIcon.arrowBack,
                 onPressed: () {
                   Navigator.of(context).pop(viewModel.hasChanges);
                 },
@@ -67,7 +67,7 @@ class AddTeamMembersScreen extends StatelessWidget {
               ),
               title: Text(user.username),
               trailing: isTeamMember
-                  ? const Icon(CustomIcon.checkCircle, color: CustomColor.green)
+                  ? CustomIcon.plusCircle.copyWith(color: CustomColor.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
                       child: const Text(CustomString.addFriend),

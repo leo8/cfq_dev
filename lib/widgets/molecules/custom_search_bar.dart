@@ -22,10 +22,7 @@ class CustomSearchBar extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         fillColor: CustomColor.white24, // Slightly transparent background color
-        prefixIcon: const Icon(
-          CustomIcon.search, // Search icon on the left
-          color: CustomColor.white70,
-        ),
+        prefixIcon: CustomIcon.search, // Search icon on the left
         hintText: hintText, // Display hint text in the search bar
         hintStyle: CustomTextStyle.miniBody, // Hint text style
         border: OutlineInputBorder(

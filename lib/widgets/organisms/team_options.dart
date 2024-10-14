@@ -1,7 +1,6 @@
 import 'package:cfq_dev/widgets/atoms/buttons/turn_button.dart';
 import '../atoms/buttons/cfq_button.dart';
 import 'package:flutter/material.dart';
-import '../../utils/styles/colors.dart';
 import '../../screens/add_team_members_screen.dart';
 import '../../models/team.dart';
 import '../../view_models/team_details_view_model.dart';
@@ -100,13 +99,13 @@ class TeamOptions extends StatelessWidget {
   }
 
   Widget _buildOptionButton(BuildContext context,
-      {required IconData icon,
+      {required CustomIcon icon,
       required String label,
       required VoidCallback onPressed}) {
     return Column(
       children: [
         IconButton(
-          icon: Icon(icon, color: CustomColor.white),
+          icon: icon,
           onPressed: onPressed,
         ),
         Text(

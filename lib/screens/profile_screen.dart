@@ -27,8 +27,8 @@ class ProfileScreen extends StatelessWidget {
               // Show back button if viewing another user's profile
               if (!viewModel.isCurrentUser) {
                 return IconButton(
-                  icon: const Icon(CustomIcon.arrowBack,
-                      color: CustomColor.white),
+                  icon: CustomIcon.arrowBack,
+                  color: CustomColor.white,
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

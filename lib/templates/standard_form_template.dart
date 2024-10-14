@@ -31,7 +31,7 @@ class StandardFormTemplate extends StatelessWidget {
         centerTitle: true, // Centers the app bar title
         title: appBarTitle, // Custom app bar title passed in
         leading: IconButton(
-          icon: const Icon(CustomIcon.close), // Close icon for back navigation
+          icon: CustomIcon.close, // Close icon for back navigation
           onPressed: onBackPressed, // Calls the provided back button callback
         ),
         actions: appBarActions, // Adds the action buttons to the app bar

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 import '../../../utils/styles/text_styles.dart';
 
 class BorderedIconTextField extends StatelessWidget {
-  final IconData icon;
+  final CustomIcon icon;
   final TextEditingController controller;
   final String hintText;
   final bool readOnly;
@@ -34,7 +35,7 @@ class BorderedIconTextField extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Icon(icon, color: CustomColor.white, size: 28),
+            child: icon,
           ),
           Expanded(
             child: TextField(

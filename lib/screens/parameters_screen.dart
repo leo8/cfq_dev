@@ -26,7 +26,7 @@ class ParametersScreen extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(CustomIcon.editProfile),
+            leading: CustomIcon.editProfile,
             title: const Text(CustomString.editProfile),
             onTap: () {
               Navigator.push(
@@ -45,8 +45,8 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(CustomIcon.notificationsSettings),
-            title: const Text(CustomString.notifications),
+            leading: CustomIcon.favorite,
+            title: const Text(CustomString.favorites),
             onTap: () {
               // Navigate to notification settings screen
             },

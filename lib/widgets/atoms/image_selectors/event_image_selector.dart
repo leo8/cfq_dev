@@ -38,10 +38,8 @@ class EventImageSelector extends StatelessWidget {
                   : null,
             ),
             child: image == null
-                ? const Center(
-                    child: Icon(
-                      CustomIcon.addImage,
-                      color: CustomColor.white,
+                ? Center(
+                    child: CustomIcon.addImage.copyWith(
                       size: 50,
                     ),
                   )
@@ -58,8 +56,7 @@ class EventImageSelector extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(8.0),
-              child: const Icon(
-                CustomIcon.addImage,
+              child: CustomIcon.addImage.copyWith(
                 color: CustomColor.grey,
               ),
             ),

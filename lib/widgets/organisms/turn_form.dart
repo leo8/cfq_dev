@@ -8,6 +8,7 @@ import '../atoms/avatars/custom_avatar.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text.dart';
+import '../atoms/texts/custom_text_field.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
@@ -103,8 +104,7 @@ class TurnForm extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(CustomIcon.eventOrganizer,
-                        color: CustomColor.white, size: 16),
+                    CustomIcon.eventOrganizer.copyWith(size: 16),
                     const SizedBox(width: 8),
                     CustomText(
                       text: CustomString.organizedBy,
@@ -156,8 +156,7 @@ class TurnForm extends StatelessWidget {
           hintText: CustomString.address,
         ),
         const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.eventDescription,
+        CustomTextField(
           controller: descriptionController,
           hintText: CustomString.describeEvent,
           maxLines: 50,

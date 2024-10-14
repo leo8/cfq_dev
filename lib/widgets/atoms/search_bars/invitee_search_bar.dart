@@ -34,7 +34,7 @@ class InviteeSearchBar extends StatelessWidget {
         controller: controller,
         onChanged: onSearch,
         decoration: InputDecoration(
-          prefixIcon: const Icon(CustomIcon.search, color: CustomColor.white),
+          prefixIcon: CustomIcon.search,
           hintText: hintText,
           filled: true,
           fillColor: CustomColor.white.withOpacity(0.1),

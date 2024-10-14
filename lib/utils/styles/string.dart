@@ -103,7 +103,7 @@ class CustomString {
   // Parameters
   static const parameters = "Paramètres";
   static const editProfile = "Editer le profil";
-  static const notifications = "Notifications";
+  static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 
   // Image Related

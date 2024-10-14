@@ -94,7 +94,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 width: _width,
                 height: _height,
                 decoration: BoxDecoration(
-                  color: CustomColor.black,
+                  color: CustomColor.grey,
                   borderRadius: BorderRadius.circular(isOpen ? 10.0 : 0.0),
                 ),
                 duration: durationAnimation500,
@@ -156,16 +156,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.home,
-                color: CustomColor.white,
-                size: sizeIcon,
-              ),
-              icon: Icon(
-                CustomIcon.home,
-                color: CustomColor.black,
-                size: sizeIcon,
-              ),
+              selectedIcon: CustomIcon.home.copyWith(size: sizeIcon),
+              icon: CustomIcon.home
+                  .copyWith(color: CustomColor.grey, size: sizeIcon),
               label: CustomString.emptyString,
             ),
           ),
@@ -173,14 +166,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             padding:
                 EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.map,
-                color: CustomColor.white,
+              selectedIcon: CustomIcon.map.copyWith(
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.map,
-                color: CustomColor.black,
+              icon: CustomIcon.map.copyWith(
+                color: CustomColor.grey,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,
@@ -190,14 +180,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             padding:
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.teams,
+              selectedIcon: CustomIcon.team.copyWith(
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.teams,
-                color: CustomColor.black,
+              icon: CustomIcon.team.copyWith(
+                color: CustomColor.grey,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,
@@ -206,14 +194,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.profile,
-                color: CustomColor.white,
+              selectedIcon: CustomIcon.profile.copyWith(
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.profile,
-                color: CustomColor.black,
+              icon: CustomIcon.profile.copyWith(
+                color: CustomColor.grey,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,

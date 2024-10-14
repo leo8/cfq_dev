@@ -62,10 +62,7 @@ class TeamCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              CustomIcon.arrowForward,
-              color: CustomColor.white,
-            ),
+            CustomIcon.arrowForward,
           ],
         ),
       ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_edit_form.dart';
 import '../templates/auth_template.dart';
-import '../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -50,7 +49,7 @@ class EditProfileScreen extends StatelessWidget {
                 top: 10,
                 right: 10,
                 child: IconButton(
-                  icon: const Icon(CustomIcon.close, color: CustomColor.white),
+                  icon: CustomIcon.close,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
