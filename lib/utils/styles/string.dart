@@ -42,6 +42,7 @@ class CustomString {
   static const searchFriends = "Chercher des amis..";
   static const noUsersFound = "Aucun utilisateur ne correspond à ta recherche.";
   static const userNotFound = "Utilisateur non trouvé";
+  static const noResults = "Pas de résultats.";
 
   // Friends
   static const myFriends = "Mes amis";
@@ -57,7 +58,9 @@ class CustomString {
   static const myTeamsCapital = "MES TEAMS";
   static const noTeamsYet = "Vous n'avez pas encore de teams.";
   static const createTeam = "Créer une team";
-  static const teamName = "Nom de la team";
+  static const newTeamCapital = "NOUVELLE TEAM";
+  static const teamName = "Donne-lui un nom";
+  static const addFriends = "Ajoute tes amis";
   static const members = "Membres";
   static const addMembers = "Ajouter des membres";
   static const leaveTeam = "Quitter l'équipe";

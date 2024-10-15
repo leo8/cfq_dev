@@ -120,25 +120,26 @@ class CreateTeamViewModel extends ChangeNotifier {
   }
 
   Future<void> performSearch(String query) async {
-    if (query.isEmpty) {
-      _searchResults = [];
-      notifyListeners();
-      return;
-    }
-
     _isSearching = true;
     notifyListeners();
 
     try {
-      final queryLower = query.toLowerCase();
-
-      // Filter friends list based on 'searchKey'
-      _searchResults = _friendsList.where((user) {
-        final searchKeyLower = user.searchKey;
-        // Exclude already selected friends
-        return searchKeyLower.startsWith(queryLower) &&
-            !_selectedFriends.any((f) => f.uid == user.uid);
-      }).toList();
+      if (query.isEmpty) {
+        // If query is empty, show all friends not already selected
+        _searchResults = _friendsList
+            .where((user) =>
+                !_selectedFriends.any((f) => f.uid == user.uid) &&
+                user.uid != _currentUser?.uid)
+            .toList();
+      } else {
+        final queryLower = query.toLowerCase();
+        _searchResults = _friendsList.where((user) {
+          final searchKeyLower = user.searchKey;
+          return searchKeyLower.contains(queryLower) &&
+              !_selectedFriends.any((f) => f.uid == user.uid) &&
+              user.uid != _currentUser?.uid;
+        }).toList();
+      }
     } catch (e) {
       AppLogger.error('Error while searching users: $e');
     }
