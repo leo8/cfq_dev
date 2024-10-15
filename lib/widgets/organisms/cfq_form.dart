@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:cfq_dev/widgets/atoms/buttons/custom_button.dart';
 import 'package:cfq_dev/widgets/molecules/event_organizer.dart';
 import 'package:flutter/material.dart';
-import '../../screens/invitees_selector_screen.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
@@ -11,7 +10,6 @@ import '../atoms/texts/custom_text_field.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
-import '../../utils/logger.dart';
 
 class CfqForm extends StatelessWidget {
   final Uint8List? image;
