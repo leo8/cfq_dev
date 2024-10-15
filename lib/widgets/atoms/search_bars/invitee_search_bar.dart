@@ -35,19 +35,16 @@ class InviteeSearchBar extends StatelessWidget {
     AppLogger.debug('Search results length: ${searchResults.length}');
     return Column(
       children: [
-        Container(
+        BorderedIconTextField(
+          icon: CustomIcon.search
+              .copyWith(color: CustomColor.customWhite, size: 22),
+          controller: controller,
+          hintText: hintText,
+          hintTextStyle: CustomTextStyle.body1,
+          borderRadius: BorderRadius.circular(30),
           height: 46,
-          child: BorderedIconTextField(
-            icon: CustomIcon.search
-                .copyWith(color: CustomColor.customWhite, size: 22),
-            controller: controller,
-            hintText: hintText,
-            hintTextStyle: CustomTextStyle.body1,
-            borderRadius: BorderRadius.circular(30),
-            height: 46,
-            onTap: null,
-            readOnly: false,
-          ),
+          onTap: null,
+          readOnly: false,
         ),
         const SizedBox(
           height: 25,
