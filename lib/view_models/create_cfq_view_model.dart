@@ -13,8 +13,10 @@ import '../providers/storage_methods.dart';
 import '../models/team.dart';
 import '../screens/invitees_selector_screen.dart';
 import 'package:provider/provider.dart';
+import '../view_models/invitees_selector_view_model.dart';
 
-class CreateCfqViewModel extends ChangeNotifier {
+class CreateCfqViewModel extends ChangeNotifier
+    implements InviteesSelectorViewModel {
   // Controllers for form fields
   final TextEditingController cfqNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -521,7 +523,8 @@ class CreateCfqViewModel extends ChangeNotifier {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider.value(
+        builder: (context) =>
+            ChangeNotifierProvider<InviteesSelectorViewModel>.value(
           value: this,
           child: const InviteesSelectorScreen(),
         ),
@@ -542,5 +545,32 @@ class CreateCfqViewModel extends ChangeNotifier {
         _selectedInvitees.map((user) => user.username).toList();
     inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
     inviteesController.text = inviteeNames.join(', ');
+  }
+
+  @override
+  void toggleInvitee(model.User invitee) {
+    if (_selectedInvitees.contains(invitee)) {
+      removeInvitee(invitee);
+    } else {
+      addInvitee(invitee);
+    }
+  }
+
+  @override
+  void toggleTeam(Team team) {
+    if (_selectedTeamInvitees.contains(team)) {
+      removeTeam(team);
+    } else {
+      addTeam(team);
+    }
+  }
+
+  @override
+  void toggleEverybody() {
+    if (_isEverybodySelected) {
+      removeEverybody();
+    } else {
+      selectEverybody();
+    }
   }
 }

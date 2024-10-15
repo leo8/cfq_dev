@@ -5,7 +5,7 @@ import '../utils/styles/string.dart';
 import '../utils/styles/text_styles.dart';
 import '../utils/logger.dart';
 import 'package:provider/provider.dart';
-import '../view_models/create_cfq_view_model.dart';
+import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/search_bars/invitee_search_bar.dart';
 import '../widgets/atoms/chips/invitee_chip.dart';
 import '../widgets/atoms/chips/team_chip.dart';
@@ -15,7 +15,7 @@ class InviteesSelectorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CreateCfqViewModel>(
+    return Consumer<InviteesSelectorViewModel>(
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(

@@ -1,17 +1,14 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import '../molecules/invitees_field.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
-import '../atoms/avatars/custom_avatar.dart';
-import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
-import '../atoms/texts/custom_text.dart';
 import '../atoms/texts/custom_text_field.dart';
-import '../../models/team.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../atoms/buttons/custom_button.dart';
+import '../molecules/event_organizer.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -26,20 +23,9 @@ class TurnForm extends StatelessWidget {
   final String moodsDisplay;
   final bool isLoading;
   final VoidCallback onSubmit;
-  final TextEditingController inviteeSearchController;
-  final List<model.User> selectedInvitees;
-  final List<dynamic> searchResults;
-  final bool isSearching;
-  final Function(model.User) onAddInvitee;
-  final Function(model.User) onRemoveInvitee;
   final model.User currentUser;
-  final List<Team> userTeams;
-  final List<Team> selectedTeams;
-  final Function(Team) onAddTeam;
-  final Function(Team) onRemoveTeam;
-  final Function(String) onSearch;
-  final VoidCallback onSelectEverybody;
-  final bool isEverybodySelected;
+  final TextEditingController inviteesController;
+  final VoidCallback openInviteesSelectorScreen;
 
   const TurnForm({
     super.key,
@@ -55,129 +41,90 @@ class TurnForm extends StatelessWidget {
     required this.moodsDisplay,
     required this.isLoading,
     required this.onSubmit,
-    required this.inviteeSearchController,
-    required this.selectedInvitees,
-    required this.searchResults,
-    required this.isSearching,
-    required this.onAddInvitee,
-    required this.onRemoveInvitee,
     required this.currentUser,
-    required this.userTeams,
-    required this.selectedTeams,
-    required this.onAddTeam,
-    required this.onRemoveTeam,
-    required this.onSearch,
-    required this.onSelectEverybody,
-    required this.isEverybodySelected,
+    required this.inviteesController,
+    required this.openInviteesSelectorScreen,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: EventImageSelector(
-            image: image,
-            onSelectImage: onSelectImage,
-            width: MediaQuery.of(context).size.width * 0.60,
-            height: MediaQuery.of(context).size.height * 0.15,
-          ),
-        ),
-        const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.eventTitle,
-          controller: nameController,
-          hintText: CustomString.eventTitle,
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: CustomColor.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    CustomIcon.eventOrganizer.copyWith(size: 16),
-                    const SizedBox(width: 8),
-                    CustomText(
-                      text: CustomString.organizedBy,
-                      textStyle: CustomTextStyle.body1,
-                    ),
-                    const SizedBox(width: 30),
-                    CustomAvatar(
-                      imageUrl: currentUser.profilePictureUrl,
-                      radius: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    CustomText(
-                      text: currentUser.username,
-                      color: CustomColor.white,
-                      textStyle: CustomTextStyle.body1,
-                    ),
-                  ],
-                ),
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              CustomString.turnCapital,
+              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.eventMood,
-          controller: TextEditingController(text: moodsDisplay),
-          hintText: CustomString.whatMood,
-          readOnly: true,
-          onTap: onSelectMoods,
-        ),
-        const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.calendar,
-          controller: TextEditingController(text: dateTimeDisplay),
-          hintText: CustomString.when,
-          readOnly: true,
-          onTap: onSelectDateTime,
-        ),
-        const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.eventLocation,
-          controller: locationController,
-          hintText: CustomString.where,
-        ),
-        const SizedBox(height: 8),
-        BorderedIconTextField(
-          icon: CustomIcon.eventAddress,
-          controller: addressController,
-          hintText: CustomString.address,
-        ),
-        const SizedBox(height: 8),
-        CustomTextField(
-          controller: descriptionController,
-          hintText: CustomString.describeTurn,
-          maxLines: 50,
-          height: 80,
-        ),
-        const SizedBox(height: 8),
-        InviteesField(
-          searchController: inviteeSearchController,
-          selectedInvitees: selectedInvitees,
-          selectedTeams: selectedTeams,
-          searchResults: searchResults,
-          isSearching: isSearching,
-          onAddInvitee: onAddInvitee,
-          onRemoveInvitee: onRemoveInvitee,
-          onAddTeam: onAddTeam,
-          onRemoveTeam: onRemoveTeam,
-          onSearch: onSearch,
-          onSelectEverybody: onSelectEverybody,
-          isEverybodySelected: isEverybodySelected,
-        ),
-      ],
-    ));
+          ),
+          const SizedBox(height: 15),
+          Center(
+            child:
+                EventImageSelector(image: image, onSelectImage: onSelectImage),
+          ),
+          const SizedBox(height: 15),
+          EventOrganizer(
+            profilePictureUrl: currentUser.profilePictureUrl,
+            username: currentUser.username,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventTitle,
+            controller: nameController,
+            hintText: CustomString.eventTitle,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventMood,
+            controller: TextEditingController(text: moodsDisplay),
+            hintText: CustomString.whatMood,
+            readOnly: true,
+            onTap: onSelectMoods,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.calendar,
+            controller: TextEditingController(text: dateTimeDisplay),
+            hintText: CustomString.when,
+            readOnly: true,
+            onTap: onSelectDateTime,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventLocation,
+            controller: locationController,
+            hintText: CustomString.where,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventAddress,
+            controller: addressController,
+            hintText: CustomString.address,
+          ),
+          const SizedBox(height: 15),
+          CustomTextField(
+            controller: descriptionController,
+            hintText: CustomString.describeTurn,
+            maxLines: 50,
+            height: 100,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventInvitees,
+            controller: inviteesController,
+            hintText: CustomString.who,
+            readOnly: true,
+            onTap: openInviteesSelectorScreen,
+          ),
+          const SizedBox(height: 15),
+          CustomButton(
+            label: CustomString.create,
+            onTap: isLoading ? () {} : onSubmit,
+            isLoading: isLoading,
+          ),
+        ],
+      ),
+    );
   }
 }

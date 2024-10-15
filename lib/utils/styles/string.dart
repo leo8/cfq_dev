@@ -71,7 +71,7 @@ class CustomString {
   static const date = "La date";
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
   static const who = "À qui ?";
-  static const address = "Adresse";
+  static const address = "L'adresse exacte";
   static const whatMood = "Quel mood ?";
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";

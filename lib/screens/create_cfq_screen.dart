@@ -47,24 +47,6 @@ class CreateCfqScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             });
-
-            // return StandardFormTemplate(
-            //   appBarTitle:
-            //       Text(CustomString.createCfq, style: CustomTextStyle.title3),
-            //   appBarActions: [
-            //     TextButton(
-            //       onPressed: viewModel.isLoading
-            //           ? null
-            //           : () {
-            //               viewModel.createCfq();
-            //             },
-            //       child:
-            //           Text(CustomString.publier, style: CustomTextStyle.title3),
-            //     ),
-            //   ],
-            //   onBackPressed: () {
-            //     Navigator.of(context).pop();
-            //   },
             return NeonBackground(
               child: Scaffold(
                 backgroundColor:
