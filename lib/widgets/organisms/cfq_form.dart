@@ -24,21 +24,9 @@ class CfqForm extends StatelessWidget {
   final String moodsDisplay;
   final bool isLoading;
   final VoidCallback onSubmit;
-  final TextEditingController inviteeSearchController;
-  final List<model.User> selectedInvitees;
-  final List<dynamic> searchResults;
-  final bool isSearching;
-  final Function(model.User) onAddInvitee;
-  final Function(model.User) onRemoveInvitee;
   final model.User currentUser;
-  final List<Team> userTeams;
-  final List<Team> selectedTeams;
-  final Function(Team) onAddTeam;
-  final Function(Team) onRemoveTeam;
-  final Function(String) onSearch;
-  final VoidCallback onSelectEverybody;
-  final bool isEverybodySelected;
   final TextEditingController inviteesController;
+  final VoidCallback openInviteesSelectorScreen;
 
   const CfqForm({
     super.key,
@@ -52,21 +40,9 @@ class CfqForm extends StatelessWidget {
     required this.moodsDisplay,
     required this.isLoading,
     required this.onSubmit,
-    required this.inviteeSearchController,
-    required this.selectedInvitees,
-    required this.searchResults,
-    required this.isSearching,
-    required this.onAddInvitee,
-    required this.onRemoveInvitee,
     required this.currentUser,
-    required this.userTeams,
-    required this.selectedTeams,
-    required this.onAddTeam,
-    required this.onRemoveTeam,
-    required this.onSearch,
-    required this.onSelectEverybody,
-    required this.isEverybodySelected,
     required this.inviteesController,
+    required this.openInviteesSelectorScreen,
   });
 
   String _formatInviteesText(List<model.User> invitees, List<Team> teams) {
@@ -138,49 +114,8 @@ class CfqForm extends StatelessWidget {
             icon: CustomIcon.eventInvitees,
             controller: inviteesController,
             hintText: CustomString.who,
-            onTap: () async {
-              AppLogger.debug('Opening InviteesSelectorScreen');
-              AppLogger.debug(
-                  'Initial selected invitees: ${selectedInvitees.length}');
-              AppLogger.debug(
-                  'Initial selected teams: ${selectedTeams.length}');
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InviteesSelectorScreen(
-                    initialSelectedInvitees: selectedInvitees,
-                    initialSelectedTeams: selectedTeams,
-                    searchResults: searchResults,
-                    searchController: inviteeSearchController,
-                    isSearching: isSearching,
-                    onAddInvitee: onAddInvitee,
-                    onRemoveInvitee: onRemoveInvitee,
-                    onAddTeam: onAddTeam,
-                    onRemoveTeam: onRemoveTeam,
-                    onSearch: onSearch,
-                    onSelectEverybody: onSelectEverybody,
-                    isEverybodySelected: isEverybodySelected,
-                  ),
-                ),
-              );
-              if (result != null) {
-                AppLogger.debug('Received result from InviteesSelectorScreen');
-                AppLogger.debug(
-                    'Returned invitees: ${result['invitees'].length}');
-                AppLogger.debug('Returned teams: ${result['teams'].length}');
-                // Update the selected invitees and teams
-                onAddInvitee(result['invitees']);
-                onAddTeam(result['teams']);
-                // Update the inviteesController text based on the selection
-                inviteesController.text =
-                    _formatInviteesText(result['invitees'], result['teams']);
-                AppLogger.debug(
-                    'Updated inviteesController text: ${inviteesController.text}');
-              } else {
-                AppLogger.debug(
-                    'No result received from InviteesSelectorScreen');
-              }
-            },
+            readOnly: true,
+            onTap: openInviteesSelectorScreen,
           ),
           const SizedBox(height: 15),
           CustomButton(

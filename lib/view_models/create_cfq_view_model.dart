@@ -11,6 +11,8 @@ import '../utils/logger.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import '../models/team.dart';
+import '../screens/invitees_selector_screen.dart';
+import 'package:provider/provider.dart';
 
 class CreateCfqViewModel extends ChangeNotifier {
   // Controllers for form fields
@@ -36,7 +38,7 @@ class CreateCfqViewModel extends ChangeNotifier {
   List<Team> _userTeams = [];
   List<Team> get userTeams => _userTeams;
 
-  final List<Team> _selectedTeamInvitees = [];
+  List<Team> _selectedTeamInvitees = [];
   List<Team> get selectedTeamInvitees => _selectedTeamInvitees;
 
   // Search
@@ -79,6 +81,9 @@ class CreateCfqViewModel extends ChangeNotifier {
     await _initializeCurrentUser();
     await fetchUserTeams();
     performSearch(CustomString.emptyString);
+    searchController.addListener(() {
+      performSearch(searchController.text);
+    });
     if (prefillTeam != null) {
       _initializePrefillData();
       _removePrefillDataFromSearchResults();
@@ -510,5 +515,32 @@ class CreateCfqViewModel extends ChangeNotifier {
     _errorMessage = null;
     _successMessage = null;
     notifyListeners();
+  }
+
+  Future<void> openInviteesSelectorScreen(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider.value(
+          value: this,
+          child: const InviteesSelectorScreen(),
+        ),
+      ),
+    );
+
+    if (result != null) {
+      _selectedInvitees = result['invitees'];
+      _selectedTeamInvitees = result['teams'];
+      _isEverybodySelected = result['isEverybodySelected'];
+      _updateInviteesControllerText();
+      notifyListeners();
+    }
+  }
+
+  void _updateInviteesControllerText() {
+    List<String> inviteeNames =
+        _selectedInvitees.map((user) => user.username).toList();
+    inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
+    inviteesController.text = inviteeNames.join(', ');
   }
 }

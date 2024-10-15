@@ -51,7 +51,7 @@ class InviteeSearchBar extends StatelessWidget {
         ),
         if (searchResults.isNotEmpty)
           SizedBox(
-            height: 400,
+            height: 250,
             child: ListView.builder(
               itemCount: searchResults.length + (isEverybodySelected ? 0 : 1),
               itemBuilder: (context, index) {
