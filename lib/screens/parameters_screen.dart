@@ -21,7 +21,7 @@ class ParametersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(CustomString.parameters),
-        backgroundColor: CustomColor.mobileBackgroundColor,
+        backgroundColor: CustomColor.customBlack,
       ),
       body: ListView(
         children: [

@@ -23,7 +23,7 @@ class ThreadScreen extends StatelessWidget {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: CustomColor.mobileBackgroundColor,
+          backgroundColor: CustomColor.customBlack,
           elevation: 0,
           title: Consumer<ThreadViewModel>(
             builder: (context, viewModel, child) {
