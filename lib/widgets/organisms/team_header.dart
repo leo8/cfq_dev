@@ -13,15 +13,18 @@ class TeamHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        CustomText(
+          text: team.name,
+          textStyle: CustomTextStyle.title1.copyWith(fontSize: 32),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
         CustomAvatar(
           imageUrl: team.imageUrl,
           radius: 50,
         ),
         const SizedBox(height: 10),
-        CustomText(
-          text: team.name,
-          textStyle: CustomTextStyle.title1,
-        ),
       ],
     );
   }

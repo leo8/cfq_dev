@@ -9,6 +9,7 @@ class CustomString {
   // General
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const add = "Ajouter";
   static const create = "Créer";
   static const done = "Terminé";
   static const success = "Succès";

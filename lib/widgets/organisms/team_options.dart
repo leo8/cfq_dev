@@ -28,73 +28,84 @@ class TeamOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<TeamDetailsViewModel>(context, listen: false);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildOptionButton(
-          context,
-          icon: CustomIcon.addMember,
-          label: 'Ajouter',
-          onPressed: () async {
-            final bool? result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddTeamMembersScreen(teamId: team.uid),
-              ),
-            );
-            if (result == true) {
-              await viewModel.refreshTeamDetails();
-            }
-          },
-        ),
-        CfqButton(
-          prefillTeam: team,
-          prefillMembers: viewModel.members,
-        ),
-        TurnButton(
-          prefillTeam: team,
-          prefillMembers: viewModel.members,
-        ),
-        _buildOptionButton(
-          context,
-          icon: CustomIcon.leaveTeam,
-          label: 'Quitter',
-          onPressed: () async {
-            bool confirmed = await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text(CustomString.leaveTeam),
-                  content: const Text(CustomString.sureToLeaveTeam),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text(CustomString.cancel),
-                      onPressed: () => Navigator.of(context).pop(false),
-                    ),
-                    TextButton(
-                      child: const Text(CustomString.leave),
-                      onPressed: () => Navigator.of(context).pop(true),
-                    ),
-                  ],
-                );
-              },
-            );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildOptionButton(
+                  context,
+                  icon: CustomIcon.addMember,
+                  label: CustomString.add,
+                  onPressed: () async {
+                    final bool? result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AddTeamMembersScreen(teamId: team.uid),
+                      ),
+                    );
+                    if (result == true) {
+                      await viewModel.refreshTeamDetails();
+                    }
+                  },
+                ),
+                CfqButton(
+                  prefillTeam: team,
+                  prefillMembers: viewModel.members,
+                ),
+                TurnButton(
+                  prefillTeam: team,
+                  prefillMembers: viewModel.members,
+                ),
+                _buildOptionButton(
+                  context,
+                  icon: CustomIcon.leaveTeam,
+                  label: CustomString.leave,
+                  onPressed: () async {
+                    bool confirmed = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text(CustomString.leaveTeam),
+                          content: const Text(CustomString.sureToLeaveTeam),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text(CustomString.cancel),
+                              onPressed: () => Navigator.of(context).pop(false),
+                            ),
+                            TextButton(
+                              child: const Text(CustomString.leave),
+                              onPressed: () => Navigator.of(context).pop(true),
+                            ),
+                          ],
+                        );
+                      },
+                    );
 
-            if (confirmed) {
-              bool success = await viewModel.leaveTeam();
-              if (success) {
-                onTeamLeft();
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(CustomString.errorLeavingTeam),
-                  ),
-                );
-              }
-            }
-          },
-        ),
-      ],
+                    if (confirmed) {
+                      bool success = await viewModel.leaveTeam();
+                      if (success) {
+                        onTeamLeft();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(CustomString.errorLeavingTeam),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -105,12 +116,12 @@ class TeamOptions extends StatelessWidget {
     return Column(
       children: [
         IconButton(
-          icon: icon,
+          icon: icon.copyWith(size: 28),
           onPressed: onPressed,
         ),
         Text(
           label,
-          style: CustomTextStyle.body1,
+          style: CustomTextStyle.body2,
         ),
       ],
     );
