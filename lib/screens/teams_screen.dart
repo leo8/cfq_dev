@@ -11,7 +11,8 @@ import 'team_details_screen.dart';
 import '../widgets/molecules/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
 import '../utils/styles/string.dart';
-import '../../utils/styles/icons.dart';
+import '../utils/styles/icons.dart';
+import '../utils/styles/colors.dart';
 
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key});
@@ -20,109 +21,124 @@ class TeamsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TeamsViewModel>(
       create: (_) => TeamsViewModel(),
-      child: Consumer<TeamsViewModel>(builder: (context, viewModel, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(CustomString.mesTeams),
-          ),
-          body: RefreshIndicator(
-            onRefresh: () => viewModel.fetchTeams(),
-            child: Consumer<TeamsViewModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  return Column(
-                    children: [
-                      // Create Team Button
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            // Centered OutlinedIconButton
-                            Center(
-                              child: OutlinedIconButton(
-                                icon: CustomIcon.add,
-                                onPressed: () {
-                                  // Navigate to CreateTeamScreen
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const CreateTeamScreen(),
-                                    ),
-                                  ).then((_) {
-                                    // Refresh teams after returning
-                                    viewModel.fetchTeams();
-                                  });
-                                },
-                              ),
+      child: Consumer<TeamsViewModel>(
+        builder: (context, viewModel, child) {
+          return Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: Scaffold(
+                backgroundColor: CustomColor.transparent,
+                appBar: AppBar(
+                  toolbarHeight: 40,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: CustomColor.transparent,
+                ),
+                body: Consumer<TeamsViewModel>(
+                  builder: (context, viewModel, child) {
+                    if (viewModel.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return Column(
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Center(
+                            child: Text(
+                              CustomString.myTeamsCapital,
+                              style: CustomTextStyle.hugeTitle
+                                  .copyWith(fontSize: 32),
                             ),
-                            const SizedBox(height: 8),
-                            // Text 'Créer une team' below the button
-                            CustomText(
-                              text: CustomString.createTeam,
-                              textStyle: CustomTextStyle.title3,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Teams List
-                      Expanded(
-                        child: viewModel.teams.isEmpty
-                            ? Center(
-                                child: CustomText(
-                                  text: CustomString.noTeamsYet,
-                                  textStyle: CustomTextStyle.title3,
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: viewModel.teams.length,
-                                itemBuilder: (context, index) {
-                                  Team team = viewModel.teams[index];
-                                  return FutureBuilder<List<model.User>>(
-                                    future: _fetchTeamMembers(team.members),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const SizedBox();
-                                      } else if (snapshot.hasData) {
-                                        List<model.User> members =
-                                            snapshot.data!;
-                                        return TeamCard(
-                                          team: team,
-                                          members: members,
-                                          onTap: () async {
-                                            final bool? result =
-                                                await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TeamDetailsScreen(
-                                                        team: team),
-                                              ),
-                                            );
-                                            if (result == true) {
-                                              await viewModel.fetchTeams();
-                                            }
-                                          },
-                                        );
-                                      } else {
-                                        return const SizedBox();
-                                      }
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          // Create Team Button
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                // Centered OutlinedIconButton
+                                Center(
+                                  child: OutlinedIconButton(
+                                    icon: CustomIcon.add,
+                                    onPressed: () {
+                                      // Navigate to CreateTeamScreen
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CreateTeamScreen(),
+                                        ),
+                                      ).then((_) {
+                                        // Refresh teams after returning
+                                        viewModel.fetchTeams();
+                                      });
                                     },
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  );
-                }
-              },
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                              ],
+                            ),
+                          ),
+                          // Teams List
+                          Expanded(
+                            child: viewModel.teams.isEmpty
+                                ? Center(
+                                    child: CustomText(
+                                      text: CustomString.noTeamsYet,
+                                      textStyle: CustomTextStyle.title3,
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    itemCount: viewModel.teams.length,
+                                    itemBuilder: (context, index) {
+                                      Team team = viewModel.teams[index];
+                                      return FutureBuilder<List<model.User>>(
+                                        future: _fetchTeamMembers(team.members),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const SizedBox();
+                                          } else if (snapshot.hasData) {
+                                            List<model.User> members =
+                                                snapshot.data!;
+                                            return TeamCard(
+                                              team: team,
+                                              members: members,
+                                              onTap: () async {
+                                                final bool? result =
+                                                    await Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        TeamDetailsScreen(
+                                                            team: team),
+                                                  ),
+                                                );
+                                                if (result == true) {
+                                                  await viewModel.fetchTeams();
+                                                }
+                                              },
+                                            );
+                                          } else {
+                                            return const SizedBox();
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 

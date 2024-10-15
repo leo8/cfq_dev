@@ -28,9 +28,9 @@ class TeamCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: CustomColor.black,
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: CustomColor.white24, width: 1.0),
+          color: CustomColor.customBlack,
+          borderRadius: BorderRadius.circular(5.0),
+          border: Border.all(color: CustomColor.customWhite, width: 0.5),
         ),
         child: Row(
           children: [
@@ -45,24 +45,31 @@ class TeamCard extends StatelessWidget {
                 children: [
                   CustomText(
                     text: team.name,
-                    textStyle: CustomTextStyle.title1,
+                    textStyle: CustomTextStyle.body1
+                        .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       _buildMemberAvatars(),
                       const SizedBox(width: 8),
-                      CustomText(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: CustomText(
                           text: members.length.toString() +
                               CustomString.space +
                               CustomString.members,
-                          textStyle: CustomTextStyle.body1),
+                          textStyle: CustomTextStyle.body2
+                              .copyWith(color: CustomColor.grey300),
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            CustomIcon.arrowForward,
+            CustomIcon.arrowForward
+                .copyWith(size: 30, color: CustomColor.customWhite),
           ],
         ),
       ),
@@ -83,7 +90,7 @@ class TeamCard extends StatelessWidget {
               imageUrl: member.profilePictureUrl,
               radius: 12,
               borderColor: CustomColor.white,
-              borderWidth: 2,
+              borderWidth: 0.3,
             ),
           );
         }).toList(),

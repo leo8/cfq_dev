@@ -35,7 +35,7 @@ class CustomIcon extends StatelessWidget {
 
   //Navigation
   static const arrowBack = CustomIcon('arrow_left.svg');
-  static const arrowForward = CustomIcon('arrow_right_cirlce.svg');
+  static const arrowForward = CustomIcon('arrow_right_circle.svg');
   static const close = CustomIcon('xmark.svg');
 
   //Auth

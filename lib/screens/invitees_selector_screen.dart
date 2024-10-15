@@ -27,7 +27,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            backgroundColor: CustomColor.black,
+            backgroundColor: CustomColor.customBlack,
             actions: [
               TextButton(
                 onPressed: () {

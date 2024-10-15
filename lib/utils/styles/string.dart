@@ -53,7 +53,8 @@ class CustomString {
 
   // Teams
   static const team = "Team";
-  static const mesTeams = "Mes teams";
+  static const myTeams = "Mes teams";
+  static const myTeamsCapital = "MES TEAMS";
   static const noTeamsYet = "Vous n'avez pas encore de teams.";
   static const createTeam = "Créer une team";
   static const teamName = "Nom de la team";

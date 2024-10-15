@@ -34,7 +34,7 @@ class CustomTextField extends StatelessWidget {
       height:
           height ?? 60.0, // Set the height if provided, else default to 60.0
       decoration: BoxDecoration(
-        color: CustomColor.black, // Background color with reduced opacity
+        color: CustomColor.customBlack, // Background color with reduced opacity
         borderRadius:
             BorderRadius.circular(5), // Rounded corners for the text field
         border: Border.all(color: CustomColor.white, width: 0.5),
