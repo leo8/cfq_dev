@@ -64,6 +64,8 @@ class CustomString {
   static const addFriends = "Ajoute tes amis";
   static const members = "Membres";
   static const addMembers = "Ajouter des membres";
+  static const teamMembers = "Déjà membres..";
+  static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
   static const sureToLeaveTeam =
       "Êtes-vous sûr de vouloir quitter cette team ?";

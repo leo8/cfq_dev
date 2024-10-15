@@ -20,26 +20,27 @@ class AddTeamMembersScreen extends StatelessWidget {
         builder: (context, viewModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text(CustomString.addMembers),
+              toolbarHeight: 40,
+              backgroundColor: CustomColor.transparent,
+              elevation: 0,
               leading: IconButton(
-                icon: CustomIcon.arrowBack,
-                onPressed: () {
-                  Navigator.of(context).pop(viewModel.hasChanges);
-                },
-              ),
+                  icon: CustomIcon.arrowBack,
+                  onPressed: () {
+                    Navigator.of(context).pop(viewModel.hasChanges);
+                  }),
             ),
             body: viewModel.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView(
                     children: [
                       _buildMembersList(
-                        'Membres de l\'équipe',
+                        CustomString.teamMembers,
                         viewModel.teamMembers,
                         viewModel,
                         true,
                       ),
                       _buildMembersList(
-                        'Autres amis',
+                        CustomString.otherFriends,
                         viewModel.nonTeamMembers,
                         viewModel,
                         false,
@@ -59,7 +60,13 @@ class AddTeamMembersScreen extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(title, style: CustomTextStyle.title3),
+          child: Text(
+            title,
+            style: CustomTextStyle.body1.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         ...users.map((user) => ListTile(
               leading: CircleAvatar(
@@ -67,7 +74,7 @@ class AddTeamMembersScreen extends StatelessWidget {
               ),
               title: Text(user.username),
               trailing: isTeamMember
-                  ? CustomIcon.plusCircle.copyWith(color: CustomColor.green)
+                  ? const Icon(Icons.check_circle, color: CustomColor.green)
                   : ElevatedButton(
                       onPressed: () => viewModel.addMemberToTeam(user.uid),
                       child: const Text(CustomString.addFriend),

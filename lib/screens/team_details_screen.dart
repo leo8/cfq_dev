@@ -8,7 +8,6 @@ import '../widgets/organisms/team_options.dart';
 import '../utils/styles/colors.dart';
 import '../widgets/organisms/team_members_list.dart';
 import '../../utils/styles/icons.dart';
-import '../utils/styles/text_styles.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
