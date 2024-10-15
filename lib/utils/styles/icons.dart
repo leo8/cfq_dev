@@ -7,9 +7,12 @@ class CustomIcon extends StatelessWidget {
   final Color? color;
   final double size;
 
-  const CustomIcon(this.assetName,
-      {Key? key, this.color = CustomColor.customWhite, this.size = 24})
-      : super(key: key);
+  const CustomIcon(
+    this.assetName, {
+    super.key,
+    this.color = CustomColor.customWhite,
+    this.size = 20,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class CustomIcon extends StatelessWidget {
 
   //General
   static const checkCircle = CustomIcon('xmark_circle.svg');
-  static const add = Icons.add;
+  static const add = CustomIcon('plus.svg');
   static const search = CustomIcon('magnifying_glass.svg');
   static const plusCircle = CustomIcon('plus_circle.svg');
 

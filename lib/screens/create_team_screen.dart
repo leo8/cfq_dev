@@ -107,7 +107,7 @@ class CreateTeamScreen extends StatelessWidget {
                                 ),
                                 title: Text(user.username),
                                 trailing: IconButton(
-                                  icon: const Icon(CustomIcon.add),
+                                  icon: CustomIcon.add,
                                   onPressed: () {
                                     viewModel.addFriend(user);
                                   },

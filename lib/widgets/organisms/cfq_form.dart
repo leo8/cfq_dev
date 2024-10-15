@@ -11,6 +11,7 @@ import '../atoms/texts/custom_text_field.dart';
 import '../../models/team.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/logger.dart';
 
 class CfqForm extends StatelessWidget {
   final Uint8List? image;
@@ -67,6 +68,13 @@ class CfqForm extends StatelessWidget {
     required this.isEverybodySelected,
     required this.inviteesController,
   });
+
+  String _formatInviteesText(List<model.User> invitees, List<Team> teams) {
+    List<String> items = [];
+    items.addAll(invitees.map((user) => user.username));
+    items.addAll(teams.map((team) => team.name));
+    return items.join(', ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,13 +138,18 @@ class CfqForm extends StatelessWidget {
             icon: CustomIcon.eventInvitees,
             controller: inviteesController,
             hintText: CustomString.who,
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              AppLogger.debug('Opening InviteesSelectorScreen');
+              AppLogger.debug(
+                  'Initial selected invitees: ${selectedInvitees.length}');
+              AppLogger.debug(
+                  'Initial selected teams: ${selectedTeams.length}');
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => InviteesSelectorScreen(
-                    selectedInvitees: selectedInvitees,
-                    selectedTeams: selectedTeams,
+                    initialSelectedInvitees: selectedInvitees,
+                    initialSelectedTeams: selectedTeams,
                     searchResults: searchResults,
                     searchController: inviteeSearchController,
                     isSearching: isSearching,
@@ -150,6 +163,23 @@ class CfqForm extends StatelessWidget {
                   ),
                 ),
               );
+              if (result != null) {
+                AppLogger.debug('Received result from InviteesSelectorScreen');
+                AppLogger.debug(
+                    'Returned invitees: ${result['invitees'].length}');
+                AppLogger.debug('Returned teams: ${result['teams'].length}');
+                // Update the selected invitees and teams
+                onAddInvitee(result['invitees']);
+                onAddTeam(result['teams']);
+                // Update the inviteesController text based on the selection
+                inviteesController.text =
+                    _formatInviteesText(result['invitees'], result['teams']);
+                AppLogger.debug(
+                    'Updated inviteesController text: ${inviteesController.text}');
+              } else {
+                AppLogger.debug(
+                    'No result received from InviteesSelectorScreen');
+              }
             },
           ),
           const SizedBox(height: 15),

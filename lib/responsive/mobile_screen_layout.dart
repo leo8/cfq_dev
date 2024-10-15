@@ -102,8 +102,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 child: Transform.rotate(
                   alignment: Alignment.center,
                   angle: isOpen ? 0.75 : 0,
-                  child: Icon(
-                    CustomIcon.add,
+                  child: CustomIcon.add.copyWith(
                     color: CustomColor.white,
                     size: sizeIcon,
                   ),

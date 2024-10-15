@@ -4,6 +4,9 @@ import '../../../models/team.dart';
 import '../../../models/user.dart' as model;
 import '../../../utils/styles/string.dart';
 import '../../../utils/styles/icons.dart';
+import '../../../utils/styles/text_styles.dart';
+import '../../../utils/logger.dart';
+import '../texts/bordered_icon_text_field.dart';
 
 class InviteeSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -19,7 +22,7 @@ class InviteeSearchBar extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onSearch,
-    this.hintText = 'Search friends or teams to invite',
+    this.hintText = CustomString.searchFriends,
     required this.searchResults,
     required this.onAddInvitee,
     required this.onAddTeam,
@@ -29,73 +32,88 @@ class InviteeSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      TextField(
-        controller: controller,
-        onChanged: onSearch,
-        decoration: InputDecoration(
-          prefixIcon: CustomIcon.search,
-          hintText: hintText,
-          filled: true,
-          fillColor: CustomColor.white.withOpacity(0.1),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            borderSide: BorderSide.none,
+    AppLogger.debug('Search results length: ${searchResults.length}');
+    return Column(
+      children: [
+        Container(
+          height: 46,
+          child: BorderedIconTextField(
+            icon: CustomIcon.search
+                .copyWith(color: CustomColor.customWhite, size: 22),
+            controller: controller,
+            hintText: hintText,
+            hintTextStyle: CustomTextStyle.body1,
+            borderRadius: BorderRadius.circular(30),
+            height: 46,
+            onTap: null,
+            readOnly: false,
           ),
         ),
-      ),
-      if (searchResults.isNotEmpty)
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
-            itemCount: searchResults.length + (isEverybodySelected ? 0 : 1),
-            itemBuilder: (context, index) {
-              if (!isEverybodySelected && index == 0) {
-                // "Tout le monde" option
-                return ListTile(
-                  leading: const CircleAvatar(
-                    backgroundImage:
-                        AssetImage('assets/images/turn_button.png'),
-                  ),
-                  title: const Text(CustomString.toutLeMonde),
-                  trailing: IconButton(
-                    icon: const Icon(CustomIcon.add),
-                    onPressed: onSelectEverybody,
-                  ),
-                );
-              } else {
-                final result = isEverybodySelected
-                    ? searchResults[index]
-                    : searchResults[index - 1];
-                if (result is Team) {
+        const SizedBox(
+          height: 25,
+        ),
+        if (searchResults.isNotEmpty)
+          SizedBox(
+            height: 400,
+            child: ListView.builder(
+              itemCount: searchResults.length + (isEverybodySelected ? 0 : 1),
+              itemBuilder: (context, index) {
+                if (!isEverybodySelected && index == 0) {
+                  // "Tout le monde" option
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(result.imageUrl),
+                    leading: const CircleAvatar(
+                      backgroundImage:
+                          AssetImage('assets/images/turn_button.png'),
                     ),
-                    title: Text(result.name),
-                    subtitle: const Text(CustomString.team),
+                    title: const Text(CustomString.toutLeMonde),
                     trailing: IconButton(
-                      icon: const Icon(CustomIcon.add),
-                      onPressed: () => onAddTeam(result),
+                      icon: CustomIcon.add.copyWith(
+                        color: CustomColor.customPurple,
+                        size: 24,
+                      ),
+                      onPressed: onSelectEverybody,
                     ),
                   );
-                } else if (result is model.User) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(result.profilePictureUrl),
-                    ),
-                    title: Text(result.username),
-                    trailing: IconButton(
-                      icon: const Icon(CustomIcon.add),
-                      onPressed: () => onAddInvitee(result),
-                    ),
-                  );
+                } else {
+                  final result = isEverybodySelected
+                      ? searchResults[index]
+                      : searchResults[index - 1];
+                  if (result is Team) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(result.imageUrl),
+                      ),
+                      title: Text(result.name),
+                      subtitle: const Text(CustomString.team),
+                      trailing: IconButton(
+                        icon: CustomIcon.add.copyWith(
+                          color: CustomColor.customPurple,
+                          size: 24,
+                        ),
+                        onPressed: () => onAddTeam(result),
+                      ),
+                    );
+                  } else if (result is model.User) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(result.profilePictureUrl),
+                      ),
+                      title: Text(result.username),
+                      trailing: IconButton(
+                        icon: CustomIcon.add.copyWith(
+                          color: CustomColor.customPurple,
+                          size: 24,
+                        ),
+                        onPressed: () => onAddInvitee(result),
+                      ),
+                    );
+                  }
                 }
-              }
-              return const SizedBox.shrink();
-            },
+                return const SizedBox.shrink();
+              },
+            ),
           ),
-        )
-    ]);
+      ],
+    );
   }
 }
