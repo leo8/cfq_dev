@@ -47,6 +47,7 @@ class CustomString {
 
   // Friends
   static const myFriends = "Mes amis";
+  static const myFriendsCapital = "MES AMIS";
   static const noFriendsYet = "Vous n'avez pas encore d'amis";
   static const friendAdded = "Ami ajouté !";
   static const friendDeleted = "Ami supprimé !";

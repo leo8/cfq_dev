@@ -6,7 +6,6 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 import '../atoms/avatars/profile_image_avatar.dart';
-import '../molecules/username_location_field.dart';
 import '../atoms/dates/custom_date_field.dart';
 import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
