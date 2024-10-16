@@ -12,11 +12,11 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColor.transparent, // Sets the background color
+      backgroundColor: CustomColor.customBlack, // Sets the background color
       appBar: AppBar(
         toolbarHeight: 40,
         automaticallyImplyLeading: false,
-        backgroundColor: CustomColor.transparent,
+        backgroundColor: CustomColor.customBlack,
         actions: [
           IconButton(
             icon: CustomIcon.close,
