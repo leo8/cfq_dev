@@ -3,54 +3,63 @@ import '../../../utils/styles/colors.dart';
 import '../../../utils/styles/text_styles.dart';
 
 class CustomButton extends StatelessWidget {
-  final String label; // The button label text
-  final VoidCallback
-      onTap; // Function to be triggered when the button is tapped
-  final bool isLoading; // Indicates if the button is in a loading state
-  final double? width; // Optional width parameter
-  final Color? color; // Optional color parameter
-  final double? borderRadius; // Optional border radius parameter
+  final String label;
+  final VoidCallback onTap;
+  final bool isLoading;
+  final double? width;
+  final double? height;
+  final Color? color;
+  final double? borderRadius;
+  final TextStyle? textStyle;
+  final Color borderColor; // Added optional border color
+  final double? borderWidth; // Added border width with default value
 
-  // Constructor for the custom button
   const CustomButton({
     super.key,
-    required this.label, // Button label is required
-    required this.onTap, // onTap callback is required
-    this.isLoading = false, // Default value for isLoading is false
-    this.width, // Optional width parameter
-    this.color, // Optional color parameter
-    this.borderRadius, // Optional border radius parameter
+    required this.label,
+    required this.onTap,
+    this.isLoading = false,
+    this.width,
+    this.height,
+    this.color,
+    this.borderRadius,
+    this.textStyle,
+    this.borderColor = CustomColor.customWhite,
+    this.borderWidth, // Default border width
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: isLoading ? null : onTap, // Disable tap if the button is loading
+      onTap: isLoading ? null : onTap,
       child: isLoading
           ? const Center(
-              // Show a loading spinner if isLoading is true
               child: CircularProgressIndicator(
                 strokeWidth: 5,
-                color: CustomColor.customWhite, // White loading spinner color
+                color: CustomColor.customWhite,
               ),
             )
           : Container(
-              width: width ??
-                  double.infinity, // Use provided width or full container width
-              alignment: Alignment.center, // Centers the button label
-              padding: const EdgeInsets.symmetric(
-                  vertical: 16), // Padding for the button
+              width: width ?? double.infinity,
+              height: height,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    borderRadius ?? 7), // Use provided border radius or default
-                color: color ??
-                    CustomColor.customWhite, // Use provided color or default
+                borderRadius: BorderRadius.circular(borderRadius ?? 7),
+                color: color ?? CustomColor.customWhite,
+                border: borderWidth != null
+                    ? Border.all(
+                        color: borderColor,
+                        width: borderWidth!,
+                      )
+                    : null,
               ),
               child: Text(
-                label, // Button text
-                style: CustomTextStyle.subButton.copyWith(
-                  color: CustomColor.customBlack,
-                ),
+                label,
+                style: textStyle ??
+                    CustomTextStyle.subButton.copyWith(
+                      color: CustomColor.customBlack,
+                    ),
               ),
             ),
     );

@@ -66,7 +66,7 @@ class CustomIcon extends StatelessWidget {
   static const statusOff = CustomIcon('moon.svg');
   static const statusOn = CustomIcon('disco.svg');
   static const userLocation = CustomIcon('location.svg');
-  static const privateProfile = Icons.lock;
+  static const privateProfile = Icons.lock_outlined;
 
   //Teams
   static const addMember = CustomIcon('add_member.svg');
