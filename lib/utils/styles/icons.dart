@@ -4,7 +4,7 @@ import 'colors.dart';
 
 class CustomIcon extends StatelessWidget {
   final String assetName;
-  final Color? color;
+  final Color color;
   final double size;
 
   const CustomIcon(
@@ -18,8 +18,7 @@ class CustomIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return SvgPicture.asset(
       'assets/icons/$assetName',
-      colorFilter:
-          color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
       width: size,
       height: size,
     );
