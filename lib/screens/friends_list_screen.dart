@@ -96,7 +96,8 @@ class FriendsListScreen extends StatelessWidget {
                               leading: ClickableAvatar(
                                 userId: friend.uid,
                                 imageUrl: friend.profilePictureUrl,
-                                radius: 20, // Adjust as needed
+                                radius: 20,
+                                isActive: friend.isActive,
                                 onTap: () {
                                   // Navigate to friend's profile
                                   Navigator.push(

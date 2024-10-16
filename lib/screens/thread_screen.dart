@@ -85,9 +85,23 @@ class ThreadScreen extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundImage: NetworkImage(user.profilePictureUrl),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: user.isActive
+                          ? [
+                              const BoxShadow(
+                                color: CustomColor.turnColor,
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(user.profilePictureUrl),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   CustomText(

@@ -142,9 +142,24 @@ class CreateTeamScreen extends StatelessWidget {
                                       final user =
                                           viewModel.searchResults[index];
                                       return ListTile(
-                                        leading: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              user.profilePictureUrl),
+                                        leading: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: user.isActive
+                                                ? [
+                                                    const BoxShadow(
+                                                      color:
+                                                          CustomColor.turnColor,
+                                                      blurRadius: 5,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ]
+                                                : null,
+                                          ),
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                user.profilePictureUrl),
+                                          ),
                                         ),
                                         title: Text(user.username),
                                         trailing: IconButton(
