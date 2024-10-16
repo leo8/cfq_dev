@@ -38,8 +38,9 @@ class ProfileImageAvatar extends StatelessWidget {
                 ),
         ),
         Positioned(
-          bottom: -10,
-          left: 80,
+          bottom: -5,
+          left: 0,
+          right: 0,
           child: IconButton(
             onPressed: onImageSelected,
             icon: CustomIcon.addImage,

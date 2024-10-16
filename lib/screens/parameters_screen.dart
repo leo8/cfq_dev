@@ -32,7 +32,8 @@ class ParametersScreen extends StatelessWidget {
           Center(
             child: Text(
               CustomString.parametersCapital,
-              style: CustomTextStyle.body1.copyWith(fontSize: 28),
+              style: CustomTextStyle.body1
+                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(

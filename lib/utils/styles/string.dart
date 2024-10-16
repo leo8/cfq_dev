@@ -114,6 +114,8 @@ class CustomString {
   static const parameters = "Paramètres";
   static const parametersCapital = "PARAMÈTRES";
   static const editProfile = "Mon profil";
+  static const myProfile = "Mon profil";
+  static const myProfileCapital = "MON PROFIL";
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 

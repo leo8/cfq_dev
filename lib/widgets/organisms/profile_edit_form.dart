@@ -1,7 +1,10 @@
 import 'dart:typed_data';
+import 'package:cfq_dev/widgets/atoms/texts/bordered_icon_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/icons.dart';
 import '../atoms/avatars/profile_image_avatar.dart';
 import '../molecules/username_location_field.dart';
 import '../atoms/dates/custom_date_field.dart';
@@ -133,14 +136,27 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          _buildProfileImage(),
-          const SizedBox(height: 16),
-          UsernameLocationFields(
-            usernameController: _usernameController,
-            locationController: _locationController,
+          const SizedBox(height: 15),
+          Center(
+            child: Text(
+              CustomString.myProfileCapital,
+              style: CustomTextStyle.body1
+                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
           ),
-          const SizedBox(height: 16),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          _buildProfileImage(),
+          const SizedBox(height: 20),
+          BorderedIconTextField(
+              icon: CustomIcon.editProfile,
+              controller: _usernameController,
+              hintText: CustomString.yourUsername),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+              icon: CustomIcon.userLocation,
+              controller: _locationController,
+              hintText: CustomString.yourLocation),
+          const SizedBox(height: 15),
           CustomDateField(
             controller: _birthDateController,
             hintText: CustomString.yourBirthdate,
@@ -151,7 +167,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
               });
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 35),
           CustomButton(
             label: 'Sauvegarder',
             onTap: _handleSave,
