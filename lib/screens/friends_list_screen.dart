@@ -8,6 +8,7 @@ import '../view_models/friends_list_view_model.dart';
 import 'profile_screen.dart';
 import '../widgets/atoms/avatars/clickable_avatar.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
+import '../widgets/molecules/custom_search_bar.dart';
 
 class FriendsListScreen extends StatelessWidget {
   final String currentUserId;
@@ -38,6 +39,25 @@ class FriendsListScreen extends StatelessWidget {
             ),
             const SizedBox(
               height: 35,
+            ),
+            Consumer<FriendsListViewModel>(
+              builder: (context, viewModel, child) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: GestureDetector(
+                    onTap: () => viewModel
+                        .performSearch(viewModel.searchController.text),
+                    child: CustomSearchBar(
+                      controller: viewModel.searchController,
+                      hintText: CustomString.searchFriends,
+                      onChanged: (value) => viewModel.performSearch(value),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(
+              height: 25,
             ),
             Expanded(
               child: Consumer<FriendsListViewModel>(
@@ -71,7 +91,7 @@ class FriendsListScreen extends StatelessWidget {
                         model.User friend = viewModel.friends[index];
                         return Column(
                           children: [
-                            Divider(),
+                            const Divider(),
                             ListTile(
                               leading: ClickableAvatar(
                                 userId: friend.uid,
