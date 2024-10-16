@@ -9,6 +9,7 @@ import 'profile_screen.dart';
 import '../widgets/atoms/avatars/clickable_avatar.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../widgets/molecules/custom_search_bar.dart';
+import '../utils/styles/icons.dart';
 
 class FriendsListScreen extends StatelessWidget {
   final String currentUserId;
@@ -24,6 +25,12 @@ class FriendsListScreen extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 40,
           backgroundColor: CustomColor.customBlack,
+          leading: IconButton(
+            icon: CustomIcon.arrowBack,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: Column(
           children: [

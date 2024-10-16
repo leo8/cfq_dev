@@ -23,6 +23,12 @@ class ParametersScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
+        leading: IconButton(
+          icon: CustomIcon.arrowBack,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: ListView(
         children: [
