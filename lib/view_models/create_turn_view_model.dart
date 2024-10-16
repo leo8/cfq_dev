@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/enums/moods.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
+import 'package:cfq_dev/utils/styles/text_styles.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart' as model;
 import '../models/turn_event_model.dart';
@@ -14,6 +16,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../screens/invitees_selector_screen.dart';
 import '../view_models/invitees_selector_view_model.dart';
+import '../widgets/atoms/chips/mood_chip.dart';
+import '../widgets/atoms/buttons/custom_button.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -354,32 +358,64 @@ class CreateTurnViewModel extends ChangeNotifier
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text(CustomString.whatMood),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: CustomMood.moods.map((mood) {
-                    return CheckboxListTile(
-                      title: Text(mood),
-                      value: tempSelectedMoods.contains(mood),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            tempSelectedMoods.add(mood);
-                          } else {
-                            tempSelectedMoods.remove(mood);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
+              title: Stack(
+                children: [
+                  Center(
+                    child: Text(CustomString.whatMood,
+                        style: CustomTextStyle.body1.copyWith(fontSize: 22)),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogContext).pop(),
+                      child: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: CustomColor.customBlack,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.center,
+                      children: CustomMood.moods.map((mood) {
+                        return MoodChip(
+                          icon: mood.icon,
+                          label: mood.label,
+                          isSelected: tempSelectedMoods.contains(mood.label),
+                          onTap: () {
+                            setState(() {
+                              if (tempSelectedMoods.contains(mood.label)) {
+                                tempSelectedMoods.remove(mood.label);
+                              } else {
+                                tempSelectedMoods.add(mood.label);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                ],
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop(tempSelectedMoods);
-                  },
-                  child: const Text(CustomString.ok),
+                Center(
+                  child: CustomButton(
+                    label: CustomString.done,
+                    color: CustomColor.customPurple,
+                    borderRadius: 15,
+                    onTap: () =>
+                        Navigator.of(dialogContext).pop(tempSelectedMoods),
+                    width: 140, // Adjust this value to make the button smaller
+                  ),
                 ),
               ],
             );

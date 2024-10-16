@@ -7,6 +7,9 @@ class CustomButton extends StatelessWidget {
   final VoidCallback
       onTap; // Function to be triggered when the button is tapped
   final bool isLoading; // Indicates if the button is in a loading state
+  final double? width; // Optional width parameter
+  final Color? color; // Optional color parameter
+  final double? borderRadius; // Optional border radius parameter
 
   // Constructor for the custom button
   const CustomButton({
@@ -14,6 +17,9 @@ class CustomButton extends StatelessWidget {
     required this.label, // Button label is required
     required this.onTap, // onTap callback is required
     this.isLoading = false, // Default value for isLoading is false
+    this.width, // Optional width parameter
+    this.color, // Optional color parameter
+    this.borderRadius, // Optional border radius parameter
   });
 
   @override
@@ -29,14 +35,16 @@ class CustomButton extends StatelessWidget {
               ),
             )
           : Container(
-              width:
-                  double.infinity, // Button width takes up the full container
+              width: width ??
+                  double.infinity, // Use provided width or full container width
               alignment: Alignment.center, // Centers the button label
               padding: const EdgeInsets.symmetric(
                   vertical: 16), // Padding for the button
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7), // Rounded corners
-                color: CustomColor.customWhite,
+                borderRadius: BorderRadius.circular(
+                    borderRadius ?? 7), // Use provided border radius or default
+                color: color ??
+                    CustomColor.customWhite, // Use provided color or default
               ),
               child: Text(
                 label, // Button text

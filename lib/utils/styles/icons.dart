@@ -86,12 +86,15 @@ class CustomIcon extends StatelessWidget {
   static const favorite = CustomIcon('heart.svg');
 
   //Moods
-  static const streetIcon = CustomIcon('street_icon.svg');
-  static const homeParty = CustomIcon('home_party.svg');
-  static const sunHorizon = CustomIcon('sun_horizon.svg');
-  static const forkKnife = CustomIcon('fork_knife.svg');
-  static const beer = CustomIcon('beer.svg');
-  static const partyPopper = CustomIcon('party_popper.svg');
+  static const streetMood = CustomIcon('street_icon.svg');
+  static const homeMood = CustomIcon('home_party.svg');
+  static const chillMood = CustomIcon('moon2.svg');
+  static const dinerMood = CustomIcon('fork_knife.svg');
+  static const barMood = CustomIcon('beer.svg');
+  static const turnMood = CustomIcon('party_popper.svg');
+  static const clubMood = CustomIcon('disco.svg');
+  static const beforeMood = CustomIcon('sun_horizon.svg');
+  static const afterMood = CustomIcon('moon.svg');
 
   //Parameters
   static const settings = Icons.settings;

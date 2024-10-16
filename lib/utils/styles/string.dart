@@ -79,7 +79,7 @@ class CustomString {
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
   static const who = "À qui ?";
   static const address = "L'adresse exacte";
-  static const whatMood = "Quel mood ?";
+  static const whatMood = "Quel(s) mood(s) ?";
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
@@ -123,12 +123,15 @@ class CustomString {
   static const pleaseSelectAnImage = "Veuillez sélectionner une image";
 
   // Moods
-  static const houseMood = "maison";
-  static const barMood = "bar";
-  static const clubMood = "club";
-  static const streetMood = "street";
-  static const turnMood = "turn";
-  static const chillMood = "chill";
+  static const houseMood = "Maison";
+  static const barMood = "Bar";
+  static const clubMood = "Club";
+  static const streetMood = "Street";
+  static const turnMood = "Turn";
+  static const chillMood = "Chill";
+  static const dinerMood = "Dîner";
+  static const beforeMood = "Before";
+  static const afterMood = "After";
 
   // Error Messages
   static const errorFetchingEvents =
