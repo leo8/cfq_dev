@@ -6,6 +6,7 @@ import '../../utils/styles/icons.dart';
 import '../../../utils/styles/colors.dart';
 import '../../../utils/styles/text_styles.dart';
 import '../atoms/buttons/custom_button.dart';
+import '../atoms/avatars/custom_avatar.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
@@ -70,23 +71,43 @@ class _ProfileContentState extends State<ProfileContent>
           children: [
             // Left 1/3 container with AvatarNeonSwitch or CircleAvatar
             Container(
-              width: MediaQuery.of(context).size.width / 3,
-              padding: const EdgeInsets.only(
-                  left: 21, top: 16, bottom: 16, right: 1),
-              child: widget.isCurrentUser
-                  ? AvatarNeonSwitch(
-                      isActive: widget.user.isActive,
-                      onChanged: widget.onActiveChanged,
-                      imageUrl: widget.user.profilePictureUrl,
-                      avatarRadius: 70,
-                      switchSize: 1.4,
-                    )
-                  : CircleAvatar(
-                      radius: 70,
-                      backgroundImage:
-                          NetworkImage(widget.user.profilePictureUrl),
-                    ),
-            ),
+                width: MediaQuery.of(context).size.width / 3,
+                padding: const EdgeInsets.only(
+                    left: 21, top: 16, bottom: 16, right: 1),
+                child: widget.isCurrentUser
+                    ? AvatarNeonSwitch(
+                        isActive: widget.user.isActive,
+                        onChanged: widget.onActiveChanged,
+                        imageUrl: widget.user.profilePictureUrl,
+                        avatarRadius: 70,
+                        switchSize: 1.4,
+                      )
+                    : widget.isFriend
+                        ? Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: widget.user.isActive
+                                  ? [
+                                      const BoxShadow(
+                                        color: CustomColor.turnColor,
+                                        blurRadius: 5,
+                                        spreadRadius: 1,
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: CustomAvatar(
+                              radius: 70,
+                              imageUrl: widget.user.profilePictureUrl,
+                              borderColor: CustomColor.turnColor,
+                              borderWidth: 1,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 70,
+                            backgroundImage:
+                                NetworkImage(widget.user.profilePictureUrl),
+                          )),
             // Right 2/3 column
             Expanded(
               child: Padding(
@@ -109,17 +130,20 @@ class _ProfileContentState extends State<ProfileContent>
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 8),
-                          Text('|', style: CustomTextStyle.body1),
+                          if (widget.isCurrentUser | widget.isFriend)
+                            Text('|', style: CustomTextStyle.body1),
                           const SizedBox(width: 8),
-                          CustomIcon.userLocation,
+                          if (widget.isCurrentUser | widget.isFriend)
+                            CustomIcon.userLocation,
                           const SizedBox(width: 4),
-                          Text(
-                            widget.user.location.isNotEmpty
-                                ? widget.user.location[0].toUpperCase() +
-                                    widget.user.location.substring(1)
-                                : CustomString.noLocation,
-                            style: CustomTextStyle.body1,
-                          ),
+                          if (widget.isCurrentUser | widget.isFriend)
+                            Text(
+                              widget.user.location.isNotEmpty
+                                  ? widget.user.location[0].toUpperCase() +
+                                      widget.user.location.substring(1)
+                                  : CustomString.noLocation,
+                              style: CustomTextStyle.body1,
+                            ),
                         ],
                       ),
                     ),
