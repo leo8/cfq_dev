@@ -36,7 +36,7 @@ class MapScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: CustomColor.black
+                color: CustomColor.customBlack
                     .withOpacity(0.5), // Semi-transparent background
                 borderRadius: BorderRadius.circular(10),
               ),

@@ -29,13 +29,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
   final Duration durationAnimation200 =
       const Duration(milliseconds: 200); // Short animation duration
+  final Duration durationAnimation300 = const Duration(milliseconds: 300);
   final Duration durationAnimation500 =
       const Duration(milliseconds: 500); // Longer animation duration
   final double paddingTopIcon =
       10; // Top padding for icons in the bottom navigation bar
   final double paddinghorizontal =
       40; // Horizontal padding for icons in the navigation bar
-  final double sizeIcon = 30; // Size of icons
+  final double sizeIcon = 24; // Size of icons
 
   // Handle the tap on the plus button
   void _handleTap() {
@@ -63,10 +64,10 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       });
       Future.delayed(durationAnimation200, () {
         setState(() {
-          _width = 200; // Expand the button horizontally
+          _width = 170; // Expand the button horizontally
         });
       });
-      Future.delayed(durationAnimation500, () {
+      Future.delayed(durationAnimation300, () {
         setState(() {
           _showButtons = true; // Show additional buttons
           isClicked = false; // Allow new clicks
@@ -79,33 +80,47 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Allow floating action button over content
+      extendBody: true,
+      backgroundColor:
+          CustomColor.transparent, // Make the Scaffold background transparent
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Stack(
         children: [
-          // Floating action button with animation
           AnimatedAlign(
             alignment: Alignment(0, _yPositionPlusButton),
-            duration: durationAnimation500,
+            duration: durationAnimation300,
             curve: Curves.easeInOut,
             child: GestureDetector(
               onTap: _handleTap,
               child: AnimatedContainer(
                 width: _width,
                 height: _height,
-                decoration: BoxDecoration(
-                  color: CustomColor.black,
-                  borderRadius: BorderRadius.circular(isOpen ? 10.0 : 0.0),
-                ),
-                duration: durationAnimation500,
+                duration: durationAnimation300,
                 curve: Curves.easeInOut,
-                child: Transform.rotate(
-                  alignment: Alignment.center,
-                  angle: isOpen ? 0.75 : 0,
-                  child: Icon(
-                    CustomIcon.add,
-                    color: CustomColor.white,
-                    size: sizeIcon,
+                decoration: BoxDecoration(
+                  color: CustomColor.customBlack,
+                  borderRadius: BorderRadius.circular(isOpen ? 10.0 : 12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                    BoxShadow(
+                      color: Colors.purple.withOpacity(0.3),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Transform.rotate(
+                    alignment: Alignment.center,
+                    angle: isOpen ? 0.75 : 0,
+                    child: CustomIcon.add.copyWith(
+                      color: CustomColor.white,
+                      size: sizeIcon,
+                    ),
                   ),
                 ),
               ),
@@ -139,6 +154,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       ),
       // Bottom navigation bar
       bottomNavigationBar: NavigationBar(
+        backgroundColor: CustomColor
+            .customBlack, // Make the NavigationBar background transparent
+        elevation: 0, // Remove any shadow
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -156,16 +174,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.home,
-                color: CustomColor.white,
-                size: sizeIcon,
-              ),
-              icon: Icon(
-                CustomIcon.home,
-                color: CustomColor.black,
-                size: sizeIcon,
-              ),
+              selectedIcon: CustomIcon.home.copyWith(size: sizeIcon),
+              icon: CustomIcon.home
+                  .copyWith(color: CustomColor.grey600, size: sizeIcon),
               label: CustomString.emptyString,
             ),
           ),
@@ -173,14 +184,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             padding:
                 EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.map,
-                color: CustomColor.white,
+              selectedIcon: CustomIcon.map.copyWith(
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.map,
-                color: CustomColor.black,
+              icon: CustomIcon.map.copyWith(
+                color: CustomColor.grey600,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,
@@ -190,14 +198,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             padding:
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.teams,
+              selectedIcon: CustomIcon.team.copyWith(
                 color: CustomColor.white,
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.teams,
-                color: CustomColor.black,
+              icon: CustomIcon.team.copyWith(
+                color: CustomColor.grey600,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,
@@ -206,14 +212,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           Padding(
             padding: EdgeInsets.only(top: paddingTopIcon),
             child: NavigationDestination(
-              selectedIcon: Icon(
-                CustomIcon.profile,
-                color: CustomColor.white,
+              selectedIcon: CustomIcon.profile.copyWith(
                 size: sizeIcon,
               ),
-              icon: Icon(
-                CustomIcon.profile,
-                color: CustomColor.black,
+              icon: CustomIcon.profile.copyWith(
+                color: CustomColor.grey600,
                 size: sizeIcon,
               ),
               label: CustomString.emptyString,

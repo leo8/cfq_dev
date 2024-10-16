@@ -9,6 +9,9 @@ class CustomString {
   // General
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const add = "Ajouter";
+  static const create = "Créer";
+  static const done = "Terminé";
   static const success = "Succès";
   static const leave = "Quitter";
   static const orCapital = "OU";
@@ -40,6 +43,7 @@ class CustomString {
   static const searchFriends = "Chercher des amis..";
   static const noUsersFound = "Aucun utilisateur ne correspond à ta recherche.";
   static const userNotFound = "Utilisateur non trouvé";
+  static const noResults = "Pas de résultats.";
 
   // Friends
   static const myFriends = "Mes amis";
@@ -51,12 +55,17 @@ class CustomString {
 
   // Teams
   static const team = "Team";
-  static const mesTeams = "Mes teams";
+  static const myTeams = "Mes teams";
+  static const myTeamsCapital = "MES TEAMS";
   static const noTeamsYet = "Vous n'avez pas encore de teams.";
   static const createTeam = "Créer une team";
-  static const teamName = "Nom de la team";
+  static const newTeamCapital = "NOUVELLE TEAM";
+  static const teamName = "Donne-lui un nom";
+  static const addFriends = "Ajoute tes amis";
   static const members = "Membres";
   static const addMembers = "Ajouter des membres";
+  static const teamMembers = "Déjà membres..";
+  static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
   static const sureToLeaveTeam =
       "Êtes-vous sûr de vouloir quitter cette team ?";
@@ -68,10 +77,11 @@ class CustomString {
   static const when = "Quand ?";
   static const date = "La date";
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
-  static const address = "Adresse";
+  static const who = "À qui ?";
+  static const address = "L'adresse exacte";
   static const whatMood = "Quel mood ?";
-  static const describeEvent =
-      "Raconte pas ta vie, dis-nous juste où tu sors...";
+  static const describeCfq = "Sois pertinent !";
+  static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
   static const invitees = "T'invites qui ?";
   static const toutLeMonde = "Tout le monde";
@@ -102,8 +112,8 @@ class CustomString {
 
   // Parameters
   static const parameters = "Paramètres";
-  static const editProfile = "Editer le profil";
-  static const notifications = "Notifications";
+  static const editProfile = "Éditer le profil";
+  static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 
   // Image Related

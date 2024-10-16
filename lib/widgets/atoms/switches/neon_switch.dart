@@ -65,11 +65,9 @@ class NeonSwitch extends StatelessWidget {
                   ],
                 ),
                 child: Center(
-                  child: Icon(
-                    value ? CustomIcon.statusOn : CustomIcon.statusOff,
-                    color: CustomColor.white,
-                    size: iconSize,
-                  ),
+                  child: value
+                      ? CustomIcon.statusOn.copyWith(size: iconSize)
+                      : CustomIcon.statusOff.copyWith(size: iconSize),
                 ),
               ),
             ),

@@ -60,9 +60,8 @@ class ImageSelector extends StatelessWidget {
                     CustomColor.purple, // Background color for the icon button
                 shape: BoxShape.circle, // Circular shape for the icon button
               ),
-              child: const Icon(
-                CustomIcon.addImage, // Photo icon for selecting a new image
-                color: CustomColor.white,
+              child: CustomIcon.addImage.copyWith(
+                // Photo icon for selecting a new image
                 size: 16, // Icon size
               ),
             ),

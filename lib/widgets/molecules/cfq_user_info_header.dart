@@ -66,8 +66,11 @@ class CfqUserInfoHeader extends StatelessWidget {
               onPressed: onFollowPressed,
             ),
             IconButton(
-              icon: const Icon(CustomIcon.eventConversation,
-                  color: CustomColor.white),
+              icon: CustomIcon.favorite,
+              onPressed: () {/* Implement favorite functionality */},
+            ),
+            IconButton(
+              icon: CustomIcon.eventConversation,
               onPressed: () {/* Implement messaging functionality */},
             ),
           ],

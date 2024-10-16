@@ -85,11 +85,7 @@ class _ProfileContentState extends State<ProfileContent>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    CustomIcon.userLocation,
-                    color: CustomColor.red,
-                    size: 16,
-                  ),
+                  CustomIcon.userLocation.copyWith(color: CustomColor.red),
                   const SizedBox(width: 4),
                   Text(
                     widget.user.location.isNotEmpty

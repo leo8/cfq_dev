@@ -11,13 +11,18 @@ import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import '../models/team.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../screens/invitees_selector_screen.dart';
+import '../view_models/invitees_selector_view_model.dart';
 
-class CreateTurnViewModel extends ChangeNotifier {
+class CreateTurnViewModel extends ChangeNotifier
+    implements InviteesSelectorViewModel {
   // Controllers for form fields
   final TextEditingController turnNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  TextEditingController inviteesController = TextEditingController();
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
 
@@ -81,6 +86,9 @@ class CreateTurnViewModel extends ChangeNotifier {
     await _initializeCurrentUser();
     await fetchUserTeams();
     performSearch(CustomString.emptyString);
+    searchController.addListener(() {
+      performSearch(searchController.text);
+    });
     if (prefillTeam != null) {
       _initializePrefillData();
       _removePrefillDataFromSearchResults();
@@ -545,5 +553,60 @@ class CreateTurnViewModel extends ChangeNotifier {
     _errorMessage = null;
     _successMessage = null;
     notifyListeners();
+  }
+
+  Future<void> openInviteesSelectorScreen(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ChangeNotifierProvider<InviteesSelectorViewModel>.value(
+          value: this,
+          child: const InviteesSelectorScreen(),
+        ),
+      ),
+    );
+
+    if (result != null) {
+      _selectedInvitees = result['invitees'];
+      _selectedTeamInvitees = result['teams'];
+      _isEverybodySelected = result['isEverybodySelected'];
+      _updateInviteesControllerText();
+      notifyListeners();
+    }
+  }
+
+  void _updateInviteesControllerText() {
+    List<String> inviteeNames =
+        _selectedInvitees.map((user) => user.username).toList();
+    inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
+    inviteesController.text = inviteeNames.join(', ');
+  }
+
+  @override
+  void toggleInvitee(model.User invitee) {
+    if (_selectedInvitees.contains(invitee)) {
+      removeInvitee(invitee);
+    } else {
+      addInvitee(invitee);
+    }
+  }
+
+  @override
+  void toggleTeam(Team team) {
+    if (_selectedTeamInvitees.contains(team)) {
+      removeTeam(team);
+    } else {
+      addTeam(team);
+    }
+  }
+
+  @override
+  void toggleEverybody() {
+    if (_isEverybodySelected) {
+      removeEverybody();
+    } else {
+      selectEverybody();
+    }
   }
 }

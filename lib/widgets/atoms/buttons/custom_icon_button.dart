@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 
 class CustomIconButton extends StatelessWidget {
-  final IconData icon; // The icon displayed inside the button
+  final CustomIcon icon; // The icon displayed inside the button
   final VoidCallback onTap; // The function triggered when the button is pressed
   final double size; // The size of the icon
   final Color color; // The color of the icon
@@ -18,11 +19,7 @@ class CustomIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(
-        icon, // Set the icon passed through the constructor
-        size: size, // Set the size of the icon
-        color: color, // Set the color of the icon
-      ),
+      icon: icon.copyWith(color: color, size: size),
       onPressed: onTap, // Call the provided onTap function when pressed
     );
   }

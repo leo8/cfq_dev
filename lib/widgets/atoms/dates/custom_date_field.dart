@@ -58,7 +58,7 @@ class CustomDateField extends StatelessWidget {
               hintStyle: CustomTextStyle.xsBody,
               border: InputBorder.none,
               suffixIcon: suffixIcon ??
-                  const Icon(CustomIcon.calendar,
+                  CustomIcon.calendar.copyWith(
                       color: CustomColor.white70), // Icon for date selection
             ),
             readOnly: true, // Disables manual input, making it read-only

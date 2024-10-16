@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/colors.dart';
 
 class SignUpOption extends StatelessWidget {
   final String
@@ -29,8 +30,11 @@ class SignUpOption extends StatelessWidget {
         // Display the action text, which is clickable and styled in a bold, accent color
         GestureDetector(
           onTap: onTap, // Calls the provided onTap function when tapped
-          child: Text(actionText,
-              style: CustomTextStyle.personnalizedPurpleTitle1),
+          child: Text(
+            actionText,
+            style: CustomTextStyle.getColoredTextStyle(
+                CustomTextStyle.title1, CustomColor.personnalizedPurple),
+          ),
         ),
       ],
     );

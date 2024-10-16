@@ -1,67 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'colors.dart';
 
-class CustomIcon {
+class CustomIcon extends StatelessWidget {
+  final String assetName;
+  final Color color;
+  final double size;
+
+  const CustomIcon(
+    this.assetName, {
+    super.key,
+    this.color = CustomColor.customWhite,
+    this.size = 20,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/icons/$assetName',
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      width: size,
+      height: size,
+    );
+  }
+
+  CustomIcon copyWith({Color? color, double? size}) {
+    return CustomIcon(
+      assetName,
+      color: color ?? this.color,
+      size: size ?? this.size,
+    );
+  }
+
   //Navigation
-  static const arrowBack = Icons.arrow_back;
-  static const arrowForward = Icons.arrow_forward_ios;
-  static const close = Icons.close;
+  static const arrowBack = CustomIcon('arrow_left.svg');
+  static const arrowForward = CustomIcon('arrow_right_circle.svg');
+  static const close = CustomIcon('xmark.svg');
 
   //Auth
   static const visibilityOff = Icons.visibility_off;
   static const visibility = Icons.visibility;
 
   //General
-  static const checkCircle = Icons.check_circle;
-  static const add = Icons.add;
-  static const search = Icons.search;
+  static const checkCircle = CustomIcon('xmark_circle.svg');
+  static const add = CustomIcon('plus.svg');
+  static const search = CustomIcon('magnifying_glass.svg');
+  static const plusCircle = CustomIcon('plus_circle.svg');
 
   //Image related
-  static const addImage = Icons.add_a_photo;
+  static const addImage = CustomIcon('photo.svg');
 
   //Date related
-  static const calendar = Icons.calendar_today;
-
-  //Location related
-  static const locationOn = Icons.location_on;
+  static const calendar = CustomIcon('calendar.svg');
 
   //Nav Bar & Features
-  static const home = Icons.language_outlined;
-  static const map = Icons.location_on_outlined;
-  static const profile = Icons.person_outlined;
-  static const teams = Icons.groups_2_outlined;
+  static const home = CustomIcon('home.svg');
+  static const map = CustomIcon('location.svg');
+  static const profile = CustomIcon('person_circle.svg');
+  static const team = CustomIcon('team.svg');
 
-  static const notifications = Icons.notifications;
-  static const inbox = Icons.message;
+  static const notifications = CustomIcon('bell.svg');
+  static const inbox = CustomIcon('message.svg');
 
   //User
-  static const statusOff = Icons.nights_stay_outlined;
-  static const statusOn = Icons.public;
-  static const userLocation = Icons.location_on;
+  static const statusOff = CustomIcon('moon.svg');
+  static const statusOn = CustomIcon('disco.svg');
+  static const userLocation = CustomIcon('location.svg');
   static const privateProfile = Icons.lock;
 
   //Teams
-  static const addMember = Icons.person_add;
-  static const leaveTeam = Icons.exit_to_app;
+  static const addMember = CustomIcon('add_member.svg');
+  static const leaveTeam = CustomIcon('open_door.svg');
 
   //Events Forms
-  static const eventTitle = Icons.title;
-  static const eventOrganizer = Icons.bolt;
-  static const eventMood = Icons.mood;
-  static const eventLocation = Icons.location_on;
-  static const eventDescription = Icons.description;
-  static const eventAddress = Icons.home;
+  static const eventTitle = CustomIcon('pencil.svg');
+  static const eventOrganizer = CustomIcon('bolt.svg');
+  static const eventMood = CustomIcon('moon2.svg');
+  static const eventLocation = CustomIcon('location.svg');
+  static const eventAddress = CustomIcon('address.svg');
+  static const eventInvitees = CustomIcon('person.svg');
 
   //Events Cards
-  static const eventConversation = Icons.message;
-  static const followUp = Icons.notifications_none;
-  static const share = Icons.share;
+  static const eventConversation = CustomIcon('message.svg');
+  static const followUp = CustomIcon('bell.svg');
+  static const favorite = CustomIcon('heart.svg');
 
   //Moods
+  static const streetIcon = CustomIcon('street_icon.svg');
+  static const homeParty = CustomIcon('home_party.svg');
+  static const sunHorizon = CustomIcon('sun_horizon.svg');
+  static const forkKnife = CustomIcon('fork_knife.svg');
+  static const beer = CustomIcon('beer.svg');
+  static const partyPopper = CustomIcon('party_popper.svg');
 
   //Parameters
   static const settings = Icons.settings;
-  static const editProfile = Icons.person;
+  static const editProfile = CustomIcon('pencil.svg');
   static const confidentiality = Icons.lock;
-  static const notificationsSettings = Icons.notifications;
   static const logOut = Icons.exit_to_app;
 }
