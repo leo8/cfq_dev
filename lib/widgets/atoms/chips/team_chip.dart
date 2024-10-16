@@ -21,7 +21,7 @@ class TeamChip extends StatelessWidget {
         backgroundImage: NetworkImage(team.imageUrl),
       ),
       label: Text(team.name),
-      deleteIcon: const Icon(CustomIcon.close, size: 18),
+      deleteIcon: CustomIcon.close.copyWith(size: 18),
       onDeleted: onDelete,
       backgroundColor: CustomColor.white.withOpacity(0.1),
       labelStyle: CustomTextStyle.body1,

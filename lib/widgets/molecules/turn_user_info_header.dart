@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/widgets/atoms/avatars/custom_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/texts/custom_text.dart';
-import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
@@ -60,17 +59,15 @@ class TurnUserInfoHeader extends StatelessWidget {
         Column(
           children: [
             IconButton(
-              icon:
-                  const Icon(CustomIcon.checkCircle, color: CustomColor.white),
+              icon: CustomIcon.checkCircle,
               onPressed: onAttendingPressed,
             ),
             IconButton(
-              icon: const Icon(CustomIcon.share, color: CustomColor.white),
-              onPressed: () {/* Implement share functionality */},
+              icon: CustomIcon.favorite,
+              onPressed: () {/* Implement favorite functionality */},
             ),
             IconButton(
-              icon: const Icon(CustomIcon.eventConversation,
-                  color: CustomColor.white),
+              icon: CustomIcon.eventConversation,
               onPressed: () {/* Implement messaging functionality */},
             ),
           ],

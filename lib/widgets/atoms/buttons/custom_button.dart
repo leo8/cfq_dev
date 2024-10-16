@@ -24,7 +24,8 @@ class CustomButton extends StatelessWidget {
           ? const Center(
               // Show a loading spinner if isLoading is true
               child: CircularProgressIndicator(
-                color: CustomColor.white, // White loading spinner color
+                strokeWidth: 5,
+                color: CustomColor.customWhite, // White loading spinner color
               ),
             )
           : Container(
@@ -34,12 +35,14 @@ class CustomButton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                   vertical: 16), // Padding for the button
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30), // Rounded corners
-                gradient: CustomColor.purpleGradient,
+                borderRadius: BorderRadius.circular(7), // Rounded corners
+                color: CustomColor.customWhite,
               ),
               child: Text(
                 label, // Button text
-                style: CustomTextStyle.title3,
+                style: CustomTextStyle.subButton.copyWith(
+                  color: CustomColor.customBlack,
+                ),
               ),
             ),
     );

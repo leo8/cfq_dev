@@ -52,7 +52,7 @@ class TurnCardContent extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [CustomColor.grey900, CustomColor.grey900],
+          colors: [CustomColor.customBlack, CustomColor.grey900],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -78,7 +78,7 @@ class TurnCardContent extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: CustomColor.black.withOpacity(0.6),
+                    color: CustomColor.customBlack.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: CustomText(

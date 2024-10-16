@@ -28,7 +28,7 @@ class CfqButton extends StatelessWidget {
         );
       },
       child: Image.asset(
-        'assets/cfq_button.png',
+        'assets/images/cfq_button.png',
         width: 60,
         height: 60,
       ),

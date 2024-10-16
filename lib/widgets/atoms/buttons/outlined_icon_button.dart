@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 
 class OutlinedIconButton extends StatelessWidget {
-  final IconData icon;
+  final CustomIcon icon;
   final VoidCallback onPressed;
   final double size;
   final double iconSize;
@@ -29,8 +30,7 @@ class OutlinedIconButton extends StatelessWidget {
           padding: EdgeInsets.zero, // Remove default padding
         ),
         onPressed: onPressed,
-        child: Icon(
-          icon,
+        child: icon.copyWith(
           size: iconSize,
           color: color,
         ),

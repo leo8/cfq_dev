@@ -10,7 +10,7 @@ class NeonBackground extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/neon_background.png'),
+          image: AssetImage('assets/images/neon_background.png'),
           fit: BoxFit.cover,
         ),
       ),

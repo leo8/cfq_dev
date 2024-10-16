@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/icons.dart';
 import '../../../utils/styles/text_styles.dart';
 
 class BorderedIconTextField extends StatelessWidget {
-  final IconData icon;
+  final CustomIcon icon;
   final TextEditingController controller;
   final String hintText;
   final bool readOnly;
   final int maxLines;
   final double height;
   final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
+  final TextStyle? hintTextStyle;
 
   const BorderedIconTextField({
     super.key,
@@ -18,8 +21,10 @@ class BorderedIconTextField extends StatelessWidget {
     required this.hintText,
     this.readOnly = false,
     this.maxLines = 1,
-    this.height = 40.0,
+    this.height = 46.0,
     this.onTap,
+    this.borderRadius,
+    this.hintTextStyle,
   });
 
   @override
@@ -27,21 +32,24 @@ class BorderedIconTextField extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        border: Border.all(color: CustomColor.white, width: 0.8),
-        borderRadius: BorderRadius.circular(8),
+        color: CustomColor.customBlack,
+        border: Border.all(color: CustomColor.white, width: 0.5),
+        borderRadius: borderRadius ?? BorderRadius.circular(5),
       ),
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Icon(icon, color: CustomColor.white, size: 28),
+          Container(
+            width: 48,
+            alignment: Alignment.center,
+            child: icon,
           ),
           Expanded(
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: CustomTextStyle.miniBody,
+                hintStyle: hintTextStyle ??
+                    CustomTextStyle.body2.copyWith(color: CustomColor.grey),
                 border: InputBorder.none,
               ),
               style: CustomTextStyle.body1,

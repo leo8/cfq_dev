@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller; // Controller to manage the text input
@@ -22,7 +23,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines =
         1, // Defaults to 1, making it a single-line text field by default
     this.onChanged, // Optional onChanged callback
-    this.height, // Optional height parameter
+    this.height = 46.0, // Optional height parameter
     this.textStyle,
     super.key,
   });
@@ -33,24 +34,21 @@ class CustomTextField extends StatelessWidget {
       height:
           height ?? 60.0, // Set the height if provided, else default to 60.0
       decoration: BoxDecoration(
-        color: CustomColor.white
-            .withOpacity(0.1), // Background color with reduced opacity
+        color: CustomColor.customBlack, // Background color with reduced opacity
         borderRadius:
-            BorderRadius.circular(15), // Rounded corners for the text field
+            BorderRadius.circular(5), // Rounded corners for the text field
+        border: Border.all(color: CustomColor.white, width: 0.5),
       ),
       padding: const EdgeInsets.symmetric(
           horizontal: 12), // Padding inside the container
       child: Row(
         children: [
-          if (icon != null) ...[
-            Icon(
-              // Display the icon if provided
-              (icon as Icon).icon, // Extract the IconData from the widget
-              color: CustomColor.white,
-              size: 24.0, // Consistent icon size
+          if (icon != null)
+            Container(
+              width: 48,
+              alignment: Alignment.center,
+              child: icon,
             ),
-            const SizedBox(width: 10.0), // Spacing between icon and text field
-          ],
           Expanded(
             child: TextField(
               controller:
@@ -67,8 +65,8 @@ class CustomTextField extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText, // Hint text shown when the field is empty
                 hintStyle: textStyle ??
-                    const TextStyle(
-                        color: CustomColor.white70), // Style of the hint text
+                    CustomTextStyle.body2.copyWith(
+                        color: CustomColor.grey), // Style of the hint text
                 border:
                     InputBorder.none, // Removes the default underline border
                 suffixIcon:

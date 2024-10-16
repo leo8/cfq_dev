@@ -21,12 +21,12 @@ class ParametersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(CustomString.parameters),
-        backgroundColor: CustomColor.mobileBackgroundColor,
+        backgroundColor: CustomColor.customBlack,
       ),
       body: ListView(
         children: [
           ListTile(
-            leading: const Icon(CustomIcon.editProfile),
+            leading: CustomIcon.editProfile,
             title: const Text(CustomString.editProfile),
             onTap: () {
               Navigator.push(
@@ -45,8 +45,8 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(CustomIcon.notificationsSettings),
-            title: const Text(CustomString.notifications),
+            leading: CustomIcon.favorite,
+            title: const Text(CustomString.favorites),
             onTap: () {
               // Navigate to notification settings screen
             },
@@ -55,7 +55,11 @@ class ParametersScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
-            title: Text(CustomString.logOut, style: CustomTextStyle.redtitle3),
+            title: Text(
+              CustomString.logOut,
+              style: CustomTextStyle.getColoredTextStyle(
+                  CustomTextStyle.title3, CustomColor.red),
+            ),
             onTap: () async {
               await viewModel.logOut();
               Navigator.of(context)
