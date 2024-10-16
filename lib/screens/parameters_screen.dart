@@ -19,15 +19,32 @@ class ParametersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
-        title: const Text(CustomString.parameters),
+        toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
       ),
       body: ListView(
         children: [
+          const SizedBox(
+            height: 15,
+          ),
+          Center(
+            child: Text(
+              CustomString.parametersCapital,
+              style: CustomTextStyle.body1.copyWith(fontSize: 28),
+            ),
+          ),
+          const SizedBox(
+            height: 70,
+          ),
+          const Divider(),
           ListTile(
-            leading: CustomIcon.editProfile,
-            title: const Text(CustomString.editProfile),
+            leading: CustomIcon.profile,
+            title: Text(
+              CustomString.editProfile,
+              style: CustomTextStyle.body1,
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -37,16 +54,13 @@ class ParametersScreen extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(CustomIcon.confidentiality),
-            title: const Text(CustomString.privacy),
-            onTap: () {
-              // Navigate to privacy settings screen
-            },
-          ),
+          const Divider(),
           ListTile(
             leading: CustomIcon.favorite,
-            title: const Text(CustomString.favorites),
+            title: Text(
+              CustomString.favorites,
+              style: CustomTextStyle.body1,
+            ),
             onTap: () {
               // Navigate to notification settings screen
             },
@@ -57,8 +71,7 @@ class ParametersScreen extends StatelessWidget {
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
             title: Text(
               CustomString.logOut,
-              style: CustomTextStyle.getColoredTextStyle(
-                  CustomTextStyle.title3, CustomColor.red),
+              style: CustomTextStyle.body1.copyWith(color: CustomColor.red),
             ),
             onTap: () async {
               await viewModel.logOut();
@@ -66,6 +79,7 @@ class ParametersScreen extends StatelessWidget {
                   .pushNamedAndRemoveUntil('/login', (route) => false);
             },
           ),
+          const Divider(),
         ],
       ),
     );

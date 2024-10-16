@@ -24,7 +24,7 @@ class CustomString {
   static const alreadySignedUp = "Déjà inscrit(e) ?";
   static const noAccountYet = "T'as pas encore de compte ?";
   static const forgotPassword = "T'as oublié ton mot de passe ?";
-  static const logOut = "Déconnexion";
+  static const logOut = "Se déconnecter";
 
   // Authentication Form
   static const yourEmail = "Ton email";
@@ -112,7 +112,8 @@ class CustomString {
 
   // Parameters
   static const parameters = "Paramètres";
-  static const editProfile = "Éditer le profil";
+  static const parametersCapital = "PARAMÈTRES";
+  static const editProfile = "Mon profil";
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 
