@@ -8,6 +8,7 @@ import 'package:cfq_dev/screens/profile_screen.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/string.dart';
+import 'dart:async';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -38,50 +39,75 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       40; // Horizontal padding for icons in the navigation bar
   final double sizeIcon = 24; // Size of icons
 
+  // Add this new variable
+  Timer? _autoCloseTimer;
+
   // Handle the tap on the plus button
   void _handleTap() {
     if (isClicked) {
-      return; // Prevent further clicks while handling the current one
+      return;
     }
-    isClicked = true; // Block further taps
+    isClicked = true;
 
     if (isOpen) {
-      // If the button is open, close it
-      setState(() {
-        _width = 45; // Shrink the button horizontally
-      });
-      Future.delayed(durationAnimation200, () {
-        setState(() {
-          _yPositionPlusButton = _yPositionPlusButtonClose; // Move button down
-          isClicked = false; // Allow new clicks
-        });
-      });
-      _showButtons = false; // Hide additional buttons
+      _closeButton();
     } else {
-      // If the button is closed, open it
-      setState(() {
-        _yPositionPlusButton = _yPositionPlusButtonOpen; // Move button up
-      });
-      Future.delayed(durationAnimation200, () {
-        setState(() {
-          _width = 170; // Expand the button horizontally
-        });
-      });
-      Future.delayed(durationAnimation300, () {
-        setState(() {
-          _showButtons = true; // Show additional buttons
-          isClicked = false; // Allow new clicks
-        });
-      });
+      _openButton();
     }
-    isOpen = !isOpen; // Toggle open state
+  }
+
+  // New method to open the button
+  void _openButton() {
+    setState(() {
+      _yPositionPlusButton = _yPositionPlusButtonOpen;
+      isOpen = true;
+    });
+    Future.delayed(durationAnimation200, () {
+      setState(() {
+        _width = 170;
+      });
+    });
+    Future.delayed(durationAnimation300, () {
+      setState(() {
+        _showButtons = true;
+        isClicked = false;
+      });
+    });
+
+    // Start the auto-close timer
+    _autoCloseTimer?.cancel(); // Cancel any existing timer
+    _autoCloseTimer = Timer(const Duration(seconds: 3), _closeButton);
+  }
+
+  // New method to close the button
+  void _closeButton() {
+    _autoCloseTimer?.cancel(); // Cancel the timer when closing manually
+
+    setState(() {
+      _width = 45;
+      _showButtons = false;
+    });
+    Future.delayed(durationAnimation200, () {
+      setState(() {
+        _yPositionPlusButton = _yPositionPlusButtonClose;
+        isOpen = false;
+        isClicked = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoCloseTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: CustomColor.transparent,
+      backgroundColor:
+          CustomColor.transparent, // Make the Scaffold background transparent
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Stack(
         children: [
