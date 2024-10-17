@@ -62,7 +62,7 @@ class InviteeSearchBar extends StatelessWidget {
                       backgroundImage:
                           AssetImage('assets/images/turn_button.png'),
                     ),
-                    title: const Text(CustomString.toutLeMonde),
+                    title: const Text(CustomString.everybody),
                     trailing: IconButton(
                       icon: CustomIcon.add.copyWith(
                         color: CustomColor.customPurple,

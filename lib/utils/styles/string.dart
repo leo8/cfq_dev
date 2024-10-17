@@ -85,7 +85,7 @@ class CustomString {
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
   static const invitees = "T'invites qui ?";
-  static const toutLeMonde = "Tout le monde";
+  static const everybody = "Tout le monde";
 
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";

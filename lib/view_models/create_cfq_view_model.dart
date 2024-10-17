@@ -234,10 +234,22 @@ class CreateCfqViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  // Update the removeInvitee method
   void removeInvitee(model.User invitee) {
     _selectedInvitees.remove(invitee);
+
+    // Check if the invitee is part of any selected teams
+    for (var team in _selectedTeamInvitees.toList()) {
+      if (team.members.contains(invitee.uid)) {
+        _selectedTeamInvitees.remove(team);
+      }
+    }
+
+    // If any invitee is removed, "Everybody" should be deselected
+    _isEverybodySelected = false;
+
     performSearch(searchController.text);
+
+    notifyListeners();
   }
 
   void addTeam(Team team) {
@@ -268,9 +280,13 @@ class CreateCfqViewModel extends ChangeNotifier
 
   void removeTeam(Team team) {
     _selectedTeamInvitees.remove(team);
-    _selectedInvitees
-        .removeWhere((invitee) => team.members.contains(invitee.uid));
+
+    // "Everybody" should be deselected when a team is removed
+    _isEverybodySelected = false;
+
     performSearch(searchController.text);
+
+    notifyListeners();
   }
 
   void selectEverybody() {
