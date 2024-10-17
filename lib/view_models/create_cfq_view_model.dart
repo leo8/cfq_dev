@@ -106,6 +106,7 @@ class CreateCfqViewModel extends ChangeNotifier
           _selectedInvitees.add(member);
         }
       }
+      _updateInviteesControllerText();
     }
   }
 
