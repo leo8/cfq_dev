@@ -123,7 +123,7 @@ class CreateTeamScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             SizedBox(
-                              height: 180, // Adjust this height as needed
+                              height: 200, // Adjust this height as needed
                               child: SingleChildScrollView(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -187,35 +187,37 @@ class CreateTeamScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Container(
-                              height: 100, // Adjust this height as needed
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    if (viewModel.selectedFriends.isNotEmpty)
-                                      Wrap(
-                                        spacing: 8.0,
-                                        runSpacing: 4.0,
-                                        children: viewModel.selectedFriends
-                                            .map((friend) {
-                                          bool isCurrentUser = friend.uid ==
-                                              viewModel.currentUser?.uid;
-                                          return Chip(
-                                            avatar: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.profilePictureUrl),
-                                            ),
-                                            label: Text(friend.username),
-                                            onDeleted: isCurrentUser
-                                                ? null
-                                                : () => viewModel
-                                                    .removeFriend(friend),
-                                          );
-                                        }).toList(),
-                                      ),
-                                  ],
+                            Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      if (viewModel.selectedFriends.isNotEmpty)
+                                        Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          children: viewModel.selectedFriends
+                                              .map((friend) {
+                                            bool isCurrentUser = friend.uid ==
+                                                viewModel.currentUser?.uid;
+                                            return Chip(
+                                              avatar: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    friend.profilePictureUrl),
+                                              ),
+                                              label: Text(friend.username),
+                                              onDeleted: isCurrentUser
+                                                  ? null
+                                                  : () => viewModel
+                                                      .removeFriend(friend),
+                                            );
+                                          }).toList(),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
