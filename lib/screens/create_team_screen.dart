@@ -120,88 +120,106 @@ class CreateTeamScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Column(
-                              children: [
-                                if (viewModel.isSearching) ...[
-                                  const CircularProgressIndicator(),
-                                ] else if (viewModel
-                                    .searchResults.isNotEmpty) ...[
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: viewModel.searchResults.length,
-                                    itemBuilder: (context, index) {
-                                      final user =
-                                          viewModel.searchResults[index];
-                                      return ListTile(
-                                        leading: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            boxShadow: user.isActive
-                                                ? [
-                                                    const BoxShadow(
-                                                      color:
-                                                          CustomColor.turnColor,
-                                                      blurRadius: 5,
-                                                      spreadRadius: 1,
-                                                    ),
-                                                  ]
-                                                : null,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 180, // Adjust this height as needed
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  child: Column(
+                                    children: [
+                                      if (viewModel.isSearching) ...[
+                                        const CircularProgressIndicator(),
+                                      ] else if (viewModel
+                                          .searchResults.isNotEmpty) ...[
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount:
+                                              viewModel.searchResults.length,
+                                          itemBuilder: (context, index) {
+                                            final user =
+                                                viewModel.searchResults[index];
+                                            return ListTile(
+                                              leading: Container(
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: user.isActive
+                                                      ? [
+                                                          const BoxShadow(
+                                                            color: CustomColor
+                                                                .turnColor,
+                                                            blurRadius: 5,
+                                                            spreadRadius: 1,
+                                                          ),
+                                                        ]
+                                                      : null,
+                                                ),
+                                                child: CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      user.profilePictureUrl),
+                                                ),
+                                              ),
+                                              title: Text(user.username),
+                                              trailing: IconButton(
+                                                icon: CustomIcon.add,
+                                                onPressed: () =>
+                                                    viewModel.addFriend(user),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ] else if (!viewModel.isSearching &&
+                                          viewModel.searchController.text
+                                              .isNotEmpty) ...[
+                                        Center(
+                                          child: Text(
+                                            CustomString.noResults,
+                                            style: CustomTextStyle.body2,
                                           ),
-                                          child: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                user.profilePictureUrl),
-                                          ),
                                         ),
-                                        title: Text(user.username),
-                                        trailing: IconButton(
-                                          icon: CustomIcon.add,
-                                          onPressed: () =>
-                                              viewModel.addFriend(user),
-                                        ),
-                                      );
-                                    },
+                                      ],
+                                    ],
                                   ),
-                                ] else if (!viewModel.isSearching &&
-                                    viewModel
-                                        .searchController.text.isNotEmpty) ...[
-                                  Center(
-                                    child: Text(
-                                      CustomString.noResults,
-                                      style: CustomTextStyle.body2,
-                                    ),
-                                  ),
-                                ],
-                                const SizedBox(height: 10),
-                                if (viewModel.selectedFriends.isNotEmpty)
-                                  Wrap(
-                                    spacing: 8.0,
-                                    runSpacing: 4.0,
-                                    children:
-                                        viewModel.selectedFriends.map((friend) {
-                                      bool isCurrentUser = friend.uid ==
-                                          viewModel.currentUser?.uid;
-                                      return Chip(
-                                        avatar: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              friend.profilePictureUrl),
-                                        ),
-                                        label: Text(friend.username),
-                                        onDeleted: isCurrentUser
-                                            ? null
-                                            : () =>
-                                                viewModel.removeFriend(friend),
-                                      );
-                                    }).toList(),
-                                  ),
-                              ],
+                                ),
+                              ),
                             ),
-                          ),
+                            Container(
+                              height: 100, // Adjust this height as needed
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    if (viewModel.selectedFriends.isNotEmpty)
+                                      Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 4.0,
+                                        children: viewModel.selectedFriends
+                                            .map((friend) {
+                                          bool isCurrentUser = friend.uid ==
+                                              viewModel.currentUser?.uid;
+                                          return Chip(
+                                            avatar: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  friend.profilePictureUrl),
+                                            ),
+                                            label: Text(friend.username),
+                                            onDeleted: isCurrentUser
+                                                ? null
+                                                : () => viewModel
+                                                    .removeFriend(friend),
+                                          );
+                                        }).toList(),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
