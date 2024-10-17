@@ -6,7 +6,7 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
-import '../../widgets/molecules/custom_search_bar.dart';
+import '../widgets/atoms/search_bars/custom_search_bar.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;

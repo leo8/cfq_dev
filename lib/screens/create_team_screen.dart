@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_team_view_model.dart';
-import '../widgets/molecules/custom_search_bar.dart';
+import '../widgets/atoms/search_bars/custom_search_bar.dart';
 import '../widgets/atoms/texts/bordered_icon_text_field.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../utils/styles/string.dart';

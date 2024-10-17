@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
-import '../molecules/custom_search_bar.dart';
+import '../atoms/search_bars/custom_search_bar.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class ThreadHeader extends StatelessWidget {
