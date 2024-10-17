@@ -217,10 +217,6 @@ class CreateTeamScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (viewModel.isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
                 ],
               );
             }
