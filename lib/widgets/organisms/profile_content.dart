@@ -73,14 +73,14 @@ class _ProfileContentState extends State<ProfileContent>
             Container(
                 width: MediaQuery.of(context).size.width / 3,
                 padding: const EdgeInsets.only(
-                    left: 21, top: 16, bottom: 16, right: 1),
+                    left: 16, top: 16, bottom: 16, right: 1),
                 child: widget.isCurrentUser
                     ? AvatarNeonSwitch(
                         isActive: widget.user.isActive,
                         onChanged: widget.onActiveChanged,
                         imageUrl: widget.user.profilePictureUrl,
                         avatarRadius: 70,
-                        switchSize: 1.4,
+                        switchSize: 1.2,
                       )
                     : widget.isFriend
                         ? Container(
@@ -112,13 +112,17 @@ class _ProfileContentState extends State<ProfileContent>
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 1, top: 16, bottom: 16, right: 21),
+                    left: 1, top: 16, bottom: 16, right: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 40,
-                    ),
+                    widget.isCurrentUser
+                        ? const SizedBox(
+                            height: 50,
+                          )
+                        : const SizedBox(
+                            height: 25,
+                          ),
                     // Username, separator, location icon, and location
                     Center(
                       child: Row(
@@ -126,12 +130,20 @@ class _ProfileContentState extends State<ProfileContent>
                         children: [
                           Text(
                             widget.user.username,
-                            style: CustomTextStyle.body1
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: CustomTextStyle.body1.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text('|', style: CustomTextStyle.body1),
+                            Text(
+                              '|',
+                              style: CustomTextStyle.body1.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
                             CustomIcon.userLocation,
@@ -142,12 +154,15 @@ class _ProfileContentState extends State<ProfileContent>
                                   ? widget.user.location[0].toUpperCase() +
                                       widget.user.location.substring(1)
                                   : CustomString.noLocation,
-                              style: CustomTextStyle.body1,
+                              style: CustomTextStyle.body1.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
                     // Buttons
                     if (widget.isCurrentUser)
                       Center(
@@ -156,8 +171,10 @@ class _ProfileContentState extends State<ProfileContent>
                           children: [
                             CustomButton(
                                 label: CustomString.myFriends,
-                                textStyle: CustomTextStyle.subButton
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                textStyle: CustomTextStyle.subButton.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                                 onTap: widget.onFriendsTap!,
                                 color: CustomColor.customBlack,
                                 borderWidth: 0.5,
@@ -167,8 +184,10 @@ class _ProfileContentState extends State<ProfileContent>
                             const SizedBox(width: 20),
                             CustomButton(
                                 label: CustomString.parameters,
-                                textStyle: CustomTextStyle.subButton
-                                    .copyWith(fontWeight: FontWeight.bold),
+                                textStyle: CustomTextStyle.subButton.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
                                 onTap: widget.onParametersTap!,
                                 color: CustomColor.customBlack,
                                 borderWidth: 0.5,
@@ -181,21 +200,21 @@ class _ProfileContentState extends State<ProfileContent>
                     else
                       Center(
                         child: CustomButton(
-                          label: widget.isFriend
-                              ? CustomString.removeFriend
-                              : CustomString.addFriend,
-                          onTap: widget.isFriend
-                              ? widget.onRemoveFriendTap!
-                              : widget.onAddFriendTap!,
-                          color: widget.isFriend
-                              ? CustomColor.customBlack
-                              : CustomColor.customPurple,
-                          textStyle: CustomTextStyle.subButton
-                              .copyWith(color: CustomColor.customWhite),
-                          borderRadius: 5,
-                          borderWidth: 0.5,
-                          width: 240,
-                        ),
+                            label: widget.isFriend
+                                ? CustomString.removeFriend
+                                : CustomString.addFriend,
+                            onTap: widget.isFriend
+                                ? widget.onRemoveFriendTap!
+                                : widget.onAddFriendTap!,
+                            color: widget.isFriend
+                                ? CustomColor.customBlack
+                                : CustomColor.customPurple,
+                            textStyle: CustomTextStyle.subButton
+                                .copyWith(color: CustomColor.customWhite),
+                            borderRadius: 5,
+                            borderWidth: 0.5,
+                            width: 220,
+                            height: 50),
                       ),
                   ],
                 ),
