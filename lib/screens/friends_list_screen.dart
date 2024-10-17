@@ -10,6 +10,7 @@ import '../widgets/atoms/avatars/clickable_avatar.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../widgets/molecules/custom_search_bar.dart';
 import '../utils/styles/icons.dart';
+import '../../utils/utils.dart';
 
 class FriendsListScreen extends StatelessWidget {
   final String currentUserId;
@@ -72,15 +73,10 @@ class FriendsListScreen extends StatelessWidget {
                   // Handle success and error messages
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (viewModel.friendRemoved) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(CustomString.friendDeleted)),
-                      );
+                      showSnackBar(CustomString.friendDeleted, context);
                       viewModel.resetStatus();
                     } else if (viewModel.errorMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(viewModel.errorMessage!)),
-                      );
+                      showSnackBar(viewModel.errorMessage!, context);
                       viewModel.resetStatus();
                     }
                   });

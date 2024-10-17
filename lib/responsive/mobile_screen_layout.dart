@@ -81,8 +81,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor:
-          CustomColor.transparent, // Make the Scaffold background transparent
+      backgroundColor: CustomColor.transparent,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Stack(
         children: [

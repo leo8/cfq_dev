@@ -8,6 +8,7 @@ import '../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/utils.dart';
 
 class CreateTeamScreen extends StatelessWidget {
   const CreateTeamScreen({super.key});
@@ -37,14 +38,10 @@ class CreateTeamScreen extends StatelessWidget {
               // Handle success and error messages
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (viewModel.errorMessage != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(viewModel.errorMessage!)),
-                  );
+                  showSnackBar(viewModel.errorMessage!, context);
                   viewModel.resetStatus();
                 } else if (viewModel.successMessage != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(viewModel.successMessage!)),
-                  );
+                  showSnackBar(viewModel.successMessage!, context);
                   viewModel.resetStatus();
                   Navigator.pop(context);
                 }
@@ -176,7 +173,7 @@ class CreateTeamScreen extends StatelessWidget {
                                   Center(
                                     child: Text(
                                       CustomString.noResults,
-                                      style: CustomTextStyle.title3,
+                                      style: CustomTextStyle.body2,
                                     ),
                                   ),
                                 ],

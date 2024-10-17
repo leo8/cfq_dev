@@ -9,6 +9,7 @@ import '../../models/user.dart' as model;
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/utils.dart';
 
 class TeamOptions extends StatelessWidget {
   final Team team;
@@ -92,11 +93,7 @@ class TeamOptions extends StatelessWidget {
                       if (success) {
                         onTeamLeft();
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(CustomString.errorLeavingTeam),
-                          ),
-                        );
+                        showSnackBar(CustomString.errorLeavingTeam, context);
                       }
                     }
                   },
