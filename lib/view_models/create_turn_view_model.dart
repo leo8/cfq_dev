@@ -29,7 +29,7 @@ class CreateTurnViewModel extends ChangeNotifier
   TextEditingController inviteesController = TextEditingController();
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
-  List<User> _previousSelectedInvitees = [];
+  List<model.User> _previousSelectedInvitees = [];
   List<Team> _previousSelectedTeamInvitees = [];
   bool _previousIsEverybodySelected = false;
 
@@ -641,9 +641,11 @@ class CreateTurnViewModel extends ChangeNotifier
       _selectedInvitees = result['invitees'];
       _selectedTeamInvitees = result['teams'];
       _isEverybodySelected = result['isEverybodySelected'];
-      _updateInviteesControllerText();
-      notifyListeners();
+    } else {
+      revertSelections();
     }
+    _updateInviteesControllerText();
+    notifyListeners();
   }
 
   void _updateInviteesControllerText() {
