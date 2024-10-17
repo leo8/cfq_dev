@@ -26,6 +26,9 @@ class ProfileViewModel extends ChangeNotifier {
   bool _friendRemoved = false;
   bool get friendRemoved => _friendRemoved;
 
+  Stream<DocumentSnapshot>? _userStream;
+  Stream<DocumentSnapshot>? get userStream => _userStream;
+
   ProfileViewModel({this.userId}) {
     fetchUserData();
   }
@@ -58,6 +61,10 @@ class ProfileViewModel extends ChangeNotifier {
       }
 
       _isLoading = false;
+      _userStream = FirebaseFirestore.instance
+          .collection('users')
+          .doc(profileUserId)
+          .snapshots();
       notifyListeners();
     } catch (e) {
       _isLoading = false;

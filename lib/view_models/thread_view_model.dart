@@ -25,6 +25,9 @@ class ThreadViewModel extends ChangeNotifier {
   bool _isInitializing = true;
   bool get isInitializing => _isInitializing;
 
+  Stream<DocumentSnapshot>? _currentUserStream;
+  Stream<DocumentSnapshot>? get currentUserStream => _currentUserStream;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
@@ -86,6 +89,10 @@ class ThreadViewModel extends ChangeNotifier {
       }
 
       _activeFriends = activeFriends;
+      _currentUserStream = FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .snapshots();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching current user and active friends: $e');

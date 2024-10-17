@@ -10,6 +10,7 @@ import '../models/user.dart' as model;
 import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -137,19 +138,28 @@ class ThreadScreen extends StatelessWidget {
 
   Widget _buildActiveFriendsList(
       BuildContext context, ThreadViewModel viewModel) {
-    return ActiveFriendsList(
-      currentUser: viewModel.currentUser!,
-      activeFriends: viewModel.activeFriends,
-      onActiveChanged: (bool newValue) {
-        viewModel.updateIsActiveStatus(newValue);
-      },
-      onFriendTap: (String friendId) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(userId: friendId),
-          ),
-        );
+    return StreamBuilder<DocumentSnapshot>(
+      stream: viewModel.currentUserStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ActiveFriendsList(
+            currentUser: model.User.fromSnap(snapshot.data!),
+            activeFriends: viewModel.activeFriends,
+            onActiveChanged: (bool newValue) {
+              viewModel.updateIsActiveStatus(newValue);
+            },
+            onFriendTap: (String friendId) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(userId: friendId),
+                ),
+              );
+            },
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
       },
     );
   }
