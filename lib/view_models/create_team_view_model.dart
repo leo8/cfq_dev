@@ -237,14 +237,14 @@ class CreateTeamViewModel extends ChangeNotifier {
       await _updateUsersTeams(memberUids, teamId);
 
       // Success
-      _successMessage = 'Team created successfully!';
+      _successMessage = CustomString.successCreatingTeam;
       _isLoading = false;
       notifyListeners();
 
       // Optionally, reset the form or navigate back
     } catch (e) {
       AppLogger.error('Error creating team: $e');
-      _errorMessage = 'Failed to create team. Please try again.';
+      _errorMessage = CustomString.errorCreatingTeam;
       _isLoading = false;
       notifyListeners();
     }

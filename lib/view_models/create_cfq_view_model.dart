@@ -506,12 +506,12 @@ class CreateCfqViewModel extends ChangeNotifier
       await _updateTeamInviteesCfqs(
           _selectedTeamInvitees.map((team) => team.uid).toList(), cfqId);
 
-      _successMessage = 'CFQ created successfully!';
+      _successMessage = CustomString.successCreatingCfq;
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error creating cfq: $e');
-      _errorMessage = 'Failed to create cfq. Please try again.';
+      _errorMessage = CustomString.errorCreatingCfq;
       _isLoading = false;
       notifyListeners();
     }

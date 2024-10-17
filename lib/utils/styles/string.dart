@@ -137,6 +137,11 @@ class CustomString {
   static const beforeMood = "Before";
   static const afterMood = "After";
 
+  // Success Messages
+  static const successCreatingTeam = "Team créée avec succès !";
+  static const successCreatingTurn = "Turn créé avec succès !";
+  static const successCreatingCfq = "CFQ créé avec succès !";
+
   // Error Messages
   static const errorFetchingEvents =
       "Erreur lors de la récupération des évènements";
@@ -153,6 +158,9 @@ class CustomString {
       "Récupération des données, pas d'évènements pour le moment...";
   static const noEventsAvailable = "Aucun évènement disponible";
   static const errorLeavingTeam = "Erreur lors de la sortie de la team";
+  static const errorCreatingTeam = "Erreur lors de la création de la Team..";
+  static const errorCreatingTurn = "Erreur lors de la création du Turn..";
+  static const errorCreatingCfq = "Erreur lors de la création du CFQ..";
 
   // Utils
   static const thisIsWeb = "C'est web";

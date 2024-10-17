@@ -539,12 +539,12 @@ class CreateTurnViewModel extends ChangeNotifier
       await _updateTeamInviteesTurns(
           _selectedTeamInvitees.map((team) => team.uid).toList(), turnId);
 
-      _successMessage = 'TURN created successfully!';
+      _successMessage = CustomString.successCreatingTurn;
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error creating TURN: $e');
-      _errorMessage = 'Failed to create TURN. Please try again.';
+      _errorMessage = CustomString.errorCreatingTurn;
       _isLoading = false;
       notifyListeners();
     }
