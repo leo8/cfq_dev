@@ -112,7 +112,7 @@ class AddTeamMembersViewModel extends ChangeNotifier {
     } else {
       _nonTeamMembers = _allNonTeamMembers
           .where((friend) =>
-              friend.username.toLowerCase().contains(query.toLowerCase()))
+              friend.username.toLowerCase().startsWith(query.toLowerCase()))
           .toList();
     }
     notifyListeners();

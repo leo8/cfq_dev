@@ -90,7 +90,7 @@ class FriendsListViewModel extends ChangeNotifier {
     } else {
       _filteredFriends = _allFriends
           .where((friend) =>
-              friend.username.toLowerCase().contains(query.toLowerCase()))
+              friend.username.toLowerCase().startsWith(query.toLowerCase()))
           .toList();
     }
     notifyListeners();

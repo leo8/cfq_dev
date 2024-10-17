@@ -135,7 +135,7 @@ class CreateTeamViewModel extends ChangeNotifier {
         final queryLower = query.toLowerCase();
         _searchResults = _friendsList.where((user) {
           final searchKeyLower = user.searchKey;
-          return searchKeyLower.contains(queryLower) &&
+          return searchKeyLower.startsWith(queryLower) &&
               !_selectedFriends.any((f) => f.uid == user.uid) &&
               user.uid != _currentUser?.uid;
         }).toList();
