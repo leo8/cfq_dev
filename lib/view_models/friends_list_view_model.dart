@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
 import '../utils/logger.dart';
+import '../utils/styles/string.dart';
 
 class FriendsListViewModel extends ChangeNotifier {
   final String currentUserId;
@@ -75,7 +76,7 @@ class FriendsListViewModel extends ChangeNotifier {
       _friends = friendsList;
     } catch (e) {
       AppLogger.error('Error fetching friends: $e');
-      _errorMessage = 'Failed to fetch friends. Please try again.';
+      _errorMessage = CustomString.failedToFetchFriends;
     }
 
     _allFriends = _friends;
@@ -129,7 +130,7 @@ class FriendsListViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error removing friend: $e');
-      _errorMessage = 'Failed to remove friend. Please try again.';
+      _errorMessage = CustomString.failedToRemoveFriend;
       notifyListeners();
     }
   }

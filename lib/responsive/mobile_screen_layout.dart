@@ -127,12 +127,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                   borderRadius: BorderRadius.circular(isOpen ? 10.0 : 12.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
+                      color: CustomColor.blue.withOpacity(0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),
                     BoxShadow(
-                      color: Colors.purple.withOpacity(0.3),
+                      color: CustomColor.purple.withOpacity(0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),
@@ -143,7 +143,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                     alignment: Alignment.center,
                     angle: isOpen ? 0.75 : 0,
                     child: CustomIcon.add.copyWith(
-                      color: CustomColor.white,
+                      color: CustomColor.customWhite,
                       size: sizeIcon,
                     ),
                   ),
@@ -224,7 +224,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: CustomIcon.team.copyWith(
-                color: CustomColor.white,
+                color: CustomColor.customWhite,
                 size: sizeIcon,
               ),
               icon: CustomIcon.team.copyWith(

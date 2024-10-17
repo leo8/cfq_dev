@@ -8,7 +8,7 @@ import '../view_models/friends_list_view_model.dart';
 import 'profile_screen.dart';
 import '../widgets/atoms/avatars/clickable_avatar.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
-import '../widgets/molecules/custom_search_bar.dart';
+import '../widgets/atoms/search_bars/custom_search_bar.dart';
 import '../utils/styles/icons.dart';
 import '../../utils/utils.dart';
 

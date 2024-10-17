@@ -45,8 +45,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                 },
                 child: Text(
                   CustomString.done,
-                  style: CustomTextStyle.body1.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: CustomTextStyle.body1Bold.copyWith(
                     color: CustomColor.customPurple,
                   ),
                 ),

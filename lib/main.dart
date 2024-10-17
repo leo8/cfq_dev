@@ -97,7 +97,7 @@ class _CFQState extends State<CFQ> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    color: CustomColor.white,
+                    color: CustomColor.customWhite,
                   ),
                 );
               }

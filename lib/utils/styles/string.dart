@@ -147,12 +147,15 @@ class CustomString {
       "Erreur lors de la récupération des évènements";
   static const failedToUpdateStatusPleaseTryAgain =
       "Erreur lors de la mise à jour du statut. Veuillez réessayer.";
+  static const failedToPickImage =
+      "Erreur lors du chargement de l'image. Veuillez réessayer.";
+  static const failedToLoadMap = "Erreur lors du chargement de la map..";
   static const failedToUploadProfilePicture =
       "Erreur lors de l'upload de la photo de profil. Veuillez réessayer.";
   static const someErrorOccurred = "Une erreur s'est produite";
   static const veuillezRemplirTousLesChamps =
       "Veuillez remplir tous les champs";
-  static const pleaseFillInAllRequiredFields =
+  static const pleaseFillAllRequiredFields =
       "Veuillez remplir tous les champs requis";
   static const fetchingDataNoEventsYet =
       "Récupération des données, pas d'évènements pour le moment...";
@@ -161,6 +164,24 @@ class CustomString {
   static const errorCreatingTeam = "Erreur lors de la création de la Team..";
   static const errorCreatingTurn = "Erreur lors de la création du Turn..";
   static const errorCreatingCfq = "Erreur lors de la création du CFQ..";
+  static const pleaseSelectAtLeastOneMood =
+      "Veuillez sélectionner au moins un mood";
+  static const failedToInitializeUserData =
+      "Échec de l'initialisation des données utilisateur";
+  static const failedToFetchUserTeams =
+      "Échec de la récupération des teams de l'utilisateur";
+  static const failedToPerformSearch = "Échec de la recherche";
+  static const pleaseSelectDateAndTime =
+      "Veuillez sélectionner une date et une heure";
+  static const pleaseEnterTeamName = "Veuillez entrer un nom d'équipe";
+  static const pleaseSelectAtLeastOneMember =
+      "Veuillez sélectionner au moins un membre";
+  static const failedToFetchFriends =
+      "Échec de la récupération des amis. Veuillez réessayer.";
+  static const failedToRemoveFriend =
+      "Échec de la suppression de l'ami. Veuillez réessayer.";
+  static const pleaseFillInAllRequiredFields =
+      "Veuillez remplir tous les champs";
 
   // Utils
   static const thisIsWeb = "C'est web";

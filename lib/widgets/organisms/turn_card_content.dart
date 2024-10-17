@@ -84,7 +84,7 @@ class TurnCardContent extends StatelessWidget {
                   child: CustomText(
                     text:
                         '${eventDateTime.day} ${DateTimeUtils.getMonthAbbreviation(eventDateTime.month)}',
-                    color: CustomColor.white,
+                    color: CustomColor.customWhite,
                     textStyle: CustomTextStyle.body2,
                   ),
                 ),
