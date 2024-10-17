@@ -23,13 +23,17 @@ class AddTeamMembersViewModel extends ChangeNotifier {
   List<model.User> get teamMembers => _teamMembers;
   List<model.User> get nonTeamMembers => _nonTeamMembers;
 
+  final TextEditingController searchController = TextEditingController();
+  List<model.User> _allNonTeamMembers = [];
+
   void _sortUsers() {
     _teamMembers = _friends
         .where((friend) => _teamMemberIds.contains(friend.uid))
         .toList();
-    _nonTeamMembers = _friends
+    _allNonTeamMembers = _friends
         .where((friend) => !_teamMemberIds.contains(friend.uid))
         .toList();
+    _nonTeamMembers = _allNonTeamMembers;
     notifyListeners();
   }
 
@@ -100,5 +104,17 @@ class AddTeamMembersViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error adding member to team: $e');
     }
+  }
+
+  void performSearch(String query) {
+    if (query.isEmpty) {
+      _nonTeamMembers = _allNonTeamMembers;
+    } else {
+      _nonTeamMembers = _allNonTeamMembers
+          .where((friend) =>
+              friend.username.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 }

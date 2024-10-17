@@ -6,6 +6,7 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../widgets/molecules/custom_search_bar.dart';
 
 class AddTeamMembersScreen extends StatelessWidget {
   final String teamId;
@@ -39,11 +40,31 @@ class AddTeamMembersScreen extends StatelessWidget {
                         viewModel,
                         true,
                       ),
-                      const SizedBox(
-                        height: 25,
+                      const SizedBox(height: 30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Center(
+                          child: Text(
+                            CustomString.otherFriends,
+                            style: CustomTextStyle.body1.copyWith(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: CustomSearchBar(
+                          controller: viewModel.searchController,
+                          hintText: CustomString.searchFriends,
+                          onChanged: (value) => viewModel.performSearch(value),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
                       _buildMembersList(
-                        CustomString.otherFriends,
+                        '',
                         viewModel.nonTeamMembers,
                         viewModel,
                         false,
@@ -61,16 +82,19 @@ class AddTeamMembersScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            title,
-            style: CustomTextStyle.body1.copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+        if (title.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: Text(
+                title,
+                style: CustomTextStyle.body1.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-        ),
         ...users.map(
           (user) => Column(
             children: [
