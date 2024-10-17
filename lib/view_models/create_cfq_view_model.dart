@@ -30,6 +30,7 @@ class CreateCfqViewModel extends ChangeNotifier
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
 
+  // Everybody
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
 
@@ -578,8 +579,8 @@ class CreateCfqViewModel extends ChangeNotifier
 
   void _updateInviteesControllerText() {
     List<String> inviteeNames =
-        _selectedInvitees.map((user) => user.username).toList();
-    inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
+        _selectedTeamInvitees.map((team) => team.name).toList();
+    inviteeNames.addAll(_selectedInvitees.map((user) => user.username));
     inviteesController.text = inviteeNames.join(', ');
   }
 

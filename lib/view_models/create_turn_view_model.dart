@@ -614,8 +614,8 @@ class CreateTurnViewModel extends ChangeNotifier
 
   void _updateInviteesControllerText() {
     List<String> inviteeNames =
-        _selectedInvitees.map((user) => user.username).toList();
-    inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
+        _selectedTeamInvitees.map((team) => team.name).toList();
+    inviteeNames.addAll(_selectedInvitees.map((user) => user.username));
     inviteesController.text = inviteeNames.join(', ');
   }
 
