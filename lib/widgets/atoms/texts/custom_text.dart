@@ -29,7 +29,8 @@ class CustomText extends StatelessWidget {
             fontSize: fontSize ?? 16, // Default font size if not provided
             fontWeight: fontWeight ??
                 FontWeight.normal, // Default font weight if not provided
-            color: color ?? CustomColor.white, // Default color if not provided
+            color: color ??
+                CustomColor.customWhite, // Default color if not provided
           ),
     );
   }

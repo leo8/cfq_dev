@@ -171,14 +171,14 @@ class CreateTeamViewModel extends ChangeNotifier {
     try {
       // Validate required fields
       if (teamNameController.text.isEmpty) {
-        _errorMessage = 'Please enter a team name.';
+        _errorMessage = CustomString.pleaseEnterTeamName;
         _isLoading = false;
         notifyListeners();
         return;
       }
 
       if (_selectedFriends.isEmpty) {
-        _errorMessage = 'Please select at least one member.';
+        _errorMessage = CustomString.pleaseSelectAtLeastOneMember;
         _isLoading = false;
         notifyListeners();
         return;

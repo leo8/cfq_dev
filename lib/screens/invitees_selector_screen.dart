@@ -78,7 +78,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                       label: const Text(CustomString.everybody),
                       deleteIcon: CustomIcon.close.copyWith(size: 18),
                       onDeleted: viewModel.selectEverybody,
-                      backgroundColor: CustomColor.white.withOpacity(0.1),
+                      backgroundColor: CustomColor.customWhite.withOpacity(0.1),
                       labelStyle: CustomTextStyle.body1,
                     ),
                   ...viewModel.selectedTeamInvitees

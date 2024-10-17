@@ -17,7 +17,7 @@ class TurnLocationInfo extends StatelessWidget {
     return Row(
       children: [
         CustomIcon.eventLocation.copyWith(
-          color: CustomColor.white54,
+          color: CustomColor.customWhite,
           size: 20,
         ),
         const SizedBox(width: 4),

@@ -37,7 +37,7 @@ class CustomTextField extends StatelessWidget {
         color: CustomColor.customBlack, // Background color with reduced opacity
         borderRadius:
             BorderRadius.circular(5), // Rounded corners for the text field
-        border: Border.all(color: CustomColor.white, width: 0.5),
+        border: Border.all(color: CustomColor.customWhite, width: 0.5),
       ),
       padding: const EdgeInsets.symmetric(
           horizontal: 12), // Padding inside the container
@@ -59,7 +59,8 @@ class CustomTextField extends StatelessWidget {
                   maxLines, // Controls how many lines the text field can expand to
               style: textStyle ??
                   const TextStyle(
-                      color: CustomColor.white), // Text color inside the field
+                      color: CustomColor
+                          .customWhite), // Text color inside the field
               onChanged:
                   onChanged, // Calls the onChanged callback when text changes
               decoration: InputDecoration(

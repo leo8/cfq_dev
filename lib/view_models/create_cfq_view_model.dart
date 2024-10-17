@@ -160,7 +160,7 @@ class CreateCfqViewModel extends ChangeNotifier
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error initializing current user: $e');
-      _errorMessage = 'Failed to initialize user data.';
+      _errorMessage = CustomString.failedToInitializeUserData;
       notifyListeners();
     }
   }
@@ -176,7 +176,7 @@ class CreateCfqViewModel extends ChangeNotifier
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching user teams: $e');
-      _errorMessage = 'Failed to fetch user teams.';
+      _errorMessage = CustomString.failedToFetchUserTeams;
       notifyListeners();
     }
   }
@@ -229,7 +229,8 @@ class CreateCfqViewModel extends ChangeNotifier
       }
     } catch (e) {
       AppLogger.error('Error while searching: $e');
-      _errorMessage = 'Failed to perform search.';
+      _errorMessage = CustomString.failedToPerformSearch;
+      notifyListeners();
     }
 
     _isSearching = false;
@@ -342,7 +343,7 @@ class CreateCfqViewModel extends ChangeNotifier
       }
     } catch (e) {
       AppLogger.error('Error picking cfq image: $e');
-      _errorMessage = 'Failed to pick image.';
+      _errorMessage = CustomString.failedToPickImage;
       notifyListeners();
     }
   }
@@ -367,7 +368,8 @@ class CreateCfqViewModel extends ChangeNotifier
                     top: 0,
                     child: GestureDetector(
                       onTap: () => Navigator.of(dialogContext).pop(),
-                      child: const Icon(Icons.close, color: Colors.white),
+                      child: const Icon(Icons.close,
+                          color: CustomColor.customWhite),
                     ),
                   ),
                 ],
@@ -432,19 +434,19 @@ class CreateCfqViewModel extends ChangeNotifier
   Future<void> createCfq() async {
     // Validate required fields
     if (_cfqImage == null) {
-      _errorMessage = 'Please select an image.';
+      _errorMessage = CustomString.pleaseSelectAnImage;
       notifyListeners();
       return;
     }
 
     if (cfqNameController.text.isEmpty || descriptionController.text.isEmpty) {
-      _errorMessage = 'Please fill all required fields.';
+      _errorMessage = CustomString.pleaseFillAllRequiredFields;
       notifyListeners();
       return;
     }
 
     if (_selectedMoods == null || _selectedMoods!.isEmpty) {
-      _errorMessage = 'Please select at least one mood.';
+      _errorMessage = CustomString.pleaseSelectAtLeastOneMood;
       notifyListeners();
       return;
     }

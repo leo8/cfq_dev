@@ -15,7 +15,7 @@ class OutlinedIconButton extends StatelessWidget {
     required this.onPressed,
     this.size = 60.0,
     this.iconSize = 30.0,
-    this.color = CustomColor.white,
+    this.color = CustomColor.customWhite,
   });
 
   @override

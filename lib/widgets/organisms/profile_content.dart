@@ -293,7 +293,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.otherUserPosts,
                       style: TextStyle(
                         color: _selectedIndex == 0
-                            ? CustomColor.white
+                            ? CustomColor.customWhite
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 0
                             ? FontWeight.bold
@@ -306,7 +306,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.otherUserCalendar,
                       style: TextStyle(
                         color: _selectedIndex == 1
-                            ? CustomColor.white
+                            ? CustomColor.customWhite
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 1
                             ? FontWeight.bold
@@ -344,7 +344,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.myPosts,
                       style: TextStyle(
                         color: _selectedIndex == 0
-                            ? CustomColor.white
+                            ? CustomColor.customWhite
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 0
                             ? FontWeight.bold
@@ -357,7 +357,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.myCalendar,
                       style: TextStyle(
                         color: _selectedIndex == 1
-                            ? CustomColor.white
+                            ? CustomColor.customWhite
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 1
                             ? FontWeight.bold

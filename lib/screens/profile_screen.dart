@@ -32,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
                 if (!viewModel.isCurrentUser) {
                   return IconButton(
                     icon: CustomIcon.arrowBack,
-                    color: CustomColor.white,
+                    color: CustomColor.customWhite,
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

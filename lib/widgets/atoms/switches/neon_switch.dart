@@ -36,7 +36,7 @@ class NeonSwitch extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 22, 1, 57),
           borderRadius: BorderRadius.circular(15 * size),
-          border: Border.all(color: CustomColor.white, width: 1 * size),
+          border: Border.all(color: CustomColor.customWhite, width: 1 * size),
         ),
         child: Stack(
           children: [

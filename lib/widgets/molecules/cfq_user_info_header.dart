@@ -62,7 +62,7 @@ class CfqUserInfoHeader extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.notifications_none,
-                  color: CustomColor.white),
+                  color: CustomColor.customWhite),
               onPressed: onFollowPressed,
             ),
             IconButton(
