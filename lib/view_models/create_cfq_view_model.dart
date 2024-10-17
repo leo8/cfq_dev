@@ -361,7 +361,7 @@ class CreateCfqViewModel extends ChangeNotifier
                 children: [
                   Center(
                     child: Text(CustomString.whatMood,
-                        style: CustomTextStyle.body1.copyWith(fontSize: 22)),
+                        style: CustomTextStyle.bigBody1),
                   ),
                   Positioned(
                     right: 0,

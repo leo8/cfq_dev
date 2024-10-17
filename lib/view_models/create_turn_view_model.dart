@@ -386,8 +386,10 @@ class CreateTurnViewModel extends ChangeNotifier
               title: Stack(
                 children: [
                   Center(
-                    child: Text(CustomString.whatMood,
-                        style: CustomTextStyle.body1.copyWith(fontSize: 22)),
+                    child: Text(
+                      CustomString.whatMood,
+                      style: CustomTextStyle.bigBody1,
+                    ),
                   ),
                   Positioned(
                     right: 0,

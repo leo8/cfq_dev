@@ -128,37 +128,22 @@ class _ProfileContentState extends State<ProfileContent>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.user.username,
-                            style: CustomTextStyle.body1.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
+                          Text(widget.user.username,
+                              style: CustomTextStyle.bigBody1),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text(
-                              '|',
-                              style: CustomTextStyle.body1.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
+                            Text('|', style: CustomTextStyle.bigBody1),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
                             CustomIcon.userLocation,
                           const SizedBox(width: 4),
                           if (widget.isCurrentUser | widget.isFriend)
                             Text(
-                              widget.user.location.isNotEmpty
-                                  ? widget.user.location[0].toUpperCase() +
-                                      widget.user.location.substring(1)
-                                  : CustomString.noLocation,
-                              style: CustomTextStyle.body1.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
+                                widget.user.location.isNotEmpty
+                                    ? widget.user.location[0].toUpperCase() +
+                                        widget.user.location.substring(1)
+                                    : CustomString.noLocation,
+                                style: CustomTextStyle.bigBody1),
                         ],
                       ),
                     ),
@@ -293,7 +278,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.otherUserPosts,
                       style: TextStyle(
                         color: _selectedIndex == 0
-                            ? CustomColor.customWhite
+                            ? CustomColor.white
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 0
                             ? FontWeight.bold
@@ -306,7 +291,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.otherUserCalendar,
                       style: TextStyle(
                         color: _selectedIndex == 1
-                            ? CustomColor.customWhite
+                            ? CustomColor.white
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 1
                             ? FontWeight.bold
@@ -344,7 +329,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.myPosts,
                       style: TextStyle(
                         color: _selectedIndex == 0
-                            ? CustomColor.customWhite
+                            ? CustomColor.white
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 0
                             ? FontWeight.bold
@@ -357,7 +342,7 @@ class _ProfileContentState extends State<ProfileContent>
                       CustomString.myCalendar,
                       style: TextStyle(
                         color: _selectedIndex == 1
-                            ? CustomColor.customWhite
+                            ? CustomColor.white
                             : CustomColor.grey,
                         fontWeight: _selectedIndex == 1
                             ? FontWeight.bold

@@ -23,7 +23,7 @@ class TeamChip extends StatelessWidget {
       label: Text(team.name),
       deleteIcon: CustomIcon.close.copyWith(size: 18),
       onDeleted: onDelete,
-      backgroundColor: CustomColor.customWhite.withOpacity(0.1),
+      backgroundColor: CustomColor.white.withOpacity(0.1),
       labelStyle: CustomTextStyle.body1,
     );
   }

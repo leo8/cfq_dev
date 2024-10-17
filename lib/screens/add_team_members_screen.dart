@@ -44,13 +44,8 @@ class AddTeamMembersScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Center(
-                          child: Text(
-                            CustomString.otherFriends,
-                            style: CustomTextStyle.body1.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: Text(CustomString.otherFriends,
+                              style: CustomTextStyle.bigBody1),
                         ),
                       ),
                       const SizedBox(height: 15),
@@ -86,13 +81,7 @@ class AddTeamMembersScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Center(
-              child: Text(
-                title,
-                style: CustomTextStyle.body1.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: Text(title, style: CustomTextStyle.bigBody1),
             ),
           ),
         ...users.map(

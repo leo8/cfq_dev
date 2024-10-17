@@ -78,7 +78,7 @@ class ParametersScreen extends StatelessWidget {
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
             title: Text(
               CustomString.logOut,
-              style: CustomTextStyle.body1.copyWith(color: CustomColor.red),
+              style: CustomTextStyle.body1Bold.copyWith(color: CustomColor.red),
             ),
             onTap: () async {
               await viewModel.logOut();
