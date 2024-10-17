@@ -22,9 +22,12 @@ class ThreadViewModel extends ChangeNotifier {
   List<model.User> _activeFriends = [];
   List<model.User> get activeFriends => _activeFriends;
 
+  bool _isInitializing = true;
+  bool get isInitializing => _isInitializing;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
-    fetchCurrentUserAndActiveFriends();
+    _initializeData();
   }
 
   @override
@@ -36,6 +39,12 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   // Existing methods (performSearch, parseDate, fetchCombinedEvents)
+
+  Future<void> _initializeData() async {
+    await fetchCurrentUserAndActiveFriends();
+    _isInitializing = false;
+    notifyListeners();
+  }
 
   Future<void> fetchCurrentUserAndActiveFriends() async {
     try {

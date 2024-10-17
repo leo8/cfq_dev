@@ -41,6 +41,9 @@ class ThreadScreen extends StatelessWidget {
         ),
         body: Consumer<ThreadViewModel>(
           builder: (context, viewModel, child) {
+            if (viewModel.isInitializing) {
+              return const Center(child: CircularProgressIndicator());
+            }
             if (viewModel.searchController.text.isNotEmpty) {
               return _buildSearchResults(context, viewModel);
             } else {
