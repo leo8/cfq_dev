@@ -17,18 +17,19 @@ class InviteeSearchBar extends StatelessWidget {
   final Function(Team) onAddTeam;
   final VoidCallback onSelectEverybody;
   final bool isEverybodySelected;
+  final bool showEverybodyOption;
 
-  const InviteeSearchBar({
-    super.key,
-    required this.controller,
-    required this.onSearch,
-    this.hintText = CustomString.searchFriends,
-    required this.searchResults,
-    required this.onAddInvitee,
-    required this.onAddTeam,
-    required this.onSelectEverybody,
-    required this.isEverybodySelected,
-  });
+  const InviteeSearchBar(
+      {super.key,
+      required this.controller,
+      required this.onSearch,
+      this.hintText = CustomString.searchFriends,
+      required this.searchResults,
+      required this.onAddInvitee,
+      required this.onAddTeam,
+      required this.onSelectEverybody,
+      required this.isEverybodySelected,
+      required this.showEverybodyOption});
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +58,22 @@ class InviteeSearchBar extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (!isEverybodySelected && index == 0) {
                   // "Tout le monde" option
-                  return ListTile(
-                    leading: const CircleAvatar(
-                      backgroundImage:
-                          AssetImage('assets/images/turn_button.png'),
-                    ),
-                    title: const Text(CustomString.everybody),
-                    trailing: IconButton(
-                      icon: CustomIcon.add.copyWith(
-                        color: CustomColor.customPurple,
-                        size: 24,
+                  if (showEverybodyOption) {
+                    return ListTile(
+                      leading: const CircleAvatar(
+                        backgroundImage:
+                            AssetImage('assets/images/turn_button.png'),
                       ),
-                      onPressed: onSelectEverybody,
-                    ),
-                  );
+                      title: const Text(CustomString.everybody),
+                      trailing: IconButton(
+                        icon: CustomIcon.add.copyWith(
+                          color: CustomColor.customPurple,
+                          size: 24,
+                        ),
+                        onPressed: onSelectEverybody,
+                      ),
+                    );
+                  }
                 } else {
                   final result = isEverybodySelected
                       ? searchResults[index]

@@ -84,6 +84,9 @@ class CreateCfqViewModel extends ChangeNotifier
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  bool _showEverybodyOption = true;
+  bool get showEverybodyOption => _showEverybodyOption;
+
   CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
   }
@@ -188,6 +191,9 @@ class CreateCfqViewModel extends ChangeNotifier
 
     try {
       final queryLower = query.toLowerCase();
+
+      // Update _showEverybodyOption based on whether the search query is empty
+      _showEverybodyOption = query.isEmpty;
 
       if (_isEverybodySelected) {
         // If everybody is selected, only show teams in search results

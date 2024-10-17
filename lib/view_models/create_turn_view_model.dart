@@ -85,6 +85,9 @@ class CreateTurnViewModel extends ChangeNotifier
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  bool _showEverybodyOption = true;
+  bool get showEverybodyOption => _showEverybodyOption;
+
   CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
   }
@@ -218,6 +221,8 @@ class CreateTurnViewModel extends ChangeNotifier
 
     try {
       final queryLower = query.toLowerCase();
+
+      _showEverybodyOption = query.isEmpty;
 
       if (_isEverybodySelected) {
         // If everybody is selected, only show teams in search results

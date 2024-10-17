@@ -63,6 +63,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                 onAddTeam: viewModel.addTeam,
                 onSelectEverybody: viewModel.selectEverybody,
                 isEverybodySelected: viewModel.isEverybodySelected,
+                showEverybodyOption: viewModel.showEverybodyOption,
               ),
               const SizedBox(height: 10),
               Wrap(

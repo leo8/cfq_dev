@@ -8,6 +8,7 @@ abstract class InviteesSelectorViewModel extends ChangeNotifier {
   List<dynamic> get searchResults;
   bool get isSearching;
   bool get isEverybodySelected;
+  bool get showEverybodyOption;
   TextEditingController get searchController;
 
   void toggleInvitee(model.User invitee);
