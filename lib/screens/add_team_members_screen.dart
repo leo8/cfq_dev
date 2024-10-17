@@ -39,6 +39,9 @@ class AddTeamMembersScreen extends StatelessWidget {
                         viewModel,
                         true,
                       ),
+                      const SizedBox(
+                        height: 25,
+                      ),
                       _buildMembersList(
                         CustomString.otherFriends,
                         viewModel.nonTeamMembers,
@@ -68,18 +71,25 @@ class AddTeamMembersScreen extends StatelessWidget {
             ),
           ),
         ),
-        ...users.map((user) => ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(user.profilePictureUrl),
+        ...users.map(
+          (user) => Column(
+            children: [
+              const Divider(),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(user.profilePictureUrl),
+                ),
+                title: Text(user.username),
+                trailing: isTeamMember
+                    ? const Icon(Icons.check_circle, color: CustomColor.green)
+                    : ElevatedButton(
+                        onPressed: () => viewModel.addMemberToTeam(user.uid),
+                        child: const Text(CustomString.addFriend),
+                      ),
               ),
-              title: Text(user.username),
-              trailing: isTeamMember
-                  ? const Icon(Icons.check_circle, color: CustomColor.green)
-                  : ElevatedButton(
-                      onPressed: () => viewModel.addMemberToTeam(user.uid),
-                      child: const Text(CustomString.addFriend),
-                    ),
-            )),
+            ],
+          ),
+        ),
       ],
     );
   }
