@@ -19,4 +19,5 @@ abstract class InviteesSelectorViewModel extends ChangeNotifier {
   void removeInvitee(model.User invitee);
   void removeTeam(Team team);
   void selectEverybody();
+  void revertSelections();
 }

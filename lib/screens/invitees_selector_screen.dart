@@ -19,11 +19,12 @@ class InviteesSelectorScreen extends StatelessWidget {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 75,
+            toolbarHeight: 40,
             leading: IconButton(
               icon: CustomIcon.arrowBack,
               onPressed: () {
                 AppLogger.debug('Back button pressed');
+                viewModel.revertSelections();
                 Navigator.of(context).pop();
               },
             ),

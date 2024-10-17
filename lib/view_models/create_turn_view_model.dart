@@ -29,6 +29,9 @@ class CreateTurnViewModel extends ChangeNotifier
   TextEditingController inviteesController = TextEditingController();
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
+  List<User> _previousSelectedInvitees = [];
+  List<Team> _previousSelectedTeamInvitees = [];
+  bool _previousIsEverybodySelected = false;
 
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
@@ -560,6 +563,15 @@ class CreateTurnViewModel extends ChangeNotifier
     }
   }
 
+  @override
+  void revertSelections() {
+    _selectedInvitees = List.from(_previousSelectedInvitees);
+    _selectedTeamInvitees = List.from(_previousSelectedTeamInvitees);
+    _isEverybodySelected = _previousIsEverybodySelected;
+    _updateInviteesControllerText();
+    notifyListeners();
+  }
+
   // Update 'turns' field for invitees
   Future<void> _updateInviteesTurns(
       List<String> inviteesIds, String turnId) async {
@@ -609,6 +621,11 @@ class CreateTurnViewModel extends ChangeNotifier
   }
 
   Future<void> openInviteesSelectorScreen(BuildContext context) async {
+    // Store the current state before opening the selector screen
+    _previousSelectedInvitees = List.from(_selectedInvitees);
+    _previousSelectedTeamInvitees = List.from(_selectedTeamInvitees);
+    _previousIsEverybodySelected = _isEverybodySelected;
+
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
