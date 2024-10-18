@@ -4,6 +4,8 @@ import '../molecules/turn_header.dart';
 import '../molecules/turn_details.dart';
 import '../molecules/turn_buttons.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/date_time_utils.dart';
+import '../../widgets/atoms/avatars/clickable_avatar.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -44,11 +46,10 @@ class TurnCardContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
-        color: CustomColor.customBlack,
+        gradient: CustomColor.turnBackgroundGradient,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: CustomColor.customWhite, width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,10 +60,46 @@ class TurnCardContent extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          ClickableAvatar(
+                            userId: '', // Add user ID
+                            imageUrl: profilePictureUrl,
+                            onTap: () {}, // Add onTap functionality
+                            isActive: false, // Add isActive
+                            radius: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(username, style: CustomTextStyle.body1),
+                                Text(DateTimeUtils.getTimeAgo(datePublished),
+                                    style: CustomTextStyle.body2),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TurnButtons(
+                      onAttendingPressed: onAttendingPressed,
+                      onSharePressed: onSharePressed,
+                      onSendPressed: onSendPressed,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(left: 24),
                   child: TurnDetails(
                     profilePictureUrl: profilePictureUrl,
                     username: username,
@@ -76,11 +113,7 @@ class TurnCardContent extends StatelessWidget {
                     description: description,
                   ),
                 ),
-                TurnButtons(
-                  onAttendingPressed: onAttendingPressed,
-                  onSharePressed: onSharePressed,
-                  onSendPressed: onSendPressed,
-                ),
+                const SizedBox(height: 25),
               ],
             ),
           ),

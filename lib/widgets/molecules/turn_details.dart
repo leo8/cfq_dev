@@ -38,23 +38,11 @@ class TurnDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            ClickableAvatar(
-              userId: '', // Add user ID
-              imageUrl: profilePictureUrl,
-              onTap: () {}, // Add onTap functionality
-              radius: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(username, style: CustomTextStyle.body1),
-            Text(' • ', style: CustomTextStyle.body2),
-            Text(DateTimeUtils.getTimeAgo(datePublished),
-                style: CustomTextStyle.body2),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(turnName, style: CustomTextStyle.title2),
+        Text(turnName,
+            style: CustomTextStyle.hugeTitle.copyWith(
+              fontSize: 28,
+              letterSpacing: 1.4,
+            )),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -67,38 +55,30 @@ class TurnDetails extends StatelessWidget {
                   ))
               .toList(),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 20),
         Text(DateTimeUtils.formatEventDateTime(eventDateTime),
-            style: CustomTextStyle.body2),
+            style: CustomTextStyle.title3.copyWith(
+                color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text('$attendeesCount ${CustomString.going}',
-            style: CustomTextStyle.body2),
-        const SizedBox(height: 8),
+            style: CustomTextStyle.body1),
+        const SizedBox(height: 20),
         Row(
           children: [
-            Text(where, style: CustomTextStyle.body2),
-            Text(' | ', style: CustomTextStyle.body2),
+            Text(where, style: CustomTextStyle.body1),
+            Text(' | ', style: CustomTextStyle.body1),
             Expanded(
                 child: Text(address,
-                    style: CustomTextStyle.body2,
+                    style: CustomTextStyle.body1,
                     overflow: TextOverflow.ellipsis)),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           description,
-          style: CustomTextStyle.body2,
+          style: CustomTextStyle.body1,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
-        ),
-        GestureDetector(
-          onTap: () {
-            // Implement "See more" functionality
-          },
-          child: Text(
-            CustomString.seeMore,
-            style: CustomTextStyle.body2.copyWith(fontWeight: FontWeight.bold),
-          ),
         ),
       ],
     );
