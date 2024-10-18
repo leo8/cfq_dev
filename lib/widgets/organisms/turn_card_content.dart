@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
-import '../molecules/turn_event_details.dart';
-import '../molecules/turn_location_info.dart';
-import '../molecules/turn_user_info_header.dart';
-import '../atoms/texts/custom_text.dart';
+import '../molecules/turn_header.dart';
+import '../molecules/turn_details.dart';
+import '../molecules/turn_buttons.dart';
 import '../../utils/styles/text_styles.dart';
-import '../../utils/date_time_utils.dart';
-import '../../utils/styles/string.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -49,77 +46,40 @@ class TurnCardContent extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
-        gradient: CustomColor.turnBackgroundGradient,
+        color: CustomColor.customBlack,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: CustomColor.customWhite, width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(
-                  turnImageUrl,
-                  width: double.infinity,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: CustomColor.customBlack.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: CustomText(
-                    text:
-                        '${eventDateTime.day} ${DateTimeUtils.getMonthAbbreviation(eventDateTime.month)}',
-                    color: CustomColor.customWhite,
-                    textStyle: CustomTextStyle.body2,
-                  ),
-                ),
-              ),
-            ],
+          TurnHeader(
+            turnImageUrl: turnImageUrl,
+            eventDateTime: eventDateTime,
           ),
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TurnUserInfoHeader(
-                  profilePictureUrl: profilePictureUrl,
-                  username: username,
-                  organizers: organizers,
-                  timeInfo: DateTimeUtils.getTimeAgo(datePublished),
+                Expanded(
+                  child: TurnDetails(
+                    profilePictureUrl: profilePictureUrl,
+                    username: username,
+                    datePublished: datePublished,
+                    turnName: turnName,
+                    moods: [], // Add moods list
+                    eventDateTime: eventDateTime,
+                    attendeesCount: attendeesCount,
+                    where: where,
+                    address: address,
+                    description: description,
+                  ),
+                ),
+                TurnButtons(
                   onAttendingPressed: onAttendingPressed,
-                  datePublished: datePublished,
-                ),
-                const SizedBox(height: 16),
-                TurnEventDetails(
-                  turnName: turnName,
-                  eventDateTime: eventDateTime,
-                ),
-                const SizedBox(height: 8),
-                CustomText(
-                  text: attendeesCount.toString() +
-                      CustomString.space +
-                      CustomString.going,
-                  textStyle: CustomTextStyle.body2,
-                ),
-                const SizedBox(height: 8),
-                TurnLocationInfo(
-                  address: address,
-                ),
-                const SizedBox(height: 8),
-                CustomText(
-                  text: description,
-                  textStyle: CustomTextStyle.body2,
+                  onSharePressed: onSharePressed,
+                  onSendPressed: onSendPressed,
                 ),
               ],
             ),

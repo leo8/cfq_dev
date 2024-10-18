@@ -15,6 +15,7 @@ class CustomString {
   static const success = "Succès";
   static const leave = "Quitter";
   static const orCapital = "OU";
+  static const seeMore = "Voir plus";
 
   // Authentication
   static const logInCapital = "CONNEXION";
