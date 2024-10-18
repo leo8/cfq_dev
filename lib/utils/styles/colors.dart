@@ -14,27 +14,41 @@ class CustomColor {
   static const blueNeon = Color.fromRGBO(75, 103, 110, 1);
   static const purpleNeon = Color.fromRGBO(67, 56, 98, 1);
 
-  static const turnBackgroundGradient =
-      LinearGradient(begin: Alignment.bottomLeft, stops: [
-    0,
-    0.8,
-    1
-  ], colors: [
-    CustomColor.customBlack,
-    CustomColor.customBlack,
-    CustomColor.blueNeon,
-  ]);
+  static const turnBackgroundGradient = LinearGradient(
+      begin: Alignment.bottomLeft,
+      stops: [0, 1],
+      colors: [Color(0xFF1D1D20), Color(0xFF1D1D20)]);
 
   static const cfqBackgroundGradient =
-      LinearGradient(begin: Alignment.bottomLeft, stops: [
+      LinearGradient(begin: Alignment.bottomRight, stops: [
     0,
-    0.5,
     1
   ], colors: [
-    CustomColor.purpleNeon,
-    CustomColor.customBlack,
-    CustomColor.customBlack,
+    Color(0xFF0F0F2C),
+    Color(0xFF2A185C),
   ]);
+
+  // static const turnBackgroundGradient =
+  //    LinearGradient(begin: Alignment.bottomLeft, stops: [
+  //  0,
+  //  0.8,
+  //  1
+  // ], colors: [
+  //  CustomColor.customBlack,
+  //  CustomColor.customBlack,
+  //  CustomColor.blueNeon,
+  // ]);
+
+  // static const cfqBackgroundGradient =
+  //    LinearGradient(begin: Alignment.bottomLeft, stops: [
+  //  0,
+  //  0.5,
+  //  1
+  // ], colors: [
+  //  CustomColor.purpleNeon,
+  //  CustomColor.customBlack,
+  //  CustomColor.customBlack,
+  // ]);
 
   //Theme
   static const mobileBackgroundColor = Color.fromRGBO(0, 0, 0, 1);

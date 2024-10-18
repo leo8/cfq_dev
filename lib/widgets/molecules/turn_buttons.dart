@@ -20,9 +20,9 @@ class TurnButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildIconButton(CustomIcon.eventConversation, onSendPressed),
-        const SizedBox(width: 10),
+        const SizedBox(width: 6),
         _buildIconButton(CustomIcon.favorite, onSharePressed),
-        const SizedBox(width: 15),
+        const SizedBox(width: 9),
         _buildAttendingButton(),
       ],
     );

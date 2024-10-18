@@ -74,16 +74,17 @@ class TurnCardContent extends StatelessWidget {
                             imageUrl: profilePictureUrl,
                             onTap: () {}, // Add onTap functionality
                             isActive: false, // Add isActive
-                            radius: 20,
+                            radius: 28,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(username, style: CustomTextStyle.body1),
-                                Text(DateTimeUtils.getTimeAgo(datePublished),
-                                    style: CustomTextStyle.body2),
+                                Text(
+                                    '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                    style: CustomTextStyle.body1
+                                        .copyWith(fontSize: 18)),
                               ],
                             ),
                           ),
@@ -99,7 +100,7 @@ class TurnCardContent extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Padding(
-                  padding: const EdgeInsets.only(left: 24),
+                  padding: const EdgeInsets.only(left: 18),
                   child: TurnDetails(
                     profilePictureUrl: profilePictureUrl,
                     username: username,
