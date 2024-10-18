@@ -96,16 +96,21 @@ class EventsList extends StatelessWidget {
                 datePublished: parseDate(event['datePublished']),
                 location: event['where'] ?? CustomString.emptyString,
                 when: event['when'] ?? CustomString.emptyString,
+                moods: List<String>.from(event['moods'] ?? []),
+                followersCount: 0,
                 onFollowPressed: () {
                   // Handle follow action
+                },
+                onSendPressed: () {
+                  // Handle share action
                 },
                 onSharePressed: () {
                   // Handle share action
                 },
-                onSendPressed: () {
+                onFavoritePressed: () {
                   // Handle send action
                 },
-                onCommentPressed: () {
+                onBellPressed: () {
                   // Handle comment action
                 },
               );
