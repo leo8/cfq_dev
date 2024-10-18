@@ -70,6 +70,7 @@ class EventsList extends StatelessWidget {
                 address: event['address'] ?? CustomString.emptyString,
                 attendeesCount: (event['attending'] as List?)?.length ?? 0,
                 datePublished: parseDate(event['datePublished']),
+                moods: List<String>.from(event['moods'] ?? []),
                 onAttendingPressed: () {
                   // Handle attending action
                 },

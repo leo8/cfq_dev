@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../atoms/avatars/clickable_avatar.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';

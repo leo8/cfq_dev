@@ -11,6 +11,7 @@ class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
   final String username;
   final List<String> organizers;
+  final List<String> moods;
   final String turnName;
   final String description;
   final DateTime eventDateTime;
@@ -40,6 +41,7 @@ class TurnCardContent extends StatelessWidget {
     required this.onCommentPressed,
     required this.turnImageUrl,
     required this.datePublished,
+    required this.moods,
     super.key,
   });
 
@@ -106,7 +108,7 @@ class TurnCardContent extends StatelessWidget {
                     username: username,
                     datePublished: datePublished,
                     turnName: turnName,
-                    moods: [], // Add moods list
+                    moods: moods, // Add moods list
                     eventDateTime: eventDateTime,
                     attendeesCount: attendeesCount,
                     where: where,
