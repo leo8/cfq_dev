@@ -96,7 +96,7 @@ class CFQCardContent extends StatelessWidget {
                     CFQButtons(
                       onSendPressed: onSendPressed,
                       onFavoritePressed: onFavoritePressed,
-                      onBellPressed: onBellPressed,
+                      onFollowUpPressed: onBellPressed,
                     ),
                   ],
                 ),
