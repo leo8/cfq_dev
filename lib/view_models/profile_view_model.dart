@@ -23,6 +23,8 @@ class ProfileViewModel extends ChangeNotifier {
   bool _friendAdded = false;
   bool get friendAdded => _friendAdded;
 
+  model.User? get currentUser => _currentUser;
+
   bool _friendRemoved = false;
   bool get friendRemoved => _friendRemoved;
 
@@ -224,6 +226,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedTurns: _user!.invitedTurns,
         postedCfqs: _user!.postedCfqs,
         invitedCfqs: _user!.invitedCfqs,
+        favorites: _user!.favorites,
       );
 
       _isLoading = false;
@@ -268,6 +271,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedTurns: _user!.invitedTurns,
         postedCfqs: _user!.postedCfqs,
         invitedCfqs: _user!.invitedCfqs,
+        favorites: _user!.favorites,
       );
 
       _isLoading = false;

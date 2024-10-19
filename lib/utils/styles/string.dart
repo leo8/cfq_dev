@@ -15,6 +15,7 @@ class CustomString {
   static const success = "Succès";
   static const leave = "Quitter";
   static const orCapital = "OU";
+  static const seeMore = "Voir plus";
 
   // Authentication
   static const logInCapital = "CONNEXION";
@@ -119,6 +120,10 @@ class CustomString {
   static const myProfileCapital = "MON PROFIL";
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
+
+  // Favorites
+  static const favoritesCapital = "FAVORIS";
+  static const noFavoriteEvents = "Pas encore de favoris";
 
   // Image Related
   static const noImage = "Aucune image";

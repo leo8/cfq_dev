@@ -7,14 +7,47 @@ class CustomColor {
   static const customPurple = Color(0xFFB098E6);
   static const customCyan = Color(0xFF47FFE6);
   static const customDarkGrey = Color(0xFF1D1D20);
-  static const turnBackground = Color(0xFF1D1D20);
-  static const cfqBackgroundGradient =
-      LinearGradient(begin: Alignment.bottomRight, stops: [
+
+  static const turnColor = Colors.cyanAccent;
+  static const offColor = Colors.purpleAccent;
+
+  static const blueNeon = Color.fromRGBO(75, 103, 110, 1);
+  static const purpleNeon = Color.fromRGBO(67, 56, 98, 1);
+
+  // static const turnBackgroundGradient = LinearGradient(
+  //     begin: Alignment.bottomLeft,
+  //     stops: [0, 1],
+  //     colors: [Color(0xFF1D1D20), Color(0xFF1D1D20)]);
+
+  // static const cfqBackgroundGradient =
+  //     LinearGradient(begin: Alignment.bottomRight, stops: [
+  //   0,
+  //   1
+  // ], colors: [
+  //   Color(0xFF0F0F2C),
+  //   Color(0xFF2A185C),
+  // ]);
+
+  static const turnBackgroundGradient =
+      LinearGradient(begin: Alignment.bottomLeft, stops: [
     0,
+    0.8,
     1
   ], colors: [
-    Color(0xFF0F0F2C),
-    Color(0xFF2A185C),
+    CustomColor.customBlack,
+    CustomColor.customBlack,
+    CustomColor.blueNeon,
+  ]);
+
+  static const cfqBackgroundGradient =
+      LinearGradient(begin: Alignment.bottomLeft, stops: [
+    0,
+    0.5,
+    1
+  ], colors: [
+    CustomColor.purpleNeon,
+    CustomColor.customBlack,
+    CustomColor.customBlack,
   ]);
 
   //Theme
@@ -22,9 +55,6 @@ class CustomColor {
   static const webBackgroundColor = Color.fromRGBO(18, 18, 18, 1);
   static const mobileSearchColor = Color.fromRGBO(38, 38, 38, 1);
   static const secondaryColor = Colors.grey;
-
-  static const turnColor = Colors.cyanAccent;
-  static const offColor = Colors.purpleAccent;
 
   //Standard colors
   static const transparent = Colors.transparent;
