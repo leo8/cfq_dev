@@ -40,9 +40,21 @@ class CustomTextStyle {
     color: CustomColor.customWhite,
   );
 
+  static TextStyle bigBody1 = GoogleFonts.inter(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: CustomColor.customWhite,
+  );
+
   static TextStyle body1 = GoogleFonts.inter(
     fontSize: 16,
     fontWeight: FontWeight.normal,
+    color: CustomColor.customWhite,
+  );
+
+  static TextStyle body1Bold = GoogleFonts.inter(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 

@@ -16,9 +16,13 @@ class CustomAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: radius + borderWidth,
-      backgroundColor: borderColor,
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: borderColor != null && borderWidth > 0
+            ? Border.all(color: borderColor!, width: borderWidth)
+            : null,
+      ),
       child: CircleAvatar(
         radius: radius,
         backgroundImage: NetworkImage(imageUrl),

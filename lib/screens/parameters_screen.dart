@@ -5,6 +5,7 @@ import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
+import '../screens/favorites_screen.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -19,15 +20,39 @@ class ParametersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
-        title: const Text(CustomString.parameters),
+        toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
+        leading: IconButton(
+          icon: CustomIcon.arrowBack,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: ListView(
         children: [
+          const SizedBox(
+            height: 15,
+          ),
+          Center(
+            child: Text(
+              CustomString.parametersCapital,
+              style: CustomTextStyle.body1
+                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(
+            height: 70,
+          ),
+          const Divider(),
           ListTile(
-            leading: CustomIcon.editProfile,
-            title: const Text(CustomString.editProfile),
+            leading: CustomIcon.profile,
+            title: Text(
+              CustomString.editProfile,
+              style: CustomTextStyle.body1,
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -37,18 +62,21 @@ class ParametersScreen extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(CustomIcon.confidentiality),
-            title: const Text(CustomString.privacy),
-            onTap: () {
-              // Navigate to privacy settings screen
-            },
-          ),
+          const Divider(),
           ListTile(
             leading: CustomIcon.favorite,
-            title: const Text(CustomString.favorites),
+            title: Text(
+              CustomString.favorites,
+              style: CustomTextStyle.body1,
+            ),
             onTap: () {
-              // Navigate to notification settings screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FavoritesScreen(
+                      currentUserId: viewModel.currentUser!.uid),
+                ),
+              );
             },
           ),
           // Add more parameter options as needed
@@ -57,8 +85,7 @@ class ParametersScreen extends StatelessWidget {
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
             title: Text(
               CustomString.logOut,
-              style: CustomTextStyle.getColoredTextStyle(
-                  CustomTextStyle.title3, CustomColor.red),
+              style: CustomTextStyle.body1Bold.copyWith(color: CustomColor.red),
             ),
             onTap: () async {
               await viewModel.logOut();
@@ -66,6 +93,7 @@ class ParametersScreen extends StatelessWidget {
                   .pushNamedAndRemoveUntil('/login', (route) => false);
             },
           ),
+          const Divider(),
         ],
       ),
     );

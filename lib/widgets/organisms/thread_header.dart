@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
-import '../molecules/custom_search_bar.dart';
+import '../atoms/search_bars/custom_search_bar.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class ThreadHeader extends StatelessWidget {
@@ -28,13 +28,13 @@ class ThreadHeader extends StatelessWidget {
         const SizedBox(width: 10),
         CustomIconButton(
           icon: CustomIcon.notifications,
-          color: CustomColor.white,
+          color: CustomColor.customWhite,
           onTap: onNotificationTap,
         ),
         const SizedBox(width: 10),
         CustomIconButton(
           icon: CustomIcon.inbox,
-          color: CustomColor.white,
+          color: CustomColor.customWhite,
           onTap: onMessageTap,
         ),
       ],

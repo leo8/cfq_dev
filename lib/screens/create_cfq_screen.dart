@@ -8,6 +8,7 @@ import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
+import '../../utils/utils.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
@@ -33,14 +34,10 @@ class CreateCfqScreen extends StatelessWidget {
             // Handle success and error messages
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (viewModel.errorMessage != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(viewModel.errorMessage!)),
-                );
+                showSnackBar(viewModel.errorMessage!, context);
                 viewModel.resetStatus();
               } else if (viewModel.successMessage != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(viewModel.successMessage!)),
-                );
+                showSnackBar(viewModel.successMessage!, context);
                 viewModel.resetStatus();
 
                 // Optionally navigate back to previous screen

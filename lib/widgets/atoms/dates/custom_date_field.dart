@@ -44,24 +44,35 @@ class CustomDateField extends StatelessWidget {
       child: AbsorbPointer(
         // Prevents direct text input
         child: Container(
+          height: 46,
           decoration: BoxDecoration(
-            color: CustomColor.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(15),
+            color: CustomColor.customBlack,
+            border: Border.all(color: CustomColor.customWhite, width: 0.5),
+            borderRadius: BorderRadius.circular(5),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: TextField(
-            controller:
-                controller, // Controller that holds the selected date text
-            style: CustomTextStyle.xsBody,
-            decoration: InputDecoration(
-              hintText: hintText, // Placeholder text when no date is selected
-              hintStyle: CustomTextStyle.xsBody,
-              border: InputBorder.none,
-              suffixIcon: suffixIcon ??
-                  CustomIcon.calendar.copyWith(
-                      color: CustomColor.white70), // Icon for date selection
-            ),
-            readOnly: true, // Disables manual input, making it read-only
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                alignment: Alignment.centerLeft,
+                child: CustomIcon.calendar,
+              ),
+              Expanded(
+                // Add this
+                child: TextField(
+                  controller: controller,
+                  style: CustomTextStyle.body1,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle:
+                        CustomTextStyle.body2.copyWith(color: CustomColor.grey),
+                    border: InputBorder.none,
+                  ),
+                  readOnly: true,
+                ),
+              ),
+            ],
           ),
         ),
       ),

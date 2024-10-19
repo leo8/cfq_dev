@@ -22,9 +22,15 @@ class ThreadViewModel extends ChangeNotifier {
   List<model.User> _activeFriends = [];
   List<model.User> get activeFriends => _activeFriends;
 
+  bool _isInitializing = true;
+  bool get isInitializing => _isInitializing;
+
+  Stream<DocumentSnapshot>? _currentUserStream;
+  Stream<DocumentSnapshot>? get currentUserStream => _currentUserStream;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
-    fetchCurrentUserAndActiveFriends();
+    _initializeData();
   }
 
   @override
@@ -36,6 +42,12 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   // Existing methods (performSearch, parseDate, fetchCombinedEvents)
+
+  Future<void> _initializeData() async {
+    await fetchCurrentUserAndActiveFriends();
+    _isInitializing = false;
+    notifyListeners();
+  }
 
   Future<void> fetchCurrentUserAndActiveFriends() async {
     try {
@@ -77,6 +89,10 @@ class ThreadViewModel extends ChangeNotifier {
       }
 
       _activeFriends = activeFriends;
+      _currentUserStream = FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .snapshots();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching current user and active friends: $e');
@@ -221,5 +237,36 @@ class ThreadViewModel extends ChangeNotifier {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       performSearch(searchController.text);
     });
+  }
+
+  Future<void> toggleFavorite(String eventId, bool isFavorite) async {
+    try {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+
+      if (isFavorite) {
+        // Add to favorites
+        await userRef.update({
+          'favorites': FieldValue.arrayUnion([eventId])
+        });
+      } else {
+        // Remove from favorites
+        await userRef.update({
+          'favorites': FieldValue.arrayRemove([eventId])
+        });
+      }
+
+      // Update local user object
+      if (_currentUser != null) {
+        if (isFavorite) {
+          _currentUser!.favorites.add(eventId);
+        } else {
+          _currentUser!.favorites.remove(eventId);
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error toggling favorite: $e');
+    }
   }
 }
