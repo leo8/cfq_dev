@@ -19,14 +19,14 @@ class ThreadViewModel extends ChangeNotifier {
   model.User? _currentUser;
   model.User? get currentUser => _currentUser;
 
-  List<model.User> _activeFriends = [];
-  List<model.User> get activeFriends => _activeFriends;
-
   bool _isInitializing = true;
   bool get isInitializing => _isInitializing;
 
   Stream<DocumentSnapshot>? _currentUserStream;
   Stream<DocumentSnapshot>? get currentUserStream => _currentUserStream;
+
+  Stream<List<model.User>>? _activeFriendsStream;
+  Stream<List<model.User>>? get activeFriendsStream => _activeFriendsStream;
 
   StreamSubscription<DocumentSnapshot>? _userSubscription;
 
@@ -48,12 +48,13 @@ class ThreadViewModel extends ChangeNotifier {
   // Existing methods (performSearch, parseDate, fetchCombinedEvents)
 
   Future<void> _initializeData() async {
-    await fetchCurrentUserAndActiveFriends();
+    await _fetchCurrentUser();
+    _setupActiveFriendsStream();
     _isInitializing = false;
     notifyListeners();
   }
 
-  Future<void> fetchCurrentUserAndActiveFriends() async {
+  Future<void> _fetchCurrentUser() async {
     try {
       DocumentSnapshot currentUserSnap = await FirebaseFirestore.instance
           .collection('users')
@@ -61,46 +62,30 @@ class ThreadViewModel extends ChangeNotifier {
           .get();
 
       _currentUser = model.User.fromSnap(currentUserSnap);
-
-      List<dynamic> friendsUids = _currentUser!.friends;
-
-      if (friendsUids.isEmpty) {
-        _activeFriends = [];
-        notifyListeners();
-        return;
-      }
-
-      List<model.User> activeFriends = [];
-
-      int batchSize = 10;
-      for (int i = 0; i < friendsUids.length; i += batchSize) {
-        List<dynamic> batch = friendsUids.sublist(
-            i,
-            i + batchSize > friendsUids.length
-                ? friendsUids.length
-                : i + batchSize);
-
-        QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .where('uid', whereIn: batch)
-            .where('isActive', isEqualTo: true)
-            .get();
-
-        List<model.User> batchUsers =
-            snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
-
-        activeFriends.addAll(batchUsers);
-      }
-
-      _activeFriends = activeFriends;
       _currentUserStream = FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserUid)
           .snapshots();
       notifyListeners();
     } catch (e) {
-      AppLogger.error('Error fetching current user and active friends: $e');
+      AppLogger.error('Error fetching current user: $e');
     }
+  }
+
+  void _setupActiveFriendsStream() {
+    if (_currentUser == null || _currentUser!.friends.isEmpty) {
+      _activeFriendsStream = Stream.value([]);
+      return;
+    }
+
+    _activeFriendsStream = FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', whereIn: _currentUser!.friends)
+        .where('isActive', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+    });
   }
 
   Future<void> updateIsActiveStatus(bool newValue) async {
@@ -282,6 +267,7 @@ class ThreadViewModel extends ChangeNotifier {
         .listen((snapshot) {
       if (snapshot.exists) {
         _currentUser = model.User.fromSnap(snapshot);
+        _setupActiveFriendsStream(); // Update active friends stream when user changes
         notifyListeners();
       }
     });
