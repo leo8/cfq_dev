@@ -84,7 +84,7 @@ class ThreadScreen extends StatelessWidget {
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: CustomColor.customWhite,
+                color: CustomColor.transparent,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Row(
