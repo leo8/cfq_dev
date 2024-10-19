@@ -272,4 +272,10 @@ class ThreadViewModel extends ChangeNotifier {
       }
     });
   }
+
+  void clearSearchString() {
+    searchController.clear();
+    _users = [];
+    notifyListeners();
+  }
 }
