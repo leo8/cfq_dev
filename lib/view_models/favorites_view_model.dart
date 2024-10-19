@@ -86,8 +86,12 @@ class FavoritesViewModel extends ChangeNotifier {
           'favorites': FieldValue.arrayRemove([eventId])
         });
         _currentUser!.favorites.remove(eventId);
-        _favoriteEvents.removeWhere(
-            (event) => event['turnId'] == eventId || event['cfqId'] == eventId);
+        _favoriteEvents.removeWhere((event) {
+          // Check for both turnId and cfqId
+          return (event.data() as Map<String, dynamic>).containsKey('turnId')
+              ? event['turnId'] == eventId
+              : event['cfqId'] == eventId;
+        });
       }
 
       notifyListeners();

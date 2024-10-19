@@ -28,9 +28,12 @@ class ThreadViewModel extends ChangeNotifier {
   Stream<DocumentSnapshot>? _currentUserStream;
   Stream<DocumentSnapshot>? get currentUserStream => _currentUserStream;
 
+  StreamSubscription<DocumentSnapshot>? _userSubscription;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
+    _listenToUserChanges();
   }
 
   @override
@@ -38,6 +41,7 @@ class ThreadViewModel extends ChangeNotifier {
     _debounce?.cancel();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
+    _userSubscription?.cancel();
     super.dispose();
   }
 
@@ -268,5 +272,18 @@ class ThreadViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error toggling favorite: $e');
     }
+  }
+
+  void _listenToUserChanges() {
+    _userSubscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserUid)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        _currentUser = model.User.fromSnap(snapshot);
+        notifyListeners();
+      }
+    });
   }
 }
