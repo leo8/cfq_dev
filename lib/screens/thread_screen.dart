@@ -132,7 +132,10 @@ class ThreadScreen extends StatelessWidget {
         Expanded(
           child: EventsList(
             eventsStream: viewModel.fetchCombinedEvents(),
-            currentUserId: viewModel.currentUserUid,
+            currentUser: viewModel.currentUser,
+            onFavoriteToggle: (eventId, isFavorite) {
+              viewModel.toggleFavorite(eventId, isFavorite);
+            },
           ),
         ),
       ],

@@ -224,6 +224,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedTurns: _user!.invitedTurns,
         postedCfqs: _user!.postedCfqs,
         invitedCfqs: _user!.invitedCfqs,
+        favorites: _user!.favorites,
       );
 
       _isLoading = false;
@@ -268,6 +269,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedTurns: _user!.invitedTurns,
         postedCfqs: _user!.postedCfqs,
         invitedCfqs: _user!.invitedCfqs,
+        favorites: _user!.favorites,
       );
 
       _isLoading = false;

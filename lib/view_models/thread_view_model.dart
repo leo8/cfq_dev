@@ -238,4 +238,35 @@ class ThreadViewModel extends ChangeNotifier {
       performSearch(searchController.text);
     });
   }
+
+  Future<void> toggleFavorite(String eventId, bool isFavorite) async {
+    try {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+
+      if (isFavorite) {
+        // Add to favorites
+        await userRef.update({
+          'favorites': FieldValue.arrayUnion([eventId])
+        });
+      } else {
+        // Remove from favorites
+        await userRef.update({
+          'favorites': FieldValue.arrayRemove([eventId])
+        });
+      }
+
+      // Update local user object
+      if (_currentUser != null) {
+        if (isFavorite) {
+          _currentUser!.favorites.add(eventId);
+        } else {
+          _currentUser!.favorites.remove(eventId);
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error toggling favorite: $e');
+    }
+  }
 }

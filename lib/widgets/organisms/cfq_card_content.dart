@@ -23,11 +23,13 @@ class CFQCardContent extends StatelessWidget {
   final String cfqId;
   final String organizerId;
   final String currentUserId;
+  final List favorites;
   final VoidCallback onFollowPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
   final VoidCallback onFavoritePressed; // New callback for favorite button
   final VoidCallback onBellPressed; // New callback for bell button
+  final bool isFavorite;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -49,6 +51,8 @@ class CFQCardContent extends StatelessWidget {
     required this.cfqId,
     required this.organizerId,
     required this.currentUserId,
+    required this.favorites,
+    required this.isFavorite,
     super.key,
   });
 
@@ -119,6 +123,7 @@ class CFQCardContent extends StatelessWidget {
                       onSendPressed: onSendPressed,
                       onFavoritePressed: onFavoritePressed,
                       onFollowUpPressed: onBellPressed,
+                      isFavorite: isFavorite,
                     ),
                   ],
                 ),

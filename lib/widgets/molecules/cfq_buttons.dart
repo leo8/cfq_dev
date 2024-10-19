@@ -6,12 +6,14 @@ class CFQButtons extends StatelessWidget {
   final VoidCallback onSendPressed;
   final VoidCallback onFavoritePressed;
   final VoidCallback onFollowUpPressed;
+  final bool isFavorite;
 
   const CFQButtons({
     Key? key,
     required this.onSendPressed,
     required this.onFavoritePressed,
     required this.onFollowUpPressed,
+    required this.isFavorite,
   }) : super(key: key);
 
   @override
@@ -21,7 +23,7 @@ class CFQButtons extends StatelessWidget {
       children: [
         _buildIconButton(CustomIcon.eventConversation, onSendPressed),
         const SizedBox(width: 6),
-        _buildIconButton(CustomIcon.favorite, onFavoritePressed),
+        _buildFavoriteButton(),
         const SizedBox(width: 9),
         _buildFollowUpButton(),
       ],
@@ -33,6 +35,16 @@ class CFQButtons extends StatelessWidget {
       icon: icon.copyWith(size: 24),
       onPressed: onPressed,
       color: CustomColor.customWhite,
+      padding: const EdgeInsets.all(8),
+    );
+  }
+
+  Widget _buildFavoriteButton() {
+    return IconButton(
+      icon: isFavorite
+          ? CustomIcon.favorite.copyWith(color: CustomColor.red, size: 24)
+          : CustomIcon.favorite.copyWith(size: 24),
+      onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(8),
     );
   }
@@ -58,7 +70,7 @@ class CFQButtons extends StatelessWidget {
         ),
         child: Center(
           child: CustomIcon.followUp.copyWith(
-            size: 38,
+            size: 30,
             color: CustomColor.customWhite,
           ),
         ),

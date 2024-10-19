@@ -25,9 +25,12 @@ class TurnCardContent extends StatelessWidget {
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
   final VoidCallback onCommentPressed;
+  final VoidCallback onFavoritePressed;
   final String turnId;
   final String organizerId;
   final String currentUserId;
+  final List favorites;
+  final bool isFavorite;
 
   const TurnCardContent({
     required this.profilePictureUrl,
@@ -42,6 +45,7 @@ class TurnCardContent extends StatelessWidget {
     required this.onAttendingPressed,
     required this.onSharePressed,
     required this.onSendPressed,
+    required this.onFavoritePressed,
     required this.onCommentPressed,
     required this.turnImageUrl,
     required this.datePublished,
@@ -49,6 +53,8 @@ class TurnCardContent extends StatelessWidget {
     required this.turnId,
     required this.organizerId,
     required this.currentUserId,
+    required this.favorites,
+    required this.isFavorite,
     super.key,
   });
 
@@ -119,6 +125,8 @@ class TurnCardContent extends StatelessWidget {
                       onAttendingPressed: onAttendingPressed,
                       onSharePressed: onSharePressed,
                       onSendPressed: onSendPressed,
+                      onFavoritePressed: onFavoritePressed,
+                      isFavorite: isFavorite,
                     ),
                   ],
                 ),

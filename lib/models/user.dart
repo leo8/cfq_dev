@@ -16,6 +16,7 @@ class User {
   final List invitedTurns; // List of turns 'uid
   final List postedCfqs; // List of cfqs 'uid
   final List invitedCfqs; // List of cfqs 'uid
+  final List favorites; // List of favorite items
 
   // Constructor for initializing a User object
   User(
@@ -32,7 +33,8 @@ class User {
       required this.postedTurns,
       required this.invitedTurns,
       required this.postedCfqs,
-      required this.invitedCfqs});
+      required this.invitedCfqs,
+      required this.favorites});
 
   // Convert User object to a JSON format for storage
   Map<String, dynamic> toJson() => {
@@ -51,6 +53,7 @@ class User {
         "invitedTurns": invitedTurns,
         "postedCfqs": postedCfqs,
         "invitedCfqs": invitedCfqs,
+        "favorites": favorites,
       };
 
   // Create a User object from a Firestore snapshot
@@ -74,6 +77,7 @@ class User {
       invitedTurns: snapshot['invitedTurns'],
       postedCfqs: snapshot['postedCfqs'],
       invitedCfqs: snapshot['invitedCfqs'],
+      favorites: snapshot['favorites'],
     );
   }
 }

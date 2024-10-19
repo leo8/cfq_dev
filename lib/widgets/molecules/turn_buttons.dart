@@ -6,12 +6,16 @@ class TurnButtons extends StatelessWidget {
   final VoidCallback onAttendingPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
+  final VoidCallback onFavoritePressed;
+  final bool isFavorite;
 
   const TurnButtons({
     Key? key,
     required this.onAttendingPressed,
     required this.onSharePressed,
     required this.onSendPressed,
+    required this.onFavoritePressed,
+    required this.isFavorite,
   }) : super(key: key);
 
   @override
@@ -21,7 +25,7 @@ class TurnButtons extends StatelessWidget {
       children: [
         _buildIconButton(CustomIcon.eventConversation, onSendPressed),
         const SizedBox(width: 6),
-        _buildIconButton(CustomIcon.favorite, onSharePressed),
+        _buildFavoriteButton(),
         const SizedBox(width: 9),
         _buildAttendingButton(),
       ],
@@ -33,6 +37,16 @@ class TurnButtons extends StatelessWidget {
       icon: icon.copyWith(size: 24),
       onPressed: onPressed,
       color: CustomColor.customWhite,
+      padding: const EdgeInsets.all(8),
+    );
+  }
+
+  Widget _buildFavoriteButton() {
+    return IconButton(
+      icon: isFavorite
+          ? CustomIcon.favorite.copyWith(color: CustomColor.red, size: 24)
+          : CustomIcon.favorite.copyWith(size: 24),
+      onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(8),
     );
   }
