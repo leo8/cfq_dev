@@ -10,6 +10,7 @@ import '../models/user.dart' as model;
 import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -41,6 +42,9 @@ class ThreadScreen extends StatelessWidget {
         ),
         body: Consumer<ThreadViewModel>(
           builder: (context, viewModel, child) {
+            if (viewModel.isInitializing) {
+              return const Center(child: CircularProgressIndicator());
+            }
             if (viewModel.searchController.text.isNotEmpty) {
               return _buildSearchResults(context, viewModel);
             } else {
@@ -80,14 +84,28 @@ class ThreadScreen extends StatelessWidget {
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: CustomColor.white24,
+                color: CustomColor.customWhite,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundImage: NetworkImage(user.profilePictureUrl),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: user.isActive
+                          ? [
+                              const BoxShadow(
+                                color: CustomColor.turnColor,
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: NetworkImage(user.profilePictureUrl),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   CustomText(
@@ -112,7 +130,13 @@ class ThreadScreen extends StatelessWidget {
         _buildActiveFriendsList(context, viewModel),
         const SizedBox(height: 20),
         Expanded(
-          child: EventsList(eventsStream: viewModel.fetchCombinedEvents()),
+          child: EventsList(
+            eventsStream: viewModel.fetchCombinedEvents(),
+            currentUser: viewModel.currentUser,
+            onFavoriteToggle: (eventId, isFavorite) {
+              viewModel.toggleFavorite(eventId, isFavorite);
+            },
+          ),
         ),
       ],
     );
@@ -120,19 +144,28 @@ class ThreadScreen extends StatelessWidget {
 
   Widget _buildActiveFriendsList(
       BuildContext context, ThreadViewModel viewModel) {
-    return ActiveFriendsList(
-      currentUser: viewModel.currentUser!,
-      activeFriends: viewModel.activeFriends,
-      onActiveChanged: (bool newValue) {
-        viewModel.updateIsActiveStatus(newValue);
-      },
-      onFriendTap: (String friendId) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(userId: friendId),
-          ),
-        );
+    return StreamBuilder<DocumentSnapshot>(
+      stream: viewModel.currentUserStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ActiveFriendsList(
+            currentUser: model.User.fromSnap(snapshot.data!),
+            activeFriends: viewModel.activeFriends,
+            onActiveChanged: (bool newValue) {
+              viewModel.updateIsActiveStatus(newValue);
+            },
+            onFriendTap: (String friendId) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(userId: friendId),
+                ),
+              );
+            },
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
       },
     );
   }

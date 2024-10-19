@@ -12,10 +12,15 @@ import 'package:provider/provider.dart'; // State management using Provider
 import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding
       .ensureInitialized(); // Ensure bindings are initialized
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   FlutterNativeSplash.preserve(
       widgetsBinding: widgetsBinding); // Preserve splash screen until ready
 
@@ -92,7 +97,7 @@ class _CFQState extends State<CFQ> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    color: CustomColor.white,
+                    color: CustomColor.customWhite,
                   ),
                 );
               }

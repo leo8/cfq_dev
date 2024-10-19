@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
 import '../utils/logger.dart';
+import '../utils/styles/string.dart';
 
 class FriendsListViewModel extends ChangeNotifier {
   final String currentUserId;
+
+  final TextEditingController searchController = TextEditingController();
+  List<model.User> _allFriends = [];
+  List<model.User> _filteredFriends = [];
+
+  List<model.User> get friends => _filteredFriends;
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
   List<model.User> _friends = [];
-  List<model.User> get friends => _friends;
 
   // Status variables for error handling and success messages
   String? _errorMessage;
@@ -51,7 +57,10 @@ class FriendsListViewModel extends ChangeNotifier {
       int batchSize = 10;
       for (int i = 0; i < friendsUids.length; i += batchSize) {
         List<dynamic> batch = friendsUids.sublist(
-            i, i + batchSize > friendsUids.length ? friendsUids.length : i + batchSize);
+            i,
+            i + batchSize > friendsUids.length
+                ? friendsUids.length
+                : i + batchSize);
 
         QuerySnapshot snapshot = await FirebaseFirestore.instance
             .collection('users')
@@ -67,10 +76,24 @@ class FriendsListViewModel extends ChangeNotifier {
       _friends = friendsList;
     } catch (e) {
       AppLogger.error('Error fetching friends: $e');
-      _errorMessage = 'Failed to fetch friends. Please try again.';
+      _errorMessage = CustomString.failedToFetchFriends;
     }
 
+    _allFriends = _friends;
+    _filteredFriends = _allFriends;
     _isLoading = false;
+    notifyListeners();
+  }
+
+  void performSearch(String query) {
+    if (query.isEmpty) {
+      _filteredFriends = _allFriends;
+    } else {
+      _filteredFriends = _allFriends
+          .where((friend) =>
+              friend.username.toLowerCase().startsWith(query.toLowerCase()))
+          .toList();
+    }
     notifyListeners();
   }
 
@@ -107,7 +130,7 @@ class FriendsListViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error removing friend: $e');
-      _errorMessage = 'Failed to remove friend. Please try again.';
+      _errorMessage = CustomString.failedToRemoveFriend;
       notifyListeners();
     }
   }

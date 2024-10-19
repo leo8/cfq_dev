@@ -5,8 +5,13 @@ import '../../utils/styles/colors.dart';
 
 class TeamMembersList extends StatelessWidget {
   final List<model.User> members;
+  final bool isCurrentUserActive;
 
-  const TeamMembersList({super.key, required this.members});
+  const TeamMembersList({
+    super.key,
+    required this.members,
+    required this.isCurrentUserActive,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +34,7 @@ class TeamMembersList extends StatelessWidget {
                 return TeamMemberItem(
                   user: user,
                   isCurrentUser: index == 0,
+                  isCurrentUserActive: index == 0 ? isCurrentUserActive : null,
                 );
               },
             ),

@@ -135,7 +135,7 @@ class CreateTeamViewModel extends ChangeNotifier {
         final queryLower = query.toLowerCase();
         _searchResults = _friendsList.where((user) {
           final searchKeyLower = user.searchKey;
-          return searchKeyLower.contains(queryLower) &&
+          return searchKeyLower.startsWith(queryLower) &&
               !_selectedFriends.any((f) => f.uid == user.uid) &&
               user.uid != _currentUser?.uid;
         }).toList();
@@ -171,14 +171,14 @@ class CreateTeamViewModel extends ChangeNotifier {
     try {
       // Validate required fields
       if (teamNameController.text.isEmpty) {
-        _errorMessage = 'Please enter a team name.';
+        _errorMessage = CustomString.pleaseEnterTeamName;
         _isLoading = false;
         notifyListeners();
         return;
       }
 
       if (_selectedFriends.isEmpty) {
-        _errorMessage = 'Please select at least one member.';
+        _errorMessage = CustomString.pleaseSelectAtLeastOneMember;
         _isLoading = false;
         notifyListeners();
         return;
@@ -237,14 +237,14 @@ class CreateTeamViewModel extends ChangeNotifier {
       await _updateUsersTeams(memberUids, teamId);
 
       // Success
-      _successMessage = 'Team created successfully!';
+      _successMessage = CustomString.successCreatingTeam;
       _isLoading = false;
       notifyListeners();
 
       // Optionally, reset the form or navigate back
     } catch (e) {
       AppLogger.error('Error creating team: $e');
-      _errorMessage = 'Failed to create team. Please try again.';
+      _errorMessage = CustomString.errorCreatingTeam;
       _isLoading = false;
       notifyListeners();
     }

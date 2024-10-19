@@ -39,8 +39,8 @@ class LoginForm extends StatelessWidget {
           hintText: CustomString.yourPassword, // Placeholder for password input
           obscureText: true, // Hides the password for security
           suffixIcon: const Icon(CustomIcon.visibility,
-              color:
-                  CustomColor.white70), // Icon for password visibility toggle
+              color: CustomColor
+                  .customWhite), // Icon for password visibility toggle
         ),
         const SizedBox(height: 4),
         ForgotPasswordLink(

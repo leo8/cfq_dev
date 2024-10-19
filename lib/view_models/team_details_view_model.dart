@@ -10,12 +10,15 @@ class TeamDetailsViewModel extends ChangeNotifier {
   List<model.User> _members = [];
   bool _isLoading = true;
   bool _hasChanges = false;
+  bool _isCurrentUserActive = false;
 
   bool get isLoading => _isLoading;
   bool get hasChanges => _hasChanges;
+  bool get isCurrentUserActive => _isCurrentUserActive;
 
   TeamDetailsViewModel({required Team team}) : _team = team {
     _fetchTeamMembers();
+    _listenToCurrentUserActiveStatus();
   }
 
   Team get team => _team;
@@ -111,5 +114,19 @@ class TeamDetailsViewModel extends ChangeNotifier {
       return 0;
     });
     notifyListeners();
+  }
+
+  void _listenToCurrentUserActiveStatus() {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(currentUserId)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        _isCurrentUserActive = snapshot.data()?['isActive'] ?? false;
+        notifyListeners();
+      }
+    });
   }
 }

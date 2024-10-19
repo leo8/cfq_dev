@@ -4,7 +4,7 @@ import '../../models/user.dart' as model;
 import '../atoms/avatars/custom_avatar.dart';
 import '../atoms/texts/custom_text.dart';
 import '../../utils/styles/text_styles.dart';
-import '../../utils/styles/Colors.dart';
+import '../../utils/styles/colors.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 
@@ -89,7 +89,7 @@ class TeamCard extends StatelessWidget {
             child: CustomAvatar(
               imageUrl: member.profilePictureUrl,
               radius: 12,
-              borderColor: CustomColor.white,
+              borderColor: CustomColor.customWhite,
               borderWidth: 0.3,
             ),
           );

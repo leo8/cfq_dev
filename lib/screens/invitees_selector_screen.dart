@@ -19,11 +19,12 @@ class InviteesSelectorScreen extends StatelessWidget {
       builder: (context, viewModel, child) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 75,
+            toolbarHeight: 40,
             leading: IconButton(
               icon: CustomIcon.arrowBack,
               onPressed: () {
                 AppLogger.debug('Back button pressed');
+                viewModel.revertSelections();
                 Navigator.of(context).pop();
               },
             ),
@@ -44,8 +45,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                 },
                 child: Text(
                   CustomString.done,
-                  style: CustomTextStyle.body1.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: CustomTextStyle.body1Bold.copyWith(
                     color: CustomColor.customPurple,
                   ),
                 ),
@@ -62,6 +62,7 @@ class InviteesSelectorScreen extends StatelessWidget {
                 onAddTeam: viewModel.addTeam,
                 onSelectEverybody: viewModel.selectEverybody,
                 isEverybodySelected: viewModel.isEverybodySelected,
+                showEverybodyOption: viewModel.showEverybodyOption,
               ),
               const SizedBox(height: 10),
               Wrap(
@@ -73,8 +74,11 @@ class InviteesSelectorScreen extends StatelessWidget {
                         backgroundImage:
                             AssetImage('assets/images/turn_button.png'),
                       ),
-                      label: const Text(CustomString.toutLeMonde),
+                      label: const Text(CustomString.everybody),
+                      deleteIcon: CustomIcon.close.copyWith(size: 18),
                       onDeleted: viewModel.selectEverybody,
+                      backgroundColor: CustomColor.white.withOpacity(0.1),
+                      labelStyle: CustomTextStyle.body1,
                     ),
                   ...viewModel.selectedTeamInvitees
                       .map((teamInvitee) => TeamChip(

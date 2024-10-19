@@ -59,6 +59,7 @@ class ActiveFriendsList extends StatelessWidget {
             imageUrl: friend.profilePictureUrl,
             radius: 45,
             onTap: () => onFriendTap(friend.uid),
+            isActive: friend.isActive,
           ),
           const SizedBox(height: 4),
           Text(friend.username, style: CustomTextStyle.miniBody),

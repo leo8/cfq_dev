@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:cfq_dev/enums/moods.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
+import 'package:cfq_dev/utils/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/user.dart' as model;
@@ -14,6 +16,8 @@ import '../models/team.dart';
 import '../screens/invitees_selector_screen.dart';
 import 'package:provider/provider.dart';
 import '../view_models/invitees_selector_view_model.dart';
+import '../widgets/atoms/chips/mood_chip.dart';
+import '../widgets/atoms/buttons/custom_button.dart';
 
 class CreateCfqViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -26,6 +30,11 @@ class CreateCfqViewModel extends ChangeNotifier
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
 
+  List<model.User> _previousSelectedInvitees = [];
+  List<Team> _previousSelectedTeamInvitees = [];
+  bool _previousIsEverybodySelected = false;
+
+  // Everybody
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
 
@@ -75,6 +84,9 @@ class CreateCfqViewModel extends ChangeNotifier
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  bool _showEverybodyOption = true;
+  bool get showEverybodyOption => _showEverybodyOption;
+
   CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
   }
@@ -101,6 +113,7 @@ class CreateCfqViewModel extends ChangeNotifier
           _selectedInvitees.add(member);
         }
       }
+      _updateInviteesControllerText();
     }
   }
 
@@ -147,7 +160,7 @@ class CreateCfqViewModel extends ChangeNotifier
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error initializing current user: $e');
-      _errorMessage = 'Failed to initialize user data.';
+      _errorMessage = CustomString.failedToInitializeUserData;
       notifyListeners();
     }
   }
@@ -163,7 +176,7 @@ class CreateCfqViewModel extends ChangeNotifier
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching user teams: $e');
-      _errorMessage = 'Failed to fetch user teams.';
+      _errorMessage = CustomString.failedToFetchUserTeams;
       notifyListeners();
     }
   }
@@ -178,6 +191,9 @@ class CreateCfqViewModel extends ChangeNotifier
 
     try {
       final queryLower = query.toLowerCase();
+
+      // Update _showEverybodyOption based on whether the search query is empty
+      _showEverybodyOption = query.isEmpty;
 
       if (_isEverybodySelected) {
         // If everybody is selected, only show teams in search results
@@ -213,7 +229,8 @@ class CreateCfqViewModel extends ChangeNotifier
       }
     } catch (e) {
       AppLogger.error('Error while searching: $e');
-      _errorMessage = 'Failed to perform search.';
+      _errorMessage = CustomString.failedToPerformSearch;
+      notifyListeners();
     }
 
     _isSearching = false;
@@ -228,10 +245,22 @@ class CreateCfqViewModel extends ChangeNotifier
     notifyListeners();
   }
 
-  // Update the removeInvitee method
   void removeInvitee(model.User invitee) {
     _selectedInvitees.remove(invitee);
+
+    // Check if the invitee is part of any selected teams
+    for (var team in _selectedTeamInvitees.toList()) {
+      if (team.members.contains(invitee.uid)) {
+        _selectedTeamInvitees.remove(team);
+      }
+    }
+
+    // If any invitee is removed, "Everybody" should be deselected
+    _isEverybodySelected = false;
+
     performSearch(searchController.text);
+
+    notifyListeners();
   }
 
   void addTeam(Team team) {
@@ -262,9 +291,13 @@ class CreateCfqViewModel extends ChangeNotifier
 
   void removeTeam(Team team) {
     _selectedTeamInvitees.remove(team);
-    _selectedInvitees
-        .removeWhere((invitee) => team.members.contains(invitee.uid));
+
+    // "Everybody" should be deselected when a team is removed
+    _isEverybodySelected = false;
+
     performSearch(searchController.text);
+
+    notifyListeners();
   }
 
   void selectEverybody() {
@@ -310,7 +343,7 @@ class CreateCfqViewModel extends ChangeNotifier
       }
     } catch (e) {
       AppLogger.error('Error picking cfq image: $e');
-      _errorMessage = 'Failed to pick image.';
+      _errorMessage = CustomString.failedToPickImage;
       notifyListeners();
     }
   }
@@ -324,32 +357,65 @@ class CreateCfqViewModel extends ChangeNotifier
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text(CustomString.whatMood),
-              content: SingleChildScrollView(
-                child: Column(
-                  children: CustomMood.moods.map((mood) {
-                    return CheckboxListTile(
-                      title: Text(mood),
-                      value: tempSelectedMoods.contains(mood),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            tempSelectedMoods.add(mood);
-                          } else {
-                            tempSelectedMoods.remove(mood);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
+              title: Stack(
+                children: [
+                  Center(
+                    child: Text(CustomString.whatMood,
+                        style: CustomTextStyle.bigBody1),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogContext).pop(),
+                      child: const Icon(Icons.close,
+                          color: CustomColor.customWhite),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: CustomColor.customBlack,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.center,
+                      children: CustomMood.moods.map((mood) {
+                        return MoodChip(
+                          icon: mood.icon,
+                          label: mood.label,
+                          isSelected: tempSelectedMoods.contains(mood.label),
+                          onTap: () {
+                            setState(() {
+                              if (tempSelectedMoods.contains(mood.label)) {
+                                tempSelectedMoods.remove(mood.label);
+                              } else {
+                                tempSelectedMoods.add(mood.label);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                ],
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop(tempSelectedMoods);
-                  },
-                  child: const Text(CustomString.ok),
+                Center(
+                  child: CustomButton(
+                    label: CustomString.done,
+                    color: CustomColor.customPurple,
+                    borderRadius: 15,
+                    onTap: () =>
+                        Navigator.of(dialogContext).pop(tempSelectedMoods),
+                    width: 140, // Adjust this value to make the button smaller
+                  ),
                 ),
               ],
             );
@@ -368,19 +434,19 @@ class CreateCfqViewModel extends ChangeNotifier
   Future<void> createCfq() async {
     // Validate required fields
     if (_cfqImage == null) {
-      _errorMessage = 'Please select an image.';
+      _errorMessage = CustomString.pleaseSelectAnImage;
       notifyListeners();
       return;
     }
 
     if (cfqNameController.text.isEmpty || descriptionController.text.isEmpty) {
-      _errorMessage = 'Please fill all required fields.';
+      _errorMessage = CustomString.pleaseFillAllRequiredFields;
       notifyListeners();
       return;
     }
 
     if (_selectedMoods == null || _selectedMoods!.isEmpty) {
-      _errorMessage = 'Please select at least one mood.';
+      _errorMessage = CustomString.pleaseSelectAtLeastOneMood;
       notifyListeners();
       return;
     }
@@ -442,12 +508,12 @@ class CreateCfqViewModel extends ChangeNotifier
       await _updateTeamInviteesCfqs(
           _selectedTeamInvitees.map((team) => team.uid).toList(), cfqId);
 
-      _successMessage = 'CFQ created successfully!';
+      _successMessage = CustomString.successCreatingCfq;
       _isLoading = false;
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error creating cfq: $e');
-      _errorMessage = 'Failed to create cfq. Please try again.';
+      _errorMessage = CustomString.errorCreatingCfq;
       _isLoading = false;
       notifyListeners();
     }
@@ -469,6 +535,15 @@ class CreateCfqViewModel extends ChangeNotifier
       AppLogger.error('Error updating users\' turns: $e');
       rethrow; // Re-throw the error to be caught in createTurn()
     }
+  }
+
+  @override
+  void revertSelections() {
+    _selectedInvitees = List.from(_previousSelectedInvitees);
+    _selectedTeamInvitees = List.from(_previousSelectedTeamInvitees);
+    _isEverybodySelected = _previousIsEverybodySelected;
+    _updateInviteesControllerText();
+    notifyListeners();
   }
 
   // Update 'invitedCfqs' field for invitees
@@ -520,6 +595,11 @@ class CreateCfqViewModel extends ChangeNotifier
   }
 
   Future<void> openInviteesSelectorScreen(BuildContext context) async {
+    // Store the current state before opening the selector screen
+    _previousSelectedInvitees = List.from(_selectedInvitees);
+    _previousSelectedTeamInvitees = List.from(_selectedTeamInvitees);
+    _previousIsEverybodySelected = _isEverybodySelected;
+
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -535,15 +615,17 @@ class CreateCfqViewModel extends ChangeNotifier
       _selectedInvitees = result['invitees'];
       _selectedTeamInvitees = result['teams'];
       _isEverybodySelected = result['isEverybodySelected'];
-      _updateInviteesControllerText();
-      notifyListeners();
+    } else {
+      revertSelections();
     }
+    _updateInviteesControllerText();
+    notifyListeners();
   }
 
   void _updateInviteesControllerText() {
     List<String> inviteeNames =
-        _selectedInvitees.map((user) => user.username).toList();
-    inviteeNames.addAll(_selectedTeamInvitees.map((team) => team.name));
+        _selectedTeamInvitees.map((team) => team.name).toList();
+    inviteeNames.addAll(_selectedInvitees.map((user) => user.username));
     inviteesController.text = inviteeNames.join(', ');
   }
 

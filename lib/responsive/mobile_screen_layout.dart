@@ -8,6 +8,7 @@ import 'package:cfq_dev/screens/profile_screen.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/string.dart';
+import 'dart:async';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -38,43 +39,67 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       40; // Horizontal padding for icons in the navigation bar
   final double sizeIcon = 24; // Size of icons
 
+  // Add this new variable
+  Timer? _autoCloseTimer;
+
   // Handle the tap on the plus button
   void _handleTap() {
     if (isClicked) {
-      return; // Prevent further clicks while handling the current one
+      return;
     }
-    isClicked = true; // Block further taps
+    isClicked = true;
 
     if (isOpen) {
-      // If the button is open, close it
-      setState(() {
-        _width = 45; // Shrink the button horizontally
-      });
-      Future.delayed(durationAnimation200, () {
-        setState(() {
-          _yPositionPlusButton = _yPositionPlusButtonClose; // Move button down
-          isClicked = false; // Allow new clicks
-        });
-      });
-      _showButtons = false; // Hide additional buttons
+      _closeButton();
     } else {
-      // If the button is closed, open it
-      setState(() {
-        _yPositionPlusButton = _yPositionPlusButtonOpen; // Move button up
-      });
-      Future.delayed(durationAnimation200, () {
-        setState(() {
-          _width = 170; // Expand the button horizontally
-        });
-      });
-      Future.delayed(durationAnimation300, () {
-        setState(() {
-          _showButtons = true; // Show additional buttons
-          isClicked = false; // Allow new clicks
-        });
-      });
+      _openButton();
     }
-    isOpen = !isOpen; // Toggle open state
+  }
+
+  // New method to open the button
+  void _openButton() {
+    setState(() {
+      _yPositionPlusButton = _yPositionPlusButtonOpen;
+      isOpen = true;
+    });
+    Future.delayed(durationAnimation200, () {
+      setState(() {
+        _width = 170;
+      });
+    });
+    Future.delayed(durationAnimation300, () {
+      setState(() {
+        _showButtons = true;
+        isClicked = false;
+      });
+    });
+
+    // Start the auto-close timer
+    _autoCloseTimer?.cancel(); // Cancel any existing timer
+    _autoCloseTimer = Timer(const Duration(seconds: 3), _closeButton);
+  }
+
+  // New method to close the button
+  void _closeButton() {
+    _autoCloseTimer?.cancel(); // Cancel the timer when closing manually
+
+    setState(() {
+      _width = 45;
+      _showButtons = false;
+    });
+    Future.delayed(durationAnimation200, () {
+      setState(() {
+        _yPositionPlusButton = _yPositionPlusButtonClose;
+        isOpen = false;
+        isClicked = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoCloseTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -102,12 +127,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                   borderRadius: BorderRadius.circular(isOpen ? 10.0 : 12.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.withOpacity(0.3),
+                      color: CustomColor.blue.withOpacity(0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),
                     BoxShadow(
-                      color: Colors.purple.withOpacity(0.3),
+                      color: CustomColor.purple.withOpacity(0.3),
                       blurRadius: 10,
                       spreadRadius: 2,
                     ),
@@ -118,7 +143,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                     alignment: Alignment.center,
                     angle: isOpen ? 0.75 : 0,
                     child: CustomIcon.add.copyWith(
-                      color: CustomColor.white,
+                      color: CustomColor.customWhite,
                       size: sizeIcon,
                     ),
                   ),
@@ -199,7 +224,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
                 EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: CustomIcon.team.copyWith(
-                color: CustomColor.white,
+                color: CustomColor.customWhite,
                 size: sizeIcon,
               ),
               icon: CustomIcon.team.copyWith(

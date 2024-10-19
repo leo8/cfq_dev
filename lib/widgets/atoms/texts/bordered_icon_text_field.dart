@@ -33,7 +33,7 @@ class BorderedIconTextField extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: CustomColor.customBlack,
-        border: Border.all(color: CustomColor.white, width: 0.5),
+        border: Border.all(color: CustomColor.customWhite, width: 0.5),
         borderRadius: borderRadius ?? BorderRadius.circular(5),
       ),
       child: Row(

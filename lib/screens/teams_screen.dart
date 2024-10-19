@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/atoms/buttons/outlined_icon_button.dart';
 import '../utils/styles/text_styles.dart';
 import 'team_details_screen.dart';
-import '../widgets/molecules/team_card.dart';
+import '../widgets/organisms/team_card.dart';
 import '../widgets/atoms/texts/custom_text.dart';
 import '../utils/styles/string.dart';
 import '../utils/styles/icons.dart';

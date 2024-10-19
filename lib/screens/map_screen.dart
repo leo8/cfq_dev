@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/string.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
@@ -25,8 +26,8 @@ class MapScreen extends StatelessWidget {
               },
               errorBuilder: (context, error, stackTrace) {
                 return Center(
-                  child: Text('Failed to load image',
-                      style: CustomTextStyle.title3),
+                  child: Text(CustomString.failedToLoadMap,
+                      style: CustomTextStyle.body1),
                 );
               },
             ),

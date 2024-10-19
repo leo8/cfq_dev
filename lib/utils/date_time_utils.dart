@@ -47,6 +47,7 @@ class DateTimeUtils {
   static String formatEventDateTime(DateTime dateTime) {
     final now = DateTime.now();
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final nextWeek = now.add(const Duration(days: 7));
 
     if (dateTime.year == now.year &&
         dateTime.month == now.month &&
@@ -56,8 +57,63 @@ class DateTimeUtils {
         dateTime.month == tomorrow.month &&
         dateTime.day == tomorrow.day) {
       return "Demain | ${formatEventTime(dateTime)}";
+    } else if (dateTime.isBefore(nextWeek)) {
+      final dayName = _getDayName(dateTime.weekday);
+      return "$dayName | ${formatEventTime(dateTime)}";
     } else {
-      return '${dateTime.day} ${getMonthAbbreviation(dateTime.month)} | ${formatEventTime(dateTime)}';
+      return '${dateTime.day} ${getMonthNameFrench(dateTime.month)} | ${formatEventTime(dateTime)}';
+    }
+  }
+
+  static String _getDayName(int weekday) {
+    switch (weekday) {
+      case DateTime.monday:
+        return 'Lundi';
+      case DateTime.tuesday:
+        return 'Mardi';
+      case DateTime.wednesday:
+        return 'Mercredi';
+      case DateTime.thursday:
+        return 'Jeudi';
+      case DateTime.friday:
+        return 'Vendredi';
+      case DateTime.saturday:
+        return 'Samedi';
+      case DateTime.sunday:
+        return 'Dimanche';
+      default:
+        throw ArgumentError('Invalid weekday');
+    }
+  }
+
+  static String getMonthNameFrench(int month) {
+    switch (month) {
+      case 1:
+        return 'Janvier';
+      case 2:
+        return 'Février';
+      case 3:
+        return 'Mars';
+      case 4:
+        return 'Avril';
+      case 5:
+        return 'Mai';
+      case 6:
+        return 'Juin';
+      case 7:
+        return 'Juillet';
+      case 8:
+        return 'Août';
+      case 9:
+        return 'Septembre';
+      case 10:
+        return 'Octobre';
+      case 11:
+        return 'Novembre';
+      case 12:
+        return 'Décembre';
+      default:
+        throw ArgumentError('Invalid month');
     }
   }
 

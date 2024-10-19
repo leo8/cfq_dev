@@ -52,7 +52,11 @@ class TeamDetailsScreen extends StatelessWidget {
                               prefillTeam: viewModel.team,
                             ),
                             const SizedBox(height: 20),
-                            TeamMembersList(members: viewModel.members),
+                            TeamMembersList(
+                              members: viewModel.members,
+                              isCurrentUserActive:
+                                  viewModel.isCurrentUserActive,
+                            ),
                           ],
                         ),
                       ),

@@ -15,6 +15,7 @@ class CustomString {
   static const success = "Succès";
   static const leave = "Quitter";
   static const orCapital = "OU";
+  static const seeMore = "Voir plus";
 
   // Authentication
   static const logInCapital = "CONNEXION";
@@ -24,7 +25,7 @@ class CustomString {
   static const alreadySignedUp = "Déjà inscrit(e) ?";
   static const noAccountYet = "T'as pas encore de compte ?";
   static const forgotPassword = "T'as oublié ton mot de passe ?";
-  static const logOut = "Déconnexion";
+  static const logOut = "Se déconnecter";
 
   // Authentication Form
   static const yourEmail = "Ton email";
@@ -47,6 +48,7 @@ class CustomString {
 
   // Friends
   static const myFriends = "Mes amis";
+  static const myFriendsCapital = "MES AMIS";
   static const noFriendsYet = "Vous n'avez pas encore d'amis";
   static const friendAdded = "Ami ajouté !";
   static const friendDeleted = "Ami supprimé !";
@@ -79,12 +81,12 @@ class CustomString {
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
   static const who = "À qui ?";
   static const address = "L'adresse exacte";
-  static const whatMood = "Quel mood ?";
+  static const whatMood = "Quel(s) mood(s) ?";
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
   static const invitees = "T'invites qui ?";
-  static const toutLeMonde = "Tout le monde";
+  static const everybody = "Tout le monde";
 
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
@@ -112,9 +114,16 @@ class CustomString {
 
   // Parameters
   static const parameters = "Paramètres";
-  static const editProfile = "Éditer le profil";
+  static const parametersCapital = "PARAMÈTRES";
+  static const editProfile = "Mon profil";
+  static const myProfile = "Mon profil";
+  static const myProfileCapital = "MON PROFIL";
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
+
+  // Favorites
+  static const favoritesCapital = "FAVORIS";
+  static const noFavoriteEvents = "Pas encore de favoris";
 
   // Image Related
   static const noImage = "Aucune image";
@@ -123,29 +132,61 @@ class CustomString {
   static const pleaseSelectAnImage = "Veuillez sélectionner une image";
 
   // Moods
-  static const houseMood = "maison";
-  static const barMood = "bar";
-  static const clubMood = "club";
-  static const streetMood = "street";
-  static const turnMood = "turn";
-  static const chillMood = "chill";
+  static const houseMood = "Maison";
+  static const barMood = "Bar";
+  static const clubMood = "Club";
+  static const streetMood = "Street";
+  static const turnMood = "Turn";
+  static const chillMood = "Chill";
+  static const dinerMood = "Dîner";
+  static const beforeMood = "Before";
+  static const afterMood = "After";
+
+  // Success Messages
+  static const successCreatingTeam = "Team créée avec succès !";
+  static const successCreatingTurn = "Turn créé avec succès !";
+  static const successCreatingCfq = "CFQ créé avec succès !";
 
   // Error Messages
   static const errorFetchingEvents =
       "Erreur lors de la récupération des évènements";
   static const failedToUpdateStatusPleaseTryAgain =
       "Erreur lors de la mise à jour du statut. Veuillez réessayer.";
+  static const failedToPickImage =
+      "Erreur lors du chargement de l'image. Veuillez réessayer.";
+  static const failedToLoadMap = "Erreur lors du chargement de la map..";
   static const failedToUploadProfilePicture =
       "Erreur lors de l'upload de la photo de profil. Veuillez réessayer.";
   static const someErrorOccurred = "Une erreur s'est produite";
   static const veuillezRemplirTousLesChamps =
       "Veuillez remplir tous les champs";
-  static const pleaseFillInAllRequiredFields =
+  static const pleaseFillAllRequiredFields =
       "Veuillez remplir tous les champs requis";
   static const fetchingDataNoEventsYet =
       "Récupération des données, pas d'évènements pour le moment...";
   static const noEventsAvailable = "Aucun évènement disponible";
   static const errorLeavingTeam = "Erreur lors de la sortie de la team";
+  static const errorCreatingTeam = "Erreur lors de la création de la Team..";
+  static const errorCreatingTurn = "Erreur lors de la création du Turn..";
+  static const errorCreatingCfq = "Erreur lors de la création du CFQ..";
+  static const pleaseSelectAtLeastOneMood =
+      "Veuillez sélectionner au moins un mood";
+  static const failedToInitializeUserData =
+      "Échec de l'initialisation des données utilisateur";
+  static const failedToFetchUserTeams =
+      "Échec de la récupération des teams de l'utilisateur";
+  static const failedToPerformSearch = "Échec de la recherche";
+  static const pleaseSelectDateAndTime =
+      "Veuillez sélectionner une date et une heure";
+  static const pleaseEnterTeamName = "Veuillez entrer un nom d'équipe";
+  static const pleaseSelectAtLeastOneMember =
+      "Veuillez sélectionner au moins un membre";
+  static const failedToFetchFriends =
+      "Échec de la récupération des amis. Veuillez réessayer.";
+  static const failedToRemoveFriend =
+      "Échec de la suppression de l'ami. Veuillez réessayer.";
+  static const pleaseFillInAllRequiredFields =
+      "Veuillez remplir tous les champs";
 
   // Utils
   static const thisIsWeb = "C'est web";
