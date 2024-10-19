@@ -8,9 +8,11 @@ import 'cfq_card_content.dart';
 
 class EventsList extends StatelessWidget {
   final Stream<List<DocumentSnapshot>> eventsStream;
+  final String currentUserId;
 
   const EventsList({
     required this.eventsStream,
+    required this.currentUserId,
     super.key,
   });
 
@@ -71,6 +73,9 @@ class EventsList extends StatelessWidget {
                 attendeesCount: (event['attending'] as List?)?.length ?? 0,
                 datePublished: parseDate(event['datePublished']),
                 moods: List<String>.from(event['moods'] ?? []),
+                turnId: event['turnId'] ?? CustomString.emptyString,
+                organizerId: event['uid'] ?? CustomString.emptyString,
+                currentUserId: currentUserId,
                 onAttendingPressed: () {
                   // Handle attending action
                 },
@@ -98,6 +103,9 @@ class EventsList extends StatelessWidget {
                 when: event['when'] ?? CustomString.emptyString,
                 moods: List<String>.from(event['moods'] ?? []),
                 followersCount: 0,
+                cfqId: event['cfqId'] ?? CustomString.emptyString,
+                organizerId: event['uid'] ?? CustomString.emptyString,
+                currentUserId: currentUserId,
                 onFollowPressed: () {
                   // Handle follow action
                 },

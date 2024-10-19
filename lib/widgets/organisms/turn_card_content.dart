@@ -6,6 +6,7 @@ import '../molecules/turn_buttons.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
+import '../../screens/profile_screen.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -24,6 +25,9 @@ class TurnCardContent extends StatelessWidget {
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
   final VoidCallback onCommentPressed;
+  final String turnId;
+  final String organizerId;
+  final String currentUserId;
 
   const TurnCardContent({
     required this.profilePictureUrl,
@@ -42,6 +46,9 @@ class TurnCardContent extends StatelessWidget {
     required this.turnImageUrl,
     required this.datePublished,
     required this.moods,
+    required this.turnId,
+    required this.organizerId,
+    required this.currentUserId,
     super.key,
   });
 
@@ -71,13 +78,28 @@ class TurnCardContent extends StatelessWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          ClickableAvatar(
-                            userId: '', // Add user ID
-                            imageUrl: profilePictureUrl,
-                            onTap: () {}, // Add onTap functionality
-                            isActive: false, // Add isActive
-                            radius: 28,
-                          ),
+                          currentUserId != organizerId
+                              ? ClickableAvatar(
+                                  userId: organizerId,
+                                  imageUrl: profilePictureUrl,
+                                  onTap: () {
+                                    // Navigate to friend's profile
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProfileScreen(userId: organizerId),
+                                      ),
+                                    );
+                                  },
+                                  isActive: false, // Add isActive
+                                  radius: 28,
+                                )
+                              : ClickableAvatar(
+                                  userId: organizerId,
+                                  imageUrl: profilePictureUrl,
+                                  onTap: () {},
+                                ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(

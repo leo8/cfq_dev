@@ -130,7 +130,10 @@ class ThreadScreen extends StatelessWidget {
         _buildActiveFriendsList(context, viewModel),
         const SizedBox(height: 20),
         Expanded(
-          child: EventsList(eventsStream: viewModel.fetchCombinedEvents()),
+          child: EventsList(
+            eventsStream: viewModel.fetchCombinedEvents(),
+            currentUserId: viewModel.currentUserUid,
+          ),
         ),
       ],
     );

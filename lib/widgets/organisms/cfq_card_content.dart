@@ -6,6 +6,7 @@ import '../molecules/cfq_buttons.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
+import '../../screens/profile_screen.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -19,6 +20,9 @@ class CFQCardContent extends StatelessWidget {
   final String location;
   final String when;
   final int followersCount; // New field for followers count
+  final String cfqId;
+  final String organizerId;
+  final String currentUserId;
   final VoidCallback onFollowPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
@@ -42,6 +46,9 @@ class CFQCardContent extends StatelessWidget {
     required this.onSendPressed,
     required this.onFavoritePressed,
     required this.onBellPressed,
+    required this.cfqId,
+    required this.organizerId,
+    required this.currentUserId,
     super.key,
   });
 
@@ -70,20 +77,35 @@ class CFQCardContent extends StatelessWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          ClickableAvatar(
-                            userId: '', // Add user ID
-                            imageUrl: profilePictureUrl,
-                            onTap: () {}, // Add onTap functionality
-                            isActive: false, // Add isActive
-                            radius: 28,
-                          ),
+                          currentUserId != organizerId
+                              ? ClickableAvatar(
+                                  userId: organizerId,
+                                  imageUrl: profilePictureUrl,
+                                  onTap: () {
+                                    // Navigate to friend's profile
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProfileScreen(userId: organizerId),
+                                      ),
+                                    );
+                                  },
+                                  isActive: false, // Add isActive
+                                  radius: 28,
+                                )
+                              : ClickableAvatar(
+                                  userId: organizerId,
+                                  imageUrl: profilePictureUrl,
+                                  onTap: () {},
+                                ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                  '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
                                   style: CustomTextStyle.body1
                                       .copyWith(fontSize: 18),
                                 ),
