@@ -23,6 +23,8 @@ class ProfileViewModel extends ChangeNotifier {
   bool _friendAdded = false;
   bool get friendAdded => _friendAdded;
 
+  model.User? get currentUser => _currentUser;
+
   bool _friendRemoved = false;
   bool get friendRemoved => _friendRemoved;
 

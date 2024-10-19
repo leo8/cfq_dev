@@ -121,6 +121,10 @@ class CustomString {
   static const favorites = "Favoris";
   static const privacy = "Confidentialité";
 
+  // Favorites
+  static const favoritesCapital = "FAVORIS";
+  static const noFavoriteEvents = "Pas encore de favoris";
+
   // Image Related
   static const noImage = "Aucune image";
   static const pickImageFromGallery = "Choisir une photo de la galerie";
