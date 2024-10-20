@@ -3,7 +3,7 @@ import 'package:cfq_dev/widgets/organisms/turn_card_content.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user.dart' as model;
-
+import '../../screens/conversation_screen.dart';
 import '../../utils/styles/string.dart';
 import 'cfq_card_content.dart';
 
@@ -90,6 +90,18 @@ class EventsList extends StatelessWidget {
                   // Handle share action
                 },
                 onSendPressed: () {
+                  if (event['channelId'] != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                            eventName: event['turnName'],
+                            channelId: event['channelId']),
+                      ),
+                    );
+                  } else {
+                    // Handle the case where no channel exists for this turn
+                  }
                   // Handle send action
                 },
                 onCommentPressed: () {
@@ -120,7 +132,19 @@ class EventsList extends StatelessWidget {
                   // Handle follow action
                 },
                 onSendPressed: () {
-                  // Handle share action
+                  if (event['channelId'] != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                            eventName: event['cfqName'],
+                            channelId: event['channelId']),
+                      ),
+                    );
+                  } else {
+                    // Handle the case where no channel exists for this turn
+                  }
+                  // Handle send action
                 },
                 onSharePressed: () {
                   // Handle share action

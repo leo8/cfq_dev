@@ -462,6 +462,9 @@ class CreateCfqViewModel extends ChangeNotifier
       // Generate unique cfq ID
       String cfqId = const Uuid().v1();
 
+      // Generate unique channel ID
+      String channelId = const Uuid().v1();
+
       // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -476,21 +479,21 @@ class CreateCfqViewModel extends ChangeNotifier
 
       // Create cfq object
       Cfq cfq = Cfq(
-        name: cfqNameController.text.trim(),
-        description: descriptionController.text.trim(),
-        moods: _selectedMoods!,
-        uid: currentUserId,
-        username: _currentUser!.username,
-        eventId: cfqId,
-        datePublished: DateTime.now(),
-        when: whenController.text.trim(),
-        imageUrl: cfqImageUrl,
-        profilePictureUrl: _currentUser!.profilePictureUrl,
-        where: locationController.text.trim(),
-        organizers: [currentUserId],
-        invitees: _selectedInvitees.map((user) => user.uid).toList(),
-        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-      );
+          name: cfqNameController.text.trim(),
+          description: descriptionController.text.trim(),
+          moods: _selectedMoods!,
+          uid: currentUserId,
+          username: _currentUser!.username,
+          eventId: cfqId,
+          datePublished: DateTime.now(),
+          when: whenController.text.trim(),
+          imageUrl: cfqImageUrl,
+          profilePictureUrl: _currentUser!.profilePictureUrl,
+          where: locationController.text.trim(),
+          organizers: [currentUserId],
+          invitees: _selectedInvitees.map((user) => user.uid).toList(),
+          teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+          channelId: channelId);
 
       // Save cfq to Firestore
       await FirebaseFirestore.instance

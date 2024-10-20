@@ -496,6 +496,9 @@ class CreateTurnViewModel extends ChangeNotifier
       // Generate unique TURN ID
       String turnId = const Uuid().v1();
 
+      // Generate unique channel ID
+      String channelId = const Uuid().v1();
+
       // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -505,26 +508,26 @@ class CreateTurnViewModel extends ChangeNotifier
 
       // Create TURN object
       Turn turn = Turn(
-        name: turnNameController.text.trim(),
-        description: descriptionController.text.trim(),
-        moods: _selectedMoods!,
-        uid: currentUserId,
-        username: _currentUser!.username,
-        eventId: turnId,
-        datePublished: DateTime.now(),
-        eventDateTime: _selectedDateTime!,
-        imageUrl: turnImageUrl,
-        profilePictureUrl: _currentUser!.profilePictureUrl,
-        where: locationController.text.trim(),
-        address: addressController.text.trim(),
-        organizers: [currentUserId], // Assuming current user is the organizer
-        invitees: inviteeUids,
-        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        attending: [],
-        notSureAttending: [],
-        notAttending: [],
-        notAnswered: [],
-      );
+          name: turnNameController.text.trim(),
+          description: descriptionController.text.trim(),
+          moods: _selectedMoods!,
+          uid: currentUserId,
+          username: _currentUser!.username,
+          eventId: turnId,
+          datePublished: DateTime.now(),
+          eventDateTime: _selectedDateTime!,
+          imageUrl: turnImageUrl,
+          profilePictureUrl: _currentUser!.profilePictureUrl,
+          where: locationController.text.trim(),
+          address: addressController.text.trim(),
+          organizers: [currentUserId], // Assuming current user is the organizer
+          invitees: inviteeUids,
+          teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+          attending: [],
+          notSureAttending: [],
+          notAttending: [],
+          notAnswered: [],
+          channelId: channelId);
 
       // Save TURN to Firestore
       await FirebaseFirestore.instance
