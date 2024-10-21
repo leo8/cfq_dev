@@ -96,7 +96,8 @@ class EventsList extends StatelessWidget {
                       MaterialPageRoute(
                         builder: (context) => ConversationScreen(
                             eventName: event['turnName'],
-                            channelId: event['channelId']),
+                            channelId: event['channelId'],
+                            members: event['invitees']),
                       ),
                     );
                   } else {
@@ -136,10 +137,13 @@ class EventsList extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                            eventName: event['cfqName'],
-                            channelId: event['channelId']),
-                      ),
+                          builder: (context) => ConversationScreen(
+                              eventName: event['cfqName'],
+                              channelId: event['channelId'],
+                              members: event['invitees'])
+
+                          //members: event['invitees']
+                          ),
                     );
                   } else {
                     // Handle the case where no channel exists for this turn

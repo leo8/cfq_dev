@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../providers/conversation_service.dart';
+import '../models/user.dart' as model;
 
 class ConversationScreen extends StatelessWidget {
   final String channelId;
   final String eventName;
+  final List members;
   final ConversationService _conversationService = ConversationService();
 
-  ConversationScreen({required this.eventName, required this.channelId});
+  ConversationScreen({
+    required this.eventName,
+    required this.channelId,
+    required this.members,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(eventName),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.people),
+            onPressed: () {
+              _showInviteesList(context);
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -42,6 +56,38 @@ class ConversationScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showInviteesList(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<List<model.User>>(
+          future: _conversationService.getInviteeDetails(members),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error loading invitees'));
+            }
+            final inviteeDetails = snapshot.data ?? [];
+            return ListView.builder(
+              itemCount: inviteeDetails.length,
+              itemBuilder: (context, index) {
+                final invitee = inviteeDetails[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(invitee.profilePictureUrl),
+                  ),
+                  title: Text(invitee.username),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }
