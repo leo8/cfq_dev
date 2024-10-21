@@ -95,15 +95,19 @@ class EventsList extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConversationScreen(
-                            eventName: event['turnName'],
-                            channelId: event['channelId'],
-                            members: event['invitees']),
+                          eventName:
+                              isTurn ? event['turnName'] : event['cfqName'],
+                          channelId: event['channelId'],
+                          members: event['invitees'],
+                          organizerName: event['username'],
+                          organizerProfilePicture: event['profilePictureUrl'],
+                          currentUser: currentUser!,
+                        ),
                       ),
                     );
                   } else {
-                    // Handle the case where no channel exists for this turn
+                    // Handle the case where no channel exists for this event
                   }
-                  // Handle send action
                 },
                 onCommentPressed: () {
                   // Handle comment action
@@ -137,18 +141,20 @@ class EventsList extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ConversationScreen(
-                              eventName: event['cfqName'],
-                              channelId: event['channelId'],
-                              members: event['invitees'])
-
-                          //members: event['invitees']
-                          ),
+                        builder: (context) => ConversationScreen(
+                          eventName:
+                              isTurn ? event['turnName'] : event['cfqName'],
+                          channelId: event['channelId'],
+                          members: event['invitees'],
+                          organizerName: event['username'],
+                          organizerProfilePicture: event['profilePictureUrl'],
+                          currentUser: currentUser!,
+                        ),
+                      ),
                     );
                   } else {
-                    // Handle the case where no channel exists for this turn
+                    // Handle the case where no channel exists for this event
                   }
-                  // Handle send action
                 },
                 onSharePressed: () {
                   // Handle share action

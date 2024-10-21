@@ -4,8 +4,8 @@ import '../models/user.dart' as model;
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(
-      String channelId, String message, String senderId) async {
+  Future<void> sendMessage(String channelId, String message, String senderId,
+      String senderUsername, String senderProfilePicture) async {
     await _firestore
         .collection('conversations')
         .doc(channelId)
@@ -13,6 +13,8 @@ class ConversationService {
         .add({
       'message': message,
       'senderId': senderId,
+      'senderUsername': senderUsername,
+      'senderProfilePicture': senderProfilePicture,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
