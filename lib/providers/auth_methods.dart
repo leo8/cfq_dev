@@ -80,21 +80,23 @@ class AuthMethods {
 
         // Create User model object with the provided data
         model.User user = model.User(
-            username: username,
-            uid: userCredential.user!.uid,
-            email: email,
-            friends: [],
-            teams: [],
-            profilePictureUrl: profilePictureUrl,
-            location: location ?? CustomString.emptyString,
-            birthDate: birthDate,
-            isActive: false,
-            searchKey: username.toLowerCase(), // New users start as inactive
-            postedTurns: [],
-            invitedTurns: [],
-            postedCfqs: [],
-            invitedCfqs: [],
-            favorites: []);
+          username: username,
+          uid: userCredential.user!.uid,
+          email: email,
+          friends: [],
+          teams: [],
+          profilePictureUrl: profilePictureUrl,
+          location: location ?? CustomString.emptyString,
+          birthDate: birthDate,
+          isActive: false,
+          searchKey: username.toLowerCase(), // New users start as inactive
+          postedTurns: [],
+          invitedTurns: [],
+          postedCfqs: [],
+          invitedCfqs: [],
+          favorites: [],
+          conversations: [],
+        );
 
         // Save the user data to Firestore under 'users' collection
         await _firestore.collection('users').doc(userCredential.user!.uid).set(

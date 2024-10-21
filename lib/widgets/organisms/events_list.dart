@@ -11,11 +11,17 @@ class EventsList extends StatelessWidget {
   final Stream<List<DocumentSnapshot>> eventsStream;
   final model.User? currentUser;
   final Function(String, bool) onFavoriteToggle;
+  final Function(String) addConversationToUserList;
+  final Function(String) removeConversationFromUserList;
+  final Function(String) isConversationInUserList;
 
   const EventsList({
     required this.eventsStream,
     required this.currentUser,
     required this.onFavoriteToggle,
+    required this.addConversationToUserList,
+    required this.removeConversationFromUserList,
+    required this.isConversationInUserList,
     super.key,
   });
 
@@ -102,6 +108,11 @@ class EventsList extends StatelessWidget {
                           organizerName: event['username'],
                           organizerProfilePicture: event['profilePictureUrl'],
                           currentUser: currentUser!,
+                          addConversationToUserList: addConversationToUserList,
+                          removeConversationFromUserList:
+                              removeConversationFromUserList,
+                          isInUserConversations:
+                              isConversationInUserList(event['channelId']),
                         ),
                       ),
                     );
@@ -149,6 +160,11 @@ class EventsList extends StatelessWidget {
                           organizerName: event['username'],
                           organizerProfilePicture: event['profilePictureUrl'],
                           currentUser: currentUser!,
+                          addConversationToUserList: addConversationToUserList,
+                          removeConversationFromUserList:
+                              removeConversationFromUserList,
+                          isInUserConversations:
+                              isConversationInUserList(event['channelId']),
                         ),
                       ),
                     );

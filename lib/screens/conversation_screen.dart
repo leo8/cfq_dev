@@ -4,6 +4,7 @@ import '../providers/conversation_service.dart';
 import '../models/user.dart' as model;
 import '../utils/styles/colors.dart';
 import '../utils/styles/text_styles.dart';
+import '../utils/styles/string.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 
@@ -15,6 +16,9 @@ class ConversationScreen extends StatelessWidget {
   final String organizerProfilePicture;
   final model.User currentUser;
   final ConversationService _conversationService = ConversationService();
+  final Function(String) addConversationToUserList;
+  final Function(String) removeConversationFromUserList;
+  final bool isInUserConversations;
 
   ConversationScreen({
     required this.eventName,
@@ -23,6 +27,9 @@ class ConversationScreen extends StatelessWidget {
     required this.organizerName,
     required this.organizerProfilePicture,
     required this.currentUser,
+    required this.addConversationToUserList,
+    required this.removeConversationFromUserList,
+    required this.isInUserConversations,
   });
 
   @override
@@ -57,30 +64,36 @@ class ConversationScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(eventName, style: CustomTextStyle.title3),
+                Row(
+                  children: [
+                    Text(eventName, style: CustomTextStyle.title1),
+                    const SizedBox(width: 12),
+                    IconButton(
+                      icon: const Icon(Icons.more_horiz,
+                          color: CustomColor.customPurple),
+                      onPressed: () => _showOptions(context),
+                    ),
+                  ],
+                ),
                 Row(
                   children: [
                     CircleAvatar(
                       backgroundImage: NetworkImage(organizerProfilePicture),
                       radius: 12,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(organizerName, style: CustomTextStyle.body1),
                   ],
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert, color: CustomColor.customPurple),
-            onPressed: () => _showOptions(context),
           ),
         ],
       ),
@@ -92,22 +105,25 @@ class ConversationScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: CustomColor.customBlack,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          child: Wrap(
+            children: <Widget>[
               ListTile(
-                leading:
-                    Icon(Icons.add_comment, color: CustomColor.customWhite),
-                title: Text('Add to my messages', style: CustomTextStyle.body1),
+                leading: Icon(isInUserConversations ? Icons.remove : Icons.add),
+                title: Text(isInUserConversations
+                    ? CustomString.removeFromMyMessages
+                    : CustomString.addToMyMessages),
                 onTap: () {
-                  // Implement add to messages functionality
+                  if (isInUserConversations) {
+                    removeConversationFromUserList(channelId);
+                  } else {
+                    addConversationToUserList(channelId);
+                  }
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.people, color: CustomColor.customWhite),
-                title: Text('See members', style: CustomTextStyle.body1),
+                leading: const Icon(Icons.people),
+                title: const Text(CustomString.seeMembers),
                 onTap: () {
                   Navigator.pop(context);
                   _showInviteesList(context);
@@ -180,7 +196,7 @@ class ConversationScreen extends StatelessWidget {
     final TextEditingController _controller = TextEditingController();
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 24),
       child: Row(
         children: [
           CircleAvatar(
@@ -206,15 +222,26 @@ class ConversationScreen extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: CustomIcon.eventConversation,
+            icon: const Icon(Icons.send, color: CustomColor.customPurple),
             onPressed: () {
               if (_controller.text.isNotEmpty) {
                 _conversationService.sendMessage(
-                    channelId,
-                    _controller.text,
-                    currentUser.uid,
-                    currentUser.username,
-                    currentUser.profilePictureUrl);
+                  channelId,
+                  _controller.text,
+                  currentUser.uid,
+                  currentUser.username,
+                  currentUser.profilePictureUrl,
+                );
+                _conversationService.createConversation(
+                  channelId,
+                  eventName,
+                  organizerProfilePicture,
+                );
+                _conversationService.updateConversationLastMessage(
+                  channelId,
+                  _controller.text,
+                  currentUser.username,
+                );
                 _controller.clear();
               }
             },

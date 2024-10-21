@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart' as model;
+import '../models/conversation.dart';
+import '../providers/conversation_service.dart';
 
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
@@ -30,10 +32,18 @@ class ThreadViewModel extends ChangeNotifier {
 
   StreamSubscription<DocumentSnapshot>? _userSubscription;
 
+  final ConversationService _conversationService = ConversationService();
+
+  List<Conversation> _conversations = [];
+  List<Conversation> _filteredConversations = [];
+
+  List<Conversation> get filteredConversations => _filteredConversations;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
     _listenToUserChanges();
+    loadConversations();
   }
 
   @override
@@ -271,5 +281,43 @@ class ThreadViewModel extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  Future<void> loadConversations() async {
+    _conversations =
+        await _conversationService.getUserConversations(currentUserUid);
+    _sortConversations();
+    _filteredConversations = _conversations;
+    notifyListeners();
+  }
+
+  void _sortConversations() {
+    _conversations.sort(
+        (a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+  }
+
+  void searchConversations(String query) {
+    _filteredConversations = _conversations
+        .where((conversation) =>
+            conversation.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    notifyListeners();
+  }
+
+  Future<void> addConversationToUserList(String channelId) async {
+    await _conversationService.addConversationToUser(currentUserUid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> removeConversationFromUserList(String channelId) async {
+    await _conversationService.removeConversationFromUser(
+        currentUserUid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  bool isConversationInUserList(String channelId) {
+    return _conversations.any((conversation) => conversation.id == channelId);
   }
 }

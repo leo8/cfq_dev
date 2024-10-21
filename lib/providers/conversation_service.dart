@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../models/conversation.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -38,5 +39,57 @@ class ConversationService {
       }
     }
     return invitees;
+  }
+
+  Future<List<Conversation>> getUserConversations(String userId) async {
+    List<Conversation> conversations = [];
+
+    // Fetch the user document to get the list of conversation IDs
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(userId).get();
+    List<String> conversationIds =
+        List<String>.from(userDoc['conversations'] ?? []);
+
+    // Fetch each conversation
+    for (String channelId in conversationIds) {
+      DocumentSnapshot conversationDoc =
+          await _firestore.collection('conversations').doc(channelId).get();
+      if (conversationDoc.exists) {
+        conversations.add(Conversation.fromFirestore(conversationDoc));
+      }
+    }
+
+    return conversations;
+  }
+
+  Future<void> createConversation(
+      String channelId, String name, String imageUrl) async {
+    await _firestore.collection('conversations').doc(channelId).set({
+      'name': name,
+      'imageUrl': imageUrl,
+      'lastMessageTimestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> updateConversationLastMessage(String channelId,
+      String lastMessageContent, String lastSenderUsername) async {
+    await _firestore.collection('conversations').doc(channelId).update({
+      'lastMessageContent': lastMessageContent,
+      'lastSenderUsername': lastSenderUsername,
+      'lastMessageTimestamp': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> addConversationToUser(String userId, String channelId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'conversations': FieldValue.arrayUnion([channelId])
+    });
+  }
+
+  Future<void> removeConversationFromUser(
+      String userId, String channelId) async {
+    await _firestore.collection('users').doc(userId).update({
+      'conversations': FieldValue.arrayRemove([channelId])
+    });
   }
 }

@@ -59,6 +59,12 @@ class FavoritesScreen extends StatelessWidget {
                         eventsStream: Stream.value(viewModel.favoriteEvents),
                         currentUser: viewModel.currentUser,
                         onFavoriteToggle: viewModel.toggleFavorite,
+                        addConversationToUserList:
+                            viewModel.addConversationToUserList,
+                        removeConversationFromUserList:
+                            viewModel.removeConversationFromUserList,
+                        isConversationInUserList:
+                            viewModel.isConversationInUserList,
                       );
                     }
                   },

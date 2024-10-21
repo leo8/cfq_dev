@@ -11,6 +11,7 @@ import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'conversations_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -34,7 +35,12 @@ class ThreadScreen extends StatelessWidget {
                   // Add notification functionality later
                 },
                 onMessageTap: () {
-                  // Add message functionality later
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ConversationsScreen(
+                            currentUser: viewModel.currentUser!)),
+                  );
                 },
               );
             },
@@ -136,6 +142,10 @@ class ThreadScreen extends StatelessWidget {
             onFavoriteToggle: (eventId, isFavorite) {
               viewModel.toggleFavorite(eventId, isFavorite);
             },
+            addConversationToUserList: viewModel.addConversationToUserList,
+            removeConversationFromUserList:
+                viewModel.removeConversationFromUserList,
+            isConversationInUserList: viewModel.isConversationInUserList,
           ),
         ),
       ],

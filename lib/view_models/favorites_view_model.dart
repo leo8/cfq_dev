@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../models/conversation.dart';
 import '../utils/logger.dart';
+import '../providers/conversation_service.dart';
 
 class FavoritesViewModel extends ChangeNotifier {
   final String currentUserId;
@@ -17,6 +19,10 @@ class FavoritesViewModel extends ChangeNotifier {
 
   List<DocumentSnapshot> get favoriteEvents => _favoriteEvents;
   bool get isLoading => _isLoading;
+
+  final ConversationService _conversationService = ConversationService();
+
+  List<Conversation> _conversations = [];
 
   Future<void> _initializeData() async {
     await _fetchCurrentUser();
@@ -98,5 +104,28 @@ class FavoritesViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error toggling favorite: $e');
     }
+  }
+
+  Future<void> loadConversations() async {
+    _conversations =
+        await _conversationService.getUserConversations(currentUserId);
+    notifyListeners();
+  }
+
+  Future<void> addConversationToUserList(String channelId) async {
+    await _conversationService.addConversationToUser(currentUserId, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> removeConversationFromUserList(String channelId) async {
+    await _conversationService.removeConversationFromUser(
+        currentUserId, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  bool isConversationInUserList(String channelId) {
+    return _conversations.any((conversation) => conversation.id == channelId);
   }
 }

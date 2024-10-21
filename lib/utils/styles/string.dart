@@ -38,6 +38,12 @@ class CustomString {
   static const username = "Nom d'utilisateur";
   static const noLocation = "Aucune localisation";
 
+  // Messagerie
+  static const messagerieCapital = "MESSAGERIE";
+  static const addToMyMessages = "Ajouter à ma messagerie";
+  static const removeFromMyMessages = "Retirer de ma messagerie";
+  static const seeMembers = "Voir les members";
+
   // Search
   static const search = "Chercher..";
   static const searchUsers = "Chercher des utilisateurs..";
