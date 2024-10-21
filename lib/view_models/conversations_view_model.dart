@@ -2,66 +2,58 @@ import 'package:flutter/material.dart';
 import '../models/conversation.dart';
 import '../providers/conversation_service.dart';
 import '../models/user.dart' as model;
+import 'dart:async';
 import '../utils/logger.dart';
 
 class ConversationsViewModel extends ChangeNotifier {
-  final ConversationService _conversationService = ConversationService();
   final model.User currentUser;
+  final ConversationService _conversationService = ConversationService();
   List<Conversation> _conversations = [];
-  List<Conversation> _filteredConversations = [];
+  List<Conversation> get conversations => _conversations;
   final TextEditingController searchController = TextEditingController();
-
-  List<Conversation> get filteredConversations => _filteredConversations;
+  StreamSubscription<List<Conversation>>? _conversationsSubscription;
 
   ConversationsViewModel({required this.currentUser}) {
-    AppLogger.debug(
-        'ConversationsViewModel initialized for user: ${currentUser.uid}');
-    _loadConversations();
+    initConversations();
   }
 
-  Future<void> _loadConversations() async {
-    AppLogger.debug('Loading conversations for user: ${currentUser.uid}');
-    _conversations =
-        await _conversationService.getUserConversations(currentUser.uid);
-    AppLogger.debug('Loaded ${_conversations.length} conversations');
-    _sortConversations();
-    _filteredConversations = _conversations;
-    AppLogger.debug(
-        'Filtered conversations set, count: ${_filteredConversations.length}');
-    notifyListeners();
-  }
-
-  void _sortConversations() {
-    _conversations.sort(
-        (a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
-    AppLogger.debug('Conversations sorted');
+  void initConversations() {
+    _conversationsSubscription?.cancel();
+    _conversationsSubscription = conversationsStream.listen(
+      (updatedConversations) {
+        _conversations = updatedConversations;
+        notifyListeners();
+      },
+      onError: (error) {
+        AppLogger.error('ConversationsViewModel: Error in stream: $error');
+      },
+    );
   }
 
   void searchConversations(String query) {
-    AppLogger.debug('Searching conversations with query: $query');
-    _filteredConversations = _conversations
-        .where((conversation) =>
-            conversation.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    AppLogger.debug('Search results: ${_filteredConversations.length}');
+    // Implement search logic here
     notifyListeners();
   }
 
   Future<void> addConversationToUserList(String channelId) async {
     await _conversationService.addConversationToUser(
         currentUser.uid, channelId);
-    await _loadConversations();
+    initConversations();
   }
 
   Future<void> removeConversationFromUserList(String channelId) async {
     await _conversationService.removeConversationFromUser(
         currentUser.uid, channelId);
-    await _loadConversations();
+    initConversations();
   }
 
   @override
   void dispose() {
+    _conversationsSubscription?.cancel();
     searchController.dispose();
     super.dispose();
   }
+
+  Stream<List<Conversation>> get conversationsStream =>
+      _conversationService.getUserConversationsStream(currentUser.uid);
 }

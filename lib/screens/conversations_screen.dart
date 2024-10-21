@@ -8,6 +8,7 @@ import '../utils/styles/string.dart';
 import '../widgets/atoms/search_bars/custom_search_bar.dart';
 import '../widgets/organisms/conversation_card.dart';
 import '../models/user.dart' as model;
+import '../models/conversation.dart';
 import 'conversation_screen.dart';
 
 class ConversationsScreen extends StatelessWidget {
@@ -18,86 +19,96 @@ class ConversationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ConversationsViewModel(currentUser: currentUser),
-      child: Scaffold(
-        backgroundColor: CustomColor.customBlack,
-        appBar: AppBar(
-          toolbarHeight: 40,
+    return Consumer<ConversationsViewModel>(
+      builder: (context, viewModel, child) {
+        return Scaffold(
           backgroundColor: CustomColor.customBlack,
-          leading: IconButton(
-            icon: CustomIcon.arrowBack,
-            onPressed: () => Navigator.of(context).pop(),
+          appBar: AppBar(
+            toolbarHeight: 40,
+            backgroundColor: CustomColor.customBlack,
+            leading: IconButton(
+              icon: CustomIcon.arrowBack,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-        ),
-        body: Consumer<ConversationsViewModel>(
-          builder: (context, viewModel, child) {
-            return Column(
-              children: [
-                const SizedBox(height: 15),
-                Center(
-                  child: Text(
-                    CustomString.messagerieCapital,
-                    style: CustomTextStyle.body1.copyWith(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+          body: Column(
+            children: [
+              const SizedBox(height: 15),
+              Center(
+                child: Text(
+                  CustomString.messagerieCapital,
+                  style: CustomTextStyle.body1.copyWith(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 15),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: CustomSearchBar(
-                    controller: viewModel.searchController,
-                    onChanged: (value) => viewModel.searchConversations(value),
-                  ),
+              ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CustomSearchBar(
+                  controller: viewModel.searchController,
+                  onChanged: (value) => viewModel.searchConversations(value),
                 ),
-                const SizedBox(height: 20), // Added more space here
-                Expanded(
-                  child: viewModel.filteredConversations.isEmpty
-                      ? Center(
-                          child: Text(
-                            CustomString.noConversationsYet,
-                            style: CustomTextStyle.body1,
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: viewModel.filteredConversations.length,
-                          itemBuilder: (context, index) {
-                            final conversation =
-                                viewModel.filteredConversations[index];
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ConversationScreen(
-                                      channelId: conversation.id,
-                                      eventName: conversation.name,
-                                      members: conversation.members,
-                                      organizerName: conversation.organizerName,
-                                      organizerProfilePicture:
-                                          conversation.organizerProfilePicture,
-                                      currentUser: currentUser,
-                                      addConversationToUserList:
-                                          viewModel.addConversationToUserList,
-                                      removeConversationFromUserList: viewModel
-                                          .removeConversationFromUserList,
-                                      initialIsInUserConversations: true,
-                                      eventPicture: conversation.imageUrl,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child:
-                                  ConversationCard(conversation: conversation),
-                            );
-                          },
-                        ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: StreamBuilder<List<Conversation>>(
+                  stream: viewModel.conversationsStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No conversations yet'));
+                    }
+                    return _buildConversationsList(snapshot.data!);
+                  },
                 ),
-              ],
-            );
-          },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildConversationsList(List<Conversation> conversations) {
+    return ListView.builder(
+      itemCount: conversations.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: ConversationCard(
+              key: ValueKey(conversations[index].id),
+              conversation: conversations[index]),
+          onTap: () => _navigateToConversation(context, conversations[index]),
+        );
+      },
+    );
+  }
+
+  void _navigateToConversation(
+      BuildContext context, Conversation conversation) {
+    final viewModel =
+        Provider.of<ConversationsViewModel>(context, listen: false);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConversationScreen(
+          channelId: conversation.id,
+          eventName: conversation.name,
+          members: conversation.members,
+          organizerName: conversation.organizerName,
+          organizerProfilePicture: conversation.organizerProfilePicture,
+          currentUser: currentUser,
+          addConversationToUserList: viewModel.addConversationToUserList,
+          removeConversationFromUserList:
+              viewModel.removeConversationFromUserList,
+          initialIsInUserConversations: true,
+          eventPicture: conversation.imageUrl,
         ),
       ),
     );
