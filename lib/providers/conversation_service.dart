@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
 import '../models/conversation.dart';
-import '../utils/logger.dart'; // Make sure you have this import
 import 'package:rxdart/rxdart.dart';
 
 class ConversationService {
@@ -95,6 +94,7 @@ class ConversationService {
       'members': members,
       'organizerName': organizerName,
       'organizerProfilePicture': organizerProfilePicture,
+      'searchKey': eventName.toLowerCase(),
     }, SetOptions(merge: true));
   }
 

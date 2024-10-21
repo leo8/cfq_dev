@@ -53,21 +53,7 @@ class ConversationsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: StreamBuilder<List<Conversation>>(
-                  stream: viewModel.conversationsStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    }
-                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No conversations yet'));
-                    }
-                    return _buildConversationsList(snapshot.data!);
-                  },
-                ),
+                child: _buildConversationsList(viewModel.conversations),
               ),
             ],
           ),
@@ -77,6 +63,9 @@ class ConversationsScreen extends StatelessWidget {
   }
 
   Widget _buildConversationsList(List<Conversation> conversations) {
+    if (conversations.isEmpty) {
+      return const Center(child: Text('No conversations found'));
+    }
     return ListView.builder(
       itemCount: conversations.length,
       itemBuilder: (context, index) {

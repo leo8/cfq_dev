@@ -10,6 +10,7 @@ class Conversation {
   final List<String> members;
   final String organizerName;
   final String organizerProfilePicture;
+  final String searchKey;
 
   Conversation({
     required this.id,
@@ -21,6 +22,7 @@ class Conversation {
     required this.members,
     required this.organizerName,
     required this.organizerProfilePicture,
+    required this.searchKey,
   });
 
   factory Conversation.fromFirestore(DocumentSnapshot doc) {
@@ -36,6 +38,7 @@ class Conversation {
       members: List<String>.from(data['members'] ?? []),
       organizerName: data['organizerName'] ?? '',
       organizerProfilePicture: data['organizerProfilePicture'] ?? '',
+      searchKey: data['searchKey'] ?? data['name'].toLowerCase(),
     );
   }
 }

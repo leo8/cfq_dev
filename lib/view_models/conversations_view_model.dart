@@ -8,8 +8,8 @@ import '../utils/logger.dart';
 class ConversationsViewModel extends ChangeNotifier {
   final model.User currentUser;
   final ConversationService _conversationService = ConversationService();
-  List<Conversation> _conversations = [];
-  List<Conversation> get conversations => _conversations;
+  List<Conversation> _allConversations = [];
+  List<Conversation> _filteredConversations = [];
   final TextEditingController searchController = TextEditingController();
   StreamSubscription<List<Conversation>>? _conversationsSubscription;
 
@@ -17,11 +17,14 @@ class ConversationsViewModel extends ChangeNotifier {
     initConversations();
   }
 
+  List<Conversation> get conversations => _filteredConversations;
+
   void initConversations() {
     _conversationsSubscription?.cancel();
     _conversationsSubscription = conversationsStream.listen(
       (updatedConversations) {
-        _conversations = updatedConversations;
+        _allConversations = updatedConversations;
+        _filteredConversations = _allConversations;
         notifyListeners();
       },
       onError: (error) {
@@ -31,7 +34,14 @@ class ConversationsViewModel extends ChangeNotifier {
   }
 
   void searchConversations(String query) {
-    // Implement search logic here
+    if (query.isEmpty) {
+      _filteredConversations = _allConversations;
+    } else {
+      _filteredConversations = _allConversations
+          .where((conversation) =>
+              conversation.searchKey.contains(query.toLowerCase()))
+          .toList();
+    }
     notifyListeners();
   }
 
