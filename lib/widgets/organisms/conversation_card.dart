@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import '../../models/conversation.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/string.dart';
 import '../../utils/date_time_utils.dart';
 
 class ConversationCard extends StatelessWidget {
   final Conversation conversation;
+  final String currentUserUsername;
 
-  const ConversationCard({Key? key, required this.conversation})
-      : super(key: key);
+  const ConversationCard({
+    Key? key,
+    required this.conversation,
+    required this.currentUserUsername,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class ConversationCard extends StatelessWidget {
                     style: CustomTextStyle.body1Bold,
                   ),
                   Text(
-                    '${conversation.lastSenderUsername}: ${conversation.lastMessageContent}',
+                    '${_getLastSenderDisplay()}: ${conversation.lastMessageContent}',
                     style:
                         CustomTextStyle.body2.copyWith(color: CustomColor.grey),
                     overflow: TextOverflow.ellipsis,
@@ -48,5 +53,11 @@ class ConversationCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getLastSenderDisplay() {
+    return conversation.lastSenderUsername == currentUserUsername
+        ? CustomString.you
+        : conversation.lastSenderUsername;
   }
 }

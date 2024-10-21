@@ -72,6 +72,7 @@ class ConversationsScreen extends StatelessWidget {
         return GestureDetector(
           child: ConversationCard(
               key: ValueKey(conversations[index].id),
+              currentUserUsername: currentUser.username,
               conversation: conversations[index]),
           onTap: () => _navigateToConversation(context, conversations[index]),
         );

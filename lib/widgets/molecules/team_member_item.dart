@@ -3,6 +3,7 @@ import '../atoms/texts/custom_text.dart';
 import '../../models/user.dart' as model;
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
 
@@ -82,7 +83,7 @@ class TeamMemberItem extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           CustomText(
-            text: isCurrentUser ? 'You' : user.username,
+            text: isCurrentUser ? CustomString.you : user.username,
             textStyle: CustomTextStyle.miniBody,
             textAlign: TextAlign.center,
           ),
