@@ -8,17 +8,17 @@ import '../utils/styles/string.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 
-class ConversationScreen extends StatelessWidget {
+class ConversationScreen extends StatefulWidget {
   final String channelId;
   final String eventName;
   final List members;
   final String organizerName;
   final String organizerProfilePicture;
   final model.User currentUser;
-  final ConversationService _conversationService = ConversationService();
   final Function(String) addConversationToUserList;
   final Function(String) removeConversationFromUserList;
-  final bool isInUserConversations;
+  final bool initialIsInUserConversations;
+  final String eventPicture;
 
   ConversationScreen({
     required this.eventName,
@@ -26,11 +26,26 @@ class ConversationScreen extends StatelessWidget {
     required this.members,
     required this.organizerName,
     required this.organizerProfilePicture,
+    required this.eventPicture,
     required this.currentUser,
     required this.addConversationToUserList,
     required this.removeConversationFromUserList,
-    required this.isInUserConversations,
+    required this.initialIsInUserConversations,
   });
+
+  @override
+  _ConversationScreenState createState() => _ConversationScreenState();
+}
+
+class _ConversationScreenState extends State<ConversationScreen> {
+  late bool isInUserConversations;
+  final ConversationService _conversationService = ConversationService();
+
+  @override
+  void initState() {
+    super.initState();
+    isInUserConversations = widget.initialIsInUserConversations;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +88,7 @@ class ConversationScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(eventName, style: CustomTextStyle.title1),
+                    Text(widget.eventName, style: CustomTextStyle.title1),
                     const SizedBox(width: 12),
                     IconButton(
                       icon: const Icon(Icons.more_horiz,
@@ -85,11 +100,12 @@ class ConversationScreen extends StatelessWidget {
                 Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(organizerProfilePicture),
+                      backgroundImage:
+                          NetworkImage(widget.organizerProfilePicture),
                       radius: 12,
                     ),
                     const SizedBox(width: 8),
-                    Text(organizerName, style: CustomTextStyle.body1),
+                    Text(widget.organizerName, style: CustomTextStyle.body1),
                   ],
                 ),
               ],
@@ -113,11 +129,15 @@ class ConversationScreen extends StatelessWidget {
                     ? CustomString.removeFromMyMessages
                     : CustomString.addToMyMessages),
                 onTap: () {
-                  if (isInUserConversations) {
-                    removeConversationFromUserList(channelId);
-                  } else {
-                    addConversationToUserList(channelId);
-                  }
+                  setState(() {
+                    if (isInUserConversations) {
+                      widget.removeConversationFromUserList(widget.channelId);
+                      isInUserConversations = false;
+                    } else {
+                      widget.addConversationToUserList(widget.channelId);
+                      isInUserConversations = true;
+                    }
+                  });
                   Navigator.pop(context);
                 },
               ),
@@ -138,14 +158,14 @@ class ConversationScreen extends StatelessWidget {
 
   Widget _buildMessageList() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _conversationService.getMessages(channelId),
+      stream: _conversationService.getMessages(widget.channelId),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
         return ListView(
           reverse: true,
           children: snapshot.data!.docs.map((doc) {
-            final isCurrentUser = doc['senderId'] == currentUser.uid;
+            final isCurrentUser = doc['senderId'] == widget.currentUser.uid;
             return _buildMessageBubble(doc, isCurrentUser);
           }).toList(),
         );
@@ -200,7 +220,7 @@ class ConversationScreen extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(currentUser.profilePictureUrl),
+            backgroundImage: NetworkImage(widget.currentUser.profilePictureUrl),
             radius: 16,
           ),
           SizedBox(width: 8),
@@ -225,22 +245,25 @@ class ConversationScreen extends StatelessWidget {
             icon: const Icon(Icons.send, color: CustomColor.customPurple),
             onPressed: () {
               if (_controller.text.isNotEmpty) {
-                _conversationService.sendMessage(
-                  channelId,
-                  _controller.text,
-                  currentUser.uid,
-                  currentUser.username,
-                  currentUser.profilePictureUrl,
-                );
                 _conversationService.createConversation(
-                  channelId,
-                  eventName,
-                  organizerProfilePicture,
+                  widget.channelId,
+                  widget.eventName,
+                  widget.eventPicture,
+                  widget.members.cast<String>(),
+                  widget.organizerName,
+                  widget.organizerProfilePicture,
+                );
+                _conversationService.sendMessage(
+                  widget.channelId,
+                  _controller.text,
+                  widget.currentUser.uid,
+                  widget.currentUser.username,
+                  widget.currentUser.profilePictureUrl,
                 );
                 _conversationService.updateConversationLastMessage(
-                  channelId,
+                  widget.channelId,
                   _controller.text,
-                  currentUser.username,
+                  widget.currentUser.username,
                 );
                 _controller.clear();
               }
@@ -258,7 +281,7 @@ class ConversationScreen extends StatelessWidget {
         return Container(
           color: CustomColor.customBlack,
           child: FutureBuilder<List<model.User>>(
-            future: _conversationService.getInviteeDetails(members),
+            future: _conversationService.getInviteeDetails(widget.members),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());

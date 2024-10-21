@@ -7,6 +7,9 @@ class Conversation {
   final String lastMessageContent;
   final String lastSenderUsername;
   final DateTime lastMessageTimestamp;
+  final List<String> members;
+  final String organizerName;
+  final String organizerProfilePicture;
 
   Conversation({
     required this.id,
@@ -15,6 +18,9 @@ class Conversation {
     required this.lastMessageContent,
     required this.lastSenderUsername,
     required this.lastMessageTimestamp,
+    required this.members,
+    required this.organizerName,
+    required this.organizerProfilePicture,
   });
 
   factory Conversation.fromFirestore(DocumentSnapshot doc) {
@@ -27,6 +33,9 @@ class Conversation {
       lastSenderUsername: data['lastSenderUsername'] ?? '',
       lastMessageTimestamp:
           (data['lastMessageTimestamp'] as Timestamp).toDate(),
+      members: List<String>.from(data['members'] ?? []),
+      organizerName: data['organizerName'] ?? '',
+      organizerProfilePicture: data['organizerProfilePicture'] ?? '',
     );
   }
 }

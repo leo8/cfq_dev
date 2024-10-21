@@ -42,7 +42,8 @@ class CustomString {
   static const messagerieCapital = "MESSAGERIE";
   static const addToMyMessages = "Ajouter à ma messagerie";
   static const removeFromMyMessages = "Retirer de ma messagerie";
-  static const seeMembers = "Voir les members";
+  static const seeMembers = "Voir les membres";
+  static const noConversationsYet = "Pas encore de conversations";
 
   // Search
   static const search = "Chercher..";

@@ -111,8 +111,9 @@ class EventsList extends StatelessWidget {
                           addConversationToUserList: addConversationToUserList,
                           removeConversationFromUserList:
                               removeConversationFromUserList,
-                          isInUserConversations:
+                          initialIsInUserConversations:
                               isConversationInUserList(event['channelId']),
+                          eventPicture: event['turnImageUrl'],
                         ),
                       ),
                     );
@@ -163,8 +164,9 @@ class EventsList extends StatelessWidget {
                           addConversationToUserList: addConversationToUserList,
                           removeConversationFromUserList:
                               removeConversationFromUserList,
-                          isInUserConversations:
+                          initialIsInUserConversations:
                               isConversationInUserList(event['channelId']),
+                          eventPicture: event['cfqImageUrl'],
                         ),
                       ),
                     );

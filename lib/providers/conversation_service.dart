@@ -63,12 +63,23 @@ class ConversationService {
   }
 
   Future<void> createConversation(
-      String channelId, String name, String imageUrl) async {
+    String channelId,
+    String eventName,
+    String eventPicture,
+    List<String> members,
+    String organizerName,
+    String organizerProfilePicture,
+  ) async {
     await _firestore.collection('conversations').doc(channelId).set({
-      'name': name,
-      'imageUrl': imageUrl,
+      'name': eventName,
+      'imageUrl': eventPicture,
+      'lastMessage': '',
+      'lastSenderUsername': '',
       'lastMessageTimestamp': FieldValue.serverTimestamp(),
-    });
+      'members': members,
+      'organizerName': organizerName,
+      'organizerProfilePicture': organizerProfilePicture,
+    }, SetOptions(merge: true));
   }
 
   Future<void> updateConversationLastMessage(String channelId,
