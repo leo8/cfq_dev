@@ -31,8 +31,12 @@ class TurnCardContent extends StatelessWidget {
   final String currentUserId;
   final List favorites;
   final bool isFavorite;
+  final String attendingStatus;
+  final Function(String) onAttendingStatusChanged;
 
   const TurnCardContent({
+    required this.attendingStatus,
+    required this.onAttendingStatusChanged,
     required this.profilePictureUrl,
     required this.username,
     required this.organizers,
@@ -122,11 +126,12 @@ class TurnCardContent extends StatelessWidget {
                       ),
                     ),
                     TurnButtons(
-                      onAttendingPressed: onAttendingPressed,
+                      onAttendingPressed: onAttendingStatusChanged,
                       onSharePressed: onSharePressed,
                       onSendPressed: onSendPressed,
                       onFavoritePressed: onFavoritePressed,
                       isFavorite: isFavorite,
+                      attendingStatus: attendingStatus,
                     ),
                   ],
                 ),

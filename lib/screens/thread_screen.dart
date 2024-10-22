@@ -148,6 +148,7 @@ class ThreadScreen extends StatelessWidget {
             removeFollowUp: ThreadViewModel.removeFollowUp,
             isFollowingUpStream: viewModel.isFollowingUpStream,
             toggleFollowUp: viewModel.toggleFollowUp,
+            onAttendingStatusChanged: viewModel.updateAttendingStatus,
           ),
         ),
       ],

@@ -19,6 +19,7 @@ class EventsList extends StatelessWidget {
   final Future<void> Function(String, String) removeFollowUp;
   final Stream<bool> Function(String, String) isFollowingUpStream;
   final Future<void> Function(String, String) toggleFollowUp;
+  final Function(String, String) onAttendingStatusChanged;
 
   const EventsList({
     required this.eventsStream,
@@ -32,6 +33,7 @@ class EventsList extends StatelessWidget {
     required this.removeFollowUp,
     required this.isFollowingUpStream,
     required this.toggleFollowUp,
+    required this.onAttendingStatusChanged,
     super.key,
   });
 
@@ -82,6 +84,19 @@ class EventsList extends StatelessWidget {
             final isFavorite = currentUser!.favorites.contains(documentId);
 
             if (isTurn) {
+              String attendingStatus = 'notAnswered';
+              if (eventData['attending']?.contains(currentUser!.uid) ?? false) {
+                attendingStatus = 'attending';
+              } else if (eventData['notSureAttending']
+                      ?.contains(currentUser!.uid) ??
+                  false) {
+                attendingStatus = 'notSureAttending';
+              } else if (eventData['notAttending']
+                      ?.contains(currentUser!.uid) ??
+                  false) {
+                attendingStatus = 'notAttending';
+              }
+
               return TurnCardContent(
                 turnImageUrl:
                     eventData['turnImageUrl'] ?? CustomString.emptyString,
@@ -155,6 +170,9 @@ class EventsList extends StatelessWidget {
                 isFavorite: isFavorite,
                 onFavoritePressed: () =>
                     onFavoriteToggle(documentId, !isFavorite),
+                attendingStatus: attendingStatus,
+                onAttendingStatusChanged: (status) =>
+                    onAttendingStatusChanged(documentId, status),
               );
             } else {
               return StreamBuilder<bool>(

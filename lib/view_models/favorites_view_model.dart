@@ -229,4 +229,51 @@ class FavoritesViewModel extends ChangeNotifier {
       AppLogger.error('Error loading favorite events: $e');
     }
   }
+
+  Future<void> updateAttendingStatus(String turnId, String status) async {
+    try {
+      final turnRef = _firestore.collection('turns').doc(turnId);
+      final userRef = _firestore.collection('users').doc(currentUserId);
+
+      await _firestore.runTransaction((transaction) async {
+        final turnDoc = await transaction.get(turnRef);
+        final userDoc = await transaction.get(userRef);
+
+        if (!turnDoc.exists || !userDoc.exists) {
+          throw Exception('Turn or User document does not exist');
+        }
+
+        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        // Remove user from all attending lists
+        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
+            .forEach((field) {
+          if (turnData[field] != null) {
+            turnData[field] = (turnData[field] as List)
+                .where((id) => id != currentUserId)
+                .toList();
+          }
+        });
+
+        // Add user to the appropriate list
+        if (status != 'notAnswered') {
+          turnData[status] = [...(turnData[status] ?? []), currentUserId];
+        }
+
+        // Update user's attending status for this turn
+        if (userData['attendingStatus'] == null) {
+          userData['attendingStatus'] = {};
+        }
+        userData['attendingStatus'][turnId] = status;
+
+        transaction.update(turnRef, turnData);
+        transaction.update(userRef, userData);
+      });
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating attending status: $e');
+    }
+  }
 }
