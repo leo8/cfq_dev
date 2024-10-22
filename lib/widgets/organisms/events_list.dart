@@ -167,21 +167,21 @@ class EventsList extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConversationScreen(
-                            eventName:
-                                isTurn ? event['turnName'] : event['cfqName'],
-                            channelId: event['channelId'],
-                            members: event['invitees'],
-                            organizerName: event['username'],
-                            organizerProfilePicture: event['profilePictureUrl'],
-                            currentUser: currentUser!,
-                            addConversationToUserList:
-                                addConversationToUserList,
-                            removeConversationFromUserList:
-                                removeConversationFromUserList,
-                            initialIsInUserConversations:
-                                isConversationInUserList(event['channelId']),
-                            eventPicture: event['cfqImageUrl'],
-                            resetUnreadMessages: resetUnreadMessages),
+                          eventName: event['cfqName'],
+                          channelId: event['channelId'],
+                          members: (event['invitees'] as List<dynamic>)
+                              .cast<String>(), // Cast to List<String>
+                          organizerName: event['username'],
+                          organizerProfilePicture: event['profilePictureUrl'],
+                          currentUser: currentUser!,
+                          addConversationToUserList: addConversationToUserList,
+                          removeConversationFromUserList:
+                              removeConversationFromUserList,
+                          initialIsInUserConversations:
+                              isConversationInUserList(event['channelId']),
+                          eventPicture: event['cfqImageUrl'],
+                          resetUnreadMessages: resetUnreadMessages,
+                        ),
                       ),
                     );
                   } else {
