@@ -293,4 +293,16 @@ class FavoritesViewModel extends ChangeNotifier {
       return 'notAnswered';
     });
   }
+
+  Stream<int> attendingCountStream(String turnId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['attending'] as List?)?.length ?? 0;
+    });
+  }
 }

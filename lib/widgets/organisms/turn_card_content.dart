@@ -34,6 +34,7 @@ class TurnCardContent extends StatelessWidget {
   final String attendingStatus;
   final Function(String) onAttendingStatusChanged;
   final Stream<String> attendingStatusStream;
+  final Stream<int> attendingCountStream;
 
   const TurnCardContent({
     required this.attendingStatus,
@@ -61,6 +62,7 @@ class TurnCardContent extends StatelessWidget {
     required this.favorites,
     required this.isFavorite,
     required this.attendingStatusStream,
+    required this.attendingCountStream,
     super.key,
   });
 
@@ -141,17 +143,23 @@ class TurnCardContent extends StatelessWidget {
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.only(left: 18),
-                  child: TurnDetails(
-                    profilePictureUrl: profilePictureUrl,
-                    username: username,
-                    datePublished: datePublished,
-                    turnName: turnName,
-                    moods: moods, // Add moods list
-                    eventDateTime: eventDateTime,
-                    attendeesCount: attendeesCount,
-                    where: where,
-                    address: address,
-                    description: description,
+                  child: StreamBuilder<int>(
+                    stream: attendingCountStream,
+                    builder: (context, snapshot) {
+                      final attendingCount = snapshot.data ?? 0;
+                      return TurnDetails(
+                        profilePictureUrl: profilePictureUrl,
+                        username: username,
+                        datePublished: datePublished,
+                        turnName: turnName,
+                        moods: moods,
+                        eventDateTime: eventDateTime,
+                        attendeesCount: attendingCount,
+                        where: where,
+                        address: address,
+                        description: description,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 25),
