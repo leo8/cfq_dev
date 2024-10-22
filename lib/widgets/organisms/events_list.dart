@@ -114,6 +114,7 @@ class EventsList extends StatelessWidget {
                           eventName:
                               isTurn ? event['turnName'] : event['cfqName'],
                           channelId: event['channelId'],
+                          organizerId: event['uid'],
                           members: (event['invitees'] as List<dynamic>)
                               .cast<String>(), // Cast to List<String>
                           organizerName: event['username'],
@@ -171,6 +172,7 @@ class EventsList extends StatelessWidget {
                         builder: (context) => ConversationScreen(
                           eventName: event['cfqName'],
                           channelId: event['channelId'],
+                          organizerId: event['uid'],
                           members: (event['invitees'] as List<dynamic>)
                               .cast<String>(), // Cast to List<String>
                           organizerName: event['username'],

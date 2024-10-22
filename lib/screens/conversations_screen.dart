@@ -95,6 +95,7 @@ class ConversationsScreen extends StatelessWidget {
           channelId: conversation.id,
           eventName: conversation.name,
           members: conversation.members,
+          organizerId: conversation.organizerId,
           organizerName: conversation.organizerName,
           organizerProfilePicture: conversation.organizerProfilePicture,
           currentUser: currentUser,

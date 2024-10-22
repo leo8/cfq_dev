@@ -11,6 +11,7 @@ import '../utils/styles/neon_background.dart';
 class ConversationScreen extends StatefulWidget {
   final String channelId;
   final String eventName;
+  final String organizerId;
   final List<String> members;
   final String organizerName;
   final String organizerProfilePicture;
@@ -23,6 +24,7 @@ class ConversationScreen extends StatefulWidget {
 
   ConversationScreen({
     required this.eventName,
+    required this.organizerId,
     required this.channelId,
     required this.members,
     required this.organizerName,
@@ -293,6 +295,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         widget.eventName,
         widget.eventPicture,
         widget.members,
+        widget.organizerId,
         widget.organizerName,
         widget.organizerProfilePicture,
       );

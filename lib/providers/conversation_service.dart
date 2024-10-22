@@ -194,12 +194,13 @@ class ConversationService {
     String eventName,
     String eventPicture,
     List<String> members,
+    String organizerId,
     String organizerName,
     String organizerProfilePicture,
   ) async {
     // Ensure the organizer is in the members list
-    if (!members.contains(organizerName)) {
-      members.add(organizerName);
+    if (!members.contains(organizerId)) {
+      members.add(organizerId);
     }
 
     await _firestore.collection('conversations').doc(channelId).set({

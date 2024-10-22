@@ -9,6 +9,7 @@ class Conversation {
   final DateTime lastMessageTimestamp;
   final List<String> members;
   final String organizerName;
+  final String organizerId;
   final String organizerProfilePicture;
   final String searchKey;
 
@@ -20,6 +21,7 @@ class Conversation {
     required this.lastSenderUsername,
     required this.lastMessageTimestamp,
     required this.members,
+    required this.organizerId,
     required this.organizerName,
     required this.organizerProfilePicture,
     required this.searchKey,
@@ -36,6 +38,7 @@ class Conversation {
       lastMessageTimestamp:
           (data['lastMessageTimestamp'] as Timestamp).toDate(),
       members: List<String>.from(data['members'] ?? []),
+      organizerId: data['organizerId'] ?? '',
       organizerName: data['organizerName'] ?? '',
       organizerProfilePicture: data['organizerProfilePicture'] ?? '',
       searchKey: data['searchKey'] ?? data['name'].toLowerCase(),
