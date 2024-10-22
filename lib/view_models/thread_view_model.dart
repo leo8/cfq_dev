@@ -431,4 +431,21 @@ class ThreadViewModel extends ChangeNotifier {
       AppLogger.error('Error updating attending status: $e');
     }
   }
+
+  Stream<String> attendingStatusStream(String turnId, String userId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 'notAnswered';
+      final data = snapshot.data() as Map<String, dynamic>;
+      if (data['attending']?.contains(userId) ?? false) return 'attending';
+      if (data['notSureAttending']?.contains(userId) ?? false)
+        return 'notSureAttending';
+      if (data['notAttending']?.contains(userId) ?? false)
+        return 'notAttending';
+      return 'notAnswered';
+    });
+  }
 }

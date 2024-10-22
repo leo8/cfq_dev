@@ -33,6 +33,7 @@ class TurnCardContent extends StatelessWidget {
   final bool isFavorite;
   final String attendingStatus;
   final Function(String) onAttendingStatusChanged;
+  final Stream<String> attendingStatusStream;
 
   const TurnCardContent({
     required this.attendingStatus,
@@ -59,6 +60,7 @@ class TurnCardContent extends StatelessWidget {
     required this.currentUserId,
     required this.favorites,
     required this.isFavorite,
+    required this.attendingStatusStream,
     super.key,
   });
 
@@ -131,6 +133,7 @@ class TurnCardContent extends StatelessWidget {
                       onSendPressed: onSendPressed,
                       onFavoritePressed: onFavoritePressed,
                       isFavorite: isFavorite,
+                      attendingStatusStream: attendingStatusStream,
                       attendingStatus: attendingStatus,
                     ),
                   ],

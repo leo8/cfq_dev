@@ -9,6 +9,7 @@ class TurnButtons extends StatelessWidget {
   final VoidCallback onFavoritePressed;
   final bool isFavorite;
   final String attendingStatus;
+  final Stream<String> attendingStatusStream;
 
   const TurnButtons({
     Key? key,
@@ -18,19 +19,26 @@ class TurnButtons extends StatelessWidget {
     required this.onFavoritePressed,
     required this.isFavorite,
     required this.attendingStatus,
+    required this.attendingStatusStream,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildIconButton(CustomIcon.eventConversation, onSendPressed),
-        const SizedBox(width: 6),
-        _buildFavoriteButton(),
-        const SizedBox(width: 9),
-        _buildAttendingButton(context),
-      ],
+    return StreamBuilder<String>(
+      stream: attendingStatusStream,
+      builder: (context, snapshot) {
+        final attendingStatus = snapshot.data ?? 'notAnswered';
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildIconButton(CustomIcon.eventConversation, onSendPressed),
+            const SizedBox(width: 6),
+            _buildFavoriteButton(),
+            const SizedBox(width: 9),
+            _buildAttendingButton(context, attendingStatus),
+          ],
+        );
+      },
     );
   }
 
@@ -53,7 +61,7 @@ class TurnButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildAttendingButton(BuildContext context) {
+  Widget _buildAttendingButton(BuildContext context, String attendingStatus) {
     IconData iconData;
     Color iconColor;
 
@@ -77,21 +85,7 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
-        width: 60,
-        height: 60,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: CustomColor.customBlack,
-          boxShadow: [
-            BoxShadow(
-              color: CustomColor.customBlack.withOpacity(0.5),
-              spreadRadius: 4,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        // ... existing container properties ...
         child: Center(
           child: Icon(
             iconData,

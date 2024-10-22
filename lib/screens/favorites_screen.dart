@@ -63,6 +63,7 @@ class FavoritesScreen extends StatelessWidget {
                       isFollowingUpStream: viewModel.isFollowingUpStream,
                       toggleFollowUp: viewModel.toggleFollowUp,
                       onAttendingStatusChanged: viewModel.updateAttendingStatus,
+                      attendingStatusStream: viewModel.attendingStatusStream,
                     ),
                   ),
                 ],

@@ -20,6 +20,7 @@ class EventsList extends StatelessWidget {
   final Stream<bool> Function(String, String) isFollowingUpStream;
   final Future<void> Function(String, String) toggleFollowUp;
   final Function(String, String) onAttendingStatusChanged;
+  final Stream<String> Function(String, String) attendingStatusStream;
 
   const EventsList({
     required this.eventsStream,
@@ -34,6 +35,7 @@ class EventsList extends StatelessWidget {
     required this.isFollowingUpStream,
     required this.toggleFollowUp,
     required this.onAttendingStatusChanged,
+    required this.attendingStatusStream,
     super.key,
   });
 
@@ -117,6 +119,10 @@ class EventsList extends StatelessWidget {
                 organizerId: eventData['uid'] ?? CustomString.emptyString,
                 currentUserId: currentUser!.uid,
                 favorites: currentUser!.favorites,
+                attendingStatusStream:
+                    attendingStatusStream(documentId, currentUser!.uid),
+                onAttendingStatusChanged: (status) =>
+                    onAttendingStatusChanged(documentId, status),
                 onAttendingPressed: () {
                   // Handle attending action
                 },
@@ -171,8 +177,6 @@ class EventsList extends StatelessWidget {
                 onFavoritePressed: () =>
                     onFavoriteToggle(documentId, !isFavorite),
                 attendingStatus: attendingStatus,
-                onAttendingStatusChanged: (status) =>
-                    onAttendingStatusChanged(documentId, status),
               );
             } else {
               return StreamBuilder<bool>(
