@@ -61,7 +61,8 @@ class EventsList extends StatelessWidget {
             final event = events[index];
             final isTurn = event.reference.parent.id == 'turns';
             final eventId = isTurn ? event['turnId'] : event['cfqId'];
-            final isFavorite = currentUser!.favorites.contains(eventId);
+            final isFavorite =
+                currentUser?.favorites.contains(eventId) ?? false;
 
             if (isTurn) {
               return TurnCardContent(

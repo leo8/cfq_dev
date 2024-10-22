@@ -78,13 +78,14 @@ class ThreadScreen extends StatelessWidget {
                   builder: (context) => ProfileScreen(userId: user.uid),
                 ),
               );
+              viewModel.clearSearchString();
             },
             child: Container(
               margin:
                   const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: CustomColor.customWhite,
+                color: CustomColor.transparent,
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Row(
@@ -146,26 +147,37 @@ class ThreadScreen extends StatelessWidget {
       BuildContext context, ThreadViewModel viewModel) {
     return StreamBuilder<DocumentSnapshot>(
       stream: viewModel.currentUserStream,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ActiveFriendsList(
-            currentUser: model.User.fromSnap(snapshot.data!),
-            activeFriends: viewModel.activeFriends,
-            onActiveChanged: (bool newValue) {
-              viewModel.updateIsActiveStatus(newValue);
-            },
-            onFriendTap: (String friendId) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(userId: friendId),
-                ),
-              );
-            },
-          );
-        } else {
+      builder: (context, userSnapshot) {
+        if (!userSnapshot.hasData) {
           return const CircularProgressIndicator();
         }
+
+        final currentUser = model.User.fromSnap(userSnapshot.data!);
+
+        return StreamBuilder<List<model.User>>(
+          stream: viewModel.activeFriendsStream,
+          builder: (context, friendsSnapshot) {
+            if (!friendsSnapshot.hasData) {
+              return const CircularProgressIndicator();
+            }
+
+            return ActiveFriendsList(
+              currentUser: currentUser,
+              activeFriends: friendsSnapshot.data!,
+              onActiveChanged: (bool newValue) {
+                viewModel.updateIsActiveStatus(newValue);
+              },
+              onFriendTap: (String friendId) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(userId: friendId),
+                  ),
+                );
+              },
+            );
+          },
+        );
       },
     );
   }
