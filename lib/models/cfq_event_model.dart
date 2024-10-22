@@ -3,10 +3,12 @@ import 'event_data_model.dart';
 // Model for representing a CFQ (event) that extends EventDataModel
 class Cfq extends EventDataModel {
   final String when; // When parameter
+  final List<String> followingUp; // New field
 
   // Constructor to initialize CFQ properties
   Cfq(
       {required this.when,
+      required this.followingUp,
       required super.name,
       required super.description,
       required super.moods,
@@ -40,6 +42,7 @@ class Cfq extends EventDataModel {
       'invitees': invitees,
       'teamInvitees': teamInvitees,
       'channelId': channelId,
+      'followingUp': followingUp,
     };
   }
 
@@ -61,6 +64,7 @@ class Cfq extends EventDataModel {
       invitees: List<String>.from(json['invitees']),
       teamInvitees: List<String>.from(json['teamInvitees']),
       channelId: json['channelId'],
+      followingUp: List<String>.from(json['followingUp'] ?? []),
     );
   }
 }

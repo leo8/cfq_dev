@@ -11,8 +11,10 @@ import '../utils/styles/text_styles.dart';
 class FavoritesScreen extends StatelessWidget {
   final String currentUserId;
 
-  const FavoritesScreen({Key? key, required this.currentUserId})
-      : super(key: key);
+  const FavoritesScreen({
+    Key? key,
+    required this.currentUserId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +68,8 @@ class FavoritesScreen extends StatelessWidget {
                         isConversationInUserList:
                             viewModel.isConversationInUserList,
                         resetUnreadMessages: viewModel.resetUnreadMessages,
+                        addFollowUp: FavoritesViewModel.addFollowUp,
+                        removeFollowUp: FavoritesViewModel.removeFollowUp,
                       );
                     }
                   },

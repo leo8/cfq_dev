@@ -7,6 +7,7 @@ class CFQButtons extends StatelessWidget {
   final VoidCallback onFavoritePressed;
   final VoidCallback onFollowUpPressed;
   final bool isFavorite;
+  final bool isFollowingUp;
 
   const CFQButtons({
     Key? key,
@@ -14,6 +15,7 @@ class CFQButtons extends StatelessWidget {
     required this.onFavoritePressed,
     required this.onFollowUpPressed,
     required this.isFavorite,
+    required this.isFollowingUp,
   }) : super(key: key);
 
   @override

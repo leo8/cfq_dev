@@ -7,6 +7,7 @@ import '../providers/conversation_service.dart';
 
 class FavoritesViewModel extends ChangeNotifier {
   final String currentUserId;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   model.User? _currentUser;
   List<DocumentSnapshot> _favoriteEvents = [];
   bool _isLoading = true;
@@ -143,6 +144,30 @@ class FavoritesViewModel extends ChangeNotifier {
       }
     } catch (e) {
       AppLogger.error('Error resetting unread messages: $e');
+    }
+  }
+
+  static Future<void> addFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      print('Error adding follow-up: $e');
+      // You might want to rethrow the error or handle it differently
+      rethrow;
+    }
+  }
+
+  static Future<void> removeFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      print('Error removing follow-up: $e');
+      // You might want to rethrow the error or handle it differently
+      rethrow;
     }
   }
 }

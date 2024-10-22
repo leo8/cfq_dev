@@ -15,6 +15,8 @@ class EventsList extends StatelessWidget {
   final Function(String) removeConversationFromUserList;
   final Function(String) isConversationInUserList;
   final Future<void> Function(String) resetUnreadMessages;
+  final Future<void> Function(String, String) addFollowUp;
+  final Future<void> Function(String, String) removeFollowUp;
 
   const EventsList({
     required this.eventsStream,
@@ -24,6 +26,8 @@ class EventsList extends StatelessWidget {
     required this.removeConversationFromUserList,
     required this.isConversationInUserList,
     required this.resetUnreadMessages,
+    required this.addFollowUp,
+    required this.removeFollowUp,
     super.key,
   });
 
@@ -154,11 +158,24 @@ class EventsList extends StatelessWidget {
                 location: event['where'] ?? CustomString.emptyString,
                 when: event['when'] ?? CustomString.emptyString,
                 moods: List<String>.from(event['moods'] ?? []),
-                followersCount: 0,
+                followingUp: List<String>.from(event['followingUp'] ?? []),
                 cfqId: event['cfqId'] ?? CustomString.emptyString,
                 organizerId: event['uid'] ?? CustomString.emptyString,
                 currentUserId: currentUser!.uid,
                 favorites: currentUser!.favorites,
+                onFollowUpToggled: (bool isFollowingUp) async {
+                  if (isFollowingUp) {
+                    await addFollowUp(
+                      event['cfqId'] ?? CustomString.emptyString,
+                      currentUser!.uid,
+                    );
+                  } else {
+                    await removeFollowUp(
+                      event['cfqId'] ?? CustomString.emptyString,
+                      currentUser!.uid,
+                    );
+                  }
+                },
                 onFollowPressed: () {
                   // Handle follow action
                 },
