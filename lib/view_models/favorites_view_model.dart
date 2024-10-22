@@ -204,10 +204,14 @@ class FavoritesViewModel extends ChangeNotifier {
         }
 
         transaction.update(cfqRef, {'followingUp': followingUp});
-      });
 
-      // Update the local state
-      await loadFavoriteEvents(); // Reload favorite events to reflect changes
+        // Update local state
+        int index =
+            _favoriteEvents.indexWhere((event) => event.id == documentId);
+        if (index != -1) {
+          _favoriteEvents[index] = cfqSnapshot;
+        }
+      });
 
       notifyListeners();
     } catch (e) {
