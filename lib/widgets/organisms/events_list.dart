@@ -14,6 +14,7 @@ class EventsList extends StatelessWidget {
   final Function(String) addConversationToUserList;
   final Function(String) removeConversationFromUserList;
   final Function(String) isConversationInUserList;
+  final Future<void> Function(String) resetUnreadMessages;
 
   const EventsList({
     required this.eventsStream,
@@ -22,6 +23,7 @@ class EventsList extends StatelessWidget {
     required this.addConversationToUserList,
     required this.removeConversationFromUserList,
     required this.isConversationInUserList,
+    required this.resetUnreadMessages,
     super.key,
   });
 
@@ -97,6 +99,13 @@ class EventsList extends StatelessWidget {
                 },
                 onSendPressed: () {
                   if (event['channelId'] != null) {
+                    // Create a new list that includes both invitees and the organizer
+                    List<String> allMembers =
+                        List<String>.from(event['invitees'] ?? []);
+                    if (!allMembers.contains(event['uid'])) {
+                      allMembers.add(event['uid']); // Add the organizer's UID
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -104,7 +113,8 @@ class EventsList extends StatelessWidget {
                           eventName:
                               isTurn ? event['turnName'] : event['cfqName'],
                           channelId: event['channelId'],
-                          members: event['invitees'],
+                          members:
+                              allMembers, // Use the new list that includes the organizer
                           organizerName: event['username'],
                           organizerProfilePicture: event['profilePictureUrl'],
                           currentUser: currentUser!,
@@ -113,7 +123,10 @@ class EventsList extends StatelessWidget {
                               removeConversationFromUserList,
                           initialIsInUserConversations:
                               isConversationInUserList(event['channelId']),
-                          eventPicture: event['turnImageUrl'],
+                          eventPicture: isTurn
+                              ? event['turnImageUrl']
+                              : event['cfqImageUrl'],
+                          resetUnreadMessages: resetUnreadMessages,
                         ),
                       ),
                     );
@@ -154,20 +167,21 @@ class EventsList extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ConversationScreen(
-                          eventName:
-                              isTurn ? event['turnName'] : event['cfqName'],
-                          channelId: event['channelId'],
-                          members: event['invitees'],
-                          organizerName: event['username'],
-                          organizerProfilePicture: event['profilePictureUrl'],
-                          currentUser: currentUser!,
-                          addConversationToUserList: addConversationToUserList,
-                          removeConversationFromUserList:
-                              removeConversationFromUserList,
-                          initialIsInUserConversations:
-                              isConversationInUserList(event['channelId']),
-                          eventPicture: event['cfqImageUrl'],
-                        ),
+                            eventName:
+                                isTurn ? event['turnName'] : event['cfqName'],
+                            channelId: event['channelId'],
+                            members: event['invitees'],
+                            organizerName: event['username'],
+                            organizerProfilePicture: event['profilePictureUrl'],
+                            currentUser: currentUser!,
+                            addConversationToUserList:
+                                addConversationToUserList,
+                            removeConversationFromUserList:
+                                removeConversationFromUserList,
+                            initialIsInUserConversations:
+                                isConversationInUserList(event['channelId']),
+                            eventPicture: event['cfqImageUrl'],
+                            resetUnreadMessages: resetUnreadMessages),
                       ),
                     );
                   } else {

@@ -17,6 +17,10 @@ class CustomString {
   static const orCapital = "OU";
   static const seeMore = "Voir plus";
   static const you = "Vous";
+  static const newSingle = "nouveau";
+  static const newPlural = "nouveaux";
+  static const message = "message";
+  static const messages = "messages";
 
   // Authentication
   static const logInCapital = "CONNEXION";

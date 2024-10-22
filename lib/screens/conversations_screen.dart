@@ -53,7 +53,8 @@ class ConversationsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: _buildConversationsList(viewModel.conversations),
+                child:
+                    _buildConversationsList(viewModel.conversations, viewModel),
               ),
             ],
           ),
@@ -62,7 +63,8 @@ class ConversationsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildConversationsList(List<Conversation> conversations) {
+  Widget _buildConversationsList(
+      List<Conversation> conversations, ConversationsViewModel viewModel) {
     if (conversations.isEmpty) {
       return const Center(child: Text('No conversations found'));
     }
@@ -73,7 +75,9 @@ class ConversationsScreen extends StatelessWidget {
           child: ConversationCard(
               key: ValueKey(conversations[index].id),
               currentUserUsername: currentUser.username,
-              conversation: conversations[index]),
+              conversation: conversations[index],
+              unreadMessagesCount:
+                  viewModel.getUnreadMessagesCount(conversations[index].id)),
           onTap: () => _navigateToConversation(context, conversations[index]),
         );
       },
@@ -99,6 +103,7 @@ class ConversationsScreen extends StatelessWidget {
               viewModel.removeConversationFromUserList,
           initialIsInUserConversations: true,
           eventPicture: conversation.imageUrl,
+          resetUnreadMessages: viewModel.resetUnreadMessages,
         ),
       ),
     );

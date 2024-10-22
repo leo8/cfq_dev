@@ -128,4 +128,20 @@ class FavoritesViewModel extends ChangeNotifier {
   bool isConversationInUserList(String channelId) {
     return _conversations.any((conversation) => conversation.id == channelId);
   }
+
+  Future<void> resetUnreadMessages(String conversationId) async {
+    try {
+      await _conversationService.resetUnreadMessages(
+          currentUser!.uid, conversationId);
+      // Update the local state
+      int index = currentUser!.conversations
+          .indexWhere((conv) => conv.conversationId == conversationId);
+      if (index != -1) {
+        currentUser!.conversations[index].unreadMessagesCount = 0;
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error resetting unread messages: $e');
+    }
+  }
 }

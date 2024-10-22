@@ -143,6 +143,7 @@ class ThreadScreen extends StatelessWidget {
             removeConversationFromUserList:
                 viewModel.removeConversationFromUserList,
             isConversationInUserList: viewModel.isConversationInUserList,
+            resetUnreadMessages: viewModel.resetUnreadMessages,
           ),
         ),
       ],

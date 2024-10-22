@@ -11,7 +11,7 @@ import '../utils/styles/neon_background.dart';
 class ConversationScreen extends StatefulWidget {
   final String channelId;
   final String eventName;
-  final List members;
+  final List<String> members;
   final String organizerName;
   final String organizerProfilePicture;
   final model.User currentUser;
@@ -19,6 +19,7 @@ class ConversationScreen extends StatefulWidget {
   final Function(String) removeConversationFromUserList;
   final bool initialIsInUserConversations;
   final String eventPicture;
+  final Future<void> Function(String) resetUnreadMessages;
 
   ConversationScreen({
     required this.eventName,
@@ -31,6 +32,7 @@ class ConversationScreen extends StatefulWidget {
     required this.addConversationToUserList,
     required this.removeConversationFromUserList,
     required this.initialIsInUserConversations,
+    required this.resetUnreadMessages,
   });
 
   @override
@@ -40,11 +42,39 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   late bool isInUserConversations;
   final ConversationService _conversationService = ConversationService();
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
     isInUserConversations = widget.initialIsInUserConversations;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Override the default back button behavior
+    ModalRoute.of(context)?.addScopedWillPopCallback(_onWillPop);
+  }
+
+  Future<bool> _onWillPop() async {
+    await _resetUnreadAndPop();
+    return true;
+  }
+
+  Future<void> _resetUnreadAndPop() async {
+    if (!_isDisposed) {
+      await widget.resetUnreadMessages(widget.channelId);
+      if (!_isDisposed) {
+        Navigator.of(context).pop();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 
   @override
@@ -56,10 +86,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
           toolbarHeight: 40,
           automaticallyImplyLeading: false,
           backgroundColor: CustomColor.transparent,
+          leading: IconButton(
+            icon: CustomIcon.arrowBack,
+            onPressed: _resetUnreadAndPop,
+          ),
           actions: [
             IconButton(
               icon: CustomIcon.close,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _resetUnreadAndPop,
             ),
           ],
         ),
@@ -245,26 +279,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             icon: const Icon(Icons.send, color: CustomColor.customPurple),
             onPressed: () {
               if (_controller.text.isNotEmpty) {
-                _conversationService.createConversation(
-                  widget.channelId,
-                  widget.eventName,
-                  widget.eventPicture,
-                  widget.members.cast<String>(),
-                  widget.organizerName,
-                  widget.organizerProfilePicture,
-                );
-                _conversationService.sendMessage(
-                  widget.channelId,
-                  _controller.text,
-                  widget.currentUser.uid,
-                  widget.currentUser.username,
-                  widget.currentUser.profilePictureUrl,
-                );
-                _conversationService.updateConversationLastMessage(
-                  widget.channelId,
-                  _controller.text,
-                  widget.currentUser.username,
-                );
+                _sendMessage(_controller.text);
                 _controller.clear();
               }
             },
@@ -272,6 +287,30 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ],
       ),
     );
+  }
+
+  void _sendMessage(String message) async {
+    try {
+      await _conversationService.createConversation(
+        widget.channelId,
+        widget.eventName,
+        widget.eventPicture,
+        widget.members,
+        widget.organizerName,
+        widget.organizerProfilePicture,
+      );
+      await _conversationService.sendMessage(
+        widget.channelId,
+        message,
+        widget.currentUser.uid,
+        widget.currentUser.username,
+        widget.currentUser.profilePictureUrl,
+      );
+      // No need to call updateConversationLastMessage separately as it's handled in sendMessage
+    } catch (e) {
+      print('Error sending message: $e');
+      // You might want to show an error message to the user here
+    }
   }
 
   void _showInviteesList(BuildContext context) {

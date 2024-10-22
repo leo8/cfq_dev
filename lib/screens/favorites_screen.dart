@@ -65,6 +65,7 @@ class FavoritesScreen extends StatelessWidget {
                             viewModel.removeConversationFromUserList,
                         isConversationInUserList:
                             viewModel.isConversationInUserList,
+                        resetUnreadMessages: viewModel.resetUnreadMessages,
                       );
                     }
                   },

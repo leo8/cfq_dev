@@ -2,37 +2,149 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import 'package:rxdart/rxdart.dart';
+import '../utils/logger.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  Future<void> incrementUnreadMessages(
+      String userId, String conversationId) async {
+    final userDoc = _firestore.collection('users').doc(userId);
+
+    await _firestore.runTransaction((transaction) async {
+      final userSnapshot = await transaction.get(userDoc);
+      final userData = userSnapshot.data() as Map<String, dynamic>;
+      final conversations = (userData['conversations'] as List<dynamic>?)
+              ?.map((e) =>
+                  model.ConversationInfo.fromMap(e as Map<String, dynamic>))
+              .toList() ??
+          [];
+
+      final conversationIndex =
+          conversations.indexWhere((c) => c.conversationId == conversationId);
+      if (conversationIndex != -1) {
+        conversations[conversationIndex].unreadMessagesCount++;
+      } else {
+        conversations.add(model.ConversationInfo(
+            conversationId: conversationId, unreadMessagesCount: 1));
+      }
+
+      transaction.update(userDoc,
+          {'conversations': conversations.map((e) => e.toMap()).toList()});
+    });
+  }
+
+  Future<void> resetUnreadMessages(String userId, String conversationId) async {
+    try {
+      await _firestore.runTransaction((transaction) async {
+        DocumentReference userRef = _firestore.collection('users').doc(userId);
+        DocumentSnapshot userSnapshot = await transaction.get(userRef);
+
+        if (userSnapshot.exists) {
+          Map<String, dynamic> userData =
+              userSnapshot.data() as Map<String, dynamic>;
+          List<Map<String, dynamic>> conversations =
+              List<Map<String, dynamic>>.from(userData['conversations'] ?? []);
+
+          int index = conversations
+              .indexWhere((conv) => conv['conversationId'] == conversationId);
+          if (index != -1) {
+            conversations[index]['unreadMessagesCount'] = 0;
+            transaction.update(userRef, {'conversations': conversations});
+          }
+        }
+      });
+    } catch (e) {
+      AppLogger.error('Error resetting unread messages: $e');
+      rethrow;
+    }
+  }
+
   Future<void> sendMessage(String channelId, String message, String senderId,
       String senderUsername, String senderProfilePicture) async {
-    await _firestore.runTransaction((transaction) async {
-      // Add the message to the messages subcollection
-      DocumentReference messageRef = _firestore
-          .collection('conversations')
-          .doc(channelId)
-          .collection('messages')
-          .doc();
+    try {
+      await _firestore.runTransaction((transaction) async {
+        // Step 1: Perform all reads
+        DocumentReference conversationRef =
+            _firestore.collection('conversations').doc(channelId);
+        DocumentSnapshot conversationSnapshot =
+            await transaction.get(conversationRef);
 
-      transaction.set(messageRef, {
-        'message': message,
-        'senderId': senderId,
-        'senderUsername': senderUsername,
-        'senderProfilePicture': senderProfilePicture,
-        'timestamp': FieldValue.serverTimestamp(),
+        if (!conversationSnapshot.exists) {
+          throw Exception('Conversation does not exist');
+        }
+
+        Map<String, dynamic> conversationData =
+            conversationSnapshot.data() as Map<String, dynamic>;
+        List<String> members = List<String>.from(conversationData['members']);
+
+        Map<String, DocumentSnapshot> userSnapshots = {};
+        for (String memberId in members) {
+          if (memberId != senderId) {
+            DocumentReference userRef =
+                _firestore.collection('users').doc(memberId);
+            DocumentSnapshot userSnapshot = await transaction.get(userRef);
+            if (userSnapshot.exists) {
+              userSnapshots[memberId] = userSnapshot;
+            } else {
+              AppLogger.warning('User document not found for member $memberId');
+            }
+          }
+        }
+
+        // Step 2: Perform all writes
+        // Add the new message
+        DocumentReference messageRef =
+            conversationRef.collection('messages').doc();
+        transaction.set(messageRef, {
+          'message': message,
+          'senderId': senderId,
+          'senderUsername': senderUsername,
+          'senderProfilePicture': senderProfilePicture,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        AppLogger.info('New message added to conversation: $channelId');
+
+        // Update conversation details
+        transaction.update(conversationRef, {
+          'lastMessageContent': message,
+          'lastSenderUsername': senderUsername,
+          'lastMessageTimestamp': FieldValue.serverTimestamp(),
+        });
+
+        AppLogger.info(
+            'Conversation $channelId updated with new message details');
+
+        // Update unreadMessagesCount for members
+        for (String memberId in userSnapshots.keys) {
+          DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
+          Map<String, dynamic> userData =
+              userSnapshot.data() as Map<String, dynamic>;
+          List<Map<String, dynamic>> conversations =
+              List<Map<String, dynamic>>.from(userData['conversations'] ?? []);
+
+          int index = conversations
+              .indexWhere((conv) => conv['conversationId'] == channelId);
+          if (index != -1) {
+            conversations[index]['unreadMessagesCount'] =
+                (conversations[index]['unreadMessagesCount'] ?? 0) + 1;
+            transaction.update(
+                userSnapshot.reference, {'conversations': conversations});
+            AppLogger.info(
+                'Incremented unreadMessagesCount for user $memberId in conversation $channelId');
+          } else {
+            AppLogger.warning(
+                'Conversation $channelId not found in user $memberId\'s list. Skipping unreadMessagesCount update.');
+          }
+        }
       });
 
-      // Update the conversation document
-      DocumentReference conversationRef =
-          _firestore.collection('conversations').doc(channelId);
-      transaction.update(conversationRef, {
-        'lastMessageContent': message,
-        'lastSenderUsername': senderUsername,
-        'lastMessageTimestamp': FieldValue.serverTimestamp(),
-      });
-    });
+      AppLogger.info('Message sent successfully to conversation: $channelId');
+    } catch (e) {
+      AppLogger.error('Error sending message to conversation $channelId: $e');
+      rethrow;
+    }
   }
 
   Stream<QuerySnapshot> getMessages(String channelId) {
@@ -85,16 +197,20 @@ class ConversationService {
     String organizerName,
     String organizerProfilePicture,
   ) async {
+    // Ensure the organizer is in the members list
+    if (!members.contains(organizerName)) {
+      members.add(organizerName);
+    }
+
     await _firestore.collection('conversations').doc(channelId).set({
       'name': eventName,
       'imageUrl': eventPicture,
-      'lastMessage': '',
-      'lastSenderUsername': '',
-      'lastMessageTimestamp': FieldValue.serverTimestamp(),
       'members': members,
       'organizerName': organizerName,
       'organizerProfilePicture': organizerProfilePicture,
-      'searchKey': eventName.toLowerCase(),
+      'lastMessageContent': '',
+      'lastSenderUsername': '',
+      'lastMessageTimestamp': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
@@ -108,15 +224,52 @@ class ConversationService {
   }
 
   Future<void> addConversationToUser(String userId, String channelId) async {
-    await _firestore.collection('users').doc(userId).update({
-      'conversations': FieldValue.arrayUnion([channelId])
+    await _firestore.runTransaction((transaction) async {
+      DocumentReference userRef = _firestore.collection('users').doc(userId);
+      DocumentSnapshot userSnapshot = await transaction.get(userRef);
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic> userData =
+            userSnapshot.data() as Map<String, dynamic>;
+        List<model.ConversationInfo> conversations = (userData['conversations']
+                    as List<dynamic>?)
+                ?.map((e) =>
+                    model.ConversationInfo.fromMap(e as Map<String, dynamic>))
+                .toList() ??
+            [];
+
+        if (!conversations.any((conv) => conv.conversationId == channelId)) {
+          conversations.add(model.ConversationInfo(
+              conversationId: channelId, unreadMessagesCount: 0));
+          transaction.update(userRef, {
+            'conversations': conversations.map((e) => e.toMap()).toList(),
+          });
+        }
+      }
     });
   }
 
   Future<void> removeConversationFromUser(
       String userId, String channelId) async {
-    await _firestore.collection('users').doc(userId).update({
-      'conversations': FieldValue.arrayRemove([channelId])
+    await _firestore.runTransaction((transaction) async {
+      DocumentReference userRef = _firestore.collection('users').doc(userId);
+      DocumentSnapshot userSnapshot = await transaction.get(userRef);
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic> userData =
+            userSnapshot.data() as Map<String, dynamic>;
+        List<model.ConversationInfo> conversations = (userData['conversations']
+                    as List<dynamic>?)
+                ?.map((e) =>
+                    model.ConversationInfo.fromMap(e as Map<String, dynamic>))
+                .toList() ??
+            [];
+
+        conversations.removeWhere((conv) => conv.conversationId == channelId);
+        transaction.update(userRef, {
+          'conversations': conversations.map((e) => e.toMap()).toList(),
+        });
+      }
     });
   }
 
@@ -126,8 +279,19 @@ class ConversationService {
         .doc(userId)
         .snapshots()
         .switchMap((userDoc) {
+      if (!userDoc.exists || userDoc.data() == null) {
+        return Stream.value([]);
+      }
+
+      List<model.ConversationInfo> conversationInfos =
+          (userDoc.data()!['conversations'] as List<dynamic>?)
+                  ?.map((e) =>
+                      model.ConversationInfo.fromMap(e as Map<String, dynamic>))
+                  .toList() ??
+              [];
+
       List<String> conversationIds =
-          List<String>.from(userDoc.data()?['conversations'] ?? []);
+          conversationInfos.map((info) => info.conversationId).toList();
 
       if (conversationIds.isEmpty) {
         return Stream.value([]);
@@ -138,9 +302,10 @@ class ConversationService {
           .where(FieldPath.documentId, whereIn: conversationIds)
           .snapshots()
           .map((snapshot) {
-        return snapshot.docs
-            .map((doc) => Conversation.fromFirestore(doc))
-            .toList()
+        return snapshot.docs.map((doc) {
+          Conversation conversation = Conversation.fromFirestore(doc);
+          return conversation;
+        }).toList()
           ..sort((a, b) =>
               b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
       });
