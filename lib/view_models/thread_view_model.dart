@@ -10,7 +10,6 @@ import '../providers/conversation_service.dart';
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
   final TextEditingController searchController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Timer? _debounce;
 
   List<model.User> _users = [];
