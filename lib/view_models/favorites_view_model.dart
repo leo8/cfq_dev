@@ -69,11 +69,6 @@ class FavoritesViewModel extends ChangeNotifier {
           .then((snapshot) => snapshot.docs);
 
       _favoriteEvents = [...turns, ...cfqs];
-      _favoriteEvents.sort((a, b) {
-        DateTime dateA = (a['eventDateTime'] ?? a['datePublished']).toDate();
-        DateTime dateB = (b['eventDateTime'] ?? b['datePublished']).toDate();
-        return dateB.compareTo(dateA);
-      });
 
       _isLoading = false;
       notifyListeners();
