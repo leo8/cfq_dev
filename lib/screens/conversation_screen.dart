@@ -86,10 +86,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
           toolbarHeight: 40,
           automaticallyImplyLeading: false,
           backgroundColor: CustomColor.transparent,
-          leading: IconButton(
-            icon: CustomIcon.arrowBack,
-            onPressed: _resetUnreadAndPop,
-          ),
           actions: [
             IconButton(
               icon: CustomIcon.close,
