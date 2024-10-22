@@ -170,4 +170,40 @@ class FavoritesViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Stream<bool> isFollowingUpStream(String cfqId, String userId) {
+    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+      List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
+      return followingUp.contains(userId);
+    });
+  }
+
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
+    try {
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> followingUp = data['followingUp'] ?? [];
+
+      if (followingUp.contains(userId)) {
+        await removeFollowUp(cfqId, userId);
+        followingUp.remove(userId);
+      } else {
+        await addFollowUp(cfqId, userId);
+        followingUp.add(userId);
+      }
+
+      // Update the local state
+      int index =
+          _favoriteEvents.indexWhere((event) => event['cfqId'] == cfqId);
+      if (index != -1) {
+        _favoriteEvents[index] = cfqSnapshot;
+      }
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error toggling follow-up: $e');
+      rethrow;
+    }
+  }
 }

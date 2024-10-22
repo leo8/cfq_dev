@@ -17,6 +17,8 @@ class EventsList extends StatelessWidget {
   final Future<void> Function(String) resetUnreadMessages;
   final Future<void> Function(String, String) addFollowUp;
   final Future<void> Function(String, String) removeFollowUp;
+  final Stream<bool> Function(String, String) isFollowingUpStream;
+  final Future<void> Function(String, String) toggleFollowUp;
 
   const EventsList({
     required this.eventsStream,
@@ -28,6 +30,8 @@ class EventsList extends StatelessWidget {
     required this.resetUnreadMessages,
     required this.addFollowUp,
     required this.removeFollowUp,
+    required this.isFollowingUpStream,
+    required this.toggleFollowUp,
     super.key,
   });
 
@@ -73,8 +77,7 @@ class EventsList extends StatelessWidget {
             final event = events[index];
             final isTurn = event.reference.parent.id == 'turns';
             final eventId = isTurn ? event['turnId'] : event['cfqId'];
-            final isFavorite =
-                currentUser?.favorites.contains(eventId) ?? false;
+            final isFavorite = currentUser!.favorites.contains(eventId);
 
             if (isTurn) {
               return TurnCardContent(
@@ -146,76 +149,77 @@ class EventsList extends StatelessWidget {
                 onFavoritePressed: () => onFavoriteToggle(eventId, !isFavorite),
               );
             } else {
-              return CFQCardContent(
-                cfqImageUrl: event['cfqImageUrl'] ?? CustomString.emptyString,
-                profilePictureUrl:
-                    event['profilePictureUrl'] ?? CustomString.emptyString,
-                username: event['username'] ?? CustomString.emptyString,
-                organizers: List<String>.from(event['organizers'] ?? []),
-                cfqName: event['cfqName'] ?? CustomString.emptyString,
-                description: event['description'] ?? CustomString.emptyString,
-                datePublished: parseDate(event['datePublished']),
-                location: event['where'] ?? CustomString.emptyString,
-                when: event['when'] ?? CustomString.emptyString,
-                moods: List<String>.from(event['moods'] ?? []),
-                followingUp: List<String>.from(event['followingUp'] ?? []),
-                cfqId: event['cfqId'] ?? CustomString.emptyString,
-                organizerId: event['uid'] ?? CustomString.emptyString,
-                currentUserId: currentUser!.uid,
-                favorites: currentUser!.favorites,
-                onFollowUpToggled: (bool isFollowingUp) async {
-                  if (isFollowingUp) {
-                    await addFollowUp(
-                      event['cfqId'] ?? CustomString.emptyString,
-                      currentUser!.uid,
-                    );
-                  } else {
-                    await removeFollowUp(
-                      event['cfqId'] ?? CustomString.emptyString,
-                      currentUser!.uid,
-                    );
-                  }
+              return StreamBuilder<bool>(
+                stream: isFollowingUpStream(eventId, currentUser!.uid),
+                builder: (context, followUpSnapshot) {
+                  final isFollowingUp = followUpSnapshot.data ?? false;
+                  return CFQCardContent(
+                    cfqImageUrl:
+                        event['cfqImageUrl'] ?? CustomString.emptyString,
+                    profilePictureUrl:
+                        event['profilePictureUrl'] ?? CustomString.emptyString,
+                    username: event['username'] ?? CustomString.emptyString,
+                    organizers: List<String>.from(event['organizers'] ?? []),
+                    cfqName: event['cfqName'] ?? CustomString.emptyString,
+                    description:
+                        event['description'] ?? CustomString.emptyString,
+                    datePublished: parseDate(event['datePublished']),
+                    location: event['where'] ?? CustomString.emptyString,
+                    when: event['when'] ?? CustomString.emptyString,
+                    moods: List<String>.from(event['moods'] ?? []),
+                    followingUp: List<String>.from(event['followingUp'] ?? []),
+                    cfqId: event['cfqId'] ?? CustomString.emptyString,
+                    organizerId: event['uid'] ?? CustomString.emptyString,
+                    currentUserId: currentUser!.uid,
+                    favorites: currentUser!.favorites,
+                    isFavorite: isFavorite,
+                    onFollowUpToggled: (bool newValue) {
+                      toggleFollowUp(eventId, currentUser!.uid);
+                    },
+                    onFollowPressed: () {
+                      // Handle follow action
+                    },
+                    onSendPressed: () async {
+                      if (event['channelId'] != null) {
+                        bool isInUserList =
+                            await isConversationInUserList(event['channelId']);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConversationScreen(
+                              eventName: event['cfqName'],
+                              channelId: event['channelId'],
+                              organizerId: event['uid'],
+                              members: (event['invitees'] as List<dynamic>)
+                                  .cast<String>(), // Cast to List<String
+                              organizerName: event['username'],
+                              organizerProfilePicture:
+                                  event['profilePictureUrl'],
+                              currentUser: currentUser!,
+                              addConversationToUserList:
+                                  addConversationToUserList,
+                              removeConversationFromUserList:
+                                  removeConversationFromUserList,
+                              initialIsInUserConversations: isInUserList,
+                              eventPicture: event['cfqImageUrl'],
+                              resetUnreadMessages: resetUnreadMessages,
+                            ),
+                          ),
+                        );
+                      } else {
+                        // Handle the case where no channel exists for this event
+                      }
+                    },
+                    onSharePressed: () {
+                      // Handle share action
+                    },
+                    onFavoritePressed: () =>
+                        onFavoriteToggle(eventId, !isFavorite),
+                    onBellPressed: () {
+                      // Handle comment action
+                    },
+                  );
                 },
-                onFollowPressed: () {
-                  // Handle follow action
-                },
-                onSendPressed: () async {
-                  if (event['channelId'] != null) {
-                    bool isInUserList =
-                        await isConversationInUserList(event['channelId']);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                          eventName: event['cfqName'],
-                          channelId: event['channelId'],
-                          organizerId: event['uid'],
-                          members: (event['invitees'] as List<dynamic>)
-                              .cast<String>(), // Cast to List<String>
-                          organizerName: event['username'],
-                          organizerProfilePicture: event['profilePictureUrl'],
-                          currentUser: currentUser!,
-                          addConversationToUserList: addConversationToUserList,
-                          removeConversationFromUserList:
-                              removeConversationFromUserList,
-                          initialIsInUserConversations: isInUserList,
-                          eventPicture: event['cfqImageUrl'],
-                          resetUnreadMessages: resetUnreadMessages,
-                        ),
-                      ),
-                    );
-                  } else {
-                    // Handle the case where no channel exists for this event
-                  }
-                },
-                onSharePressed: () {
-                  // Handle share action
-                },
-                onFavoritePressed: () => onFavoriteToggle(eventId, !isFavorite),
-                onBellPressed: () {
-                  // Handle comment action
-                },
-                isFavorite: isFavorite,
               );
             }
           },

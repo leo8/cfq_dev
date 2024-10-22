@@ -56,7 +56,12 @@ class ThreadViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  // Existing methods (performSearch, parseDate, fetchCombinedEvents)
+  Stream<bool> isFollowingUpStream(String cfqId, String userId) {
+    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+      List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
+      return followingUp.contains(userId);
+    });
+  }
 
   Future<void> _initializeData() async {
     await _fetchCurrentUser();
@@ -345,8 +350,7 @@ class ThreadViewModel extends ChangeNotifier {
         'followingUp': FieldValue.arrayUnion([userId]),
       });
     } catch (e) {
-      print('Error adding follow-up: $e');
-      // You might want to rethrow the error or handle it differently
+      AppLogger.error('Error adding follow-up: $e');
       rethrow;
     }
   }
@@ -357,8 +361,26 @@ class ThreadViewModel extends ChangeNotifier {
         'followingUp': FieldValue.arrayRemove([userId]),
       });
     } catch (e) {
-      print('Error removing follow-up: $e');
-      // You might want to rethrow the error or handle it differently
+      AppLogger.error('Error removing follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
+    try {
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> followingUp = data['followingUp'] ?? [];
+
+      if (followingUp.contains(userId)) {
+        await removeFollowUp(cfqId, userId);
+      } else {
+        await addFollowUp(cfqId, userId);
+      }
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error toggling follow-up: $e');
       rethrow;
     }
   }

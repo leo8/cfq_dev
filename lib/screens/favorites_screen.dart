@@ -70,6 +70,8 @@ class FavoritesScreen extends StatelessWidget {
                         resetUnreadMessages: viewModel.resetUnreadMessages,
                         addFollowUp: FavoritesViewModel.addFollowUp,
                         removeFollowUp: FavoritesViewModel.removeFollowUp,
+                        isFollowingUpStream: viewModel.isFollowingUpStream,
+                        toggleFollowUp: viewModel.toggleFollowUp,
                       );
                     }
                   },
