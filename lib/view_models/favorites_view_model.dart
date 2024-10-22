@@ -24,6 +24,7 @@ class FavoritesViewModel extends ChangeNotifier {
   final ConversationService _conversationService = ConversationService();
 
   List<Conversation> _conversations = [];
+  List<Conversation> get conversations => _conversations;
 
   Future<void> _initializeData() async {
     await _fetchCurrentUser();
@@ -171,39 +172,61 @@ class FavoritesViewModel extends ChangeNotifier {
     }
   }
 
-  Stream<bool> isFollowingUpStream(String cfqId, String userId) {
-    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+  Stream<bool> isFollowingUpStream(String documentId, String userId) {
+    return _firestore
+        .collection('cfqs')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
       List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
       return followingUp.contains(userId);
     });
   }
 
-  Future<void> toggleFollowUp(String cfqId, String userId) async {
+  Future<void> toggleFollowUp(String documentId, String userId) async {
     try {
-      DocumentSnapshot cfqSnapshot =
-          await _firestore.collection('cfqs').doc(cfqId).get();
-      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
-      List<dynamic> followingUp = data['followingUp'] ?? [];
+      DocumentReference cfqRef = _firestore.collection('cfqs').doc(documentId);
 
-      if (followingUp.contains(userId)) {
-        await removeFollowUp(cfqId, userId);
-        followingUp.remove(userId);
-      } else {
-        await addFollowUp(cfqId, userId);
-        followingUp.add(userId);
-      }
+      await _firestore.runTransaction((transaction) async {
+        DocumentSnapshot cfqSnapshot = await transaction.get(cfqRef);
+
+        if (!cfqSnapshot.exists) {
+          throw Exception('CFQ document does not exist');
+        }
+
+        Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+        List<dynamic> followingUp = data['followingUp'] ?? [];
+
+        if (followingUp.contains(userId)) {
+          followingUp.remove(userId);
+        } else {
+          followingUp.add(userId);
+        }
+
+        transaction.update(cfqRef, {'followingUp': followingUp});
+      });
 
       // Update the local state
-      int index =
-          _favoriteEvents.indexWhere((event) => event['cfqId'] == cfqId);
-      if (index != -1) {
-        _favoriteEvents[index] = cfqSnapshot;
-      }
+      await loadFavoriteEvents(); // Reload favorite events to reflect changes
 
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
       rethrow;
+    }
+  }
+
+  Future<void> loadFavoriteEvents() async {
+    try {
+      QuerySnapshot favoritesSnapshot = await _firestore
+          .collection('cfqs')
+          .where(FieldPath.documentId, whereIn: currentUser!.favorites)
+          .get();
+
+      _favoriteEvents = favoritesSnapshot.docs;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error loading favorite events: $e');
     }
   }
 }
