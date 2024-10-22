@@ -144,6 +144,11 @@ class ThreadViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> isConversationInUserList(String channelId) async {
+    return await _conversationService.isConversationInUserList(
+        currentUserUid, channelId);
+  }
+
   /// Parses different types of date formats (Timestamp, String, DateTime).
   /// Falls back to the current date if the format is unrecognized.
   DateTime parseDate(dynamic date) {
@@ -315,10 +320,6 @@ class ThreadViewModel extends ChangeNotifier {
         currentUserUid, channelId);
     await loadConversations();
     notifyListeners();
-  }
-
-  bool isConversationInUserList(String channelId) {
-    return _conversations.any((conversation) => conversation.id == channelId);
   }
 
   Future<void> resetUnreadMessages(String conversationId) async {

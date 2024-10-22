@@ -311,4 +311,12 @@ class ConversationService {
       });
     });
   }
+
+  Future<bool> isConversationInUserList(String userId, String channelId) async {
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    List<dynamic> conversations = userDoc['conversations'] ?? [];
+    return conversations.any((conv) => conv['conversationId'] == channelId);
+  }
 }

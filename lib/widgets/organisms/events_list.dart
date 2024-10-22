@@ -97,7 +97,7 @@ class EventsList extends StatelessWidget {
                 onSharePressed: () {
                   // Handle share action
                 },
-                onSendPressed: () {
+                onSendPressed: () async {
                   if (event['channelId'] != null) {
                     // Create a new list that includes both invitees and the organizer
                     List<String> allMembers =
@@ -105,7 +105,8 @@ class EventsList extends StatelessWidget {
                     if (!allMembers.contains(event['uid'])) {
                       allMembers.add(event['uid']); // Add the organizer's UID
                     }
-
+                    bool isInUserList =
+                        await isConversationInUserList(event['channelId']);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -113,16 +114,15 @@ class EventsList extends StatelessWidget {
                           eventName:
                               isTurn ? event['turnName'] : event['cfqName'],
                           channelId: event['channelId'],
-                          members:
-                              allMembers, // Use the new list that includes the organizer
+                          members: (event['invitees'] as List<dynamic>)
+                              .cast<String>(), // Cast to List<String>
                           organizerName: event['username'],
                           organizerProfilePicture: event['profilePictureUrl'],
                           currentUser: currentUser!,
                           addConversationToUserList: addConversationToUserList,
                           removeConversationFromUserList:
                               removeConversationFromUserList,
-                          initialIsInUserConversations:
-                              isConversationInUserList(event['channelId']),
+                          initialIsInUserConversations: isInUserList,
                           eventPicture: isTurn
                               ? event['turnImageUrl']
                               : event['cfqImageUrl'],
@@ -161,8 +161,10 @@ class EventsList extends StatelessWidget {
                 onFollowPressed: () {
                   // Handle follow action
                 },
-                onSendPressed: () {
+                onSendPressed: () async {
                   if (event['channelId'] != null) {
+                    bool isInUserList =
+                        await isConversationInUserList(event['channelId']);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -177,8 +179,7 @@ class EventsList extends StatelessWidget {
                           addConversationToUserList: addConversationToUserList,
                           removeConversationFromUserList:
                               removeConversationFromUserList,
-                          initialIsInUserConversations:
-                              isConversationInUserList(event['channelId']),
+                          initialIsInUserConversations: isInUserList,
                           eventPicture: event['cfqImageUrl'],
                           resetUnreadMessages: resetUnreadMessages,
                         ),

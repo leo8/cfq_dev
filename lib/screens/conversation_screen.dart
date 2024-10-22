@@ -40,14 +40,14 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  late bool isInUserConversations;
+  late bool _isInUserConversations;
   final ConversationService _conversationService = ConversationService();
   bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
-    isInUserConversations = widget.initialIsInUserConversations;
+    _isInUserConversations = widget.initialIsInUserConversations;
   }
 
   @override
@@ -154,18 +154,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
           child: Wrap(
             children: <Widget>[
               ListTile(
-                leading: Icon(isInUserConversations ? Icons.remove : Icons.add),
-                title: Text(isInUserConversations
+                leading:
+                    Icon(_isInUserConversations ? Icons.remove : Icons.add),
+                title: Text(_isInUserConversations
                     ? CustomString.removeFromMyMessages
                     : CustomString.addToMyMessages),
                 onTap: () {
                   setState(() {
-                    if (isInUserConversations) {
+                    if (_isInUserConversations) {
                       widget.removeConversationFromUserList(widget.channelId);
-                      isInUserConversations = false;
+                      _isInUserConversations = false;
                     } else {
                       widget.addConversationToUserList(widget.channelId);
-                      isInUserConversations = true;
+                      _isInUserConversations = true;
                     }
                   });
                   Navigator.pop(context);

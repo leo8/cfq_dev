@@ -125,8 +125,9 @@ class FavoritesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isConversationInUserList(String channelId) {
-    return _conversations.any((conversation) => conversation.id == channelId);
+  Future<bool> isConversationInUserList(String channelId) async {
+    return await _conversationService.isConversationInUserList(
+        currentUserId, channelId);
   }
 
   Future<void> resetUnreadMessages(String conversationId) async {
