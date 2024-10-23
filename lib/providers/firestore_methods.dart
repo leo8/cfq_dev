@@ -25,6 +25,7 @@ class FirestoreMethods {
     String address, // Precise address for the event
     List<String> invitees,
     List<String> teamInvitees,
+    String channelId,
   ) async {
     String res = CustomString.someErrorOccurred;
 
@@ -38,26 +39,26 @@ class FirestoreMethods {
 
       // Create a TURN object with the provided data and additional fields
       Turn turn = Turn(
-        name: turnName,
-        description: description,
-        moods: moods,
-        uid: uid,
-        username: username,
-        eventId: turnId,
-        datePublished: DateTime.now(),
-        eventDateTime: DateTime.now(), // Ideally, use the provided dateTime
-        imageUrl: turnImageUrl,
-        profilePictureUrl: profilePictureUrl,
-        where: where, // General location of the event
-        address: address, // Precise address of the event
-        organizers: organizers,
-        attending: [], // Initialize attending list as empty
-        notSureAttending: [], // Initialize not sure attending list as empty
-        notAttending: [], // Initialize not attending list as empty
-        notAnswered: [], // Initialize not answered list as empty
-        invitees: invitees,
-        teamInvitees: teamInvitees,
-      );
+          name: turnName,
+          description: description,
+          moods: moods,
+          uid: uid,
+          username: username,
+          eventId: turnId,
+          datePublished: DateTime.now(),
+          eventDateTime: DateTime.now(), // Ideally, use the provided dateTime
+          imageUrl: turnImageUrl,
+          profilePictureUrl: profilePictureUrl,
+          where: where, // General location of the event
+          address: address, // Precise address of the event
+          organizers: organizers,
+          attending: [], // Initialize attending list as empty
+          notSureAttending: [], // Initialize not sure attending list as empty
+          notAttending: [], // Initialize not attending list as empty
+          notAnswered: [], // Initialize not answered list as empty
+          invitees: invitees,
+          teamInvitees: teamInvitees,
+          channelId: channelId);
 
       // Save the TURN object to Firestore under the 'turns' collection
       await _firestore.collection('turns').doc(turnId).set(turn.toJson());
@@ -85,6 +86,7 @@ class FirestoreMethods {
         when, // General date as a string ("ce soir", "13/02/2025", "cet été", etc)
     List<String> invitees,
     List<String> teamInvitees,
+    String channelId,
   ) async {
     String res = CustomString.someErrorOccurred;
 
@@ -98,21 +100,21 @@ class FirestoreMethods {
 
       // Create a CFQ object with the provided data
       Cfq cfq = Cfq(
-        name: cfqName,
-        description: description,
-        moods: moods,
-        uid: uid,
-        username: username,
-        eventId: cfqId,
-        datePublished: DateTime.now(),
-        imageUrl: cfqImageUrl,
-        profilePictureUrl: profilePictureUrl,
-        where: where, // General location of the CFQ event
-        when: when,
-        organizers: organizers,
-        invitees: invitees,
-        teamInvitees: teamInvitees,
-      );
+          name: cfqName,
+          description: description,
+          moods: moods,
+          uid: uid,
+          username: username,
+          eventId: cfqId,
+          datePublished: DateTime.now(),
+          imageUrl: cfqImageUrl,
+          profilePictureUrl: profilePictureUrl,
+          where: where, // General location of the CFQ event
+          when: when,
+          organizers: organizers,
+          invitees: invitees,
+          teamInvitees: teamInvitees,
+          channelId: channelId);
 
       // Save the CFQ object to Firestore under the 'cfqs' collection
       await _firestore.collection('cfqs').doc(cfqId).set(cfq.toJson());

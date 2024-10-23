@@ -10,27 +10,27 @@ class Turn extends EventDataModel {
   final List<String> notAnswered; // List of people who haven't responded
 
   // Constructor initializing Turn-specific fields and inheriting from EventDataModel
-  Turn({
-    required this.eventDateTime,
-    required this.address,
-    required this.attending,
-    required this.notSureAttending,
-    required this.notAttending,
-    required this.notAnswered,
-    required super.name,
-    required super.description,
-    required super.moods,
-    required super.uid,
-    required super.username,
-    required super.eventId,
-    required super.datePublished,
-    required super.imageUrl,
-    required super.profilePictureUrl,
-    required super.where,
-    required super.organizers,
-    required super.teamInvitees,
-    required super.invitees,
-  });
+  Turn(
+      {required this.eventDateTime,
+      required this.address,
+      required this.attending,
+      required this.notSureAttending,
+      required this.notAttending,
+      required this.notAnswered,
+      required super.name,
+      required super.description,
+      required super.moods,
+      required super.uid,
+      required super.username,
+      required super.eventId,
+      required super.datePublished,
+      required super.imageUrl,
+      required super.profilePictureUrl,
+      required super.where,
+      required super.organizers,
+      required super.teamInvitees,
+      required super.invitees,
+      required super.channelId});
 
   // Convert Turn object to JSON format for storage
   Map<String, dynamic> toJson() {
@@ -54,6 +54,7 @@ class Turn extends EventDataModel {
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
       'notAnswered': notAnswered,
+      'channelId': channelId,
     };
   }
 
@@ -79,6 +80,7 @@ class Turn extends EventDataModel {
       notSureAttending: List<String>.from(json['notSureAttending']),
       notAttending: List<String>.from(json['notAttending']),
       notAnswered: List<String>.from(json['notAnswered']),
+      channelId: json['channelId'],
     );
   }
 }

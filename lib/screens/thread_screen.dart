@@ -1,6 +1,7 @@
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
+import 'package:cfq_dev/view_models/conversations_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/styles/colors.dart';
@@ -10,6 +11,7 @@ import '../models/user.dart' as model;
 import '../widgets/organisms/thread_header.dart';
 import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
+import 'conversations_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ThreadScreen extends StatelessWidget {
@@ -34,7 +36,8 @@ class ThreadScreen extends StatelessWidget {
                   // Add notification functionality later
                 },
                 onMessageTap: () {
-                  // Add message functionality later
+                  _navigateToConversationsScreen(
+                      context, viewModel.currentUser!);
                 },
               );
             },
@@ -137,6 +140,11 @@ class ThreadScreen extends StatelessWidget {
             onFavoriteToggle: (eventId, isFavorite) {
               viewModel.toggleFavorite(eventId, isFavorite);
             },
+            addConversationToUserList: viewModel.addConversationToUserList,
+            removeConversationFromUserList:
+                viewModel.removeConversationFromUserList,
+            isConversationInUserList: viewModel.isConversationInUserList,
+            resetUnreadMessages: viewModel.resetUnreadMessages,
           ),
         ),
       ],
@@ -179,6 +187,19 @@ class ThreadScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  void _navigateToConversationsScreen(
+      BuildContext context, model.User currentUser) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => ConversationsViewModel(currentUser: currentUser),
+          child: ConversationsScreen(currentUser: currentUser),
+        ),
+      ),
     );
   }
 }

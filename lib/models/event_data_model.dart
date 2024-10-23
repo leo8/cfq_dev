@@ -12,20 +12,21 @@ class EventDataModel {
   final String profilePictureUrl;
   final List<String> teamInvitees;
   final List<String> invitees;
+  final String channelId;
 
-  EventDataModel({
-    required this.name,
-    required this.description,
-    required this.moods,
-    required this.uid,
-    required this.username,
-    required this.eventId,
-    required this.datePublished,
-    required this.imageUrl,
-    required this.profilePictureUrl,
-    required this.where,
-    required this.organizers,
-    required this.teamInvitees,
-    required this.invitees,
-  });
+  EventDataModel(
+      {required this.name,
+      required this.description,
+      required this.moods,
+      required this.uid,
+      required this.username,
+      required this.eventId,
+      required this.datePublished,
+      required this.imageUrl,
+      required this.profilePictureUrl,
+      required this.where,
+      required this.organizers,
+      required this.teamInvitees,
+      required this.invitees,
+      required this.channelId});
 }

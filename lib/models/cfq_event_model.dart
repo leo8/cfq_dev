@@ -5,22 +5,22 @@ class Cfq extends EventDataModel {
   final String when; // When parameter
 
   // Constructor to initialize CFQ properties
-  Cfq({
-    required this.when,
-    required super.name,
-    required super.description,
-    required super.moods,
-    required super.uid,
-    required super.username,
-    required super.eventId,
-    required super.datePublished,
-    required super.imageUrl,
-    required super.profilePictureUrl,
-    required super.where,
-    required super.organizers,
-    required super.invitees,
-    required super.teamInvitees,
-  });
+  Cfq(
+      {required this.when,
+      required super.name,
+      required super.description,
+      required super.moods,
+      required super.uid,
+      required super.username,
+      required super.eventId,
+      required super.datePublished,
+      required super.imageUrl,
+      required super.profilePictureUrl,
+      required super.where,
+      required super.organizers,
+      required super.invitees,
+      required super.teamInvitees,
+      required super.channelId});
 
   // Convert CFQ object into a JSON map
   Map<String, dynamic> toJson() {
@@ -39,6 +39,7 @@ class Cfq extends EventDataModel {
       'when': when,
       'invitees': invitees,
       'teamInvitees': teamInvitees,
+      'channelId': channelId,
     };
   }
 
@@ -59,6 +60,7 @@ class Cfq extends EventDataModel {
       when: json['when'],
       invitees: List<String>.from(json['invitees']),
       teamInvitees: List<String>.from(json['teamInvitees']),
+      channelId: json['channelId'],
     );
   }
 }

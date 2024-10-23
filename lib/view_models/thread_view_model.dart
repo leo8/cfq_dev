@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import '../models/user.dart' as model;
+import '../models/conversation.dart';
+import '../providers/conversation_service.dart';
 
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
@@ -30,10 +32,18 @@ class ThreadViewModel extends ChangeNotifier {
 
   StreamSubscription<DocumentSnapshot>? _userSubscription;
 
+  final ConversationService _conversationService = ConversationService();
+
+  List<Conversation> _conversations = [];
+  List<Conversation> _filteredConversations = [];
+
+  List<Conversation> get filteredConversations => _filteredConversations;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
     _listenToUserChanges();
+    loadConversations();
   }
 
   @override
@@ -132,6 +142,11 @@ class ThreadViewModel extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> isConversationInUserList(String channelId) async {
+    return await _conversationService.isConversationInUserList(
+        currentUserUid, channelId);
   }
 
   /// Parses different types of date formats (Timestamp, String, DateTime).
@@ -271,6 +286,56 @@ class ThreadViewModel extends ChangeNotifier {
         notifyListeners();
       }
     });
+  }
+
+  Future<void> loadConversations() async {
+    _conversations =
+        await _conversationService.getUserConversations(currentUserUid);
+    _sortConversations();
+    _filteredConversations = _conversations;
+    notifyListeners();
+  }
+
+  void _sortConversations() {
+    _conversations.sort(
+        (a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+  }
+
+  void searchConversations(String query) {
+    _filteredConversations = _conversations
+        .where((conversation) =>
+            conversation.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    notifyListeners();
+  }
+
+  Future<void> addConversationToUserList(String channelId) async {
+    await _conversationService.addConversationToUser(currentUserUid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> removeConversationFromUserList(String channelId) async {
+    await _conversationService.removeConversationFromUser(
+        currentUserUid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> resetUnreadMessages(String conversationId) async {
+    try {
+      await _conversationService.resetUnreadMessages(
+          currentUser!.uid, conversationId);
+      // Update the local state
+      int index = currentUser!.conversations
+          .indexWhere((conv) => conv.conversationId == conversationId);
+      if (index != -1) {
+        currentUser!.conversations[index].unreadMessagesCount = 0;
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error resetting unread messages: $e');
+    }
   }
 
   void clearSearchString() {

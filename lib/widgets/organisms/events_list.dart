@@ -3,7 +3,7 @@ import 'package:cfq_dev/widgets/organisms/turn_card_content.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user.dart' as model;
-
+import '../../screens/conversation_screen.dart';
 import '../../utils/styles/string.dart';
 import 'cfq_card_content.dart';
 
@@ -11,11 +11,19 @@ class EventsList extends StatelessWidget {
   final Stream<List<DocumentSnapshot>> eventsStream;
   final model.User? currentUser;
   final Function(String, bool) onFavoriteToggle;
+  final Function(String) addConversationToUserList;
+  final Function(String) removeConversationFromUserList;
+  final Function(String) isConversationInUserList;
+  final Future<void> Function(String) resetUnreadMessages;
 
   const EventsList({
     required this.eventsStream,
     required this.currentUser,
     required this.onFavoriteToggle,
+    required this.addConversationToUserList,
+    required this.removeConversationFromUserList,
+    required this.isConversationInUserList,
+    required this.resetUnreadMessages,
     super.key,
   });
 
@@ -89,8 +97,43 @@ class EventsList extends StatelessWidget {
                 onSharePressed: () {
                   // Handle share action
                 },
-                onSendPressed: () {
-                  // Handle send action
+                onSendPressed: () async {
+                  if (event['channelId'] != null) {
+                    // Create a new list that includes both invitees and the organizer
+                    List<String> allMembers =
+                        List<String>.from(event['invitees'] ?? []);
+                    if (!allMembers.contains(event['uid'])) {
+                      allMembers.add(event['uid']); // Add the organizer's UID
+                    }
+                    bool isInUserList =
+                        await isConversationInUserList(event['channelId']);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                          eventName:
+                              isTurn ? event['turnName'] : event['cfqName'],
+                          channelId: event['channelId'],
+                          organizerId: event['uid'],
+                          members: (event['invitees'] as List<dynamic>)
+                              .cast<String>(), // Cast to List<String>
+                          organizerName: event['username'],
+                          organizerProfilePicture: event['profilePictureUrl'],
+                          currentUser: currentUser!,
+                          addConversationToUserList: addConversationToUserList,
+                          removeConversationFromUserList:
+                              removeConversationFromUserList,
+                          initialIsInUserConversations: isInUserList,
+                          eventPicture: isTurn
+                              ? event['turnImageUrl']
+                              : event['cfqImageUrl'],
+                          resetUnreadMessages: resetUnreadMessages,
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Handle the case where no channel exists for this event
+                  }
                 },
                 onCommentPressed: () {
                   // Handle comment action
@@ -119,8 +162,34 @@ class EventsList extends StatelessWidget {
                 onFollowPressed: () {
                   // Handle follow action
                 },
-                onSendPressed: () {
-                  // Handle share action
+                onSendPressed: () async {
+                  if (event['channelId'] != null) {
+                    bool isInUserList =
+                        await isConversationInUserList(event['channelId']);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                          eventName: event['cfqName'],
+                          channelId: event['channelId'],
+                          organizerId: event['uid'],
+                          members: (event['invitees'] as List<dynamic>)
+                              .cast<String>(), // Cast to List<String>
+                          organizerName: event['username'],
+                          organizerProfilePicture: event['profilePictureUrl'],
+                          currentUser: currentUser!,
+                          addConversationToUserList: addConversationToUserList,
+                          removeConversationFromUserList:
+                              removeConversationFromUserList,
+                          initialIsInUserConversations: isInUserList,
+                          eventPicture: event['cfqImageUrl'],
+                          resetUnreadMessages: resetUnreadMessages,
+                        ),
+                      ),
+                    );
+                  } else {
+                    // Handle the case where no channel exists for this event
+                  }
                 },
                 onSharePressed: () {
                   // Handle share action

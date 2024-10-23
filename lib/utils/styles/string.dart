@@ -16,6 +16,11 @@ class CustomString {
   static const leave = "Quitter";
   static const orCapital = "OU";
   static const seeMore = "Voir plus";
+  static const you = "Vous";
+  static const newSingle = "nouveau";
+  static const newPlural = "nouveaux";
+  static const message = "message";
+  static const messages = "messages";
 
   // Authentication
   static const logInCapital = "CONNEXION";
@@ -37,6 +42,13 @@ class CustomString {
   // User Information
   static const username = "Nom d'utilisateur";
   static const noLocation = "Aucune localisation";
+
+  // Messagerie
+  static const messagerieCapital = "MESSAGERIE";
+  static const addToMyMessages = "Ajouter à ma messagerie";
+  static const removeFromMyMessages = "Retirer de ma messagerie";
+  static const seeMembers = "Voir les membres";
+  static const noConversationsYet = "Pas encore de conversations";
 
   // Search
   static const search = "Chercher..";
