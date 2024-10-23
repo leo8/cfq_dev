@@ -72,7 +72,7 @@ class TurnButtons extends StatelessWidget {
         break;
       case 'notSureAttending':
         iconData = Icons.help_outline;
-        iconColor = Colors.yellow;
+        iconColor = CustomColor.yellow;
         break;
       case 'notAttending':
         iconData = Icons.close;
@@ -142,7 +142,8 @@ class TurnButtons extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.help_outline, color: Colors.yellow),
+                leading:
+                    const Icon(Icons.help_outline, color: CustomColor.yellow),
                 title: const Text('Je sais pas'),
                 onTap: () {
                   onAttendingPressed('notSureAttending');
