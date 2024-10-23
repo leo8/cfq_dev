@@ -7,6 +7,7 @@ import '../utils/styles/string.dart';
 import '../view_models/turn_invitees_view_model.dart';
 import '../models/user.dart' as model;
 import '../widgets/atoms/avatars/clickable_avatar.dart';
+import '../utils/styles/neon_background.dart';
 
 class TurnInviteesScreen extends StatelessWidget {
   final String turnId;
@@ -63,10 +64,9 @@ class TurnInviteesScreen extends StatelessWidget {
     return TabBar(
       isScrollable: false,
       indicatorColor: CustomColor.customPurple,
-      labelStyle:
-          CustomTextStyle.miniBody.copyWith(fontWeight: FontWeight.bold),
-      unselectedLabelStyle: CustomTextStyle.miniBody,
-      tabs: [
+      labelStyle: CustomTextStyle.bigBody1,
+      unselectedLabelStyle: CustomTextStyle.body1,
+      tabs: const [
         Tab(text: CustomString.attending),
         Tab(text: CustomString.notSureAttending),
         Tab(text: CustomString.notAttending),
@@ -85,13 +85,15 @@ class TurnInviteesScreen extends StatelessWidget {
             ),
           );
         }
-        return TabBarView(
-          children: [
-            _buildUserList(viewModel.attending),
-            _buildUserList(viewModel.notSureAttending),
-            _buildUserList(viewModel.notAttending),
-            _buildUserList(viewModel.invitees),
-          ],
+        return NeonBackground(
+          child: TabBarView(
+            children: [
+              _buildUserList(viewModel.attending),
+              _buildUserList(viewModel.notSureAttending),
+              _buildUserList(viewModel.notAttending),
+              _buildUserList(viewModel.invitees),
+            ],
+          ),
         );
       },
     );
@@ -109,28 +111,43 @@ class TurnInviteesScreen extends StatelessWidget {
           users.insert(0, currentUser);
         }
 
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
-            final isCurrentUser = user.uid == currentUserId;
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(30, 30, 30, 0),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.9,
+              crossAxisSpacing: 0,
+              mainAxisSpacing: 0,
+            ),
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              final isCurrentUser = user.uid == currentUserId;
 
-            return ListTile(
-              leading: ClickableAvatar(
-                userId: user.uid,
-                imageUrl: user.profilePictureUrl,
-                onTap: () {
-                  // Implement navigation to user profile
-                },
-                isActive: user.isActive,
-              ),
-              title: Text(
-                isCurrentUser ? CustomString.you : user.username,
-                style: CustomTextStyle.body1
-                    .copyWith(color: CustomColor.customWhite),
-              ),
-            );
-          },
+              return Column(
+                children: [
+                  ClickableAvatar(
+                    userId: user.uid,
+                    imageUrl: user.profilePictureUrl,
+                    onTap: () {
+                      // Implement navigation to user profile
+                    },
+                    isActive: user.isActive,
+                    radius: 40,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isCurrentUser ? CustomString.you : user.username,
+                    style: CustomTextStyle.body1
+                        .copyWith(color: CustomColor.customWhite),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              );
+            },
+          ),
         );
       },
     );

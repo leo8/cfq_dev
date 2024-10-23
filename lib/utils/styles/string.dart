@@ -209,8 +209,8 @@ class CustomString {
   static const onePersonAttending = "personne participe";
   static const peopleAttending = "personnes participent";
 
-  static const String attending = 'Participe';
-  static const String notSureAttending = 'Ne sait pas';
-  static const String notAttending = 'Ne peut pas';
+  static const String attending = 'Oui';
+  static const String notSureAttending = 'Hmm..';
+  static const String notAttending = 'Non';
   static const String invitees = 'Invités';
 }
