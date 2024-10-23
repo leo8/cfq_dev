@@ -5,6 +5,7 @@ import '../utils/styles/icons.dart';
 import '../utils/styles/text_styles.dart';
 import '../utils/styles/string.dart';
 import '../view_models/turn_invitees_view_model.dart';
+import '../screens/profile_screen.dart';
 import '../models/user.dart' as model;
 import '../widgets/atoms/avatars/clickable_avatar.dart';
 import '../utils/styles/neon_background.dart';
@@ -130,9 +131,18 @@ class TurnInviteesScreen extends StatelessWidget {
                   ClickableAvatar(
                     userId: user.uid,
                     imageUrl: user.profilePictureUrl,
-                    onTap: () {
-                      // Implement navigation to user profile
-                    },
+                    onTap: user.uid == currentUserId
+                        ? () {}
+                        : () {
+                            // Navigate to friend's profile
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProfileScreen(userId: user.uid),
+                              ),
+                            );
+                          },
                     isActive: user.isActive,
                     radius: 40,
                   ),
