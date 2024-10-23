@@ -5,6 +5,7 @@ import '../../utils/styles/colors.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
+import '../../screens/turn_invitees_screen.dart';
 
 class TurnDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -59,16 +60,24 @@ class TurnDetails extends StatelessWidget {
             style: CustomTextStyle.title3.copyWith(
                 color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        RichText(
-          text: TextSpan(
-            style: CustomTextStyle.body1,
-            children: [
-              TextSpan(
-                text: _getAttendeesCount(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              TextSpan(text: ' ${_getAttendeesText()}'),
-            ],
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TurnInviteesScreen()),
+            );
+          },
+          child: RichText(
+            text: TextSpan(
+              style: CustomTextStyle.body1,
+              children: [
+                TextSpan(
+                  text: _getAttendeesCount(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: ' ${_getAttendeesText()}'),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20),

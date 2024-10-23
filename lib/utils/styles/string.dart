@@ -103,8 +103,7 @@ class CustomString {
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
 
-  static const jeSuisLa = "Je suis là";
-  static const going = "y vont";
+  static const inviteesCapital = "INVITÉS";
 
   // Turns
   static const turnCapital = "TURN";

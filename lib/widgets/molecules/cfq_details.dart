@@ -4,6 +4,7 @@ import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
+import '../../screens/cfq_invitees_screen.dart';
 
 class CFQDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -63,16 +64,24 @@ class CFQDetails extends StatelessWidget {
               .toList(),
         ),
         const SizedBox(height: 20),
-        RichText(
-          text: TextSpan(
-            style: CustomTextStyle.body1,
-            children: [
-              TextSpan(
-                text: _getFollowersCount(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              TextSpan(text: ' ${_getFollowersText()}'),
-            ],
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CfqInviteesScreen()),
+            );
+          },
+          child: RichText(
+            text: TextSpan(
+              style: CustomTextStyle.body1,
+              children: [
+                TextSpan(
+                  text: _getFollowersCount(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: ' ${_getFollowersText()}'),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20),
