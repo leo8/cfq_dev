@@ -1,4 +1,5 @@
 import 'package:cfq_dev/models/event_data_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Turn model representing a specific event type, extending EventDataModel
 class Turn extends EventDataModel {
@@ -81,6 +82,32 @@ class Turn extends EventDataModel {
       notAttending: List<String>.from(json['notAttending']),
       notAnswered: List<String>.from(json['notAnswered']),
       channelId: json['channelId'],
+    );
+  }
+
+  factory Turn.fromSnap(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+    return Turn(
+      name: snapshot['name'] ?? '',
+      description: snapshot['description'] ?? '',
+      moods: List<String>.from(snapshot['moods'] ?? []),
+      uid: snapshot['uid'] ?? '',
+      username: snapshot['username'] ?? '',
+      eventId: snapshot['eventId'] ?? '',
+      datePublished: (snapshot['datePublished'] as Timestamp).toDate(),
+      eventDateTime: (snapshot['eventDateTime'] as Timestamp).toDate(),
+      imageUrl: snapshot['imageUrl'] ?? '',
+      profilePictureUrl: snapshot['profilePictureUrl'] ?? '',
+      where: snapshot['where'] ?? '',
+      address: snapshot['address'] ?? '',
+      organizers: List<String>.from(snapshot['organizers'] ?? []),
+      invitees: List<String>.from(snapshot['invitees'] ?? []),
+      teamInvitees: List<String>.from(snapshot['teamInvitees'] ?? []),
+      attending: List<String>.from(snapshot['attending'] ?? []),
+      notSureAttending: List<String>.from(snapshot['notSureAttending'] ?? []),
+      notAttending: List<String>.from(snapshot['notAttending'] ?? []),
+      notAnswered: List<String>.from(snapshot['notAnswered'] ?? []),
+      channelId: snapshot['channelId'] ?? '',
     );
   }
 }

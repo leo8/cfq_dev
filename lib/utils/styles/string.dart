@@ -97,7 +97,6 @@ class CustomString {
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
-  static const invitees = "T'invites qui ?";
   static const everybody = "Tout le monde";
 
   static const publier = "Publier";
@@ -209,4 +208,9 @@ class CustomString {
   static const noAttendeesYet = "Pas encore de participant";
   static const onePersonAttending = "personne participe";
   static const peopleAttending = "personnes participent";
+
+  static const String attending = 'Participe';
+  static const String notSureAttending = 'Ne sait pas';
+  static const String notAttending = 'Ne peut pas';
+  static const String invitees = 'Invités';
 }

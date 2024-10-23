@@ -18,6 +18,7 @@ class TurnDetails extends StatelessWidget {
   final String where;
   final String address;
   final String description;
+  final String turnId;
 
   const TurnDetails({
     Key? key,
@@ -31,6 +32,7 @@ class TurnDetails extends StatelessWidget {
     required this.where,
     required this.address,
     required this.description,
+    required this.turnId,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,10 @@ class TurnDetails extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TurnInviteesScreen()),
+              MaterialPageRoute(
+                  builder: (context) => TurnInviteesScreen(
+                        turnId: turnId,
+                      )),
             );
           },
           child: RichText(

@@ -158,6 +158,7 @@ class TurnCardContent extends StatelessWidget {
                         where: where,
                         address: address,
                         description: description,
+                        turnId: turnId,
                       );
                     },
                   ),
