@@ -337,4 +337,10 @@ class ThreadViewModel extends ChangeNotifier {
       AppLogger.error('Error resetting unread messages: $e');
     }
   }
+
+  void clearSearchString() {
+    searchController.clear();
+    _users = [];
+    notifyListeners();
+  }
 }

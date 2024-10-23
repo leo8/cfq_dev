@@ -81,6 +81,7 @@ class ThreadScreen extends StatelessWidget {
                   builder: (context) => ProfileScreen(userId: user.uid),
                 ),
               );
+              viewModel.clearSearchString();
             },
             child: Container(
               margin:
