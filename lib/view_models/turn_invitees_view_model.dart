@@ -68,11 +68,6 @@ class TurnInviteesViewModel extends ChangeNotifier {
       _invitees = await _fetchUsers(
           _turn!.invitees.where((id) => id != _currentUserId).toList());
 
-      print(_invitees);
-      print(_currentUserId);
-      print(turn!.invitees);
-      print(_turn!.invitees.contains(_currentUserId));
-
       // Add current user to the appropriate list if they're included
       if (_currentUserId != null) {
         model.User currentUser =
@@ -87,10 +82,7 @@ class TurnInviteesViewModel extends ChangeNotifier {
           _notAttending.insert(0, currentUser);
         }
         if (_turn!.invitees.contains(_currentUserId)) {
-          print('ok');
-          print(_invitees);
           _invitees.insert(0, currentUser);
-          print(_invitees);
         }
       }
     } catch (e) {
