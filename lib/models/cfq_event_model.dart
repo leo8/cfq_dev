@@ -47,24 +47,24 @@ class Cfq extends EventDataModel {
   }
 
   // Create a CFQ object from a JSON map
-  static Cfq fromJson(Map<String, dynamic> json) {
+  factory Cfq.fromJson(Map<String, dynamic> json) {
     return Cfq(
-      name: json['cfqName'],
-      description: json['description'],
-      moods: json['moods'],
-      uid: json['uid'],
-      username: json['username'],
-      eventId: json['cfqId'],
-      datePublished: DateTime.parse(json['datePublished']),
-      imageUrl: json['cfqImageUrl'],
-      profilePictureUrl: json['profilePictureUrl'],
-      where: json['where'],
-      organizers: List<String>.from(json['organizers']),
-      when: json['when'],
-      invitees: List<String>.from(json['invitees']),
-      teamInvitees: List<String>.from(json['teamInvitees']),
-      channelId: json['channelId'],
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      moods: List<String>.from(json['moods'] ?? []),
+      uid: json['uid'] ?? '',
+      username: json['username'] ?? '',
       followingUp: List<String>.from(json['followingUp'] ?? []),
+      eventId: json['eventId'] ?? '',
+      datePublished: DateTime.parse(json['datePublished']),
+      when: json['when'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      profilePictureUrl: json['profilePictureUrl'] ?? '',
+      where: json['where'] ?? '',
+      organizers: List<String>.from(json['organizers'] ?? []),
+      invitees: List<String>.from(json['invitees'] ?? []),
+      teamInvitees: List<String>.from(json['teamInvitees'] ?? []),
+      channelId: json['channelId'] ?? '',
     );
   }
 }

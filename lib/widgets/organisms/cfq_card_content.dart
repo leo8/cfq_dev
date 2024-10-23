@@ -148,6 +148,7 @@ class CFQCardContent extends StatelessWidget {
                     followersCount: followersCount,
                     location: location,
                     description: description,
+                    cfqId: cfqId,
                   ),
                 ),
                 const SizedBox(height: 25),

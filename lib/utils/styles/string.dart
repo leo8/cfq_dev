@@ -213,4 +213,5 @@ class CustomString {
   static const String notSureAttending = 'Hmm..';
   static const String notAttending = 'Non';
   static const String invitees = 'Invités';
+  static const String followingUp = 'Suivi par';
 }

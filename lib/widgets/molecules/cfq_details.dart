@@ -16,6 +16,7 @@ class CFQDetails extends StatelessWidget {
   final int followersCount;
   final String location;
   final String description;
+  final String cfqId;
 
   const CFQDetails({
     Key? key,
@@ -28,6 +29,7 @@ class CFQDetails extends StatelessWidget {
     required this.followersCount,
     required this.location,
     required this.description,
+    required this.cfqId,
   }) : super(key: key);
 
   @override
@@ -68,7 +70,8 @@ class CFQDetails extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CfqInviteesScreen()),
+              MaterialPageRoute(
+                  builder: (context) => CFQInviteesScreen(cfqId: cfqId)),
             );
           },
           child: RichText(
