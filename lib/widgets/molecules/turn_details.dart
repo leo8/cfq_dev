@@ -59,8 +59,18 @@ class TurnDetails extends StatelessWidget {
             style: CustomTextStyle.title3.copyWith(
                 color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        Text('$attendeesCount ${CustomString.going}',
-            style: CustomTextStyle.body1),
+        RichText(
+          text: TextSpan(
+            style: CustomTextStyle.body1,
+            children: [
+              TextSpan(
+                text: _getAttendeesCount(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextSpan(text: ' ${_getAttendeesText()}'),
+            ],
+          ),
+        ),
         const SizedBox(height: 20),
         Row(
           children: [
@@ -105,6 +115,21 @@ class TurnDetails extends StatelessWidget {
         return CustomIcon.afterMood;
       default:
         return CustomIcon.turnMood; // Default icon
+    }
+  }
+
+  String _getAttendeesCount() {
+    if (attendeesCount == 0) return '';
+    return '$attendeesCount';
+  }
+
+  String _getAttendeesText() {
+    if (attendeesCount == 0) {
+      return CustomString.noAttendeesYet;
+    } else if (attendeesCount == 1) {
+      return CustomString.onePersonAttending;
+    } else {
+      return CustomString.peopleAttending;
     }
   }
 }

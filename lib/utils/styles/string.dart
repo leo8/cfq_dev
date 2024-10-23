@@ -202,4 +202,12 @@ class CustomString {
 
   // Utils
   static const thisIsWeb = "C'est web";
+
+  // New strings for followers and attendees
+  static const noFollowersYet = "Pas encore de followers";
+  static const onePersonFollows = "personne suit";
+  static const peopleFollow = "personnes suivent";
+  static const noAttendeesYet = "Pas encore de participant";
+  static const onePersonAttending = "personne participe";
+  static const peopleAttending = "personnes participent";
 }
