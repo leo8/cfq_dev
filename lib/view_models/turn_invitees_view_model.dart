@@ -55,10 +55,6 @@ class TurnInviteesViewModel extends ChangeNotifier {
     if (_turn == null) return;
 
     try {
-      _attending = await _fetchUsers(_turn!.attending.toList());
-      _notSureAttending = await _fetchUsers(_turn!.notSureAttending.toList());
-      _notAttending = await _fetchUsers(_turn!.notAttending.toList());
-      _invitees = await _fetchUsers(_turn!.invitees.toList());
       _attending = await _fetchUsers(
           _turn!.attending.where((id) => id != _currentUserId).toList());
       _notSureAttending = await _fetchUsers(
