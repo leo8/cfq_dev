@@ -257,8 +257,6 @@ class CFQCardContent extends StatelessWidget {
                       isExpanded: isExpanded,
                     ),
                   ),
-                  const SizedBox(height: 25),
-                  Text('Followers: $followersCount'),
                 ],
               ),
             ),
