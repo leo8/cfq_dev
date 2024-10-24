@@ -4,21 +4,25 @@ import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/logger.dart';
 
 class TurnHeader extends StatelessWidget {
   final String turnImageUrl;
   final DateTime eventDateTime;
   final bool isExpanded;
+  final VoidCallback? onClose;
 
   const TurnHeader({
     Key? key,
     required this.turnImageUrl,
     required this.eventDateTime,
     required this.isExpanded,
+    this.onClose,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.debug('Building TurnHeader, isExpanded: $isExpanded');
     return Stack(
       children: [
         ClipRRect(
@@ -26,12 +30,12 @@ class TurnHeader extends StatelessWidget {
           child: Image.network(
             turnImageUrl,
             width: double.infinity,
-            height: 175,
+            height: isExpanded ? 300 : 175,
             fit: BoxFit.cover,
           ),
         ),
         Positioned(
-          top: isExpanded ? 30 : 10,
+          top: isExpanded ? 55 : 10,
           left: 10,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -62,9 +66,10 @@ class TurnHeader extends StatelessWidget {
           ),
         ),
         isExpanded
-            ? Positioned(
-                top: 10,
-                child: Center(
+            ? Positioned.fill(
+                top: -130,
+                child: Align(
+                  alignment: Alignment.center,
                   child: Text(
                     CustomString.turnCapital,
                     style: CustomTextStyle.hugeTitle.copyWith(
@@ -74,7 +79,7 @@ class TurnHeader extends StatelessWidget {
                 ),
               )
             : Positioned(
-                top: 30,
+                top: 10,
                 right: 10,
                 child: Text(
                   CustomString.turnCapital,
@@ -85,12 +90,14 @@ class TurnHeader extends StatelessWidget {
               ),
         if (isExpanded)
           Positioned(
-            top: 30,
-            right: 10,
-            child: IconButton(
-              icon: CustomIcon.close,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+            top: 65,
+            right: 20,
+            child: GestureDetector(
+                onTap: () {
+                  AppLogger.debug('Close button tapped in TurnHeader');
+                  onClose!();
+                },
+                child: const Center(child: CustomIcon.close)),
           ),
       ],
     );

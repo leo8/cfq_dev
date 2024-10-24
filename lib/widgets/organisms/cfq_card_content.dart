@@ -8,6 +8,7 @@ import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
 import '../../screens/expanded_card_screen.dart';
+import '../../utils/logger.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -33,6 +34,7 @@ class CFQCardContent extends StatelessWidget {
   final bool isFavorite;
   final Function(bool) onFollowUpToggled; // New callback
   final bool isExpanded;
+  final VoidCallback? onClose;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -58,11 +60,13 @@ class CFQCardContent extends StatelessWidget {
     required this.isFavorite,
     required this.onFollowUpToggled,
     this.isExpanded = false,
+    this.onClose,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.debug('Building CFQCardContent, isExpanded: $isExpanded');
     bool isFollowingUp = followingUp.contains(currentUserId);
     int followersCount = followingUp.length;
 
@@ -80,6 +84,14 @@ class CFQCardContent extends StatelessWidget {
         children: [
           CFQHeader(
             cfqImageUrl: cfqImageUrl,
+            isExpanded: isExpanded,
+            onClose: isExpanded
+                ? () {
+                    AppLogger.debug(
+                        'onClose callback triggered in CFQCardContent');
+                    Navigator.of(context).pop();
+                  }
+                : null,
           ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -168,34 +180,11 @@ class CFQCardContent extends StatelessWidget {
     if (!isExpanded) {
       content = GestureDetector(
         onTap: () {
+          AppLogger.debug('CFQCardContent tapped, navigating to expanded view');
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => ExpandedCardScreen(
-                cardContent: CFQCardContent(
-                  profilePictureUrl: profilePictureUrl,
-                  username: username,
-                  datePublished: datePublished,
-                  cfqName: cfqName,
-                  moods: moods,
-                  description: description,
-                  cfqId: cfqId,
-                  cfqImageUrl: cfqImageUrl,
-                  onSharePressed: onSharePressed,
-                  onSendPressed: onSendPressed,
-                  onFavoritePressed: onFavoritePressed,
-                  isFavorite: isFavorite,
-                  isExpanded: true,
-                  organizers: organizers,
-                  organizerId: organizerId,
-                  currentUserId: currentUserId,
-                  favorites: favorites,
-                  followingUp: followingUp,
-                  when: when,
-                  location: location,
-                  onFollowPressed: onFollowPressed,
-                  onBellPressed: onBellPressed,
-                  onFollowUpToggled: onFollowUpToggled,
-                ),
+                cardContent: this,
               ),
             ),
           );
