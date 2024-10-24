@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class User {
   final String username; // Username of the user
   final String uid; // Unique user ID
-  final String email; // User email address
+  final String? email; // User email address
   final List friends; // List of friends 'uid
   final List teams; // List of teams 'uid
   final String profilePictureUrl; // URL for the user's profile picture

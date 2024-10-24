@@ -58,6 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _isLoading = true; // Show loading state
     });
 
+/*
     // Call AuthMethods to sign up the user
     String res = await AuthMethods().signUpUser(
       email: _emailController.text,
@@ -86,6 +87,7 @@ class _SignupScreenState extends State<SignupScreen> {
         (route) => false,
       );
     }
+    */
   }
 
   /// Navigate to the login screen when the user chooses to log in instead.

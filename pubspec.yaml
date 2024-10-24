@@ -35,6 +35,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  google_sign_in: ^6.0.0
   http: ^1.2.2
   image_picker: ^1.1.2
   logger: ^2.4.0
@@ -78,10 +79,8 @@ flutter:
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/logo_white.png
-    - assets/turn_button.png
-    - assets/cfq_button.png
-    - assets/neon_background.png
+    - assets/
+    
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

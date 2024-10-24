@@ -9,7 +9,7 @@ class UserProvider with ChangeNotifier {
       AuthMethods(); // Instance of AuthMethods to fetch user data
 
   // Getter to access the current user. Using '!' to assert that _user is non-null
-  User get getUser => _user!;
+  User? get getUser => _user;
 
   // Refresh the current user's data by fetching the latest details from Firebase
   Future<void> refreshUser() async {

@@ -2,6 +2,8 @@ import 'package:cfq_dev/providers/user_provider.dart'; // User provider for stat
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart'; // Mobile layout
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart'; // Responsive layout
 import 'package:cfq_dev/responsive/web_screen_layout.dart'; // Web layout
+import 'package:cfq_dev/screens/login/inscription.dart';
+import 'package:cfq_dev/screens/login/login_screen_phone.dart';
 import 'package:cfq_dev/screens/login_screen.dart'; // Login screen
 import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
@@ -14,6 +16,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash scr
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
 
 void main() async {
+  // Splash Screen init
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding
       .ensureInitialized(); // Ensure bindings are initialized
   FlutterNativeSplash.preserve(
@@ -59,10 +62,19 @@ class _CFQState extends State<CFQ> {
     FlutterNativeSplash.remove(); // Remove the splash screen
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        // home: NeonBackground(child: LoginScreenMobile()));
+        home: LoginScreenMobile());
+  }
+
+/*
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (_) =>
@@ -96,14 +108,15 @@ class _CFQState extends State<CFQ> {
                   ),
                 );
               }
-              return const LoginScreen();
+              return const LoginScreenMobile();
             },
           ),
         ),
         routes: {
-          '/login': (context) => const NeonBackground(child: LoginScreen()),
+          '/login': (context) =>
+              const NeonBackground(child: LoginScreenMobile()),
         },
       ),
     );
-  }
+  }*/
 }

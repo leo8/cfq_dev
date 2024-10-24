@@ -3,6 +3,7 @@ import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:cfq_dev/screens/signup_screen.dart';
+import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/auth_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
@@ -51,10 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
       // Navigate to the appropriate layout after successful login
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const RepsonsiveLayout(
+          builder: (context) => const NeonBackground(
+              child: RepsonsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
-          ),
+          )),
         ),
         (route) => false,
       );

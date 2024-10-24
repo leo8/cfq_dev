@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>160341522687-32v4lt4a98icnhk17ekb5ednb8rmd7n1.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.160341522687-32v4lt4a98icnhk17ekb5ednb8rmd7n1</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>160341522687-9fatv5nt563b1j47oqi6ppdvgcu53e99.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDPoRP14LgesEc81VDv3udp0kr38Nn-kbc</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,21 +9,21 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.calvignac.cfq-dev</string>
+	<string>com.example.cfqDev</string>
 	<key>PROJECT_ID</key>
 	<string>cfq-dev-11498</string>
 	<key>STORAGE_BUCKET</key>
 	<string>cfq-dev-11498.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
+	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_GCM_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
+	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:160341522687:ios:0bdf8ee441ce0e42e574ca</string>
 </dict>

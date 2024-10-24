@@ -35,7 +35,7 @@ class CreateCfqViewModel extends ChangeNotifier {
   List<Team> _userTeams = [];
   List<Team> get userTeams => _userTeams;
 
-  List<Team> _selectedTeamInvitees = [];
+  final List<Team> _selectedTeamInvitees = [];
   List<Team> get selectedTeamInvitees => _selectedTeamInvitees;
 
   // Search
