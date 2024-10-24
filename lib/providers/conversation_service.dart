@@ -169,24 +169,27 @@ class ConversationService {
   }
 
   Future<List<Conversation>> getUserConversations(String userId) async {
-    List<Conversation> conversations = [];
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(userId).get();
+      List<dynamic> conversationsData = userDoc['conversations'] ?? [];
 
-    // Fetch the user document to get the list of conversation IDs
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(userId).get();
-    List<String> conversationIds =
-        List<String>.from(userDoc['conversations'] ?? []);
+      List<String> conversationIds = conversationsData
+          .map((conv) => conv['conversationId'] as String)
+          .toList();
 
-    // Fetch each conversation
-    for (String channelId in conversationIds) {
-      DocumentSnapshot conversationDoc =
-          await _firestore.collection('conversations').doc(channelId).get();
-      if (conversationDoc.exists) {
-        conversations.add(Conversation.fromFirestore(conversationDoc));
-      }
+      QuerySnapshot conversationsSnapshot = await _firestore
+          .collection('conversations')
+          .where(FieldPath.documentId, whereIn: conversationIds)
+          .get();
+
+      return conversationsSnapshot.docs.map((doc) {
+        return Conversation.fromFirestore(doc);
+      }).toList();
+    } catch (e) {
+      AppLogger.error('Error fetching user conversations: $e');
+      return [];
     }
-
-    return conversations;
   }
 
   Future<void> createConversation(

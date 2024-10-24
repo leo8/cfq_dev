@@ -114,7 +114,8 @@ class FirestoreMethods {
           organizers: organizers,
           invitees: invitees,
           teamInvitees: teamInvitees,
-          channelId: channelId);
+          channelId: channelId,
+          followingUp: []);
 
       // Save the CFQ object to Firestore under the 'cfqs' collection
       await _firestore.collection('cfqs').doc(cfqId).set(cfq.toJson());

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
+import '../../screens/cfq_invitees_screen.dart';
 
 class CFQDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -14,6 +16,7 @@ class CFQDetails extends StatelessWidget {
   final int followersCount;
   final String location;
   final String description;
+  final String cfqId;
 
   const CFQDetails({
     Key? key,
@@ -26,6 +29,7 @@ class CFQDetails extends StatelessWidget {
     required this.followersCount,
     required this.location,
     required this.description,
+    required this.cfqId,
   }) : super(key: key);
 
   @override
@@ -62,7 +66,27 @@ class CFQDetails extends StatelessWidget {
               .toList(),
         ),
         const SizedBox(height: 20),
-        Text('$followersCount following', style: CustomTextStyle.body1),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CFQInviteesScreen(cfqId: cfqId)),
+            );
+          },
+          child: RichText(
+            text: TextSpan(
+              style: CustomTextStyle.body1,
+              children: [
+                TextSpan(
+                  text: _getFollowersCount(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(text: ' ${_getFollowersText()}'),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 20),
         Text(location, style: CustomTextStyle.body1),
         const SizedBox(height: 8),
@@ -98,6 +122,21 @@ class CFQDetails extends StatelessWidget {
         return CustomIcon.afterMood;
       default:
         return CustomIcon.turnMood; // Default icon
+    }
+  }
+
+  String _getFollowersCount() {
+    if (followersCount == 0) return '';
+    return '$followersCount';
+  }
+
+  String _getFollowersText() {
+    if (followersCount == 0) {
+      return CustomString.noFollowersYet;
+    } else if (followersCount == 1) {
+      return CustomString.onePersonFollows;
+    } else {
+      return CustomString.peopleFollow;
     }
   }
 }

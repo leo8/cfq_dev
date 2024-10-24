@@ -11,8 +11,10 @@ import '../utils/styles/text_styles.dart';
 class FavoritesScreen extends StatelessWidget {
   final String currentUserId;
 
-  const FavoritesScreen({Key? key, required this.currentUserId})
-      : super(key: key);
+  const FavoritesScreen({
+    Key? key,
+    required this.currentUserId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,49 +31,45 @@ class FavoritesScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-          body: Column(
-            children: [
-              const SizedBox(height: 30),
-              Center(
-                child: Text(
-                  CustomString.favoritesCapital,
-                  style: CustomTextStyle.body1.copyWith(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+          body: Consumer<FavoritesViewModel>(
+            builder: (context, viewModel, child) {
+              return Column(
+                children: [
+                  const SizedBox(height: 30),
+                  Center(
+                    child: Text(
+                      CustomString.favoritesCapital,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 25),
-              Expanded(
-                child: Consumer<FavoritesViewModel>(
-                  builder: (context, viewModel, child) {
-                    if (viewModel.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (viewModel.favoriteEvents.isEmpty) {
-                      return Center(
-                        child: Text(
-                          CustomString.noFavoriteEvents,
-                          style: CustomTextStyle.body1,
-                        ),
-                      );
-                    } else {
-                      return EventsList(
-                        eventsStream: Stream.value(viewModel.favoriteEvents),
-                        currentUser: viewModel.currentUser,
-                        onFavoriteToggle: viewModel.toggleFavorite,
-                        addConversationToUserList:
-                            viewModel.addConversationToUserList,
-                        removeConversationFromUserList:
-                            viewModel.removeConversationFromUserList,
-                        isConversationInUserList:
-                            viewModel.isConversationInUserList,
-                        resetUnreadMessages: viewModel.resetUnreadMessages,
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
+                  const SizedBox(height: 25),
+                  Expanded(
+                    child: EventsList(
+                      eventsStream: Stream.value(viewModel.favoriteEvents),
+                      currentUser: viewModel.currentUser,
+                      onFavoriteToggle: viewModel.toggleFavorite,
+                      addConversationToUserList:
+                          viewModel.addConversationToUserList,
+                      removeConversationFromUserList:
+                          viewModel.removeConversationFromUserList,
+                      isConversationInUserList:
+                          viewModel.isConversationInUserList,
+                      resetUnreadMessages: viewModel.resetUnreadMessages,
+                      addFollowUp: FavoritesViewModel.addFollowUp,
+                      removeFollowUp: FavoritesViewModel.removeFollowUp,
+                      isFollowingUpStream: viewModel.isFollowingUpStream,
+                      toggleFollowUp: viewModel.toggleFollowUp,
+                      onAttendingStatusChanged: viewModel.updateAttendingStatus,
+                      attendingStatusStream: viewModel.attendingStatusStream,
+                      attendingCountStream: viewModel.attendingCountStream,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

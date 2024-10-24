@@ -65,6 +65,7 @@ class CustomColor {
   static const red = Colors.red;
   static const blue = Colors.blue;
   static const purple = Colors.purple;
+  static const yellow = Colors.yellow;
 
   //Variants
 

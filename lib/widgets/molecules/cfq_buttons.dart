@@ -7,6 +7,7 @@ class CFQButtons extends StatelessWidget {
   final VoidCallback onFavoritePressed;
   final VoidCallback onFollowUpPressed;
   final bool isFavorite;
+  final bool isFollowingUp;
 
   const CFQButtons({
     Key? key,
@@ -14,6 +15,7 @@ class CFQButtons extends StatelessWidget {
     required this.onFavoritePressed,
     required this.onFollowUpPressed,
     required this.isFavorite,
+    required this.isFollowingUp,
   }) : super(key: key);
 
   @override
@@ -58,20 +60,24 @@ class CFQButtons extends StatelessWidget {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: CustomColor.purpleNeon,
+          color:
+              isFollowingUp ? CustomColor.purpleNeon : CustomColor.customBlack,
           boxShadow: [
-            BoxShadow(
-              color: CustomColor.purpleNeon.withOpacity(0.5),
-              spreadRadius: 4,
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
+            if (isFollowingUp)
+              BoxShadow(
+                color: CustomColor.purpleNeon.withOpacity(0.5),
+                spreadRadius: 4,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
           ],
         ),
         child: Center(
           child: CustomIcon.followUp.copyWith(
             size: 30,
-            color: CustomColor.customWhite,
+            color: isFollowingUp
+                ? CustomColor.customWhite
+                : CustomColor.purpleNeon,
           ),
         ),
       ),

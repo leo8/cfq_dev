@@ -10,6 +10,7 @@ import '../providers/conversation_service.dart';
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
   final TextEditingController searchController = TextEditingController();
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Timer? _debounce;
 
   List<model.User> _users = [];
@@ -55,7 +56,12 @@ class ThreadViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  // Existing methods (performSearch, parseDate, fetchCombinedEvents)
+  Stream<bool> isFollowingUpStream(String cfqId, String userId) {
+    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+      List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
+      return followingUp.contains(userId);
+    });
+  }
 
   Future<void> _initializeData() async {
     await _fetchCurrentUser();
@@ -337,6 +343,122 @@ class ThreadViewModel extends ChangeNotifier {
       AppLogger.error('Error resetting unread messages: $e');
     }
   }
+
+  static Future<void> addFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      AppLogger.error('Error adding follow-up: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> removeFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      AppLogger.error('Error removing follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
+    try {
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> followingUp = data['followingUp'] ?? [];
+
+      if (followingUp.contains(userId)) {
+        await removeFollowUp(cfqId, userId);
+      } else {
+        await addFollowUp(cfqId, userId);
+      }
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error toggling follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateAttendingStatus(String turnId, String status) async {
+    try {
+      final turnRef = _firestore.collection('turns').doc(turnId);
+      final userRef = _firestore.collection('users').doc(currentUserUid);
+
+      await _firestore.runTransaction((transaction) async {
+        final turnDoc = await transaction.get(turnRef);
+        final userDoc = await transaction.get(userRef);
+
+        if (!turnDoc.exists || !userDoc.exists) {
+          throw Exception('Turn or User document does not exist');
+        }
+
+        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        // Remove user from all attending lists
+        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
+            .forEach((field) {
+          if (turnData[field] != null) {
+            turnData[field] = (turnData[field] as List)
+                .where((id) => id != currentUserUid)
+                .toList();
+          }
+        });
+
+        // Add user to the appropriate list
+        if (status != 'notAnswered') {
+          turnData[status] = [...(turnData[status] ?? []), currentUserUid];
+        }
+
+        // Update user's attending status for this turn
+        if (userData['attendingStatus'] == null) {
+          userData['attendingStatus'] = {};
+        }
+        userData['attendingStatus'][turnId] = status;
+
+        transaction.update(turnRef, turnData);
+        transaction.update(userRef, userData);
+      });
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating attending status: $e');
+    }
+  }
+
+  Stream<String> attendingStatusStream(String turnId, String userId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 'notAnswered';
+      final data = snapshot.data() as Map<String, dynamic>;
+      if (data['attending']?.contains(userId) ?? false) return 'attending';
+      if (data['notSureAttending']?.contains(userId) ?? false)
+        return 'notSureAttending';
+      if (data['notAttending']?.contains(userId) ?? false)
+        return 'notAttending';
+      return 'notAnswered';
+    });
+  }
+
+  Stream<int> attendingCountStream(String turnId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['attending'] as List?)?.length ?? 0;
+    });
 
   void clearSearchString() {
     searchController.clear();

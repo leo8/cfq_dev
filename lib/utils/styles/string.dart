@@ -97,14 +97,12 @@ class CustomString {
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
 
-  static const invitees = "T'invites qui ?";
   static const everybody = "Tout le monde";
 
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
 
-  static const jeSuisLa = "Je suis là";
-  static const going = "y vont";
+  static const inviteesCapital = "INVITÉS";
 
   // Turns
   static const turnCapital = "TURN";
@@ -202,4 +200,18 @@ class CustomString {
 
   // Utils
   static const thisIsWeb = "C'est web";
+
+  // New strings for followers and attendees
+  static const noFollowersYet = "Pas encore de followers";
+  static const onePersonFollows = "personne suit";
+  static const peopleFollow = "personnes suivent";
+  static const noAttendeesYet = "Pas encore de participant";
+  static const onePersonAttending = "personne participe";
+  static const peopleAttending = "personnes participent";
+
+  static const String attending = 'Oui';
+  static const String notSureAttending = 'Hmm..';
+  static const String notAttending = 'Non';
+  static const String invitees = 'Invités';
+  static const String followingUp = 'Suivi par';
 }

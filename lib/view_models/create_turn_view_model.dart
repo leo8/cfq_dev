@@ -526,7 +526,7 @@ class CreateTurnViewModel extends ChangeNotifier
           attending: [],
           notSureAttending: [],
           notAttending: [],
-          notAnswered: [],
+          notAnswered: inviteeUids,
           channelId: channelId);
 
       // Save TURN to Firestore

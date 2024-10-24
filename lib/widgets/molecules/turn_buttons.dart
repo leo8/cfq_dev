@@ -3,11 +3,13 @@ import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
 
 class TurnButtons extends StatelessWidget {
-  final VoidCallback onAttendingPressed;
+  final Function(String) onAttendingPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
   final VoidCallback onFavoritePressed;
   final bool isFavorite;
+  final String attendingStatus;
+  final Stream<String> attendingStatusStream;
 
   const TurnButtons({
     Key? key,
@@ -16,19 +18,27 @@ class TurnButtons extends StatelessWidget {
     required this.onSendPressed,
     required this.onFavoritePressed,
     required this.isFavorite,
+    required this.attendingStatus,
+    required this.attendingStatusStream,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildIconButton(CustomIcon.eventConversation, onSendPressed),
-        const SizedBox(width: 6),
-        _buildFavoriteButton(),
-        const SizedBox(width: 9),
-        _buildAttendingButton(),
-      ],
+    return StreamBuilder<String>(
+      stream: attendingStatusStream,
+      builder: (context, snapshot) {
+        final attendingStatus = snapshot.data ?? 'notAnswered';
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildIconButton(CustomIcon.eventConversation, onSendPressed),
+            const SizedBox(width: 6),
+            _buildFavoriteButton(),
+            const SizedBox(width: 9),
+            _buildAttendingButton(context, attendingStatus),
+          ],
+        );
+      },
     );
   }
 
@@ -51,9 +61,45 @@ class TurnButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildAttendingButton() {
+  Widget _buildAttendingButton(BuildContext context, String attendingStatus) {
+    IconData iconData;
+    Color iconColor;
+
+    switch (attendingStatus) {
+      case 'attending':
+        iconData = Icons.check;
+        iconColor = CustomColor.green;
+        break;
+      case 'notSureAttending':
+        iconData = Icons.help_outline;
+        iconColor = CustomColor.yellow;
+        break;
+      case 'notAttending':
+        iconData = Icons.close;
+        iconColor = CustomColor.red;
+        break;
+      default:
+        return _buildDefaultAttendingButton(context);
+    }
+
     return GestureDetector(
-      onTap: onAttendingPressed,
+      onTap: () => _showAttendingOptions(context),
+      child: Container(
+        // ... existing container properties ...
+        child: Center(
+          child: Icon(
+            iconData,
+            size: 30,
+            color: iconColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultAttendingButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showAttendingOptions(context),
       child: Container(
         width: 60,
         height: 60,
@@ -77,6 +123,45 @@ class TurnButtons extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAttendingOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.check, color: CustomColor.green),
+                title: const Text('Je suis là'),
+                onTap: () {
+                  onAttendingPressed('attending');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading:
+                    const Icon(Icons.help_outline, color: CustomColor.yellow),
+                title: const Text('Je sais pas'),
+                onTap: () {
+                  onAttendingPressed('notSureAttending');
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.close, color: CustomColor.red),
+                title: const Text('Je peux pas'),
+                onTap: () {
+                  onAttendingPressed('notAttending');
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

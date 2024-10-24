@@ -484,6 +484,7 @@ class CreateCfqViewModel extends ChangeNotifier
           moods: _selectedMoods!,
           uid: currentUserId,
           username: _currentUser!.username,
+          followingUp: [],
           eventId: cfqId,
           datePublished: DateTime.now(),
           when: whenController.text.trim(),

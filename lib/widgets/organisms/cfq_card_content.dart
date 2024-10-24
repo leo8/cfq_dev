@@ -19,7 +19,7 @@ class CFQCardContent extends StatelessWidget {
   final String cfqImageUrl;
   final String location;
   final String when;
-  final int followersCount; // New field for followers count
+  final List<String> followingUp;
   final String cfqId;
   final String organizerId;
   final String currentUserId;
@@ -30,6 +30,7 @@ class CFQCardContent extends StatelessWidget {
   final VoidCallback onFavoritePressed; // New callback for favorite button
   final VoidCallback onBellPressed; // New callback for bell button
   final bool isFavorite;
+  final Function(bool) onFollowUpToggled; // New callback
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -42,7 +43,7 @@ class CFQCardContent extends StatelessWidget {
     required this.cfqImageUrl,
     required this.location,
     required this.when,
-    required this.followersCount,
+    required this.followingUp,
     required this.onFollowPressed,
     required this.onSharePressed,
     required this.onSendPressed,
@@ -53,11 +54,15 @@ class CFQCardContent extends StatelessWidget {
     required this.currentUserId,
     required this.favorites,
     required this.isFavorite,
+    required this.onFollowUpToggled,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    bool isFollowingUp = followingUp.contains(currentUserId);
+    int followersCount = followingUp.length;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
@@ -122,8 +127,11 @@ class CFQCardContent extends StatelessWidget {
                     CFQButtons(
                       onSendPressed: onSendPressed,
                       onFavoritePressed: onFavoritePressed,
-                      onFollowUpPressed: onBellPressed,
+                      onFollowUpPressed: () {
+                        onFollowUpToggled(!isFollowingUp);
+                      },
                       isFavorite: isFavorite,
+                      isFollowingUp: isFollowingUp, // Add this line
                     ),
                   ],
                 ),
@@ -140,6 +148,7 @@ class CFQCardContent extends StatelessWidget {
                     followersCount: followersCount,
                     location: location,
                     description: description,
+                    cfqId: cfqId,
                   ),
                 ),
                 const SizedBox(height: 25),
