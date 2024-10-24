@@ -129,7 +129,30 @@ class ExpandedCardViewModel extends ChangeNotifier {
     }
   }
 
+  Stream<String> get attendingStatusStream {
+    if (isTurn) {
+      return _firestore
+          .collection('turns')
+          .doc(eventId)
+          .snapshots()
+          .map((snapshot) {
+        if (!snapshot.exists) return 'notAnswered';
+        final data = snapshot.data() as Map<String, dynamic>;
+        if (data['attending']?.contains(currentUserId) ?? false)
+          return 'attending';
+        if (data['notSureAttending']?.contains(currentUserId) ?? false)
+          return 'notSureAttending';
+        if (data['notAttending']?.contains(currentUserId) ?? false)
+          return 'notAttending';
+        return 'notAnswered';
+      });
+    }
+    return Stream.value('notAnswered');
+  }
+
   Future<void> updateAttendingStatus(String status) async {
+    if (!isTurn) return;
+
     try {
       final turnRef = _firestore.collection('turns').doc(eventId);
       final userRef = _firestore.collection('users').doc(currentUserId);
@@ -146,8 +169,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
         // Remove user from all attending lists
-        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
-            .forEach((field) {
+        ['attending', 'notSureAttending', 'notAttending'].forEach((field) {
           if (turnData[field] != null) {
             turnData[field] = (turnData[field] as List)
                 .where((id) => id != currentUserId)

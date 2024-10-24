@@ -38,37 +38,43 @@ class ExpandedCardScreen extends StatelessWidget {
       return Consumer<ExpandedCardViewModel>(
         builder: (context, viewModel, child) {
           final turnContent = cardContent as TurnCardContent;
-          return TurnCardContent(
-            profilePictureUrl: turnContent.profilePictureUrl,
-            username: turnContent.username,
-            organizers: turnContent.organizers,
-            turnName: turnContent.turnName,
-            description: turnContent.description,
-            eventDateTime: turnContent.eventDateTime,
-            where: turnContent.where,
-            address: turnContent.address,
-            attendeesCount: viewModel.attendeesCount,
-            onAttendingPressed: turnContent.onAttendingPressed,
-            onSharePressed: turnContent.onSharePressed,
-            onSendPressed: turnContent.onSendPressed,
-            onFavoritePressed: viewModel.toggleFavorite,
-            onCommentPressed: turnContent.onCommentPressed,
-            turnImageUrl: turnContent.turnImageUrl,
-            datePublished: turnContent.datePublished,
-            moods: turnContent.moods,
-            turnId: turnContent.turnId,
-            organizerId: turnContent.organizerId,
-            currentUserId: turnContent.currentUserId,
-            favorites: turnContent.favorites,
-            isFavorite: viewModel.isFavorite,
-            attendingStatus: viewModel.attendingStatus,
-            onAttendingStatusChanged: viewModel.updateAttendingStatus,
-            attendingStatusStream: turnContent.attendingStatusStream,
-            attendingCountStream: turnContent.attendingCountStream,
-            isExpanded: true,
-            onClose: () {
-              AppLogger.debug('onClose called from ExpandedCardScreen');
-              Navigator.of(context).pop();
+          return StreamBuilder<String>(
+            stream: viewModel.attendingStatusStream,
+            builder: (context, snapshot) {
+              final attendingStatus = snapshot.data ?? 'notAnswered';
+              return TurnCardContent(
+                profilePictureUrl: turnContent.profilePictureUrl,
+                username: turnContent.username,
+                organizers: turnContent.organizers,
+                turnName: turnContent.turnName,
+                description: turnContent.description,
+                eventDateTime: turnContent.eventDateTime,
+                where: turnContent.where,
+                address: turnContent.address,
+                attendeesCount: viewModel.attendeesCount,
+                onAttendingPressed: turnContent.onAttendingPressed,
+                onSharePressed: turnContent.onSharePressed,
+                onSendPressed: turnContent.onSendPressed,
+                onFavoritePressed: viewModel.toggleFavorite,
+                onCommentPressed: turnContent.onCommentPressed,
+                turnImageUrl: turnContent.turnImageUrl,
+                datePublished: turnContent.datePublished,
+                moods: turnContent.moods,
+                turnId: turnContent.turnId,
+                organizerId: turnContent.organizerId,
+                currentUserId: turnContent.currentUserId,
+                favorites: turnContent.favorites,
+                isFavorite: viewModel.isFavorite,
+                attendingStatus: attendingStatus,
+                onAttendingStatusChanged: viewModel.updateAttendingStatus,
+                attendingStatusStream: viewModel.attendingStatusStream,
+                attendingCountStream: turnContent.attendingCountStream,
+                isExpanded: true,
+                onClose: () {
+                  AppLogger.debug('onClose called from ExpandedCardScreen');
+                  Navigator.of(context).pop();
+                },
+              );
             },
           );
         },
