@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/icons.dart';
 import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
 
 class TurnHeader extends StatelessWidget {
   final String turnImageUrl;
   final DateTime eventDateTime;
+  final bool isExpanded;
 
   const TurnHeader({
     Key? key,
     required this.turnImageUrl,
     required this.eventDateTime,
+    required this.isExpanded,
   }) : super(key: key);
 
   @override
@@ -28,7 +31,7 @@ class TurnHeader extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 10,
+          top: isExpanded ? 30 : 10,
           left: 10,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -58,16 +61,37 @@ class TurnHeader extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
-          top: 10,
-          right: 10,
-          child: Text(
-            CustomString.turnCapital,
-            style: CustomTextStyle.hugeTitle.copyWith(
-              fontSize: 32,
+        isExpanded
+            ? Positioned(
+                top: 10,
+                child: Center(
+                  child: Text(
+                    CustomString.turnCapital,
+                    style: CustomTextStyle.hugeTitle.copyWith(
+                      fontSize: 32,
+                    ),
+                  ),
+                ),
+              )
+            : Positioned(
+                top: 30,
+                right: 10,
+                child: Text(
+                  CustomString.turnCapital,
+                  style: CustomTextStyle.hugeTitle.copyWith(
+                    fontSize: 32,
+                  ),
+                ),
+              ),
+        if (isExpanded)
+          Positioned(
+            top: 30,
+            right: 10,
+            child: IconButton(
+              icon: CustomIcon.close,
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
-        ),
       ],
     );
   }

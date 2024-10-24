@@ -86,6 +86,7 @@ class TurnCardContent extends StatelessWidget {
           TurnHeader(
             turnImageUrl: turnImageUrl,
             eventDateTime: eventDateTime,
+            isExpanded: isExpanded,
           ),
           Padding(
             padding: const EdgeInsets.all(16),

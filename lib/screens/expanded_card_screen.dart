@@ -1,5 +1,4 @@
 import 'package:cfq_dev/utils/styles/colors.dart';
-import 'package:cfq_dev/utils/styles/icons.dart';
 import 'package:flutter/material.dart';
 
 class ExpandedCardScreen extends StatelessWidget {
@@ -14,15 +13,9 @@ class ExpandedCardScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         automaticallyImplyLeading: false,
-        backgroundColor: CustomColor.customBlack,
-        actions: [
-          IconButton(
-            icon: CustomIcon.close,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
+        backgroundColor: CustomColor.transparent,
       ),
-      extendBodyBehindAppBar: false,
+      extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: cardContent,
       ),
