@@ -7,6 +7,7 @@ import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
+import '../../screens/expanded_card_screen.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -31,6 +32,7 @@ class CFQCardContent extends StatelessWidget {
   final VoidCallback onBellPressed; // New callback for bell button
   final bool isFavorite;
   final Function(bool) onFollowUpToggled; // New callback
+  final bool isExpanded;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -55,6 +57,7 @@ class CFQCardContent extends StatelessWidget {
     required this.favorites,
     required this.isFavorite,
     required this.onFollowUpToggled,
+    this.isExpanded = false,
     super.key,
   });
 
@@ -63,11 +66,14 @@ class CFQCardContent extends StatelessWidget {
     bool isFollowingUp = followingUp.contains(currentUserId);
     int followersCount = followingUp.length;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+    Widget content = Container(
+      margin: isExpanded
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
         gradient: CustomColor.cfqBackgroundGradient,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius:
+            isExpanded ? BorderRadius.zero : BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,5 +164,46 @@ class CFQCardContent extends StatelessWidget {
         ],
       ),
     );
+
+    if (!isExpanded) {
+      content = GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ExpandedCardScreen(
+                cardContent: CFQCardContent(
+                  profilePictureUrl: profilePictureUrl,
+                  username: username,
+                  datePublished: datePublished,
+                  cfqName: cfqName,
+                  moods: moods,
+                  description: description,
+                  cfqId: cfqId,
+                  cfqImageUrl: cfqImageUrl,
+                  onSharePressed: onSharePressed,
+                  onSendPressed: onSendPressed,
+                  onFavoritePressed: onFavoritePressed,
+                  isFavorite: isFavorite,
+                  isExpanded: true,
+                  organizers: organizers,
+                  organizerId: organizerId,
+                  currentUserId: currentUserId,
+                  favorites: favorites,
+                  followingUp: followingUp,
+                  when: when,
+                  location: location,
+                  onFollowPressed: onFollowPressed,
+                  onBellPressed: onBellPressed,
+                  onFollowUpToggled: onFollowUpToggled,
+                ),
+              ),
+            ),
+          );
+        },
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

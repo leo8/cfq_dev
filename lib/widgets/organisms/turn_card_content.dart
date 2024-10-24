@@ -7,6 +7,7 @@ import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
+import '../../screens/expanded_card_screen.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -35,6 +36,7 @@ class TurnCardContent extends StatelessWidget {
   final Function(String) onAttendingStatusChanged;
   final Stream<String> attendingStatusStream;
   final Stream<int> attendingCountStream;
+  final bool isExpanded;
 
   const TurnCardContent({
     required this.attendingStatus,
@@ -63,16 +65,20 @@ class TurnCardContent extends StatelessWidget {
     required this.isFavorite,
     required this.attendingStatusStream,
     required this.attendingCountStream,
+    this.isExpanded = false,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+    Widget content = Container(
+      margin: isExpanded
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
         gradient: CustomColor.turnBackgroundGradient,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius:
+            isExpanded ? BorderRadius.zero : BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,5 +176,50 @@ class TurnCardContent extends StatelessWidget {
         ],
       ),
     );
+
+    if (!isExpanded) {
+      content = GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ExpandedCardScreen(
+                cardContent: TurnCardContent(
+                  profilePictureUrl: profilePictureUrl,
+                  username: username,
+                  datePublished: datePublished,
+                  turnName: turnName,
+                  moods: moods,
+                  eventDateTime: eventDateTime,
+                  where: where,
+                  address: address,
+                  description: description,
+                  turnId: turnId,
+                  turnImageUrl: turnImageUrl,
+                  onAttendingStatusChanged: onAttendingStatusChanged,
+                  onSharePressed: onSharePressed,
+                  onSendPressed: onSendPressed,
+                  onFavoritePressed: onFavoritePressed,
+                  isFavorite: isFavorite,
+                  attendingStatusStream: attendingStatusStream,
+                  attendingStatus: attendingStatus,
+                  attendingCountStream: attendingCountStream,
+                  isExpanded: true,
+                  organizers: organizers,
+                  onAttendingPressed: onAttendingPressed,
+                  attendeesCount: attendeesCount,
+                  onCommentPressed: onCommentPressed,
+                  organizerId: organizerId,
+                  currentUserId: currentUserId,
+                  favorites: favorites,
+                ),
+              ),
+            ),
+          );
+        },
+        child: content,
+      );
+    }
+
+    return content;
   }
 }
