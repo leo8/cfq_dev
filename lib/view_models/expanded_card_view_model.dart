@@ -179,6 +179,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> toggleFollowUp() async {
+    if (isTurn) return; // Only proceed for CFQ cards
+
     try {
       final cfqRef = _firestore.collection('cfqs').doc(eventId);
 
@@ -190,7 +192,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
         }
 
         Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
-        List<dynamic> followingUp = data['followingUp'] ?? [];
+        List<String> followingUp = List<String>.from(data['followingUp'] ?? []);
 
         if (followingUp.contains(currentUserId)) {
           followingUp.remove(currentUserId);
@@ -207,5 +209,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
     }
+  }
+
+  Stream<DocumentSnapshot> get cfqStream {
+    return _firestore.collection('cfqs').doc(eventId).snapshots();
   }
 }

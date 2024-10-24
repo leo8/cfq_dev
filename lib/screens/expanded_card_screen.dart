@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/organisms/turn_card_content.dart';
 import '../widgets/organisms/cfq_card_content.dart';
 import '../utils/logger.dart';
@@ -76,35 +77,54 @@ class ExpandedCardScreen extends StatelessWidget {
       return Consumer<ExpandedCardViewModel>(
         builder: (context, viewModel, child) {
           final cfqContent = cardContent as CFQCardContent;
-          return CFQCardContent(
-            profilePictureUrl: cfqContent.profilePictureUrl,
-            username: cfqContent.username,
-            organizers: cfqContent.organizers,
-            moods: cfqContent.moods,
-            cfqName: cfqContent.cfqName,
-            description: cfqContent.description,
-            datePublished: cfqContent.datePublished,
-            cfqImageUrl: cfqContent.cfqImageUrl,
-            location: cfqContent.location,
-            when: cfqContent.when,
-            followingUp: cfqContent.followingUp,
-            onFollowPressed: cfqContent.onFollowPressed,
-            onSharePressed: cfqContent.onSharePressed,
-            onSendPressed: cfqContent.onSendPressed,
-            onFavoritePressed: viewModel.toggleFavorite,
-            onBellPressed: cfqContent.onBellPressed,
-            cfqId: cfqContent.cfqId,
-            organizerId: cfqContent.organizerId,
-            currentUserId: cfqContent.currentUserId,
-            favorites: cfqContent.favorites,
-            isFavorite: viewModel.isFavorite,
-            //isFollowingUp: viewModel.isFollowingUp,
-            onFollowUpToggled: (_) => viewModel.toggleFollowUp(),
-            //followersCount: viewModel.followersCount,
-            isExpanded: true,
-            onClose: () {
-              AppLogger.debug('onClose called from ExpandedCardScreen');
-              Navigator.of(context).pop();
+          return StreamBuilder<DocumentSnapshot>(
+            stream: viewModel.cfqStream,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Text('CFQ not found');
+              }
+
+              final cfqData = snapshot.data!.data() as Map<String, dynamic>;
+              final List<String> followingUp =
+                  List<String>.from(cfqData['followingUp'] ?? []);
+
+              return CFQCardContent(
+                profilePictureUrl: cfqContent.profilePictureUrl,
+                username: cfqContent.username,
+                organizers: cfqContent.organizers,
+                moods: cfqContent.moods,
+                cfqName: cfqContent.cfqName,
+                description: cfqContent.description,
+                datePublished: cfqContent.datePublished,
+                cfqImageUrl: cfqContent.cfqImageUrl,
+                location: cfqContent.location,
+                when: cfqContent.when,
+                followingUp: followingUp,
+                onFollowPressed: cfqContent.onFollowPressed,
+                onSharePressed: cfqContent.onSharePressed,
+                onSendPressed: cfqContent.onSendPressed,
+                onFavoritePressed: viewModel.toggleFavorite,
+                onBellPressed: cfqContent.onBellPressed,
+                cfqId: cfqContent.cfqId,
+                organizerId: cfqContent.organizerId,
+                currentUserId: cfqContent.currentUserId,
+                favorites: cfqContent.favorites,
+                isFavorite: viewModel.isFavorite,
+                onFollowUpToggled: (_) => viewModel.toggleFollowUp(),
+                isExpanded: true,
+                onClose: () {
+                  AppLogger.debug('onClose called from ExpandedCardScreen');
+                  Navigator.of(context).pop();
+                },
+              );
             },
           );
         },
