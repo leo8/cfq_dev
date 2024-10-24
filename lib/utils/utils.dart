@@ -4,6 +4,7 @@ import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utils/styles/text_styles.dart';
+import '../utils/styles/string.dart';
 import '../utils/styles/colors.dart';
 
 /// Picks an image from the specified [ImageSource] (camera or gallery).
@@ -58,4 +59,42 @@ void showSnackBar(String content, BuildContext context) {
   Future.delayed(const Duration(seconds: 3), () {
     overlayEntry.remove();
   });
+}
+
+/// Shows a dialog to choose between gallery and camera for image selection
+Future<ImageSource?> showImageSourceDialog(BuildContext context) async {
+  return showDialog<ImageSource>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              GestureDetector(
+                child: Text(
+                  CustomString.pickImageFromGallery,
+                  style: CustomTextStyle.body1,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop(ImageSource.gallery);
+                },
+              ),
+              const Padding(padding: EdgeInsets.all(6.0)),
+              const Divider(),
+              const Padding(padding: EdgeInsets.all(6.0)),
+              GestureDetector(
+                child: Text(
+                  CustomString.takePictureWithDevice,
+                  style: CustomTextStyle.body1,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

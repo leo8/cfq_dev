@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/styles/string.dart';
+import '../utils/utils.dart';
 
 class CreateTeamViewModel extends ChangeNotifier {
   // Team Name Controller
@@ -100,14 +101,17 @@ class CreateTeamViewModel extends ChangeNotifier {
   }
 
   // Image Picker
-  Future<void> pickTeamImage() async {
+  Future<void> pickTeamImage(context) async {
     try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final ImageSource? source = await showImageSourceDialog(context);
+      if (source != null) {
+        final ImagePicker picker = ImagePicker();
+        final XFile? image = await picker.pickImage(source: source);
 
-      if (image != null) {
-        _teamImage = await image.readAsBytes();
-        notifyListeners();
+        if (image != null) {
+          _teamImage = await image.readAsBytes();
+          notifyListeners();
+        }
       }
     } catch (e) {
       AppLogger.error('Error picking team image: $e');

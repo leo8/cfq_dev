@@ -93,7 +93,8 @@ class CreateTeamScreen extends StatelessWidget {
                               child: Center(
                                 child: IconButton(
                                   icon: CustomIcon.addImage,
-                                  onPressed: viewModel.pickTeamImage,
+                                  onPressed: () =>
+                                      viewModel.pickTeamImage(context),
                                 ),
                               ),
                             ),

@@ -44,12 +44,15 @@ class _SignupScreenState extends State<SignupScreen> {
     _birthDateController.dispose();
   }
 
-  /// Opens gallery to select a profile image.
+  /// Select image from gallery or take picture with device
   void selectImage() async {
-    Uint8List? im = await pickImage(ImageSource.gallery);
-    setState(() {
-      _image = im; // Sets the selected image
-    });
+    final ImageSource? source = await showImageSourceDialog(context);
+    if (source != null) {
+      Uint8List? im = await pickImage(source);
+      setState(() {
+        _image = im;
+      });
+    }
   }
 
   /// Attempts to sign up the user with the provided information.

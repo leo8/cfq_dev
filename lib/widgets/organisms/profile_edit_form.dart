@@ -10,6 +10,7 @@ import '../atoms/dates/custom_date_field.dart';
 import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/logger.dart';
+import '../../utils/utils.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -89,17 +90,18 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   }
 
   Future<void> _selectImage() async {
-    final ImagePicker picker = ImagePicker();
-    try {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        final imageBytes = await image.readAsBytes();
-        setState(() {
-          _selectedImage = imageBytes;
-        });
+    final ImageSource? source = await showImageSourceDialog(context);
+    if (source != null) {
+      try {
+        final Uint8List? imageBytes = await pickImage(source);
+        if (imageBytes != null) {
+          setState(() {
+            _selectedImage = imageBytes;
+          });
+        }
+      } catch (e) {
+        AppLogger.error('Error selecting image: $e');
       }
-    } catch (e) {
-      AppLogger.error('Error selecting image: $e');
     }
   }
 
