@@ -1,4 +1,3 @@
-import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../widgets/organisms/turn_card_content.dart';
 import '../widgets/organisms/cfq_card_content.dart';
