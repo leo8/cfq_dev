@@ -65,7 +65,7 @@ class CreateCfqScreen extends StatelessWidget {
                   child: CfqForm(
                     currentUser: viewModel.currentUser!,
                     image: viewModel.cfqImage,
-                    onSelectImage: viewModel.pickCfqImage,
+                    onSelectImage: () => viewModel.pickCfqImage(context),
                     nameController: viewModel.cfqNameController,
                     descriptionController: viewModel.descriptionController,
                     locationController: viewModel.locationController,

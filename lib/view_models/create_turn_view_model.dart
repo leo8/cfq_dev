@@ -9,6 +9,7 @@ import '../models/turn_event_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
+import '../utils/utils.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/storage_methods.dart';
 import '../models/team.dart';
@@ -177,19 +178,22 @@ class CreateTurnViewModel extends ChangeNotifier
     super.dispose();
   }
 
-  Future<void> pickTurnImage() async {
+  Future<void> pickTurnImage(context) async {
     try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final ImageSource? source = await showImageSourceDialog(context);
+      if (source != null) {
+        final ImagePicker picker = ImagePicker();
+        final XFile? image = await picker.pickImage(source: source);
 
-      if (image != null) {
-        Uint8List imageBytes = await image.readAsBytes();
-        // Optionally compress the image here if needed
-        _turnImage = imageBytes;
-        notifyListeners();
+        if (image != null) {
+          Uint8List imageBytes = await image.readAsBytes();
+          // Optionally compress the image here if needed
+          _turnImage = imageBytes;
+          notifyListeners();
+        }
       }
     } catch (e) {
-      AppLogger.error('Error picking cfq image: $e');
+      AppLogger.error('Error picking turn image: $e');
       _errorMessage = CustomString.failedToPickImage;
       notifyListeners();
     }

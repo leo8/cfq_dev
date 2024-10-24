@@ -66,7 +66,7 @@ class CreateTurnScreen extends StatelessWidget {
                   child: TurnForm(
                     currentUser: viewModel.currentUser!,
                     image: viewModel.turnImage,
-                    onSelectImage: viewModel.pickTurnImage,
+                    onSelectImage: () => viewModel.pickTurnImage(context),
                     nameController: viewModel.turnNameController,
                     descriptionController: viewModel.descriptionController,
                     locationController: viewModel.locationController,
