@@ -30,7 +30,7 @@ class TurnHeader extends StatelessWidget {
           child: Image.network(
             turnImageUrl,
             width: double.infinity,
-            height: isExpanded ? 300 : 175,
+            height: isExpanded ? 275 : 175,
             fit: BoxFit.cover,
           ),
         ),

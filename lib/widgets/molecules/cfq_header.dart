@@ -26,7 +26,7 @@ class CFQHeader extends StatelessWidget {
           child: Image.network(
             cfqImageUrl,
             width: double.infinity,
-            height: isExpanded ? 300 : 175,
+            height: isExpanded ? 275 : 175,
             fit: BoxFit.cover,
           ),
         ),

@@ -3,6 +3,7 @@ import '../../utils/styles/colors.dart';
 import '../molecules/cfq_header.dart';
 import '../molecules/cfq_details.dart';
 import '../molecules/cfq_buttons.dart';
+import '../../utils/styles/neon_background.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/date_time_utils.dart';
 import '../../widgets/atoms/avatars/clickable_avatar.dart';
@@ -71,11 +72,12 @@ class CFQCardContent extends StatelessWidget {
     int followersCount = followingUp.length;
 
     Widget content = Container(
+      height: isExpanded ? MediaQuery.of(context).size.height : null,
       margin: isExpanded
           ? EdgeInsets.zero
           : const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
-        gradient: CustomColor.cfqBackgroundGradient,
+        gradient: isExpanded ? null : CustomColor.cfqBackgroundGradient,
         borderRadius:
             isExpanded ? BorderRadius.zero : BorderRadius.circular(16),
       ),
@@ -93,86 +95,172 @@ class CFQCardContent extends StatelessWidget {
                   }
                 : null,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Row(
+          if (isExpanded)
+            Expanded(
+              child: NeonBackground(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          currentUserId != organizerId
-                              ? ClickableAvatar(
-                                  userId: organizerId,
-                                  imageUrl: profilePictureUrl,
-                                  onTap: () {
-                                    // Navigate to friend's profile
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ProfileScreen(userId: organizerId),
-                                      ),
-                                    );
-                                  },
-                                  isActive: false, // Add isActive
-                                  radius: 28,
-                                )
-                              : ClickableAvatar(
-                                  userId: organizerId,
-                                  imageUrl: profilePictureUrl,
-                                  onTap: () {},
-                                ),
-                          const SizedBox(width: 8),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                Text(
-                                  '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
-                                  style: CustomTextStyle.body1
-                                      .copyWith(fontSize: 18),
+                                currentUserId != organizerId
+                                    ? ClickableAvatar(
+                                        userId: organizerId,
+                                        imageUrl: profilePictureUrl,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfileScreen(
+                                                      userId: organizerId),
+                                            ),
+                                          );
+                                        },
+                                        isActive: false,
+                                        radius: 28,
+                                      )
+                                    : ClickableAvatar(
+                                        userId: organizerId,
+                                        imageUrl: profilePictureUrl,
+                                        onTap: () {},
+                                      ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                        style: CustomTextStyle.body1
+                                            .copyWith(fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
+                          CFQButtons(
+                            onSendPressed: onSendPressed,
+                            onFavoritePressed: onFavoritePressed,
+                            onFollowUpPressed: () {
+                              onFollowUpToggled(!isFollowingUp);
+                            },
+                            isFavorite: isFavorite,
+                            isFollowingUp: isFollowingUp,
+                          ),
                         ],
                       ),
-                    ),
-                    CFQButtons(
-                      onSendPressed: onSendPressed,
-                      onFavoritePressed: onFavoritePressed,
-                      onFollowUpPressed: () {
-                        onFollowUpToggled(!isFollowingUp);
-                      },
-                      isFavorite: isFavorite,
-                      isFollowingUp: isFollowingUp, // Add this line
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.only(left: 18),
-                  child: CFQDetails(
-                    profilePictureUrl: profilePictureUrl,
-                    username: username,
-                    datePublished: datePublished,
-                    cfqName: cfqName,
-                    moods: moods,
-                    when: when,
-                    followersCount: followersCount,
-                    location: location,
-                    description: description,
-                    cfqId: cfqId,
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 18),
+                        child: CFQDetails(
+                          profilePictureUrl: profilePictureUrl,
+                          username: username,
+                          datePublished: datePublished,
+                          cfqName: cfqName,
+                          moods: moods,
+                          when: when,
+                          followersCount: followersCount,
+                          location: location,
+                          description: description,
+                          cfqId: cfqId,
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 25),
-              ],
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            currentUserId != organizerId
+                                ? ClickableAvatar(
+                                    userId: organizerId,
+                                    imageUrl: profilePictureUrl,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProfileScreen(
+                                              userId: organizerId),
+                                        ),
+                                      );
+                                    },
+                                    isActive: false,
+                                    radius: 28,
+                                  )
+                                : ClickableAvatar(
+                                    userId: organizerId,
+                                    imageUrl: profilePictureUrl,
+                                    onTap: () {},
+                                  ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                    style: CustomTextStyle.body1
+                                        .copyWith(fontSize: 18),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      CFQButtons(
+                        onSendPressed: onSendPressed,
+                        onFavoritePressed: onFavoritePressed,
+                        onFollowUpPressed: () {
+                          onFollowUpToggled(!isFollowingUp);
+                        },
+                        isFavorite: isFavorite,
+                        isFollowingUp: isFollowingUp,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 18),
+                    child: CFQDetails(
+                      profilePictureUrl: profilePictureUrl,
+                      username: username,
+                      datePublished: datePublished,
+                      cfqName: cfqName,
+                      moods: moods,
+                      when: when,
+                      followersCount: followersCount,
+                      location: location,
+                      description: description,
+                      cfqId: cfqId,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

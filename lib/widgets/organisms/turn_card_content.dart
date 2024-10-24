@@ -123,28 +123,118 @@ class TurnCardContent extends StatelessWidget {
                 ),
               );
             },
-      child: NeonBackground(
-        child: Container(
-          margin: isExpanded
-              ? EdgeInsets.zero
-              : const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-          decoration: isExpanded
-              ? const BoxDecoration(
-                  color: CustomColor.transparent,
-                  borderRadius: BorderRadius.zero)
-              : BoxDecoration(
-                  gradient: CustomColor.turnBackgroundGradient,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TurnHeader(
-                turnImageUrl: turnImageUrl,
-                eventDateTime: eventDateTime,
-                isExpanded: isExpanded,
-                onClose: onClose,
+      child: Container(
+        height: isExpanded ? MediaQuery.of(context).size.height : null,
+        decoration: isExpanded
+            ? const BoxDecoration(
+                color: CustomColor.transparent, borderRadius: BorderRadius.zero)
+            : BoxDecoration(
+                gradient: CustomColor.turnBackgroundGradient,
+                borderRadius: BorderRadius.circular(16),
               ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TurnHeader(
+              turnImageUrl: turnImageUrl,
+              eventDateTime: eventDateTime,
+              isExpanded: isExpanded,
+              onClose: onClose,
+            ),
+            if (isExpanded)
+              Expanded(
+                child: NeonBackground(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  currentUserId != organizerId
+                                      ? ClickableAvatar(
+                                          userId: organizerId,
+                                          imageUrl: profilePictureUrl,
+                                          onTap: () {
+                                            // Navigate to friend's profile
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ProfileScreen(
+                                                        userId: organizerId),
+                                              ),
+                                            );
+                                          },
+                                          isActive: false, // Add isActive
+                                          radius: 28,
+                                        )
+                                      : ClickableAvatar(
+                                          userId: organizerId,
+                                          imageUrl: profilePictureUrl,
+                                          onTap: () {},
+                                        ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                            style: CustomTextStyle.body1
+                                                .copyWith(fontSize: 18)),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            TurnButtons(
+                              onAttendingPressed: onAttendingStatusChanged,
+                              onSharePressed: onSharePressed,
+                              onSendPressed: onSendPressed,
+                              onFavoritePressed: onFavoritePressed,
+                              isFavorite: isFavorite,
+                              attendingStatusStream: attendingStatusStream,
+                              attendingStatus: attendingStatus,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 18),
+                          child: StreamBuilder<int>(
+                            stream: attendingCountStream,
+                            builder: (context, snapshot) {
+                              final attendingCount = snapshot.data ?? 0;
+                              return TurnDetails(
+                                profilePictureUrl: profilePictureUrl,
+                                username: username,
+                                datePublished: datePublished,
+                                turnName: turnName,
+                                moods: moods,
+                                eventDateTime: eventDateTime,
+                                attendeesCount: attendingCount,
+                                where: where,
+                                address: address,
+                                description: description,
+                                turnId: turnId,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            else
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -231,8 +321,7 @@ class TurnCardContent extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );
