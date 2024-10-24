@@ -200,6 +200,20 @@ class ExpandedCardViewModel extends ChangeNotifier {
     }
   }
 
+  Stream<bool> get isFollowingUpStream {
+    if (!isTurn) {
+      return _firestore
+          .collection('cfqs')
+          .doc(eventId)
+          .snapshots()
+          .map((snapshot) {
+        List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
+        return followingUp.contains(currentUserId);
+      });
+    }
+    return Stream.value(false);
+  }
+
   Future<void> toggleFollowUp() async {
     if (isTurn) return; // Only proceed for CFQ cards
 
@@ -225,9 +239,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
         transaction.update(cfqRef, {'followingUp': followingUp});
       });
 
-      _isFollowingUp = !_isFollowingUp;
-      await _fetchFollowersCount();
-      notifyListeners();
+      // We don't need to update local state or call notifyListeners() here
+      // because the stream will automatically update the UI
     } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
     }
