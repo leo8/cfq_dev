@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/logger.dart';
 
 class CFQHeader extends StatelessWidget {
   final String cfqImageUrl;
+  final String when;
   final bool isExpanded;
   final VoidCallback? onClose;
 
   const CFQHeader({
     Key? key,
     required this.cfqImageUrl,
+    required this.when,
     this.isExpanded = false,
     this.onClose,
   }) : super(key: key);
@@ -53,6 +56,27 @@ class CFQHeader extends StatelessWidget {
                   ),
                 ),
               ),
+        if (isExpanded)
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: RichText(
+              text: TextSpan(
+                style: CustomTextStyle.hugeTitle.copyWith(
+                  fontSize: 28,
+                  letterSpacing: 1.4,
+                ),
+                children: [
+                  const TextSpan(text: 'ÇFQ '),
+                  TextSpan(
+                    text: when.toUpperCase(),
+                    style: const TextStyle(color: CustomColor.customPurple),
+                  ),
+                  const TextSpan(text: ' ?'),
+                ],
+              ),
+            ),
+          ),
         if (isExpanded)
           Positioned(
             top: 65,

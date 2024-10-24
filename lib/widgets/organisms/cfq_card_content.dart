@@ -86,6 +86,7 @@ class CFQCardContent extends StatelessWidget {
         children: [
           CFQHeader(
             cfqImageUrl: cfqImageUrl,
+            when: when,
             isExpanded: isExpanded,
             onClose: isExpanded
                 ? () {
@@ -173,6 +174,7 @@ class CFQCardContent extends StatelessWidget {
                           location: location,
                           description: description,
                           cfqId: cfqId,
+                          isExpanded: isExpanded,
                         ),
                       ),
                       const SizedBox(height: 25),
@@ -255,6 +257,7 @@ class CFQCardContent extends StatelessWidget {
                       location: location,
                       description: description,
                       cfqId: cfqId,
+                      isExpanded: isExpanded,
                     ),
                   ),
                   const SizedBox(height: 25),

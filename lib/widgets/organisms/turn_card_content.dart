@@ -140,6 +140,7 @@ class TurnCardContent extends StatelessWidget {
               eventDateTime: eventDateTime,
               isExpanded: isExpanded,
               onClose: onClose,
+              turnName: turnName,
             ),
             if (isExpanded)
               Expanded(
@@ -213,18 +214,18 @@ class TurnCardContent extends StatelessWidget {
                             builder: (context, snapshot) {
                               final attendingCount = snapshot.data ?? 0;
                               return TurnDetails(
-                                profilePictureUrl: profilePictureUrl,
-                                username: username,
-                                datePublished: datePublished,
-                                turnName: turnName,
-                                moods: moods,
-                                eventDateTime: eventDateTime,
-                                attendeesCount: attendingCount,
-                                where: where,
-                                address: address,
-                                description: description,
-                                turnId: turnId,
-                              );
+                                  profilePictureUrl: profilePictureUrl,
+                                  username: username,
+                                  datePublished: datePublished,
+                                  turnName: turnName,
+                                  moods: moods,
+                                  eventDateTime: eventDateTime,
+                                  attendeesCount: attendingCount,
+                                  where: where,
+                                  address: address,
+                                  description: description,
+                                  turnId: turnId,
+                                  isExpanded: isExpanded);
                             },
                           ),
                         ),
@@ -313,6 +314,7 @@ class TurnCardContent extends StatelessWidget {
                             address: address,
                             description: description,
                             turnId: turnId,
+                            isExpanded: isExpanded,
                           );
                         },
                       ),

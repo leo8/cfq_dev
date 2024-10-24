@@ -17,6 +17,7 @@ class CFQDetails extends StatelessWidget {
   final String location;
   final String description;
   final String cfqId;
+  final bool isExpanded;
 
   const CFQDetails({
     Key? key,
@@ -30,6 +31,7 @@ class CFQDetails extends StatelessWidget {
     required this.location,
     required this.description,
     required this.cfqId,
+    required this.isExpanded,
   }) : super(key: key);
 
   @override
@@ -37,23 +39,28 @@ class CFQDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RichText(
-          text: TextSpan(
-            style: CustomTextStyle.hugeTitle.copyWith(
-              fontSize: 28,
-              letterSpacing: 1.4,
-            ),
-            children: [
-              const TextSpan(text: 'ÇFQ '),
-              TextSpan(
-                text: when.toUpperCase(),
-                style: const TextStyle(color: CustomColor.customPurple),
+        if (!isExpanded)
+          RichText(
+            text: TextSpan(
+              style: CustomTextStyle.hugeTitle.copyWith(
+                fontSize: 28,
+                letterSpacing: 1.4,
               ),
-              const TextSpan(text: ' ?'),
-            ],
+              children: [
+                const TextSpan(text: 'ÇFQ '),
+                TextSpan(
+                  text: when.toUpperCase(),
+                  style: const TextStyle(color: CustomColor.customPurple),
+                ),
+                const TextSpan(text: ' ?'),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
+        isExpanded
+            ? const SizedBox(
+                height: 4,
+              )
+            : const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           children: moods
@@ -65,7 +72,11 @@ class CFQDetails extends StatelessWidget {
                   ))
               .toList(),
         ),
-        const SizedBox(height: 20),
+        isExpanded
+            ? const SizedBox(
+                height: 35,
+              )
+            : const SizedBox(height: 20),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -87,14 +98,22 @@ class CFQDetails extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        isExpanded
+            ? const SizedBox(
+                height: 35,
+              )
+            : const SizedBox(height: 20),
         Text(location, style: CustomTextStyle.body1),
-        const SizedBox(height: 8),
+        isExpanded
+            ? const SizedBox(
+                height: 15,
+              )
+            : const SizedBox(height: 8),
         Text(
           description,
           style: CustomTextStyle.body1,
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
+          maxLines: isExpanded ? 50 : 3,
+          overflow: isExpanded ? null : TextOverflow.ellipsis,
         ),
       ],
     );

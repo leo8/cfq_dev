@@ -8,12 +8,14 @@ import '../../utils/logger.dart';
 
 class TurnHeader extends StatelessWidget {
   final String turnImageUrl;
+  final String? turnName;
   final DateTime eventDateTime;
   final bool isExpanded;
   final VoidCallback? onClose;
 
   const TurnHeader({
     Key? key,
+    this.turnName,
     required this.turnImageUrl,
     required this.eventDateTime,
     required this.isExpanded,
@@ -88,6 +90,18 @@ class TurnHeader extends StatelessWidget {
                   ),
                 ),
               ),
+        if (isExpanded)
+          Positioned(
+            bottom: 10,
+            left: 10,
+            child: Text(
+              turnName ?? '',
+              style: CustomTextStyle.hugeTitle.copyWith(
+                fontSize: 28,
+                letterSpacing: 1.4,
+              ),
+            ),
+          ),
         if (isExpanded)
           Positioned(
             top: 65,
