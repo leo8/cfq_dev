@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
+import '../../utils/styles/text_styles.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class ThreadHeader extends StatelessWidget {
@@ -54,14 +55,12 @@ class ThreadHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
+                        minWidth: 23,
+                        minHeight: 9,
                       ),
                       child: Text(
                         snapshot.data! > 99 ? '99+' : snapshot.data!.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+                        style: CustomTextStyle.body2.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.center,
