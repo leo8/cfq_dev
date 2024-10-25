@@ -109,6 +109,8 @@ class CustomString {
   static const createTurn = "Créer un Turn";
   static const turnName = "Nom du Turn";
   static const caTurn = "Ça turn";
+  static const pleaseEnterTurnName = "Donne un nom à ton Turn";
+  static const pleaseEnterWhere = "Dis-nous où ça se passe";
 
   // CFQs
   static const cfqCapital = "CFQ";

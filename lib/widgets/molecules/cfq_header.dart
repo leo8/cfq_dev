@@ -25,14 +25,17 @@ class CFQHeader extends StatelessWidget {
     return Stack(
       children: [
         ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: Image.network(
-            cfqImageUrl,
-            width: double.infinity,
-            height: isExpanded ? 275 : 175,
-            fit: BoxFit.cover,
-          ),
-        ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: cfqImageUrl != ''
+                ? Image.network(
+                    cfqImageUrl,
+                    width: double.infinity,
+                    height: isExpanded ? 275 : 175,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    color: CustomColor.transparent,
+                  )),
         isExpanded
             ? Positioned.fill(
                 top: -130,
