@@ -89,7 +89,7 @@ class CustomString {
   static const organizedBy = "Organisé par";
   static const organizers = "Organisateurs";
   static const when = "Quand ?";
-  static const date = "La date";
+  static const date = "Une date ?";
   static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
   static const who = "À qui ?";
   static const address = "L'adresse exacte";
@@ -113,7 +113,7 @@ class CustomString {
   // CFQs
   static const cfqCapital = "CFQ";
   static const createCfq = "Créer un CFQ";
-  static const cfqName = "Nom du CFQ";
+  static const cfqName = "ÇFQ _______________ ?";
   static const caFoutQuoi = "Ça fout quoi ?";
 
   // Feeds

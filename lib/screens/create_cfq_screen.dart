@@ -77,7 +77,7 @@ class CreateCfqScreen extends StatelessWidget {
                         : CustomString.whatMood,
                     dateTimeDisplay: viewModel.selectedDateTime != null
                         ? viewModel.selectedDateTime!.toString()
-                        : CustomString.when,
+                        : CustomString.date,
                     isLoading: viewModel.isLoading,
                     onSubmit: viewModel.createCfq,
                     inviteesController: viewModel.inviteesController,

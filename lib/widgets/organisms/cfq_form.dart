@@ -70,7 +70,7 @@ class CfqForm extends StatelessWidget {
           BorderedIconTextField(
             icon: CustomIcon.eventTitle,
             controller: whenController,
-            hintText: 'ÇFQ ${whenController.text.toUpperCase()} ?',
+            hintText: CustomString.cfqName,
             onChanged: (value) {
               // Update the hintText when the 'when' value changes
               (context as Element).markNeedsBuild();
@@ -88,7 +88,7 @@ class CfqForm extends StatelessWidget {
           BorderedIconTextField(
             icon: CustomIcon.calendar,
             controller: TextEditingController(text: dateTimeDisplay),
-            hintText: CustomString.when,
+            hintText: CustomString.date,
             readOnly: true,
             onTap: onSelectDateTime,
           ),
