@@ -77,10 +77,8 @@ class EventsList extends StatelessWidget {
           return const Center(child: Text(CustomString.noEventsAvailable));
         }
 
-        return ListView.builder(
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            final event = events[index];
+        return Column(
+          children: events.map((event) {
             final documentId = event.id;
             final eventData = event.data() as Map<String, dynamic>;
             final isTurn = eventData['turnId'] != null;
@@ -256,7 +254,7 @@ class EventsList extends StatelessWidget {
                 },
               );
             }
-          },
+          }).toList(),
         );
       },
     );

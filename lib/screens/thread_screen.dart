@@ -133,13 +133,18 @@ class ThreadScreen extends StatelessWidget {
   }
 
   Widget _buildRegularContent(BuildContext context, ThreadViewModel viewModel) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 135),
-        _buildActiveFriendsList(context, viewModel),
-        const SizedBox(height: 20),
-        Expanded(
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: SizedBox(height: 135), // Adjust this value as needed
+        ),
+        SliverToBoxAdapter(
+          child: _buildActiveFriendsList(context, viewModel),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: 20),
+        ),
+        SliverToBoxAdapter(
           child: EventsList(
             eventsStream: viewModel.fetchCombinedEvents(),
             currentUser: viewModel.currentUser,

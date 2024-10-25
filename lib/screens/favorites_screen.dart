@@ -33,20 +33,26 @@ class FavoritesScreen extends StatelessWidget {
           ),
           body: Consumer<FavoritesViewModel>(
             builder: (context, viewModel, child) {
-              return Column(
-                children: [
-                  const SizedBox(height: 30),
-                  Center(
-                    child: Text(
-                      CustomString.favoritesCapital,
-                      style: CustomTextStyle.body1.copyWith(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30),
+                        Center(
+                          child: Text(
+                            CustomString.favoritesCapital,
+                            style: CustomTextStyle.body1.copyWith(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 25),
-                  Expanded(
+                  SliverToBoxAdapter(
                     child: EventsList(
                       eventsStream: Stream.value(viewModel.favoriteEvents),
                       currentUser: viewModel.currentUser,
