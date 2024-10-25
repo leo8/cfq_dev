@@ -462,6 +462,7 @@ class ThreadViewModel extends ChangeNotifier {
       final data = snapshot.data() as Map<String, dynamic>;
       return (data['attending'] as List?)?.length ?? 0;
     });
+  }
 
   void clearSearchString() {
     searchController.clear();
