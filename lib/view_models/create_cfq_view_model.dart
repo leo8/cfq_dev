@@ -23,7 +23,9 @@ import '../widgets/atoms/buttons/custom_button.dart';
 class CreateCfqViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
   // Controllers for form fields
-  final TextEditingController cfqNameController = TextEditingController();
+  DateTime? _selectedDateTime;
+  DateTime? get selectedDateTime => _selectedDateTime;
+
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController whenController = TextEditingController();
@@ -323,7 +325,6 @@ class CreateCfqViewModel extends ChangeNotifier
   void dispose() {
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
-    cfqNameController.dispose();
     descriptionController.dispose();
     locationController.dispose();
     whenController.dispose();
@@ -443,7 +444,7 @@ class CreateCfqViewModel extends ChangeNotifier
       return;
     }
 
-    if (cfqNameController.text.isEmpty || descriptionController.text.isEmpty) {
+    if (whenController.text.isEmpty || descriptionController.text.isEmpty) {
       _errorMessage = CustomString.pleaseFillAllRequiredFields;
       notifyListeners();
       return;
@@ -483,22 +484,23 @@ class CreateCfqViewModel extends ChangeNotifier
 
       // Create cfq object
       Cfq cfq = Cfq(
-          name: cfqNameController.text.trim(),
-          description: descriptionController.text.trim(),
-          moods: _selectedMoods!,
-          uid: currentUserId,
-          username: _currentUser!.username,
-          followingUp: [],
-          eventId: cfqId,
-          datePublished: DateTime.now(),
-          when: whenController.text.trim(),
-          imageUrl: cfqImageUrl,
-          profilePictureUrl: _currentUser!.profilePictureUrl,
-          where: locationController.text.trim(),
-          organizers: [currentUserId],
-          invitees: _selectedInvitees.map((user) => user.uid).toList(),
-          teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-          channelId: channelId);
+        when: whenController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods!,
+        uid: currentUserId,
+        username: _currentUser!.username,
+        followingUp: [],
+        eventId: cfqId,
+        datePublished: DateTime.now(),
+        eventDateTime: _selectedDateTime,
+        imageUrl: cfqImageUrl,
+        profilePictureUrl: _currentUser!.profilePictureUrl,
+        where: locationController.text.trim(),
+        organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: channelId,
+      );
 
       // Save cfq to Firestore
       await FirebaseFirestore.instance
@@ -524,6 +526,32 @@ class CreateCfqViewModel extends ChangeNotifier
       _errorMessage = CustomString.errorCreatingCfq;
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> selectDateTime(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTime ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null) {
+      final TimeOfDay? timePicked = await showTimePicker(
+        context: context,
+        initialTime:
+            TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+      );
+      if (timePicked != null) {
+        _selectedDateTime = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          timePicked.hour,
+          timePicked.minute,
+        );
+        notifyListeners();
+      }
     }
   }
 

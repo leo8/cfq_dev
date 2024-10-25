@@ -13,19 +13,20 @@ class BorderedIconTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final BorderRadius? borderRadius;
   final TextStyle? hintTextStyle;
+  final Function(String)? onChanged;
 
-  const BorderedIconTextField({
-    super.key,
-    required this.icon,
-    required this.controller,
-    required this.hintText,
-    this.readOnly = false,
-    this.maxLines = 1,
-    this.height = 46.0,
-    this.onTap,
-    this.borderRadius,
-    this.hintTextStyle,
-  });
+  const BorderedIconTextField(
+      {super.key,
+      required this.icon,
+      required this.controller,
+      required this.hintText,
+      this.readOnly = false,
+      this.maxLines = 1,
+      this.height = 46.0,
+      this.onTap,
+      this.borderRadius,
+      this.hintTextStyle,
+      this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,7 @@ class BorderedIconTextField extends StatelessWidget {
               maxLines: maxLines,
               readOnly: readOnly,
               onTap: onTap,
+              onChanged: onChanged,
             ),
           ),
         ],

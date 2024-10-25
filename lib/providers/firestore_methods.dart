@@ -100,7 +100,6 @@ class FirestoreMethods {
 
       // Create a CFQ object with the provided data
       Cfq cfq = Cfq(
-          name: cfqName,
           description: description,
           moods: moods,
           uid: uid,
