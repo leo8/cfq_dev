@@ -36,11 +36,18 @@ class TurnHeader extends StatelessWidget {
                   height: isExpanded ? 275 : 175,
                   fit: BoxFit.cover,
                 )
-              : Container(
-                  color: CustomColor.transparent,
-                  width: double.infinity,
-                  height: isExpanded ? 150 : 75,
-                ),
+              : isExpanded
+                  ? Container(
+                      decoration: const BoxDecoration(
+                          gradient: CustomColor.turnBackgroundGradient),
+                      width: double.infinity,
+                      height: 275,
+                    )
+                  : Container(
+                      color: CustomColor.transparent,
+                      width: double.infinity,
+                      height: 75,
+                    ),
         ),
         Positioned(
           top: isExpanded ? 55 : 10,

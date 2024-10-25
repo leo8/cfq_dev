@@ -33,11 +33,18 @@ class CFQHeader extends StatelessWidget {
                   height: isExpanded ? 275 : 175,
                   fit: BoxFit.cover,
                 )
-              : Container(
-                  color: CustomColor.transparent,
-                  width: double.infinity,
-                  height: isExpanded ? 150 : 75,
-                ),
+              : isExpanded
+                  ? Container(
+                      decoration: const BoxDecoration(
+                          gradient: CustomColor.cfqBackgroundGradient),
+                      width: double.infinity,
+                      height: 275,
+                    )
+                  : Container(
+                      color: CustomColor.transparent,
+                      width: double.infinity,
+                      height: 75,
+                    ),
         ),
         isExpanded
             ? Positioned.fill(
