@@ -463,4 +463,9 @@ class ThreadViewModel extends ChangeNotifier {
       return (data['attending'] as List?)?.length ?? 0;
     });
   }
+
+  void clearSearchResults() {
+    _users = [];
+    notifyListeners();
+  }
 }
