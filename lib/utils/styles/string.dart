@@ -109,12 +109,16 @@ class CustomString {
   static const createTurn = "Créer un Turn";
   static const turnName = "Nom du Turn";
   static const caTurn = "Ça turn";
+  static const pleaseEnterTurnName = "Donne un nom à ton Turn";
+  static const pleaseEnterWhere = "Dis-nous où ça se passe";
 
   // CFQs
   static const cfqCapital = "CFQ";
   static const createCfq = "Créer un CFQ";
   static const cfqName = "ÇFQ _______________ ?";
   static const caFoutQuoi = "Ça fout quoi ?";
+  static const pleaseSelectAtLeastOneInvitee = "Sélectionne au moins un invité";
+  static const pleaseEnterWhen = "Dis-nous quand";
 
   // Feeds
   static const myPosts = "Mes posts";

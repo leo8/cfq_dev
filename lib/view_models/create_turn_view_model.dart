@@ -465,14 +465,8 @@ class CreateTurnViewModel extends ChangeNotifier
   // Create TURN
   Future<void> createTurn() async {
     // Validate required fields
-    if (_turnImage == null) {
-      _errorMessage = CustomString.pleaseSelectAnImage;
-      notifyListeners();
-      return;
-    }
-
-    if (turnNameController.text.isEmpty || descriptionController.text.isEmpty) {
-      _errorMessage = CustomString.pleaseFillAllRequiredFields;
+    if (turnNameController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterTurnName;
       notifyListeners();
       return;
     }
@@ -483,8 +477,14 @@ class CreateTurnViewModel extends ChangeNotifier
       return;
     }
 
-    if (_selectedMoods == null || _selectedMoods!.isEmpty) {
-      _errorMessage = CustomString.pleaseSelectAtLeastOneMood;
+    if (locationController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhere;
+      notifyListeners();
+      return;
+    }
+
+    if (_selectedInvitees.isEmpty && _selectedTeamInvitees.isEmpty) {
+      _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
       notifyListeners();
       return;
     }
@@ -493,9 +493,11 @@ class CreateTurnViewModel extends ChangeNotifier
     notifyListeners();
 
     try {
-      // Upload image to Firebase Storage
-      String turnImageUrl = await StorageMethods()
-          .uploadImageToStorage('turnImages', _turnImage!, false);
+      String? turnImageUrl;
+      if (_turnImage != null) {
+        turnImageUrl = await StorageMethods()
+            .uploadImageToStorage('turnImages', _turnImage!, false);
+      }
 
       // Generate unique TURN ID
       String turnId = const Uuid().v1();
@@ -512,26 +514,23 @@ class CreateTurnViewModel extends ChangeNotifier
 
       // Create TURN object
       Turn turn = Turn(
-          name: turnNameController.text.trim(),
-          description: descriptionController.text.trim(),
-          moods: _selectedMoods!,
-          uid: currentUserId,
-          username: _currentUser!.username,
-          eventId: turnId,
-          datePublished: DateTime.now(),
-          eventDateTime: _selectedDateTime!,
-          imageUrl: turnImageUrl,
-          profilePictureUrl: _currentUser!.profilePictureUrl,
-          where: locationController.text.trim(),
-          address: addressController.text.trim(),
-          organizers: [currentUserId], // Assuming current user is the organizer
-          invitees: inviteeUids,
-          teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-          attending: [],
-          notSureAttending: [],
-          notAttending: [],
-          notAnswered: inviteeUids,
-          channelId: channelId);
+        name: turnNameController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: currentUserId,
+        username: _currentUser!.username,
+        eventId: turnId,
+        datePublished: DateTime.now(),
+        eventDateTime: _selectedDateTime!,
+        imageUrl: turnImageUrl,
+        profilePictureUrl: _currentUser!.profilePictureUrl,
+        where: locationController.text.trim(),
+        address: addressController.text.trim(),
+        organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: channelId,
+      );
 
       // Save TURN to Firestore
       await FirebaseFirestore.instance

@@ -438,20 +438,14 @@ class CreateCfqViewModel extends ChangeNotifier
   // Create cfq
   Future<void> createCfq() async {
     // Validate required fields
-    if (_cfqImage == null) {
-      _errorMessage = CustomString.pleaseSelectAnImage;
+    if (whenController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhen;
       notifyListeners();
       return;
     }
 
-    if (whenController.text.isEmpty || descriptionController.text.isEmpty) {
-      _errorMessage = CustomString.pleaseFillAllRequiredFields;
-      notifyListeners();
-      return;
-    }
-
-    if (_selectedMoods == null || _selectedMoods!.isEmpty) {
-      _errorMessage = CustomString.pleaseSelectAtLeastOneMood;
+    if (_selectedInvitees.isEmpty && _selectedTeamInvitees.isEmpty) {
+      _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
       notifyListeners();
       return;
     }
@@ -460,9 +454,11 @@ class CreateCfqViewModel extends ChangeNotifier
     notifyListeners();
 
     try {
-      // Upload image to Firebase Storage
-      String cfqImageUrl = await StorageMethods()
-          .uploadImageToStorage('cfqImages', _cfqImage!, false);
+      String? cfqImageUrl;
+      if (_cfqImage != null) {
+        cfqImageUrl = await StorageMethods()
+            .uploadImageToStorage('cfqImages', _cfqImage!, false);
+      }
 
       // Generate unique cfq ID
       String cfqId = const Uuid().v1();
@@ -486,7 +482,7 @@ class CreateCfqViewModel extends ChangeNotifier
       Cfq cfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
-        moods: _selectedMoods!,
+        moods: _selectedMoods,
         uid: currentUserId,
         username: _currentUser!.username,
         followingUp: [],
