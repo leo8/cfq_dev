@@ -66,15 +66,18 @@ class CreateCfqScreen extends StatelessWidget {
                     currentUser: viewModel.currentUser!,
                     image: viewModel.cfqImage,
                     onSelectImage: () => viewModel.pickCfqImage(context),
-                    nameController: viewModel.cfqNameController,
                     descriptionController: viewModel.descriptionController,
                     locationController: viewModel.locationController,
                     whenController: viewModel.whenController,
                     onSelectMoods: () => viewModel.selectMoods(context),
+                    onSelectDateTime: () => viewModel.selectDateTime(context),
                     moodsDisplay: viewModel.selectedMoods != null &&
                             viewModel.selectedMoods!.isNotEmpty
                         ? viewModel.selectedMoods!.join(', ')
                         : CustomString.whatMood,
+                    dateTimeDisplay: viewModel.selectedDateTime != null
+                        ? viewModel.selectedDateTime!.toString()
+                        : CustomString.when,
                     isLoading: viewModel.isLoading,
                     onSubmit: viewModel.createCfq,
                     inviteesController: viewModel.inviteesController,

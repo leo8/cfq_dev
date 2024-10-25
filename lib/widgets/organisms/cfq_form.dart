@@ -7,19 +7,19 @@ import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
 import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text_field.dart';
-import '../../models/team.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 
 class CfqForm extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onSelectImage;
-  final TextEditingController nameController;
   final TextEditingController descriptionController;
   final TextEditingController locationController;
   final TextEditingController whenController;
   final VoidCallback onSelectMoods;
+  final VoidCallback onSelectDateTime;
   final String moodsDisplay;
+  final String dateTimeDisplay;
   final bool isLoading;
   final VoidCallback onSubmit;
   final model.User currentUser;
@@ -30,25 +30,19 @@ class CfqForm extends StatelessWidget {
     super.key,
     required this.image,
     required this.onSelectImage,
-    required this.nameController,
     required this.descriptionController,
     required this.locationController,
     required this.whenController,
     required this.onSelectMoods,
+    required this.onSelectDateTime,
     required this.moodsDisplay,
+    required this.dateTimeDisplay,
     required this.isLoading,
     required this.onSubmit,
     required this.currentUser,
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
   });
-
-  String _formatInviteesText(List<model.User> invitees, List<Team> teams) {
-    List<String> items = [];
-    items.addAll(invitees.map((user) => user.username));
-    items.addAll(teams.map((team) => team.name));
-    return items.join(', ');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +56,7 @@ class CfqForm extends StatelessWidget {
               style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15),
           Center(
             child:
                 EventImageSelector(image: image, onSelectImage: onSelectImage),
@@ -77,8 +69,12 @@ class CfqForm extends StatelessWidget {
           const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.eventTitle,
-            controller: nameController,
-            hintText: CustomString.eventTitle,
+            controller: whenController,
+            hintText: 'ÇFQ ${whenController.text.toUpperCase()} ?',
+            onChanged: (value) {
+              // Update the hintText when the 'when' value changes
+              (context as Element).markNeedsBuild();
+            },
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(
@@ -91,8 +87,10 @@ class CfqForm extends StatelessWidget {
           const SizedBox(height: 15),
           BorderedIconTextField(
             icon: CustomIcon.calendar,
-            controller: whenController,
+            controller: TextEditingController(text: dateTimeDisplay),
             hintText: CustomString.when,
+            readOnly: true,
+            onTap: onSelectDateTime,
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(

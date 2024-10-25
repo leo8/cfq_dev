@@ -4,25 +4,27 @@ import 'event_data_model.dart';
 class Cfq extends EventDataModel {
   final String when; // When parameter
   final List<String> followingUp; // New field
+  final DateTime? eventDateTime; // New optional field
 
   // Constructor to initialize CFQ properties
-  Cfq(
-      {required this.when,
-      required this.followingUp,
-      required super.name,
-      required super.description,
-      required super.moods,
-      required super.uid,
-      required super.username,
-      required super.eventId,
-      required super.datePublished,
-      required super.imageUrl,
-      required super.profilePictureUrl,
-      required super.where,
-      required super.organizers,
-      required super.invitees,
-      required super.teamInvitees,
-      required super.channelId});
+  Cfq({
+    required this.when,
+    required this.followingUp,
+    this.eventDateTime, // New optional parameter
+    required super.description,
+    required super.moods,
+    required super.uid,
+    required super.username,
+    required super.eventId,
+    required super.datePublished,
+    required super.imageUrl,
+    required super.profilePictureUrl,
+    required super.where,
+    required super.organizers,
+    required super.invitees,
+    required super.teamInvitees,
+    required super.channelId,
+  }) : super(name: 'ÇFQ ${when.toUpperCase()} ?');
 
   // Convert CFQ object into a JSON map
   Map<String, dynamic> toJson() {
@@ -43,22 +45,25 @@ class Cfq extends EventDataModel {
       'teamInvitees': teamInvitees,
       'channelId': channelId,
       'followingUp': followingUp,
+      'eventDateTime': eventDateTime?.toIso8601String(), // New field
     };
   }
 
   // Create a CFQ object from a JSON map
   factory Cfq.fromJson(Map<String, dynamic> json) {
     return Cfq(
-      name: json['name'] ?? '',
+      when: json['when'] ?? '',
+      followingUp: List<String>.from(json['followingUp'] ?? []),
+      eventDateTime: json['eventDateTime'] != null
+          ? DateTime.parse(json['eventDateTime'])
+          : null,
       description: json['description'] ?? '',
       moods: List<String>.from(json['moods'] ?? []),
       uid: json['uid'] ?? '',
       username: json['username'] ?? '',
-      followingUp: List<String>.from(json['followingUp'] ?? []),
-      eventId: json['eventId'] ?? '',
+      eventId: json['cfqId'] ?? '',
       datePublished: DateTime.parse(json['datePublished']),
-      when: json['when'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
+      imageUrl: json['cfqImageUrl'] ?? '',
       profilePictureUrl: json['profilePictureUrl'] ?? '',
       where: json['where'] ?? '',
       organizers: List<String>.from(json['organizers'] ?? []),
