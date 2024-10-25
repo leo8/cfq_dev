@@ -19,6 +19,7 @@ class TurnDetails extends StatelessWidget {
   final String address;
   final String description;
   final String turnId;
+  final bool isExpanded;
 
   const TurnDetails({
     Key? key,
@@ -33,6 +34,7 @@ class TurnDetails extends StatelessWidget {
     required this.address,
     required this.description,
     required this.turnId,
+    required this.isExpanded,
   }) : super(key: key);
 
   @override
@@ -40,12 +42,17 @@ class TurnDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(turnName,
-            style: CustomTextStyle.hugeTitle.copyWith(
-              fontSize: 28,
-              letterSpacing: 1.4,
-            )),
-        const SizedBox(height: 8),
+        if (!isExpanded)
+          Text(turnName,
+              style: CustomTextStyle.hugeTitle.copyWith(
+                fontSize: 28,
+                letterSpacing: 1.4,
+              )),
+        isExpanded
+            ? const SizedBox(
+                height: 4,
+              )
+            : const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           children: moods
@@ -57,11 +64,19 @@ class TurnDetails extends StatelessWidget {
                   ))
               .toList(),
         ),
-        const SizedBox(height: 20),
+        isExpanded
+            ? const SizedBox(
+                height: 20,
+              )
+            : const SizedBox(height: 15),
         Text(DateTimeUtils.formatEventDateTime(eventDateTime),
             style: CustomTextStyle.title3.copyWith(
                 color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        isExpanded
+            ? const SizedBox(
+                height: 15,
+              )
+            : const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -85,23 +100,50 @@ class TurnDetails extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 20),
-        Row(
-          children: [
-            Text(where, style: CustomTextStyle.body1),
-            Text(' | ', style: CustomTextStyle.body1),
-            Expanded(
-                child: Text(address,
+        isExpanded
+            ? const SizedBox(
+                height: 35,
+              )
+            : const SizedBox(height: 20),
+        isExpanded
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    where,
                     style: CustomTextStyle.body1,
-                    overflow: TextOverflow.ellipsis)),
-          ],
-        ),
-        const SizedBox(height: 8),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    address,
+                    style: CustomTextStyle.body1,
+                    maxLines: 30,
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Text(where, style: CustomTextStyle.body1),
+                  Text(' | ', style: CustomTextStyle.body1),
+                  Expanded(
+                      child: Text(address,
+                          style: CustomTextStyle.body1,
+                          overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+        isExpanded
+            ? const SizedBox(
+                height: 35,
+              )
+            : const SizedBox(height: 8),
         Text(
           description,
           style: CustomTextStyle.body1,
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
+          maxLines: isExpanded ? 50 : 3,
+          overflow: isExpanded ? null : TextOverflow.ellipsis,
         ),
       ],
     );

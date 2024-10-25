@@ -120,12 +120,21 @@ class _ConversationScreenState extends State<ConversationScreen> {
               children: [
                 Row(
                   children: [
-                    Text(widget.eventName, style: CustomTextStyle.title1),
+                    Expanded(
+                      child: Text(
+                        widget.eventName,
+                        style: CustomTextStyle.title1,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     IconButton(
                       icon: const Icon(Icons.more_horiz,
                           color: CustomColor.customPurple),
                       onPressed: () => _showOptions(context),
+                      constraints:
+                          const BoxConstraints.tightFor(width: 40, height: 40),
                     ),
                   ],
                 ),
