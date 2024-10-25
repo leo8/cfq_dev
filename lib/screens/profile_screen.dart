@@ -60,6 +60,8 @@ class ProfileScreen extends StatelessWidget {
                           user: model.User.fromSnap(snapshot.data!),
                           isFriend: viewModel.isFriend,
                           isCurrentUser: viewModel.isCurrentUser,
+                          commonFriendsCount: viewModel.commonFriendsCount,
+                          commonTeamsCount: viewModel.commonTeamsCount,
                           onActiveChanged: viewModel.isCurrentUser
                               ? (bool newValue) {
                                   viewModel.updateIsActiveStatus(newValue);

@@ -31,6 +31,12 @@ class ProfileViewModel extends ChangeNotifier {
   Stream<DocumentSnapshot>? _userStream;
   Stream<DocumentSnapshot>? get userStream => _userStream;
 
+  int _commonFriendsCount = 0;
+  int get commonFriendsCount => _commonFriendsCount;
+
+  int _commonTeamsCount = 0;
+  int get commonTeamsCount => _commonTeamsCount;
+
   ProfileViewModel({this.userId}) {
     fetchUserData();
   }
@@ -57,9 +63,18 @@ class ProfileViewModel extends ChangeNotifier {
       _user = userData;
       _isCurrentUser = (profileUserId == currentUserId);
 
-      // Determine if the profile user is a friend
       if (!_isCurrentUser) {
         _isFriend = _currentUser!.friends.contains(profileUserId);
+
+        // Calculate common friends
+        _commonFriendsCount = _currentUser!.friends
+            .where((friendId) => _user!.friends.contains(friendId))
+            .length;
+
+        // Calculate common teams
+        _commonTeamsCount = _currentUser!.teams
+            .where((teamId) => _user!.teams.contains(teamId))
+            .length;
       }
 
       _isLoading = false;
