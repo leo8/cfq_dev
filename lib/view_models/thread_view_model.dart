@@ -40,6 +40,11 @@ class ThreadViewModel extends ChangeNotifier {
 
   List<Conversation> get filteredConversations => _filteredConversations;
 
+  final BehaviorSubject<int> _unreadConversationsCountSubject =
+      BehaviorSubject<int>.seeded(0);
+  Stream<int> get unreadConversationsCountStream =>
+      _unreadConversationsCountSubject.stream;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
@@ -53,6 +58,7 @@ class ThreadViewModel extends ChangeNotifier {
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     _userSubscription?.cancel();
+    _unreadConversationsCountSubject.close();
     super.dispose();
   }
 
@@ -284,14 +290,29 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   void _listenToUserChanges() {
-    _userSubscription = FirebaseFirestore.instance
+    _userSubscription = _firestore
         .collection('users')
         .doc(currentUserUid)
         .snapshots()
         .listen((snapshot) {
       if (snapshot.exists) {
-        _currentUser = model.User.fromSnap(snapshot);
-        _setupActiveFriendsStream(); // Update active friends stream when user changes
+        final userData = snapshot.data() as Map<String, dynamic>;
+        final updatedConversations = (userData['conversations']
+                    as List<dynamic>?)
+                ?.map((e) =>
+                    model.ConversationInfo.fromMap(e as Map<String, dynamic>))
+                .toList() ??
+            [];
+
+        currentUser!.conversations.clear();
+        currentUser!.conversations.addAll(updatedConversations);
+
+        // Calculate and update unread conversations count
+        int unreadCount = updatedConversations
+            .where((conv) => conv.unreadMessagesCount > 0)
+            .length;
+        _unreadConversationsCountSubject.add(unreadCount);
+
         notifyListeners();
       }
     });
