@@ -18,6 +18,8 @@ class ProfileContent extends StatefulWidget {
   final VoidCallback? onRemoveFriendTap;
   final VoidCallback? onFriendsTap;
   final VoidCallback? onParametersTap;
+  final int commonFriendsCount;
+  final int commonTeamsCount;
 
   const ProfileContent({
     super.key,
@@ -30,6 +32,8 @@ class ProfileContent extends StatefulWidget {
     this.onRemoveFriendTap,
     this.onFriendsTap,
     this.onParametersTap,
+    required this.commonFriendsCount,
+    required this.commonTeamsCount,
   });
 
   @override
@@ -56,6 +60,55 @@ class _ProfileContentState extends State<ProfileContent>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  Widget _buildCommonInfoRow() {
+    List<TextSpan> textSpans = [];
+
+    if (widget.commonFriendsCount > 0) {
+      textSpans.add(TextSpan(
+        text: '${widget.commonFriendsCount} ',
+        style: CustomTextStyle.body2.copyWith(fontWeight: FontWeight.bold),
+      ));
+      textSpans.add(TextSpan(
+        text: widget.commonFriendsCount == 1
+            ? CustomString.commonFriend
+            : CustomString.commonFriends,
+        style: CustomTextStyle.body2,
+      ));
+    }
+
+    if (widget.commonFriendsCount > 0 && widget.commonTeamsCount > 0) {
+      textSpans.add(TextSpan(
+        text: ' ${CustomString.and} ',
+        style: CustomTextStyle.body2,
+      ));
+    }
+
+    if (widget.commonTeamsCount > 0) {
+      textSpans.add(TextSpan(
+        text: '${widget.commonTeamsCount} ',
+        style: CustomTextStyle.body2.copyWith(fontWeight: FontWeight.bold),
+      ));
+      textSpans.add(TextSpan(
+        text: widget.commonTeamsCount == 1
+            ? CustomString.commonTeam
+            : CustomString.commonTeams,
+        style: CustomTextStyle.body2,
+      ));
+    }
+
+    if (widget.commonFriendsCount > 0 || widget.commonTeamsCount > 0) {
+      textSpans.add(TextSpan(
+        text: ' ${CustomString.inCommon}',
+        style: CustomTextStyle.body2,
+      ));
+    }
+
+    return RichText(
+      text: TextSpan(children: textSpans),
+      textAlign: TextAlign.center,
+    );
   }
 
   @override
@@ -183,23 +236,33 @@ class _ProfileContentState extends State<ProfileContent>
                         ),
                       )
                     else
-                      Center(
-                        child: CustomButton(
-                            label: widget.isFriend
-                                ? CustomString.removeFriend
-                                : CustomString.addFriend,
-                            onTap: widget.isFriend
-                                ? widget.onRemoveFriendTap!
-                                : widget.onAddFriendTap!,
-                            color: widget.isFriend
-                                ? CustomColor.customBlack
-                                : CustomColor.customPurple,
-                            textStyle: CustomTextStyle.subButton
-                                .copyWith(color: CustomColor.customWhite),
-                            borderRadius: 5,
-                            borderWidth: 0.5,
-                            width: 220,
-                            height: 50),
+                      Column(
+                        children: [
+                          Center(
+                            child: CustomButton(
+                                label: widget.isFriend
+                                    ? CustomString.removeFriend
+                                    : CustomString.addFriend,
+                                onTap: widget.isFriend
+                                    ? widget.onRemoveFriendTap!
+                                    : widget.onAddFriendTap!,
+                                color: widget.isFriend
+                                    ? CustomColor.customBlack
+                                    : CustomColor.customPurple,
+                                textStyle: CustomTextStyle.subButton
+                                    .copyWith(color: CustomColor.customWhite),
+                                borderRadius: 5,
+                                borderWidth: 0.5,
+                                width: 220,
+                                height: 50),
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Center(
+                            child: _buildCommonInfoRow(),
+                          ),
+                        ],
                       ),
                   ],
                 ),

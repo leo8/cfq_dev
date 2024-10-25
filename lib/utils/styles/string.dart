@@ -214,4 +214,12 @@ class CustomString {
   static const String notAttending = 'Non';
   static const String invitees = 'Invités';
   static const String followingUp = 'Suivi par';
+
+  // New strings for common friends and teams
+  static const String commonFriend = 'ami';
+  static const String commonFriends = 'amis';
+  static const String commonTeam = 'team';
+  static const String commonTeams = 'teams';
+  static const String inCommon = 'en commun';
+  static const String and = '&';
 }
