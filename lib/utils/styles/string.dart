@@ -197,6 +197,8 @@ class CustomString {
       "Échec de la suppression de l'ami. Veuillez réessayer.";
   static const pleaseFillInAllRequiredFields =
       "Veuillez remplir tous les champs";
+  static const pleaseAddAtLeastOneMember =
+      "Veuillez ajouter au moins un membre à votre équipe";
 
   // Utils
   static const thisIsWeb = "C'est web";

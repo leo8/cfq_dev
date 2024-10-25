@@ -181,8 +181,9 @@ class CreateTeamViewModel extends ChangeNotifier {
         return;
       }
 
-      if (_selectedFriends.isEmpty) {
-        _errorMessage = CustomString.pleaseSelectAtLeastOneMember;
+      // Check if at least one member (besides the current user) is selected
+      if (_selectedFriends.length <= 1) {
+        _errorMessage = CustomString.pleaseAddAtLeastOneMember;
         _isLoading = false;
         notifyListeners();
         return;
