@@ -9,22 +9,37 @@ class Cfq extends EventDataModel {
   // Constructor to initialize CFQ properties
   Cfq({
     required this.when,
-    required this.followingUp,
-    this.eventDateTime, // New optional parameter
-    required super.description,
-    required super.moods,
-    required super.uid,
-    required super.username,
-    required super.eventId,
-    required super.datePublished,
-    required super.imageUrl,
-    required super.profilePictureUrl,
-    required super.where,
-    required super.organizers,
-    required super.invitees,
-    required super.teamInvitees,
-    required super.channelId,
-  }) : super(name: 'ÇFQ ${when.toUpperCase()} ?');
+    required List<String> invitees,
+    this.followingUp = const [],
+    this.eventDateTime,
+    String? description,
+    List<String>? moods,
+    String? uid,
+    String? username,
+    String? eventId,
+    DateTime? datePublished,
+    String? imageUrl,
+    String? profilePictureUrl,
+    String? where,
+    List<String>? organizers,
+    List<String>? teamInvitees,
+    String? channelId,
+  }) : super(
+          name: 'ÇFQ ${when.toUpperCase()} ?',
+          description: description ?? '',
+          moods: moods ?? [],
+          uid: uid ?? '',
+          username: username ?? '',
+          eventId: eventId ?? '',
+          datePublished: datePublished ?? DateTime.now(),
+          imageUrl: imageUrl ?? '',
+          profilePictureUrl: profilePictureUrl ?? '',
+          where: where ?? '',
+          organizers: organizers ?? [],
+          invitees: invitees,
+          teamInvitees: teamInvitees ?? [],
+          channelId: channelId ?? '',
+        );
 
   // Convert CFQ object into a JSON map
   Map<String, dynamic> toJson() {

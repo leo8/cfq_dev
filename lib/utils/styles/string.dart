@@ -115,6 +115,8 @@ class CustomString {
   static const createCfq = "Créer un CFQ";
   static const cfqName = "ÇFQ _______________ ?";
   static const caFoutQuoi = "Ça fout quoi ?";
+  static const pleaseSelectAtLeastOneInvitee = "Sélectionne au moins un invité";
+  static const pleaseEnterWhen = "Dis-nous quand";
 
   // Feeds
   static const myPosts = "Mes posts";
