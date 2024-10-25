@@ -39,7 +39,7 @@ class TurnHeader extends StatelessWidget {
               : Container(
                   color: CustomColor.transparent,
                   width: double.infinity,
-                  height: isExpanded ? 275 : 175,
+                  height: isExpanded ? 150 : 75,
                 ),
         ),
         Positioned(
