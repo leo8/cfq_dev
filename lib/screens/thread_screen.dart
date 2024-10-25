@@ -47,6 +47,8 @@ class ThreadScreen extends StatelessWidget {
                   _navigateToConversationsScreen(
                       context, viewModel.currentUser!);
                 },
+                unreadConversationsCountStream:
+                    viewModel.unreadConversationsCountStream,
               );
             },
           ),
