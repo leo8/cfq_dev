@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
-import '../atoms/search_bars/custom_search_bar.dart';
 import '../atoms/buttons/custom_icon_button.dart';
 
 class ThreadHeader extends StatelessWidget {
-  final TextEditingController searchController;
+  final VoidCallback onSearchTap;
   final VoidCallback onNotificationTap;
   final VoidCallback onMessageTap;
 
   const ThreadHeader({
     super.key,
-    required this.searchController,
+    required this.onSearchTap,
     required this.onNotificationTap,
     required this.onMessageTap,
   });
@@ -20,12 +19,12 @@ class ThreadHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: CustomSearchBar(
-            controller: searchController,
-          ),
+        CustomIconButton(
+          icon: CustomIcon.search,
+          color: CustomColor.customWhite,
+          onTap: onSearchTap,
         ),
-        const SizedBox(width: 10),
+        const Spacer(),
         CustomIconButton(
           icon: CustomIcon.notifications,
           color: CustomColor.customWhite,

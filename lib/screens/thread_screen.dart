@@ -13,6 +13,7 @@ import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
 import 'conversations_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'search_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key});
@@ -31,7 +32,14 @@ class ThreadScreen extends StatelessWidget {
           title: Consumer<ThreadViewModel>(
             builder: (context, viewModel, child) {
               return ThreadHeader(
-                searchController: viewModel.searchController,
+                onSearchTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(viewModel: viewModel),
+                    ),
+                  );
+                },
                 onNotificationTap: () {
                   // Add notification functionality later
                 },
@@ -48,11 +56,7 @@ class ThreadScreen extends StatelessWidget {
             if (viewModel.isInitializing) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (viewModel.searchController.text.isNotEmpty) {
-              return _buildSearchResults(context, viewModel);
-            } else {
-              return _buildRegularContent(context, viewModel);
-            }
+            return _buildRegularContent(context, viewModel);
           },
         ),
       ),

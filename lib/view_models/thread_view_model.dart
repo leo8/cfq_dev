@@ -120,27 +120,30 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   Future<void> performSearch(String query) async {
-    if (query.isEmpty) {
-      _users = [];
-      notifyListeners();
-      return;
-    }
-
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Query Firestore for users matching the search query
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('searchKey', isGreaterThanOrEqualTo: query.toLowerCase())
-          .where('searchKey',
-              isLessThanOrEqualTo: '${query.toLowerCase()}\uf8ff')
-          .get();
+      QuerySnapshot snapshot;
+      if (query.isEmpty) {
+        // Fetch all users when the query is empty
+        snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .limit(
+                20) // Limit the number of results to avoid performance issues
+            .get();
+      } else {
+        // Existing search logic for non-empty queries
+        snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .where('searchKey', isGreaterThanOrEqualTo: query.toLowerCase())
+            .where('searchKey',
+                isLessThanOrEqualTo: '${query.toLowerCase()}\uf8ff')
+            .get();
+      }
 
       List<model.User> users =
           snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
-
       _users = users.where((user) => user.uid != currentUserUid).toList();
     } catch (e) {
       AppLogger.error('Error while searching users: $e');
