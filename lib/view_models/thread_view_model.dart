@@ -194,12 +194,17 @@ class ThreadViewModel extends ChangeNotifier {
           .snapshots()
           .switchMap((userSnapshot) {
         if (!userSnapshot.exists) {
+          AppLogger.warning(
+              "User document does not exist for uid: $currentUserUid");
           return Stream.value(<DocumentSnapshot>[]);
         }
 
         final userData = userSnapshot.data() as Map<String, dynamic>;
         final invitedCfqs = List<String>.from(userData['invitedCfqs'] ?? []);
         final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
+
+        AppLogger.debug(
+            "Invited CFQs: ${invitedCfqs.length}, Invited Turns: ${invitedTurns.length}");
 
         // Handle empty lists
         Stream<List<DocumentSnapshot>> cfqsStream = invitedCfqs.isEmpty
@@ -208,7 +213,10 @@ class ThreadViewModel extends ChangeNotifier {
                 .collection('cfqs')
                 .where(FieldPath.documentId, whereIn: invitedCfqs)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) {
+                AppLogger.debug("Fetched ${snapshot.docs.length} CFQs");
+                return snapshot.docs;
+              });
 
         Stream<List<DocumentSnapshot>> turnsStream = invitedTurns.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
@@ -216,18 +224,27 @@ class ThreadViewModel extends ChangeNotifier {
                 .collection('turns')
                 .where(FieldPath.documentId, whereIn: invitedTurns)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) {
+                AppLogger.debug("Fetched ${snapshot.docs.length} Turns");
+                return snapshot.docs;
+              });
 
         return Rx.combineLatest2(
           cfqsStream,
           turnsStream,
           (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
             List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
+            AppLogger.debug(
+                "Combined events: ${allEvents.length} (${cfqs.length} CFQs + ${turns.length} Turns)");
+
             allEvents.sort((a, b) {
               DateTime dateA = getEventDateTime(a);
               DateTime dateB = getEventDateTime(b);
               return dateB.compareTo(dateA);
             });
+
+            AppLogger.debug(
+                "Events sorted. First event date: ${getEventDateTime(allEvents.first)}, Last event date: ${getEventDateTime(allEvents.last)}");
             return allEvents;
           },
         );
@@ -240,13 +257,15 @@ class ThreadViewModel extends ChangeNotifier {
 
   DateTime getEventDateTime(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    DateTime result;
     if (doc.reference.parent.id == 'turns') {
-      return parseDate(data['eventDateTime']);
+      result = parseDate(data['eventDateTime']);
     } else {
-      return data['eventDateTime'] != null
+      result = data['eventDateTime'] != null
           ? parseDate(data['eventDateTime'])
           : parseDate(data['datePublished']);
     }
+    return result;
   }
 
   // Private methods

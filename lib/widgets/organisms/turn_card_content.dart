@@ -75,7 +75,6 @@ class TurnCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLogger.debug('Building TurnCardContent, isExpanded: $isExpanded');
     return GestureDetector(
       onTap: isExpanded
           ? null
