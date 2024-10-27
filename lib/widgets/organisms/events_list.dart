@@ -77,11 +77,15 @@ class EventsList extends StatelessWidget {
           return const Center(child: Text(CustomString.noEventsAvailable));
         }
 
-        return Column(
-          children: events.map((event) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            final event = events[index];
             final documentId = event.id;
             final eventData = event.data() as Map<String, dynamic>;
-            final isTurn = eventData['turnId'] != null;
+            final isTurn = event.reference.parent.id == 'turns';
 
             final isFavorite = currentUser!.favorites.contains(documentId);
 
@@ -254,7 +258,7 @@ class EventsList extends StatelessWidget {
                 },
               );
             }
-          }).toList(),
+          },
         );
       },
     );
