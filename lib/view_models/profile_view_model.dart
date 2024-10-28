@@ -6,8 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 import '../providers/storage_methods.dart';
 import 'dart:typed_data';
+import 'package:rxdart/rxdart.dart';
+import '../providers/conversation_service.dart';
+import '../models/conversation.dart';
 
 class ProfileViewModel extends ChangeNotifier {
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String? userId;
   model.User? _user; // Profile user's data
   model.User? _currentUser; // Current user's data
@@ -18,6 +22,11 @@ class ProfileViewModel extends ChangeNotifier {
   bool get isCurrentUser => _isCurrentUser;
   bool _isFriend = false; // Indicates if the profile user is a friend
   bool get isFriend => _isFriend;
+
+  final ConversationService _conversationService = ConversationService();
+
+  List<Conversation> _conversations = [];
+  List<Conversation> _filteredConversations = [];
 
   // Status variables for UI feedback
   bool _friendAdded = false;
@@ -298,5 +307,292 @@ class ProfileViewModel extends ChangeNotifier {
       AppLogger.error(e.toString());
       notifyListeners();
     }
+  }
+
+  /// Fetches both "turn" and "cfq" collections from Firestore for the user's posts,
+  /// combines them into a single stream, and sorts them by date.
+  Stream<List<DocumentSnapshot>> fetchUserPosts() {
+    try {
+      String targetUserId = userId ?? FirebaseAuth.instance.currentUser!.uid;
+
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(targetUserId)
+          .snapshots()
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          AppLogger.warning(
+              "User document does not exist for uid: $targetUserId");
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final postedCfqs = List<String>.from(userData['postedCfqs'] ?? []);
+        final postedTurns = List<String>.from(userData['postedTurns'] ?? []);
+
+        // Handle empty lists
+        Stream<List<DocumentSnapshot>> cfqsStream = postedCfqs.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('cfqs')
+                .where(FieldPath.documentId, whereIn: postedCfqs)
+                .snapshots()
+                .map((snapshot) => snapshot.docs);
+
+        Stream<List<DocumentSnapshot>> turnsStream = postedTurns.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('turns')
+                .where(FieldPath.documentId, whereIn: postedTurns)
+                .snapshots()
+                .map((snapshot) => snapshot.docs);
+
+        return Rx.combineLatest2(
+          cfqsStream,
+          turnsStream,
+          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
+            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
+            allEvents.sort((a, b) {
+              DateTime dateA = parseDate(
+                  (a.data() as Map<String, dynamic>)['datePublished']);
+              DateTime dateB = parseDate(
+                  (b.data() as Map<String, dynamic>)['datePublished']);
+              return dateB.compareTo(dateA);
+            });
+            return allEvents;
+          },
+        );
+      });
+    } catch (error) {
+      AppLogger.error("Error in fetchUserPosts: $error");
+      return Stream.value([]);
+    }
+  }
+
+  DateTime parseDate(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date);
+      } catch (e) {
+        AppLogger.warning("Warning: Could not parse date as DateTime: $date");
+        return DateTime.now();
+      }
+    } else if (date is DateTime) {
+      return date;
+    } else {
+      AppLogger.warning("Warning: Unknown type for date: $date");
+      return DateTime.now();
+    }
+  }
+
+  // Add these methods from ThreadViewModel
+  Future<void> toggleFavorite(String eventId, bool isFavorite) async {
+    try {
+      final userRef =
+          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
+
+      if (isFavorite) {
+        await userRef.update({
+          'favorites': FieldValue.arrayUnion([eventId])
+        });
+      } else {
+        await userRef.update({
+          'favorites': FieldValue.arrayRemove([eventId])
+        });
+      }
+
+      if (_currentUser != null) {
+        if (isFavorite) {
+          _currentUser!.favorites.add(eventId);
+        } else {
+          _currentUser!.favorites.remove(eventId);
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error toggling favorite: $e');
+    }
+  }
+
+  Future<void> updateAttendingStatus(String turnId, String status) async {
+    try {
+      final turnRef = _firestore.collection('turns').doc(turnId);
+      final userRef = _firestore.collection('users').doc(currentUser!.uid);
+
+      await _firestore.runTransaction((transaction) async {
+        final turnDoc = await transaction.get(turnRef);
+        final userDoc = await transaction.get(userRef);
+
+        if (!turnDoc.exists || !userDoc.exists) {
+          throw Exception('Turn or User document does not exist');
+        }
+
+        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        // Remove user from all attending lists
+        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
+            .forEach((field) {
+          if (turnData[field] != null) {
+            turnData[field] = (turnData[field] as List)
+                .where((id) => id != currentUser!.uid)
+                .toList();
+          }
+        });
+
+        // Add user to the appropriate list
+        if (status != 'notAnswered') {
+          turnData[status] = [...(turnData[status] ?? []), currentUser!.uid];
+        }
+
+        // Update user's attending status for this turn
+        if (userData['attendingStatus'] == null) {
+          userData['attendingStatus'] = {};
+        }
+        userData['attendingStatus'][turnId] = status;
+
+        transaction.update(turnRef, turnData);
+        transaction.update(userRef, userData);
+      });
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating attending status: $e');
+    }
+  }
+
+  Stream<String> attendingStatusStream(String turnId, String userId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 'notAnswered';
+      final data = snapshot.data() as Map<String, dynamic>;
+      if (data['attending']?.contains(userId) ?? false) return 'attending';
+      if (data['notSureAttending']?.contains(userId) ?? false)
+        return 'notSureAttending';
+      if (data['notAttending']?.contains(userId) ?? false)
+        return 'notAttending';
+      return 'notAnswered';
+    });
+  }
+
+  Stream<int> attendingCountStream(String turnId) {
+    return _firestore
+        .collection('turns')
+        .doc(turnId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['attending'] as List?)?.length ?? 0;
+    });
+  }
+
+  Future<void> loadConversations() async {
+    _conversations =
+        await _conversationService.getUserConversations(currentUser!.uid);
+    _sortConversations();
+    _filteredConversations = _conversations;
+    notifyListeners();
+  }
+
+  void _sortConversations() {
+    _conversations.sort(
+        (a, b) => b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+  }
+
+  void searchConversations(String query) {
+    _filteredConversations = _conversations
+        .where((conversation) =>
+            conversation.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    notifyListeners();
+  }
+
+  Future<void> addConversationToUserList(String channelId) async {
+    await _conversationService.addConversationToUser(
+        currentUser!.uid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> removeConversationFromUserList(String channelId) async {
+    await _conversationService.removeConversationFromUser(
+        currentUser!.uid, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> resetUnreadMessages(String conversationId) async {
+    try {
+      await _conversationService.resetUnreadMessages(
+          currentUser!.uid, conversationId);
+      // Update the local state
+      int index = currentUser!.conversations
+          .indexWhere((conv) => conv.conversationId == conversationId);
+      if (index != -1) {
+        currentUser!.conversations[index].unreadMessagesCount = 0;
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error resetting unread messages: $e');
+    }
+  }
+
+  Future<void> addFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      AppLogger.error('Error adding follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> removeFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      AppLogger.error('Error removing follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
+    try {
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> followingUp = data['followingUp'] ?? [];
+
+      if (followingUp.contains(userId)) {
+        await removeFollowUp(cfqId, userId);
+      } else {
+        await addFollowUp(cfqId, userId);
+      }
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error toggling follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<bool> isConversationInUserList(String channelId) async {
+    return await _conversationService.isConversationInUserList(
+        currentUser!.uid, channelId);
+  }
+
+  Stream<bool> isFollowingUpStream(String cfqId, String userId) {
+    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+      List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
+      return followingUp.contains(userId);
+    });
   }
 }

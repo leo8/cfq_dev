@@ -7,9 +7,13 @@ import '../../../utils/styles/colors.dart';
 import '../../../utils/styles/text_styles.dart';
 import '../atoms/buttons/custom_button.dart';
 import '../atoms/avatars/custom_avatar.dart';
+import '../organisms/events_list.dart';
+import 'package:cfq_dev/view_models/profile_view_model.dart';
 
 class ProfileContent extends StatefulWidget {
   final model.User user;
+  final model.User? currentUser;
+  final ProfileViewModel viewModel;
   final bool isFriend;
   final bool isCurrentUser;
   final Function(bool)? onActiveChanged;
@@ -24,6 +28,8 @@ class ProfileContent extends StatefulWidget {
   const ProfileContent({
     super.key,
     required this.user,
+    required this.currentUser,
+    required this.viewModel,
     required this.isFriend,
     required this.isCurrentUser,
     this.onActiveChanged,
@@ -365,13 +371,44 @@ class _ProfileContentState extends State<ProfileContent>
                 ],
               ),
               SizedBox(
-                height: 300,
+                height: 500,
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    Center(
-                        child: Text(CustomString.otherUserPosts,
-                            style: CustomTextStyle.title3)),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          EventsList(
+                            eventsStream:
+                                widget.user.uid == widget.currentUser!.uid
+                                    ? widget.viewModel.fetchUserPosts()
+                                    : Stream.value(
+                                        []), // Empty stream for non-friends
+                            currentUser: widget.currentUser,
+                            onFavoriteToggle: widget.viewModel.toggleFavorite,
+                            addConversationToUserList:
+                                widget.viewModel.addConversationToUserList,
+                            removeConversationFromUserList:
+                                widget.viewModel.removeConversationFromUserList,
+                            isConversationInUserList:
+                                widget.viewModel.isConversationInUserList,
+                            resetUnreadMessages:
+                                widget.viewModel.resetUnreadMessages,
+                            addFollowUp: widget.viewModel.addFollowUp,
+                            removeFollowUp: widget.viewModel.removeFollowUp,
+                            isFollowingUpStream:
+                                widget.viewModel.isFollowingUpStream,
+                            toggleFollowUp: widget.viewModel.toggleFollowUp,
+                            onAttendingStatusChanged:
+                                widget.viewModel.updateAttendingStatus,
+                            attendingStatusStream:
+                                widget.viewModel.attendingStatusStream,
+                            attendingCountStream:
+                                widget.viewModel.attendingCountStream,
+                          ),
+                        ],
+                      ),
+                    ),
                     Center(
                         child: Text(CustomString.otherUserCalendar,
                             style: CustomTextStyle.title3)),
@@ -416,13 +453,44 @@ class _ProfileContentState extends State<ProfileContent>
                 ],
               ),
               SizedBox(
-                height: 300,
+                height: 500,
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    Center(
-                        child: Text(CustomString.myPosts,
-                            style: CustomTextStyle.title3)),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          EventsList(
+                            eventsStream:
+                                widget.user.uid == widget.currentUser!.uid
+                                    ? widget.viewModel.fetchUserPosts()
+                                    : Stream.value(
+                                        []), // Empty stream for non-friends
+                            currentUser: widget.currentUser,
+                            onFavoriteToggle: widget.viewModel.toggleFavorite,
+                            addConversationToUserList:
+                                widget.viewModel.addConversationToUserList,
+                            removeConversationFromUserList:
+                                widget.viewModel.removeConversationFromUserList,
+                            isConversationInUserList:
+                                widget.viewModel.isConversationInUserList,
+                            resetUnreadMessages:
+                                widget.viewModel.resetUnreadMessages,
+                            addFollowUp: widget.viewModel.addFollowUp,
+                            removeFollowUp: widget.viewModel.removeFollowUp,
+                            isFollowingUpStream:
+                                widget.viewModel.isFollowingUpStream,
+                            toggleFollowUp: widget.viewModel.toggleFollowUp,
+                            onAttendingStatusChanged:
+                                widget.viewModel.updateAttendingStatus,
+                            attendingStatusStream:
+                                widget.viewModel.attendingStatusStream,
+                            attendingCountStream:
+                                widget.viewModel.attendingCountStream,
+                          ),
+                        ],
+                      ),
+                    ),
                     Center(
                         child: Text(CustomString.myCalendar,
                             style: CustomTextStyle.title3)),

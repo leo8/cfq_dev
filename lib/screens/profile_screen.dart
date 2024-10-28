@@ -28,7 +28,6 @@ class ProfileScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             leading: Consumer<ProfileViewModel>(
               builder: (context, viewModel, child) {
-                // Show back button if viewing another user's profile
                 if (!viewModel.isCurrentUser) {
                   return IconButton(
                     icon: CustomIcon.arrowBack,
@@ -38,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                     },
                   );
                 } else {
-                  return const SizedBox.shrink(); // No back button
+                  return const SizedBox.shrink();
                 }
               },
             ),
@@ -58,6 +57,8 @@ class ProfileScreen extends StatelessWidget {
                       return Center(
                         child: ProfileContent(
                           user: model.User.fromSnap(snapshot.data!),
+                          currentUser: viewModel.currentUser,
+                          viewModel: viewModel,
                           isFriend: viewModel.isFriend,
                           isCurrentUser: viewModel.isCurrentUser,
                           commonFriendsCount: viewModel.commonFriendsCount,
