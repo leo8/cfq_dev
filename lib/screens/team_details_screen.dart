@@ -8,6 +8,7 @@ import '../widgets/organisms/team_options.dart';
 import '../utils/styles/colors.dart';
 import '../widgets/organisms/team_members_list.dart';
 import '../../utils/styles/icons.dart';
+import '../widgets/organisms/events_list.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
@@ -56,6 +57,41 @@ class TeamDetailsScreen extends StatelessWidget {
                               members: viewModel.members,
                               isCurrentUserActive:
                                   viewModel.isCurrentUserActive,
+                            ),
+                            const SizedBox(height: 10),
+                            EventsList(
+                              eventsStream: viewModel.fetchTeamCombinedEvents(),
+                              currentUser: viewModel.currentUser,
+                              onFavoriteToggle: viewModel.toggleFavorite,
+                              addConversationToUserList:
+                                  (String channelId) async {
+                                // Implement if needed
+                              },
+                              removeConversationFromUserList:
+                                  (String channelId) async {
+                                // Implement if needed
+                              },
+                              isConversationInUserList:
+                                  (String channelId) async {
+                                // Implement if needed
+                                return false;
+                              },
+                              resetUnreadMessages:
+                                  (String conversationId) async {
+                                // Implement if needed
+                              },
+                              addFollowUp: TeamDetailsViewModel.removeFollowUp,
+                              removeFollowUp:
+                                  TeamDetailsViewModel.removeFollowUp,
+                              isFollowingUpStream:
+                                  viewModel.isFollowingUpStream,
+                              toggleFollowUp: viewModel.toggleFollowUp,
+                              onAttendingStatusChanged:
+                                  viewModel.updateAttendingStatus,
+                              attendingStatusStream:
+                                  viewModel.attendingStatusStream,
+                              attendingCountStream:
+                                  viewModel.attendingCountStream,
                             ),
                           ],
                         ),
