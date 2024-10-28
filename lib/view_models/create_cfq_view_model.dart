@@ -473,11 +473,6 @@ class CreateCfqViewModel extends ChangeNotifier
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Ensure current user is included
-      if (!inviteeUids.contains(currentUserId)) {
-        inviteeUids.add(currentUserId);
-      }
-
       // Create cfq object
       Cfq cfq = Cfq(
         when: whenController.text.trim(),
@@ -507,6 +502,7 @@ class CreateCfqViewModel extends ChangeNotifier
       // Update users' postedCfqs
       await _updateUserPosts(currentUserId, cfqId);
 
+      AppLogger.warning(inviteeUids.length.toString());
       // Update users' invitedCfqs
       await _updateInviteesCfqs(inviteeUids, cfqId);
 

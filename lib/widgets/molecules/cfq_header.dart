@@ -21,7 +21,6 @@ class CFQHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLogger.debug('Building CFQHeader, isExpanded: $isExpanded');
     return Stack(
       children: [
         ClipRRect(

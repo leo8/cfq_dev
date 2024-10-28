@@ -67,7 +67,6 @@ class CFQCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLogger.debug('Building CFQCardContent, isExpanded: $isExpanded');
     bool isFollowingUp = followingUp.contains(currentUserId);
     int followersCount = followingUp.length;
 

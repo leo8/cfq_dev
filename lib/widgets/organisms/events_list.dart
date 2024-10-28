@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/user.dart' as model;
 import '../../screens/conversation_screen.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/text_styles.dart';
 import 'cfq_card_content.dart';
 
 class EventsList extends StatelessWidget {
@@ -64,26 +65,52 @@ class EventsList extends StatelessWidget {
     return StreamBuilder<List<DocumentSnapshot>>(
       stream: eventsStream,
       builder: (context, snapshot) {
-        if (snapshot.hasError) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: MediaQuery.of(context).size.height *
+                    0.5, // 50% of screen height
+                child: Center(
+                  child: Text(
+                    CustomString.noEventsAvailable,
+                    style: CustomTextStyle.body1,
+                  ),
+                ),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
           AppLogger.error("Error fetching events: ${snapshot.error}");
-          return const Center(child: Text(CustomString.errorFetchingEvents));
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return Container(
+                height: constraints.maxHeight,
+                child: Center(
+                  child: Text(
+                    CustomString.errorFetchingEvents,
+                    style: CustomTextStyle.body1,
+                  ),
+                ),
+              );
+            },
+          );
         }
 
         final events = snapshot.data!;
-        if (events.isEmpty) {
-          return const Center(child: Text(CustomString.noEventsAvailable));
-        }
 
-        return Column(
-          children: events.map((event) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: events.length,
+          itemBuilder: (context, index) {
+            final event = events[index];
             final documentId = event.id;
-            final eventData = event.data() as Map<String, dynamic>;
-            final isTurn = eventData['turnId'] != null;
+            final eventData = event.data() as Map<String, dynamic>? ?? {};
+            final isTurn = event.reference.parent.id == 'turns';
 
-            final isFavorite = currentUser!.favorites.contains(documentId);
+            final isFavorite =
+                currentUser?.favorites.contains(documentId) ?? false;
 
             if (isTurn) {
               String attendingStatus = 'notAnswered';
@@ -254,7 +281,7 @@ class EventsList extends StatelessWidget {
                 },
               );
             }
-          }).toList(),
+          },
         );
       },
     );

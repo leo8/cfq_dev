@@ -188,66 +188,84 @@ class ThreadViewModel extends ChangeNotifier {
   /// combines them into a single stream, and sorts them by date.
   Stream<List<DocumentSnapshot>> fetchCombinedEvents() {
     try {
-      // Fetch "turns" collection, sorted by datePublished in descending order
-      Stream<QuerySnapshot> turnsStream = FirebaseFirestore.instance
-          .collection('turns')
-          .orderBy('datePublished', descending: true)
-          .snapshots();
-
-      // Fetch "cfqs" collection, sorted by datePublished in descending order
-      Stream<QuerySnapshot> cfqsStream = FirebaseFirestore.instance
-          .collection('cfqs')
-          .orderBy('datePublished', descending: true)
-          .snapshots();
-
-      // Combine the two streams into one using Rx.combineLatest2 from rxdart
-      return Rx.combineLatest2(turnsStream, cfqsStream,
-          (QuerySnapshot turnsSnapshot, QuerySnapshot cfqsSnapshot) {
-        // Log the number of documents retrieved from both snapshots
-        AppLogger.info(
-            "Turns snapshot docs count: ${turnsSnapshot.docs.length}");
-        AppLogger.info("CFQs snapshot docs count: ${cfqsSnapshot.docs.length}");
-
-        // Merge documents from both collections into a single list
-        List<DocumentSnapshot> allDocs = [];
-        allDocs.addAll(turnsSnapshot.docs);
-        allDocs.addAll(cfqsSnapshot.docs);
-
-        /// Helper function to retrieve the relevant date for sorting.
-        /// Looks for 'eventDateTime' in 'turns' and 'datePublished' in 'cfqs'.
-        DateTime getDate(DocumentSnapshot doc) {
-          dynamic date;
-          if (doc.reference.parent.id == 'turns') {
-            date = doc['eventDateTime']; // Use eventDateTime for turns
-          } else if (doc.reference.parent.id == 'cfqs') {
-            date = doc['datePublished']; // Use datePublished for cfqs
-          } else {
-            date = DateTime.now(); // Fallback to the current date if unknown
-          }
-          return parseDate(date);
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .snapshots()
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          AppLogger.warning(
+              "User document does not exist for uid: $currentUserUid");
+          return Stream.value(<DocumentSnapshot>[]);
         }
 
-        // Sort the combined events by their respective dates in descending order
-        allDocs.sort((a, b) {
-          try {
-            DateTime dateTimeA = getDate(a);
-            DateTime dateTimeB = getDate(b);
-            return dateTimeB.compareTo(dateTimeA); // Sort by date descending
-          } catch (error) {
-            AppLogger.error("Error while sorting events: $error");
-            return 0; // Avoid crashing on sorting errors
-          }
-        });
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final invitedCfqs = List<String>.from(userData['invitedCfqs'] ?? []);
+        final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-        // Log the total number of events after sorting
-        AppLogger.info(
-            "Total events after merging and sorting: ${allDocs.length}");
-        return allDocs; // Return the sorted list of events
+        AppLogger.debug(
+            "Invited CFQs: ${invitedCfqs.length}, Invited Turns: ${invitedTurns.length}");
+
+        // Handle empty lists
+        Stream<List<DocumentSnapshot>> cfqsStream = invitedCfqs.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('cfqs')
+                .where(FieldPath.documentId, whereIn: invitedCfqs)
+                .snapshots()
+                .map((snapshot) {
+                AppLogger.debug("Fetched ${snapshot.docs.length} CFQs");
+                return snapshot.docs;
+              });
+
+        Stream<List<DocumentSnapshot>> turnsStream = invitedTurns.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('turns')
+                .where(FieldPath.documentId, whereIn: invitedTurns)
+                .snapshots()
+                .map((snapshot) {
+                AppLogger.debug("Fetched ${snapshot.docs.length} Turns");
+                return snapshot.docs;
+              });
+
+        return Rx.combineLatest2(
+          cfqsStream,
+          turnsStream,
+          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
+            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
+            AppLogger.debug(
+                "Combined events: ${allEvents.length} (${cfqs.length} CFQs + ${turns.length} Turns)");
+
+            allEvents.sort((a, b) {
+              DateTime dateA = getEventDateTime(a);
+              DateTime dateB = getEventDateTime(b);
+              return dateB.compareTo(dateA);
+            });
+
+            AppLogger.debug(
+                "Events sorted. First event date: ${getEventDateTime(allEvents.first)}, Last event date: ${getEventDateTime(allEvents.last)}");
+            return allEvents;
+          },
+        );
       });
     } catch (error) {
       AppLogger.error("Error in fetchCombinedEvents: $error");
-      rethrow; // Rethrow the error to propagate it to the caller
+      return Stream.value([]);
     }
+  }
+
+  DateTime getEventDateTime(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    DateTime result;
+    if (doc.reference.parent.id == 'turns') {
+      result = parseDate(data['eventDateTime']);
+    } else {
+      result = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : parseDate(data['datePublished']);
+    }
+    return result;
   }
 
   // Private methods

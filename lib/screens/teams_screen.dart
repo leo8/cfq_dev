@@ -87,7 +87,7 @@ class TeamsScreen extends StatelessWidget {
                                 ? Center(
                                     child: CustomText(
                                       text: CustomString.noTeamsYet,
-                                      textStyle: CustomTextStyle.title3,
+                                      textStyle: CustomTextStyle.body1,
                                     ),
                                   )
                                 : ListView.builder(

@@ -51,7 +51,7 @@ class ThreadHeader extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: CustomColor.red,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       constraints: const BoxConstraints(

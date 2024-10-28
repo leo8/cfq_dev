@@ -14,7 +14,6 @@ class ExpandedCardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLogger.debug('Building ExpandedCardScreen');
     return ChangeNotifierProvider(
       create: (_) => ExpandedCardViewModel(
         eventId: cardContent is TurnCardContent

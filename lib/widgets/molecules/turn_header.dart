@@ -24,7 +24,6 @@ class TurnHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLogger.debug('Building TurnHeader, isExpanded: $isExpanded');
     return Stack(
       children: [
         ClipRRect(
