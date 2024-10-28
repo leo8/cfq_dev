@@ -371,7 +371,7 @@ class _ProfileContentState extends State<ProfileContent>
                 ],
               ),
               SizedBox(
-                height: 500,
+                height: 400,
                 child: TabBarView(
                   controller: _tabController,
                   children: [
@@ -379,11 +379,8 @@ class _ProfileContentState extends State<ProfileContent>
                       child: Column(
                         children: [
                           EventsList(
-                            eventsStream:
-                                widget.user.uid == widget.currentUser!.uid
-                                    ? widget.viewModel.fetchUserPosts()
-                                    : Stream.value(
-                                        []), // Empty stream for non-friends
+                            eventsStream: widget.viewModel
+                                .fetchUserPosts(), // This line is correct but needs proper handling in viewModel
                             currentUser: widget.currentUser,
                             onFavoriteToggle: widget.viewModel.toggleFavorite,
                             addConversationToUserList:
@@ -453,7 +450,7 @@ class _ProfileContentState extends State<ProfileContent>
                 ],
               ),
               SizedBox(
-                height: 500,
+                height: 400,
                 child: TabBarView(
                   controller: _tabController,
                   children: [

@@ -313,7 +313,13 @@ class ProfileViewModel extends ChangeNotifier {
   /// combines them into a single stream, and sorts them by date.
   Stream<List<DocumentSnapshot>> fetchUserPosts() {
     try {
+      // Use the userId parameter if provided (friend's profile), otherwise use current user's ID
       String targetUserId = userId ?? FirebaseAuth.instance.currentUser!.uid;
+
+      // Only fetch posts if viewing own profile or if the user is a friend
+      if (!_isCurrentUser && !_isFriend) {
+        return Stream.value([]); // Return empty stream for non-friends
+      }
 
       return FirebaseFirestore.instance
           .collection('users')
