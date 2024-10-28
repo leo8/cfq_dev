@@ -85,7 +85,7 @@ class CustomString {
       "Êtes-vous sûr de vouloir quitter cette team ?";
 
   // Events forms
-  static const eventTitle = "Nom de l'évènement";
+  static const eventTitle = "Nom de l'événement";
   static const organizedBy = "Organisé par";
   static const organizers = "Organisateurs";
   static const when = "Quand ?";
@@ -163,7 +163,7 @@ class CustomString {
 
   // Error Messages
   static const errorFetchingEvents =
-      "Erreur lors de la récupération des évènements";
+      "Erreur lors de la récupération des événements";
   static const failedToUpdateStatusPleaseTryAgain =
       "Erreur lors de la mise à jour du statut. Veuillez réessayer.";
   static const failedToPickImage =
@@ -176,9 +176,8 @@ class CustomString {
       "Veuillez remplir tous les champs";
   static const pleaseFillAllRequiredFields =
       "Veuillez remplir tous les champs requis";
-  static const fetchingDataNoEventsYet =
-      "Récupération des données, pas d'évènements pour le moment...";
-  static const noEventsAvailable = "Aucun évènement disponible";
+  static const fetchingDataNoEventsYet = "Récupération des données...";
+  static const noEventsAvailable = "Aucun événement pour le moment";
   static const errorLeavingTeam = "Erreur lors de la sortie de la team";
   static const errorCreatingTeam = "Erreur lors de la création de la Team..";
   static const errorCreatingTurn = "Erreur lors de la création du Turn..";
