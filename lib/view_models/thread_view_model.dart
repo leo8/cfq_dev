@@ -238,8 +238,8 @@ class ThreadViewModel extends ChangeNotifier {
                 "Combined events: ${allEvents.length} (${cfqs.length} CFQs + ${turns.length} Turns)");
 
             allEvents.sort((a, b) {
-              DateTime dateA = getEventDateTime(a);
-              DateTime dateB = getEventDateTime(b);
+              DateTime dateA = getPublishedDateTime(a);
+              DateTime dateB = getPublishedDateTime(b);
               return dateB.compareTo(dateA);
             });
 
@@ -265,6 +265,13 @@ class ThreadViewModel extends ChangeNotifier {
           ? parseDate(data['eventDateTime'])
           : parseDate(data['datePublished']);
     }
+    return result;
+  }
+
+  DateTime getPublishedDateTime(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    DateTime result;
+    result = parseDate(data['datePublished']);
     return result;
   }
 
