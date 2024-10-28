@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
+import '../providers/user_provider.dart';
 
 class ExpandedCardViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -77,6 +78,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
   Future<void> toggleFavorite() async {
     try {
       final userRef = _firestore.collection('users').doc(currentUserId);
+
+      // Update Firestore
       if (_isFavorite) {
         await userRef.update({
           'favorites': FieldValue.arrayRemove([eventId])
@@ -86,8 +89,13 @@ class ExpandedCardViewModel extends ChangeNotifier {
           'favorites': FieldValue.arrayUnion([eventId])
         });
       }
+
+      // Update local state
       _isFavorite = !_isFavorite;
       notifyListeners();
+
+      // Add this line to update UserProvider
+      UserProvider().refreshUser();
     } catch (e) {
       AppLogger.error('Error toggling favorite: $e');
     }

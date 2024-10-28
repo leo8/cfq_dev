@@ -322,6 +322,14 @@ class ThreadViewModel extends ChangeNotifier {
         .listen((snapshot) {
       if (snapshot.exists) {
         final userData = snapshot.data() as Map<String, dynamic>;
+
+        // Add this section to update favorites
+        if (_currentUser != null) {
+          _currentUser!.favorites.clear();
+          _currentUser!.favorites
+              .addAll(List<String>.from(userData['favorites'] ?? []));
+        }
+
         final updatedConversations = (userData['conversations']
                     as List<dynamic>?)
                 ?.map((e) =>
