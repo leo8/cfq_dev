@@ -156,7 +156,16 @@ class TeamDetailsViewModel extends ChangeNotifier {
         .snapshots()
         .listen((snapshot) {
       if (snapshot.exists) {
+        final userData = snapshot.data() as Map<String, dynamic>;
         _isCurrentUserActive = snapshot.data()?['isActive'] ?? false;
+
+        // Add this section to update favorites
+        if (_currentUser != null) {
+          _currentUser!.favorites.clear();
+          _currentUser!.favorites
+              .addAll(List<String>.from(userData['favorites'] ?? []));
+        }
+
         notifyListeners();
       }
     });
