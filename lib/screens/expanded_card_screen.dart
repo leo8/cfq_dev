@@ -50,7 +50,6 @@ class ExpandedCardScreen extends StatelessWidget {
                 eventDateTime: turnContent.eventDateTime,
                 where: turnContent.where,
                 address: turnContent.address,
-                attendeesCount: 0, //useless parameter to remove
                 onAttendingPressed: turnContent.onAttendingPressed,
                 onSharePressed: turnContent.onSharePressed,
                 onSendPressed: turnContent.onSendPressed,
