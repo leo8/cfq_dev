@@ -33,12 +33,27 @@ class FavoritesViewModel extends ChangeNotifier {
 
   Future<void> _fetchCurrentUser() async {
     try {
-      DocumentSnapshot userSnap = await FirebaseFirestore.instance
+      // Add real-time listener for user updates
+      FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserId)
-          .get();
-      _currentUser = model.User.fromSnap(userSnap);
-      notifyListeners();
+          .snapshots()
+          .listen((userSnap) {
+        if (userSnap.exists) {
+          final userData = userSnap.data() as Map<String, dynamic>;
+          _currentUser = model.User.fromSnap(userSnap);
+
+          // Update favorites
+          if (_currentUser != null) {
+            _currentUser!.favorites.clear();
+            _currentUser!.favorites
+                .addAll(List<String>.from(userData['favorites'] ?? []));
+            _fetchFavoriteEvents(); // Refresh favorite events when favorites change
+          }
+
+          notifyListeners();
+        }
+      });
     } catch (e) {
       AppLogger.error('Error fetching current user: $e');
     }
