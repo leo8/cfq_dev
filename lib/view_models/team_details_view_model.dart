@@ -223,8 +223,8 @@ class TeamDetailsViewModel extends ChangeNotifier {
 
             try {
               allEvents.sort((a, b) {
-                DateTime dateA = getEventDateTime(a);
-                DateTime dateB = getEventDateTime(b);
+                DateTime dateA = getPublishedDateTime(a);
+                DateTime dateB = getPublishedDateTime(b);
                 AppLogger.debug("Comparing dates - A: $dateA, B: $dateB");
                 return dateB.compareTo(dateA);
               });
@@ -242,63 +242,42 @@ class TeamDetailsViewModel extends ChangeNotifier {
     }
   }
 
-  DateTime getEventDateTime(DocumentSnapshot doc) {
-    try {
-      final data = doc.data() as Map<String, dynamic>;
-      final collectionName = doc.reference.parent.id;
-
-      AppLogger.debug(
-          "Getting date for document in collection: $collectionName");
-      AppLogger.debug("Document data: ${data.toString()}");
-
-      if (collectionName == 'turns') {
-        final eventDateTime = data['eventDateTime'];
-        if (eventDateTime == null) {
-          AppLogger.warning("No eventDateTime found for turn ${doc.id}");
-          return DateTime.now();
-        }
-
-        // Handle both String and Timestamp formats
-        if (eventDateTime is Timestamp) {
-          return eventDateTime.toDate();
-        } else if (eventDateTime is String) {
-          return DateTime.parse(eventDateTime);
-        } else {
-          AppLogger.warning(
-              "Unknown eventDateTime format for turn ${doc.id}: ${eventDateTime.runtimeType}");
-          return DateTime.now();
-        }
-      } else {
-        // CFQ case
-        final eventDateTime = data['eventDateTime'];
-        final datePublished = data['datePublished'];
-
-        if (eventDateTime != null) {
-          if (eventDateTime is Timestamp) {
-            return eventDateTime.toDate();
-          } else if (eventDateTime is String) {
-            return DateTime.parse(eventDateTime);
-          }
-        }
-
-        if (datePublished != null) {
-          if (datePublished is Timestamp) {
-            return datePublished.toDate();
-          } else if (datePublished is String) {
-            return DateTime.parse(datePublished);
-          }
-        }
-
-        AppLogger.warning("No valid date found for CFQ ${doc.id}");
-        return DateTime.now();
+  DateTime parseDate(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate(); // Convert Firestore Timestamp to DateTime
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date); // Parse String to DateTime
+      } catch (e) {
+        AppLogger.warning("Warning: Could not parse date as DateTime: $date");
+        return DateTime.now(); // Fallback to the current date
       }
-    } catch (e, stackTrace) {
-      AppLogger.error("Error getting event date time: $e");
-      AppLogger.error("Stack trace: $stackTrace");
-      AppLogger.error("Document ID: ${doc.id}");
-      AppLogger.error("Collection: ${doc.reference.parent.id}");
-      return DateTime.now();
+    } else if (date is DateTime) {
+      return date; // Already a DateTime, return as is
+    } else {
+      AppLogger.warning("Warning: Unknown type for date: $date");
+      return DateTime.now(); // Fallback to the current date
     }
+  }
+
+  DateTime getEventDateTime(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    DateTime result;
+    if (doc.reference.parent.id == 'turns') {
+      result = parseDate(data['eventDateTime']);
+    } else {
+      result = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : parseDate(data['datePublished']);
+    }
+    return result;
+  }
+
+  DateTime getPublishedDateTime(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    DateTime result;
+    result = parseDate(data['datePublished']);
+    return result;
   }
 
   // Event interaction methods
