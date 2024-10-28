@@ -84,6 +84,13 @@ class CustomString {
   static const sureToLeaveTeam =
       "Êtes-vous sûr de vouloir quitter cette team ?";
 
+  // Team Events
+  static const String teamEvents = "Événements de la team";
+  static const String noTeamEventsYet =
+      "Pas encore d'événements pour cette team";
+  static const String errorFetchingTeamEvents =
+      "Erreur lors de la récupération des événements de la team";
+
   // Events forms
   static const eventTitle = "Nom de l'événement";
   static const organizedBy = "Organisé par";
