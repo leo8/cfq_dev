@@ -9,9 +9,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
   final bool isTurn;
 
   bool _isFavorite = false;
-  String _attendingStatus = 'notAnswered';
   bool _isFollowingUp = false;
-  int _attendeesCount = 0;
   int _followersCount = 0;
 
   ExpandedCardViewModel({
@@ -23,16 +21,14 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   bool get isFavorite => _isFavorite;
-  String get attendingStatus => _attendingStatus;
   bool get isFollowingUp => _isFollowingUp;
-  int get attendeesCount => _attendeesCount;
   int get followersCount => _followersCount;
 
   Future<void> _initializeData() async {
     await _fetchFavoriteStatus();
     if (isTurn) {
-      await _fetchAttendingStatus();
-      await _fetchAttendeesCount();
+      await _fetchFollowUpStatus();
+      await _fetchFollowersCount();
     } else {
       await _fetchFollowUpStatus();
       await _fetchFollowersCount();
@@ -49,38 +45,6 @@ class ExpandedCardViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching favorite status: $e');
-    }
-  }
-
-  Future<void> _fetchAttendingStatus() async {
-    try {
-      DocumentSnapshot turnDoc =
-          await _firestore.collection('turns').doc(eventId).get();
-      Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
-      if (data['attending']?.contains(currentUserId) ?? false) {
-        _attendingStatus = 'attending';
-      } else if (data['notSureAttending']?.contains(currentUserId) ?? false) {
-        _attendingStatus = 'notSureAttending';
-      } else if (data['notAttending']?.contains(currentUserId) ?? false) {
-        _attendingStatus = 'notAttending';
-      } else {
-        _attendingStatus = 'notAnswered';
-      }
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching attending status: $e');
-    }
-  }
-
-  Future<void> _fetchAttendeesCount() async {
-    try {
-      DocumentSnapshot turnDoc =
-          await _firestore.collection('turns').doc(eventId).get();
-      Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
-      _attendeesCount = (data['attending'] as List?)?.length ?? 0;
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching attendees count: $e');
     }
   }
 
@@ -129,25 +93,38 @@ class ExpandedCardViewModel extends ChangeNotifier {
     }
   }
 
+  Stream<int> get attendingCountStream {
+    if (!isTurn) return Stream.value(0);
+
+    return _firestore
+        .collection('turns')
+        .doc(eventId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['attending'] as List?)?.length ?? 0;
+    });
+  }
+
   Stream<String> get attendingStatusStream {
-    if (isTurn) {
-      return _firestore
-          .collection('turns')
-          .doc(eventId)
-          .snapshots()
-          .map((snapshot) {
-        if (!snapshot.exists) return 'notAnswered';
-        final data = snapshot.data() as Map<String, dynamic>;
-        if (data['attending']?.contains(currentUserId) ?? false)
-          return 'attending';
-        if (data['notSureAttending']?.contains(currentUserId) ?? false)
-          return 'notSureAttending';
-        if (data['notAttending']?.contains(currentUserId) ?? false)
-          return 'notAttending';
-        return 'notAnswered';
-      });
-    }
-    return Stream.value('notAnswered');
+    if (!isTurn) return Stream.value('notAnswered');
+
+    return _firestore
+        .collection('turns')
+        .doc(eventId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 'notAnswered';
+      final data = snapshot.data() as Map<String, dynamic>;
+      if (data['attending']?.contains(currentUserId) ?? false)
+        return 'attending';
+      if (data['notSureAttending']?.contains(currentUserId) ?? false)
+        return 'notSureAttending';
+      if (data['notAttending']?.contains(currentUserId) ?? false)
+        return 'notAttending';
+      return 'notAnswered';
+    });
   }
 
   Future<void> updateAttendingStatus(String status) async {
@@ -192,8 +169,6 @@ class ExpandedCardViewModel extends ChangeNotifier {
         transaction.update(userRef, userData);
       });
 
-      _attendingStatus = status;
-      await _fetchAttendeesCount();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error updating attending status: $e');

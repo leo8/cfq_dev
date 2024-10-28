@@ -23,7 +23,6 @@ class TurnCardContent extends StatelessWidget {
   final String turnImageUrl;
   final String where;
   final String address;
-  final int attendeesCount;
   final VoidCallback onAttendingPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
@@ -52,7 +51,6 @@ class TurnCardContent extends StatelessWidget {
     required this.eventDateTime,
     required this.where,
     required this.address,
-    required this.attendeesCount,
     required this.onAttendingPressed,
     required this.onSharePressed,
     required this.onSendPressed,
@@ -107,7 +105,6 @@ class TurnCardContent extends StatelessWidget {
                       isExpanded: true,
                       organizers: organizers,
                       onAttendingPressed: onAttendingPressed,
-                      attendeesCount: attendeesCount,
                       onCommentPressed: onCommentPressed,
                       organizerId: organizerId,
                       currentUserId: currentUserId,

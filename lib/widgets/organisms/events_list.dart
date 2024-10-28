@@ -139,7 +139,6 @@ class EventsList extends StatelessWidget {
                 eventDateTime: parseDate(eventData['eventDateTime']),
                 where: eventData['where'] ?? CustomString.emptyString,
                 address: eventData['address'] ?? CustomString.emptyString,
-                attendeesCount: (eventData['attending'] as List?)?.length ?? 0,
                 datePublished: parseDate(eventData['datePublished']),
                 moods: List<String>.from(eventData['moods'] ?? []),
                 turnId: eventData['turnId'] ?? CustomString.emptyString,

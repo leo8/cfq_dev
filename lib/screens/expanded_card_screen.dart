@@ -50,7 +50,6 @@ class ExpandedCardScreen extends StatelessWidget {
                 eventDateTime: turnContent.eventDateTime,
                 where: turnContent.where,
                 address: turnContent.address,
-                attendeesCount: viewModel.attendeesCount,
                 onAttendingPressed: turnContent.onAttendingPressed,
                 onSharePressed: turnContent.onSharePressed,
                 onSendPressed: turnContent.onSendPressed,
@@ -67,7 +66,7 @@ class ExpandedCardScreen extends StatelessWidget {
                 attendingStatus: attendingStatus,
                 onAttendingStatusChanged: viewModel.updateAttendingStatus,
                 attendingStatusStream: viewModel.attendingStatusStream,
-                attendingCountStream: turnContent.attendingCountStream,
+                attendingCountStream: viewModel.attendingCountStream,
                 isExpanded: true,
                 onClose: () {
                   AppLogger.debug('onClose called from ExpandedCardScreen');
