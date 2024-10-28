@@ -33,27 +33,12 @@ class FavoritesViewModel extends ChangeNotifier {
 
   Future<void> _fetchCurrentUser() async {
     try {
-      // Add real-time listener for user updates
-      FirebaseFirestore.instance
+      DocumentSnapshot userSnap = await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserId)
-          .snapshots()
-          .listen((userSnap) {
-        if (userSnap.exists) {
-          final userData = userSnap.data() as Map<String, dynamic>;
-          _currentUser = model.User.fromSnap(userSnap);
-
-          // Update favorites
-          if (_currentUser != null) {
-            _currentUser!.favorites.clear();
-            _currentUser!.favorites
-                .addAll(List<String>.from(userData['favorites'] ?? []));
-            _fetchFavoriteEvents(); // Refresh favorite events when favorites change
-          }
-
-          notifyListeners();
-        }
-      });
+          .get();
+      _currentUser = model.User.fromSnap(userSnap);
+      notifyListeners();
     } catch (e) {
       AppLogger.error('Error fetching current user: $e');
     }
@@ -71,19 +56,32 @@ class FavoritesViewModel extends ChangeNotifier {
         return;
       }
 
-      List<DocumentSnapshot> turns = await FirebaseFirestore.instance
-          .collection('turns')
-          .where('turnId', whereIn: _currentUser!.favorites)
-          .get()
-          .then((snapshot) => snapshot.docs);
+      // Fetch both turns and cfqs
+      Map<String, DocumentSnapshot> eventsMap = {};
 
-      List<DocumentSnapshot> cfqs = await FirebaseFirestore.instance
-          .collection('cfqs')
-          .where('cfqId', whereIn: _currentUser!.favorites)
-          .get()
-          .then((snapshot) => snapshot.docs);
+      // Store fetched documents in map with their IDs
+      (await FirebaseFirestore.instance
+              .collection('turns')
+              .where('turnId', whereIn: _currentUser!.favorites)
+              .get())
+          .docs
+          .forEach((doc) => eventsMap[doc['turnId']] = doc);
 
-      _favoriteEvents = [...turns, ...cfqs];
+      (await FirebaseFirestore.instance
+              .collection('cfqs')
+              .where('cfqId', whereIn: _currentUser!.favorites)
+              .get())
+          .docs
+          .forEach((doc) => eventsMap[doc['cfqId']] = doc);
+
+      // Reconstruct list in original order and reverse it
+      _favoriteEvents = _currentUser!.favorites
+          .map((id) => eventsMap[id])
+          .where((doc) => doc != null)
+          .cast<DocumentSnapshot<Object?>>()
+          .toList()
+          .reversed
+          .toList();
 
       _isLoading = false;
       notifyListeners();
