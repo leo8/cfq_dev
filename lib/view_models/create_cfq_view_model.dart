@@ -469,10 +469,30 @@ class CreateCfqViewModel extends ChangeNotifier
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
+      // Create cfq object with the channelId
+      Cfq cfq = Cfq(
+        when: whenController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: currentUserId,
+        username: _currentUser!.username,
+        followingUp: [],
+        eventId: cfqId,
+        datePublished: DateTime.now(),
+        eventDateTime: _selectedDateTime,
+        imageUrl: cfqImageUrl,
+        profilePictureUrl: _currentUser!.profilePictureUrl,
+        where: locationController.text.trim(),
+        organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: channelId,
+      );
+
       // Create conversation first
       await _conversationService.createConversation(
         channelId,
-        descriptionController.text.trim(),
+        'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
         cfqImageUrl ?? '',
         [...inviteeUids, currentUserId], // Include all members
         currentUserId,
@@ -493,26 +513,6 @@ class CreateCfqViewModel extends ChangeNotifier
           .update({
         'conversations': FieldValue.arrayUnion([conversationInfo.toMap()]),
       });
-
-      // Create cfq object with the channelId
-      Cfq cfq = Cfq(
-        when: whenController.text.trim(),
-        description: descriptionController.text.trim(),
-        moods: _selectedMoods,
-        uid: currentUserId,
-        username: _currentUser!.username,
-        followingUp: [],
-        eventId: cfqId,
-        datePublished: DateTime.now(),
-        eventDateTime: _selectedDateTime,
-        imageUrl: cfqImageUrl,
-        profilePictureUrl: _currentUser!.profilePictureUrl,
-        where: locationController.text.trim(),
-        organizers: [currentUserId],
-        invitees: _selectedInvitees.map((user) => user.uid).toList(),
-        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: channelId,
-      );
 
       // Save cfq to Firestore
       await FirebaseFirestore.instance

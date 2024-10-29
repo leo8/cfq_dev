@@ -508,10 +508,33 @@ class CreateTurnViewModel extends ChangeNotifier
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
+      // Create turn object with the channelId
+      Turn turn = Turn(
+        name: turnNameController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: currentUserId,
+        username: _currentUser!.username,
+        eventId: turnId,
+        datePublished: DateTime.now(),
+        eventDateTime: _selectedDateTime!,
+        imageUrl: turnImageUrl,
+        profilePictureUrl: _currentUser!.profilePictureUrl,
+        where: locationController.text.trim(),
+        address: addressController.text.trim(),
+        organizers: [currentUserId],
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: channelId, // Add channelId to the turn object
+      );
+
+      AppLogger.debug(turnNameController.text.trim());
+      AppLogger.debug(turnImageUrl.toString());
+
       // Create conversation first
       await _conversationService.createConversation(
         channelId,
-        descriptionController.text.trim(),
+        turnNameController.text.trim(),
         turnImageUrl ?? '',
         [...inviteeUids, currentUserId], // Include all members
         currentUserId,
@@ -532,26 +555,6 @@ class CreateTurnViewModel extends ChangeNotifier
           .update({
         'conversations': FieldValue.arrayUnion([conversationInfo.toMap()]),
       });
-
-      // Create turn object with the channelId
-      Turn turn = Turn(
-        name: turnNameController.text.trim(),
-        description: descriptionController.text.trim(),
-        moods: _selectedMoods,
-        uid: currentUserId,
-        username: _currentUser!.username,
-        eventId: turnId,
-        datePublished: DateTime.now(),
-        eventDateTime: _selectedDateTime!,
-        imageUrl: turnImageUrl,
-        profilePictureUrl: _currentUser!.profilePictureUrl,
-        where: locationController.text.trim(),
-        address: addressController.text.trim(),
-        organizers: [currentUserId],
-        invitees: _selectedInvitees.map((user) => user.uid).toList(),
-        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: channelId, // Add channelId to the turn object
-      );
 
       // Save turn to Firestore
       await FirebaseFirestore.instance
