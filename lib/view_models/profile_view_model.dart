@@ -62,11 +62,43 @@ class ProfileViewModel extends ChangeNotifier {
       model.User userData =
           await AuthMethods().getUserDetailsById(profileUserId);
 
-      // Fetch current user's data if viewing another user's profile
+      // Set up real-time listener for current user
       if (profileUserId != currentUserId) {
         _currentUser = await AuthMethods().getUserDetailsById(currentUserId);
+        // Add real-time listener for current user
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserId)
+            .snapshots()
+            .listen((snapshot) {
+          if (snapshot.exists) {
+            final userData = snapshot.data() as Map<String, dynamic>;
+            if (_currentUser != null) {
+              _currentUser!.favorites.clear();
+              _currentUser!.favorites
+                  .addAll(List<String>.from(userData['favorites'] ?? []));
+            }
+            notifyListeners();
+          }
+        });
       } else {
         _currentUser = userData; // Viewing own profile
+        // Add real-time listener for own profile
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserId)
+            .snapshots()
+            .listen((snapshot) {
+          if (snapshot.exists) {
+            final userData = snapshot.data() as Map<String, dynamic>;
+            if (_currentUser != null) {
+              _currentUser!.favorites.clear();
+              _currentUser!.favorites
+                  .addAll(List<String>.from(userData['favorites'] ?? []));
+            }
+            notifyListeners();
+          }
+        });
       }
 
       _user = userData;
