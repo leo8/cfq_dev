@@ -19,6 +19,7 @@ import '../screens/invitees_selector_screen.dart';
 import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
+import '../providers/conversation_service.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -88,6 +89,8 @@ class CreateTurnViewModel extends ChangeNotifier
 
   bool _showEverybodyOption = true;
   bool get showEverybodyOption => _showEverybodyOption;
+
+  final ConversationService _conversationService = ConversationService();
 
   CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
@@ -499,20 +502,38 @@ class CreateTurnViewModel extends ChangeNotifier
             .uploadImageToStorage('turnImages', _turnImage!, false);
       }
 
-      // Generate unique TURN ID
       String turnId = const Uuid().v1();
-
-      // Generate unique channel ID
       String channelId = const Uuid().v1();
-
-      // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
-      // Collect invitee UIDs (excluding current user)
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Create TURN object
+      // Create conversation first
+      await _conversationService.createConversation(
+        channelId,
+        descriptionController.text.trim(),
+        turnImageUrl ?? '',
+        [...inviteeUids, currentUserId], // Include all members
+        currentUserId,
+        _currentUser!.username,
+        _currentUser!.profilePictureUrl,
+      );
+
+      // Add conversation to current user's conversations
+      model.ConversationInfo conversationInfo = model.ConversationInfo(
+        conversationId: channelId,
+        unreadMessagesCount: 0,
+      );
+
+      // Update current user's conversations in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .update({
+        'conversations': FieldValue.arrayUnion([conversationInfo.toMap()]),
+      });
+
+      // Create turn object with the channelId
       Turn turn = Turn(
         name: turnNameController.text.trim(),
         description: descriptionController.text.trim(),
@@ -529,10 +550,10 @@ class CreateTurnViewModel extends ChangeNotifier
         organizers: [currentUserId],
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: channelId,
+        channelId: channelId, // Add channelId to the turn object
       );
 
-      // Save TURN to Firestore
+      // Save turn to Firestore
       await FirebaseFirestore.instance
           .collection('turns')
           .doc(turnId)
