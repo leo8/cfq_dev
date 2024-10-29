@@ -375,13 +375,8 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
-  Stream<List<DocumentSnapshot>> fetchAttendingEvents() {
+  Stream<List<DocumentSnapshot>> fetchAttendingEvents(String userId) {
     try {
-      // Only fetch if viewing own profile
-      if (!_isCurrentUser) {
-        return Stream.value([]); // Return empty stream for other profiles
-      }
-
       // Get today's date at midnight
       final today = DateTime(
         DateTime.now().year,
@@ -391,18 +386,17 @@ class ProfileViewModel extends ChangeNotifier {
 
       return FirebaseFirestore.instance
           .collection('users')
-          .doc(_currentUser!.uid)
+          .doc(userId)
           .snapshots()
           .switchMap((userSnapshot) {
         if (!userSnapshot.exists) {
-          AppLogger.warning(
-              "User document does not exist for uid: ${_currentUser!.uid}");
+          AppLogger.warning("User document does not exist for uid: ${userId}");
           return Stream.value(<DocumentSnapshot>[]);
         }
 
         return FirebaseFirestore.instance
             .collection('turns')
-            .where('attending', arrayContains: _currentUser!.uid)
+            .where('attending', arrayContains: userId)
             .snapshots()
             .map((snapshot) {
           List<DocumentSnapshot> turns = snapshot.docs.where((doc) {
