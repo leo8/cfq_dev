@@ -1,3 +1,5 @@
+import 'logger.dart';
+
 class DateTimeUtils {
   static const List<String> _monthAbbreviations = [
     'Jan',
@@ -119,5 +121,23 @@ class DateTimeUtils {
 
   static String _padZero(int number) {
     return number.toString().padLeft(2, '0');
+  }
+
+  static DateTime parseDate(dynamic date) {
+    if (date is DateTime) {
+      return date;
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date);
+      } catch (e) {
+        AppLogger.warning("Warning: Could not parse date string: $date");
+        return DateTime.now();
+      }
+    } else if (date is DateTime) {
+      return date;
+    } else {
+      AppLogger.warning("Warning: Unknown type for date: $date");
+      return DateTime.now();
+    }
   }
 }
