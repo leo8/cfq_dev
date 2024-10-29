@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
+import '../providers/conversation_service.dart';
 
 class CreateCfqViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -89,6 +90,8 @@ class CreateCfqViewModel extends ChangeNotifier
 
   bool _showEverybodyOption = true;
   bool get showEverybodyOption => _showEverybodyOption;
+
+  final ConversationService _conversationService = ConversationService();
 
   CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
@@ -460,20 +463,13 @@ class CreateCfqViewModel extends ChangeNotifier
             .uploadImageToStorage('cfqImages', _cfqImage!, false);
       }
 
-      // Generate unique cfq ID
       String cfqId = const Uuid().v1();
-
-      // Generate unique channel ID
       String channelId = const Uuid().v1();
-
-      // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
-      // Collect invitee UIDs (excluding current user)
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Create cfq object
+      // Create cfq object with the channelId
       Cfq cfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
@@ -492,6 +488,31 @@ class CreateCfqViewModel extends ChangeNotifier
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId,
       );
+
+      // Create conversation first
+      await _conversationService.createConversation(
+        channelId,
+        'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
+        cfqImageUrl ?? '',
+        [...inviteeUids, currentUserId], // Include all members
+        currentUserId,
+        _currentUser!.username,
+        _currentUser!.profilePictureUrl,
+      );
+
+      // Add conversation to current user's conversations
+      model.ConversationInfo conversationInfo = model.ConversationInfo(
+        conversationId: channelId,
+        unreadMessagesCount: 0,
+      );
+
+      // Update current user's conversations in Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .update({
+        'conversations': FieldValue.arrayUnion([conversationInfo.toMap()]),
+      });
 
       // Save cfq to Firestore
       await FirebaseFirestore.instance

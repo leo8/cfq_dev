@@ -299,15 +299,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   void _sendMessage(String message) async {
     try {
-      await _conversationService.createConversation(
-        widget.channelId,
-        widget.eventName,
-        widget.eventPicture,
-        widget.members,
-        widget.organizerId,
-        widget.organizerName,
-        widget.organizerProfilePicture,
-      );
       await _conversationService.sendMessage(
         widget.channelId,
         message,
@@ -315,7 +306,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
         widget.currentUser.username,
         widget.currentUser.profilePictureUrl,
       );
-      // No need to call updateConversationLastMessage separately as it's handled in sendMessage
     } catch (e) {
       print('Error sending message: $e');
       // You might want to show an error message to the user here

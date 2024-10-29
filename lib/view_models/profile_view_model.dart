@@ -443,9 +443,6 @@ class ProfileViewModel extends ChangeNotifier {
               : Stream.value([]);
       AppLogger.debug(birthdaysStream.toString());
       birthdaysStream = birthdaysStream.map((birthdays) {
-        for (var e in birthdays) {
-          AppLogger.debug('Birthday element: ${e.data()}');
-        }
         return birthdays;
       });
       return Rx.combineLatest2(
