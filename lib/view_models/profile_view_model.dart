@@ -62,11 +62,43 @@ class ProfileViewModel extends ChangeNotifier {
       model.User userData =
           await AuthMethods().getUserDetailsById(profileUserId);
 
-      // Fetch current user's data if viewing another user's profile
+      // Set up real-time listener for current user
       if (profileUserId != currentUserId) {
         _currentUser = await AuthMethods().getUserDetailsById(currentUserId);
+        // Add real-time listener for current user
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserId)
+            .snapshots()
+            .listen((snapshot) {
+          if (snapshot.exists) {
+            final userData = snapshot.data() as Map<String, dynamic>;
+            if (_currentUser != null) {
+              _currentUser!.favorites.clear();
+              _currentUser!.favorites
+                  .addAll(List<String>.from(userData['favorites'] ?? []));
+            }
+            notifyListeners();
+          }
+        });
       } else {
         _currentUser = userData; // Viewing own profile
+        // Add real-time listener for own profile
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUserId)
+            .snapshots()
+            .listen((snapshot) {
+          if (snapshot.exists) {
+            final userData = snapshot.data() as Map<String, dynamic>;
+            if (_currentUser != null) {
+              _currentUser!.favorites.clear();
+              _currentUser!.favorites
+                  .addAll(List<String>.from(userData['favorites'] ?? []));
+            }
+            notifyListeners();
+          }
+        });
       }
 
       _user = userData;
@@ -351,7 +383,17 @@ class ProfileViewModel extends ChangeNotifier {
                 .collection('turns')
                 .where(FieldPath.documentId, whereIn: postedTurns)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs.where((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final invitees =
+                          List<String>.from(data['invitees'] ?? []);
+                      final organizers =
+                          List<String>.from(data['organizers'] ?? []);
+                      final currentUserId =
+                          FirebaseAuth.instance.currentUser!.uid;
+                      return invitees.contains(currentUserId) ||
+                          organizers.contains(currentUserId);
+                    }).toList());
 
         return Rx.combineLatest2(
           cfqsStream,
@@ -371,6 +413,68 @@ class ProfileViewModel extends ChangeNotifier {
       });
     } catch (error) {
       AppLogger.error("Error in fetchUserPosts: $error");
+      return Stream.value([]);
+    }
+  }
+
+  Stream<List<DocumentSnapshot>> fetchAttendingEvents(String userId) {
+    try {
+      final today = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
+
+      Stream<List<DocumentSnapshot>> turnsStream = FirebaseFirestore.instance
+          .collection('turns')
+          .where('attending', arrayContains: userId)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs.where((doc) {
+          DateTime eventDate =
+              parseDate((doc.data() as Map<String, dynamic>)['eventDateTime']);
+          return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
+        }).toList();
+      });
+
+      Stream<List<DocumentSnapshot>> birthdaysStream =
+          userId == currentUser?.uid
+              ? fetchBirthdayEvents(userId)
+              : Stream.value([]);
+      AppLogger.debug(birthdaysStream.toString());
+      birthdaysStream = birthdaysStream.map((birthdays) {
+        for (var e in birthdays) {
+          AppLogger.debug('Birthday element: ${e.data()}');
+        }
+        return birthdays;
+      });
+      return Rx.combineLatest2(
+        turnsStream,
+        birthdaysStream,
+        (List<DocumentSnapshot> turns, List<DocumentSnapshot> birthdays) {
+          List<DocumentSnapshot> allEvents = [...turns, ...birthdays];
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+
+            return dateA.compareTo(dateB);
+          });
+
+          for (var e in allEvents) {
+            final data = e.data() as Map<String, dynamic>;
+            final date = e.reference.parent.id == 'turns'
+                ? data['eventDateTime']
+                : data['birthDate'];
+            AppLogger.debug('Event date: $date');
+          }
+          return allEvents;
+        },
+      );
+    } catch (error) {
+      AppLogger.error("Error in fetchAttendingEvents: $error");
       return Stream.value([]);
     }
   }
@@ -600,5 +704,74 @@ class ProfileViewModel extends ChangeNotifier {
       List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
       return followingUp.contains(userId);
     });
+  }
+
+  Stream<List<DocumentSnapshot>> fetchBirthdayEvents(String userId) {
+    try {
+      final now = DateTime.now();
+      final nextYear = DateTime(now.year + 1, now.month, now.day);
+
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .snapshots()
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          return Stream.value([]);
+        }
+
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final List<String> friends =
+            List<String>.from(userData['friends'] ?? []);
+
+        if (friends.isEmpty) {
+          return Stream.value([]);
+        }
+
+        return FirebaseFirestore.instance
+            .collection('users')
+            .where(FieldPath.documentId, whereIn: friends)
+            .snapshots()
+            .map((snapshot) {
+          return snapshot.docs
+              .map((doc) {
+                final friendData = doc.data();
+                if (friendData['birthDate'] == null) return null;
+
+                final birthDate =
+                    DateTime.parse(friendData['birthDate'].toString());
+                final nextBirthday = DateTime(
+                  now.year,
+                  birthDate.month,
+                  birthDate.day,
+                );
+
+                final relevantBirthday = nextBirthday.isBefore(now)
+                    ? DateTime(now.year + 1, birthDate.month, birthDate.day)
+                    : nextBirthday;
+
+                final birthdayEvent = {
+                  ...friendData,
+                  'eventDateTime': relevantBirthday.toIso8601String(),
+                  'isBirthday': true,
+                  'type': 'birthday',
+                };
+
+                return doc.reference.parent
+                    .doc(doc.id)
+                    .withConverter(
+                      fromFirestore: (snapshot, _) => birthdayEvent,
+                      toFirestore: (data, _) => data as Map<String, dynamic>,
+                    )
+                    .get();
+              })
+              .whereType<Future<DocumentSnapshot>>()
+              .toList();
+        }).asyncMap((futures) => Future.wait(futures));
+      });
+    } catch (error) {
+      AppLogger.error("Error in fetchBirthdayEvents: $error");
+      return Stream.value([]);
+    }
   }
 }
