@@ -20,6 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
+import 'package:flutter/cupertino.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -355,30 +356,76 @@ class CreateTurnViewModel extends ChangeNotifier
 
   // Date-Time Picker
   Future<void> selectDateTime(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+    DateTime? selectedDate = _selectedDateTime ?? DateTime.now();
+
+    await showModalBottomSheet(
       context: context,
-      initialDate: _selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: _selectedDateTime != null
-            ? TimeOfDay.fromDateTime(_selectedDateTime!)
-            : TimeOfDay.now(),
-      );
-      if (pickedTime != null) {
-        _selectedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
+      backgroundColor: CustomColor.customBlack,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: 300,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select Date & Time',
+                        style: CustomTextStyle.body1.copyWith(
+                          color: CustomColor.customWhite,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          color: CustomColor.customWhite,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.dateAndTime,
+                      initialDateTime: DateTime.now(),
+                      minimumDate: DateTime.now().subtract(
+                        const Duration(
+                          hours: 1,
+                        ),
+                      ),
+                      maximumDate:
+                          DateTime.now().add(const Duration(days: 36500)),
+                      onDateTimeChanged: (DateTime newDateTime) {
+                        setState(() => selectedDate = newDateTime);
+                      },
+                      backgroundColor: CustomColor.customBlack,
+                      use24hFormat: true,
+                    ),
+                  ),
+                  CustomButton(
+                    label: 'Confirm',
+                    onTap: () {
+                      _selectedDateTime = selectedDate;
+                      notifyListeners();
+                      Navigator.pop(context);
+                    },
+                    color: CustomColor.customPurple,
+                    width: 200,
+                    borderRadius: 15,
+                  ),
+                ],
+              ),
+            );
+          },
         );
-        notifyListeners();
-      }
-    }
+      },
+    );
   }
 
   // Moods Selection
