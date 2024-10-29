@@ -383,7 +383,17 @@ class ProfileViewModel extends ChangeNotifier {
                 .collection('turns')
                 .where(FieldPath.documentId, whereIn: postedTurns)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs.where((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final invitees =
+                          List<String>.from(data['invitees'] ?? []);
+                      final organizers =
+                          List<String>.from(data['organizers'] ?? []);
+                      final currentUserId =
+                          FirebaseAuth.instance.currentUser!.uid;
+                      return invitees.contains(currentUserId) ||
+                          organizers.contains(currentUserId);
+                    }).toList());
 
         return Rx.combineLatest2(
           cfqsStream,

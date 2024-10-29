@@ -7,6 +7,7 @@ import '../../screens/conversation_screen.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/text_styles.dart';
 import 'cfq_card_content.dart';
+import '../molecules/private_turn_card.dart';
 
 class EventsList extends StatelessWidget {
   final Stream<List<DocumentSnapshot>> eventsStream;
@@ -99,10 +100,11 @@ class EventsList extends StatelessWidget {
 
         final events = snapshot.data!;
 
-        return ListView.builder(
+        return ListView.separated(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: events.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final event = events[index];
             final documentId = event.id;
@@ -113,6 +115,18 @@ class EventsList extends StatelessWidget {
                 currentUser?.favorites.contains(documentId) ?? false;
 
             if (isTurn) {
+              final List<String> invitees =
+                  List<String>.from(eventData['invitees'] ?? []);
+              final List<String> organizers =
+                  List<String>.from(eventData['organizers'] ?? []);
+
+              if (!invitees.contains(currentUser!.uid) &&
+                  !organizers.contains(currentUser!.uid)) {
+                return PrivateTurnCard(
+                  eventDateTime: parseDate(eventData['eventDateTime']),
+                );
+              }
+
               String attendingStatus = 'notAnswered';
               if (eventData['attending']?.contains(currentUser!.uid) ?? false) {
                 attendingStatus = 'attending';
