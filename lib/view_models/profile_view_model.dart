@@ -375,6 +375,59 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
+  Stream<List<DocumentSnapshot>> fetchAttendingEvents() {
+    try {
+      // Only fetch if viewing own profile
+      if (!_isCurrentUser) {
+        return Stream.value([]); // Return empty stream for other profiles
+      }
+
+      // Get today's date at midnight
+      final today = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      );
+
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .snapshots()
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          AppLogger.warning(
+              "User document does not exist for uid: ${_currentUser!.uid}");
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        return FirebaseFirestore.instance
+            .collection('turns')
+            .where('attending', arrayContains: _currentUser!.uid)
+            .snapshots()
+            .map((snapshot) {
+          List<DocumentSnapshot> turns = snapshot.docs.where((doc) {
+            DateTime eventDate = parseDate(
+                (doc.data() as Map<String, dynamic>)['eventDateTime']);
+            return eventDate.isAfter(today) ||
+                eventDate.isAtSameMomentAs(today);
+          }).toList();
+
+          turns.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+            return dateA.compareTo(dateB);
+          });
+          return turns;
+        });
+      });
+    } catch (error) {
+      AppLogger.error("Error in fetchAttendingEvents: $error");
+      return Stream.value([]);
+    }
+  }
+
   DateTime parseDate(dynamic date) {
     if (date is Timestamp) {
       return date.toDate();

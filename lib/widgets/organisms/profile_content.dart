@@ -488,9 +488,37 @@ class _ProfileContentState extends State<ProfileContent>
                         ],
                       ),
                     ),
-                    Center(
-                        child: Text(CustomString.myCalendar,
-                            style: CustomTextStyle.title3)),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          EventsList(
+                            eventsStream:
+                                widget.viewModel.fetchAttendingEvents(),
+                            currentUser: widget.currentUser,
+                            onFavoriteToggle: widget.viewModel.toggleFavorite,
+                            addConversationToUserList:
+                                widget.viewModel.addConversationToUserList,
+                            removeConversationFromUserList:
+                                widget.viewModel.removeConversationFromUserList,
+                            isConversationInUserList:
+                                widget.viewModel.isConversationInUserList,
+                            resetUnreadMessages:
+                                widget.viewModel.resetUnreadMessages,
+                            addFollowUp: widget.viewModel.addFollowUp,
+                            removeFollowUp: widget.viewModel.removeFollowUp,
+                            isFollowingUpStream:
+                                widget.viewModel.isFollowingUpStream,
+                            toggleFollowUp: widget.viewModel.toggleFollowUp,
+                            onAttendingStatusChanged:
+                                widget.viewModel.updateAttendingStatus,
+                            attendingStatusStream:
+                                widget.viewModel.attendingStatusStream,
+                            attendingCountStream:
+                                widget.viewModel.attendingCountStream,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
