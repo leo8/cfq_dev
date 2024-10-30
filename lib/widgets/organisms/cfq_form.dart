@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
+import '../atoms/texts/cfq_bordered_icon_text_field.dart';
 import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text_field.dart';
 import '../../utils/styles/string.dart';
@@ -97,14 +98,9 @@ class CfqForm extends StatelessWidget {
             username: currentUser.username,
           ),
           const SizedBox(height: 15),
-          BorderedIconTextField(
-            icon: CustomIcon.eventTitle,
+          CfqBorderedIconTextField(
             controller: whenController,
             hintText: CustomString.cfqName,
-            onChanged: (value) {
-              // Update the hintText when the 'when' value changes
-              (context as Element).markNeedsBuild();
-            },
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(
