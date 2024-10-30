@@ -140,4 +140,16 @@ class DateTimeUtils {
       return DateTime.now();
     }
   }
+
+  static DateTime roundToNextFiveMinutes(DateTime date) {
+    final int minutes = date.minute;
+    final int remainder = minutes % 5;
+    final int minutesToAdd = remainder == 0 ? 0 : 5 - remainder;
+    return date.add(Duration(
+      minutes: minutesToAdd,
+      seconds: -date.second,
+      milliseconds: -date.millisecond,
+      microseconds: -date.microsecond,
+    ));
+  }
 }
