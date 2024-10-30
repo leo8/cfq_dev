@@ -7,6 +7,7 @@ import '../utils/styles/text_styles.dart';
 import '../utils/styles/string.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
+import '../utils/logger.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String channelId;
@@ -307,7 +308,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         widget.currentUser.profilePictureUrl,
       );
     } catch (e) {
-      print('Error sending message: $e');
+      AppLogger.debug('Error sending message: $e');
       // You might want to show an error message to the user here
     }
   }
