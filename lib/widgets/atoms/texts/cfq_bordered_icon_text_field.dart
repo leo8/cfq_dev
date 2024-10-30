@@ -22,83 +22,53 @@ class CfqBorderedIconTextField extends StatefulWidget {
 }
 
 class _CfqBorderedIconTextFieldState extends State<CfqBorderedIconTextField> {
-  late final LayerLink _layerLink;
-  late final OverlayEntry _overlayEntry;
-  final GlobalKey _textFieldKey = GlobalKey();
   Size? _textSize;
   Size? _hintTextSize;
 
   @override
   void initState() {
     super.initState();
-    _layerLink = LayerLink();
-    widget.controller.addListener(_updateQuestionMarkPosition);
-
-    final hintTextPainter = TextPainter(
-      text: TextSpan(
-          text: widget.hintText,
-          style: CustomTextStyle.body2.copyWith(color: CustomColor.grey)),
-      textDirection: TextDirection.ltr,
-      maxLines: 1,
-    )..layout();
-    _hintTextSize = hintTextPainter.size;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _createOverlayEntry();
-      Overlay.of(context).insert(_overlayEntry);
-    });
+    widget.controller.addListener(_updateTextSize);
+    _calculateHintTextSize();
   }
 
   @override
   void dispose() {
-    _overlayEntry.remove();
-    widget.controller.removeListener(_updateQuestionMarkPosition);
+    widget.controller.removeListener(_updateTextSize);
     super.dispose();
   }
 
-  void _updateQuestionMarkPosition() {
-    final text = widget.controller.text.isEmpty
-        ? widget.hintText
-        : widget.controller.text;
+  void _calculateHintTextSize() {
+    final hintTextPainter = TextPainter(
+      text: TextSpan(
+        text: widget.hintText,
+        style: CustomTextStyle.body2.copyWith(color: CustomColor.grey),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+    _hintTextSize = hintTextPainter.size;
+  }
+
+  void _updateTextSize() {
+    if (!mounted) return;
+
+    final text = widget.controller.text;
+    if (text.isEmpty) {
+      setState(() => _textSize = null);
+      return;
+    }
+
     final textPainter = TextPainter(
       text: TextSpan(
         text: text,
-        style: widget.controller.text.isEmpty
-            ? CustomTextStyle.body2.copyWith(color: CustomColor.grey)
-            : CustomTextStyle.body1,
+        style: CustomTextStyle.body1,
       ),
       textDirection: TextDirection.ltr,
       maxLines: 1,
     )..layout();
 
-    setState(() {
-      _textSize = textPainter.size;
-
-      _overlayEntry.markNeedsBuild();
-    });
-  }
-
-  void _createOverlayEntry() {
-    _overlayEntry = OverlayEntry(
-      builder: (context) {
-        return CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset:
-              Offset((_textSize?.width ?? _hintTextSize?.width ?? 0) + 7, 9),
-          child: Material(
-            color: Colors.transparent,
-            child: SizedBox(
-              height: 22,
-              child: Text(
-                CustomString.interrogationMark,
-                style: CustomTextStyle.body1,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    setState(() => _textSize = textPainter.size);
   }
 
   @override
@@ -126,25 +96,37 @@ class _CfqBorderedIconTextFieldState extends State<CfqBorderedIconTextField> {
             ),
           ),
           Expanded(
-            child: CompositedTransformTarget(
-              link: _layerLink,
-              child: TextField(
-                key: _textFieldKey,
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  hintText: widget.hintText,
-                  hintStyle:
-                      CustomTextStyle.body2.copyWith(color: CustomColor.grey),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
+            child: Stack(
+              fit: StackFit.passthrough,
+              children: [
+                TextField(
+                  controller: widget.controller,
+                  decoration: InputDecoration(
+                    hintText: widget.hintText,
+                    hintStyle:
+                        CustomTextStyle.body2.copyWith(color: CustomColor.grey),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  style: CustomTextStyle.body1,
+                  onChanged: (value) {
+                    widget.onChanged?.call(value);
+                    _updateTextSize();
+                  },
                 ),
-                style: CustomTextStyle.body1,
-                onChanged: (value) {
-                  widget.onChanged?.call(value);
-                  _updateQuestionMarkPosition();
-                },
-              ),
+                Positioned(
+                  left: (_textSize?.width ?? _hintTextSize?.width ?? 0) + 8,
+                  top: 8,
+                  child: SizedBox(
+                    height: 22,
+                    child: Text(
+                      CustomString.interrogationMark,
+                      style: CustomTextStyle.body1,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 24),
