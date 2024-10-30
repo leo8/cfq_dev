@@ -158,7 +158,7 @@ class CustomString {
   static const barMood = "Bar";
   static const clubMood = "Club";
   static const streetMood = "Street";
-  static const turnMood = "Turn";
+  static const otherMood = "Autre";
   static const chillMood = "Chill";
   static const dinerMood = "Dîner";
   static const beforeMood = "Before";
