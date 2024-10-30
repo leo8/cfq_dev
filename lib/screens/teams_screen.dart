@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import '../view_models/teams_view_model.dart';
 import 'create_team_screen.dart';
 import '../models/team.dart';
-import '../models/user.dart' as model;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/atoms/buttons/outlined_icon_button.dart';
 import '../utils/styles/text_styles.dart';
 import 'team_details_screen.dart';
