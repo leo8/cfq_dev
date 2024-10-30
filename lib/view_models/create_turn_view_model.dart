@@ -702,10 +702,39 @@ class CreateTurnViewModel extends ChangeNotifier
   }
 
   void _updateInviteesControllerText() {
-    List<String> inviteeNames =
-        _selectedTeamInvitees.map((team) => team.name).toList();
-    inviteeNames.addAll(_selectedInvitees.map((user) => user.username));
-    inviteesController.text = inviteeNames.join(', ');
+    String text = '';
+    if (_selectedTeamInvitees.isEmpty) {
+      if (_selectedInvitees.length <= 3) {
+        List<String> inviteeNames =
+            _selectedInvitees.map((user) => user.username).toList();
+        text = inviteeNames.join(', ');
+      } else {
+        List<String> inviteeNames =
+            _selectedInvitees.take(3).map((user) => user.username).toList();
+        int remainingInviteesCount = _selectedInvitees.length - 3;
+        if (remainingInviteesCount == 1) {
+          text =
+              '${inviteeNames.join(', ')}... et $remainingInviteesCount autre';
+        } else {
+          text =
+              '${inviteeNames.join(', ')}... et $remainingInviteesCount autres';
+        }
+      }
+    } else {
+      List<String> teamInviteeNames =
+          _selectedTeamInvitees.map((team) => team.name).toList();
+      int inviteesCount = _selectedInvitees.length;
+      if (_selectedTeamInvitees.length <= 2) {
+        text = '${teamInviteeNames.join(', ')} et $inviteesCount invités';
+      } else {
+        List<String> teamInviteeNames =
+            _selectedTeamInvitees.map((team) => team.name).toList();
+        int inviteesCount = _selectedInvitees.length;
+        text = '${teamInviteeNames.join(', ')}... et $inviteesCount invités';
+      }
+    }
+
+    inviteesController.text = text;
   }
 
   @override

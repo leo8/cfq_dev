@@ -123,7 +123,7 @@ class CustomString {
   // CFQs
   static const cfqCapital = "CFQ";
   static const createCfq = "Créer un CFQ";
-  static const cfqName = "ÇFQ _______________ ?";
+  static const cfqName = "____________";
   static const caFoutQuoi = "Ça fout quoi ?";
   static const pleaseSelectAtLeastOneInvitee = "Sélectionne au moins un invité";
   static const pleaseEnterWhen = "Dis-nous quand";
@@ -158,7 +158,7 @@ class CustomString {
   static const barMood = "Bar";
   static const clubMood = "Club";
   static const streetMood = "Street";
-  static const turnMood = "Turn";
+  static const otherMood = "Autre";
   static const chillMood = "Chill";
   static const dinerMood = "Dîner";
   static const beforeMood = "Before";
