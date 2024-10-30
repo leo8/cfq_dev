@@ -20,6 +20,8 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
+import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../utils/date_time_utils.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -91,6 +93,9 @@ class CreateTurnViewModel extends ChangeNotifier
   bool get showEverybodyOption => _showEverybodyOption;
 
   final ConversationService _conversationService = ConversationService();
+
+  DateTime? _selectedEndDateTime;
+  DateTime? get selectedEndDateTime => _selectedEndDateTime;
 
   CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
@@ -355,29 +360,38 @@ class CreateTurnViewModel extends ChangeNotifier
 
   // Date-Time Picker
   Future<void> selectDateTime(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: _selectedDateTime != null
-            ? TimeOfDay.fromDateTime(_selectedDateTime!)
-            : TimeOfDay.now(),
-      );
-      if (pickedTime != null) {
-        _selectedDateTime = DateTime(
-          pickedDate.year,
-          pickedDate.month,
-          pickedDate.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        notifyListeners();
+    try {
+      final now = DateTimeUtils.roundToNextFiveMinutes(DateTime.now());
+
+      // If current selected date is in the past, update it
+      if (_selectedDateTime == null || _selectedDateTime!.isBefore(now)) {
+        _selectedDateTime = now;
       }
+
+      await showDialog(
+        context: context,
+        builder: (context) => CustomDateTimeRangePicker(
+          startInitialDate: _selectedDateTime,
+          endInitialDate: _selectedEndDateTime,
+          onDateTimeSelected: (start, end) {
+            // Do one final check before accepting the dates
+            final currentTime =
+                DateTimeUtils.roundToNextFiveMinutes(DateTime.now());
+            if (start.isBefore(currentTime)) {
+              _errorMessage = CustomString.dateTimeInPast;
+              return;
+            }
+
+            _selectedDateTime = start;
+            _selectedEndDateTime = end;
+            notifyListeners();
+          },
+        ),
+      );
+    } catch (e) {
+      AppLogger.error('Error selecting date time: $e');
+      _errorMessage = CustomString.someErrorOccurred;
+      notifyListeners();
     }
   }
 
@@ -518,6 +532,7 @@ class CreateTurnViewModel extends ChangeNotifier
         eventId: turnId,
         datePublished: DateTime.now(),
         eventDateTime: _selectedDateTime!,
+        endDateTime: _selectedEndDateTime,
         imageUrl: turnImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),

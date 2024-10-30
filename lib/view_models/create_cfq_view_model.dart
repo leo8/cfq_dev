@@ -20,12 +20,16 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
+import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../utils/date_time_utils.dart';
 
 class CreateCfqViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
   // Controllers for form fields
   DateTime? _selectedDateTime;
+  DateTime? _selectedEndDateTime;
   DateTime? get selectedDateTime => _selectedDateTime;
+  DateTime? get selectedEndDateTime => _selectedEndDateTime;
 
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
@@ -480,6 +484,7 @@ class CreateCfqViewModel extends ChangeNotifier
         eventId: cfqId,
         datePublished: DateTime.now(),
         eventDateTime: _selectedDateTime,
+        endDateTime: _selectedEndDateTime,
         imageUrl: cfqImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
@@ -543,28 +548,31 @@ class CreateCfqViewModel extends ChangeNotifier
   }
 
   Future<void> selectDateTime(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (picked != null) {
-      final TimeOfDay? timePicked = await showTimePicker(
+    try {
+      await showDialog(
         context: context,
-        initialTime:
-            TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+        builder: (context) => CustomDateTimeRangePicker(
+          startInitialDate: _selectedDateTime,
+          endInitialDate: _selectedEndDateTime,
+          onDateTimeSelected: (start, end) {
+            // Do one final check before accepting the dates
+            final currentTime =
+                DateTimeUtils.roundToNextFiveMinutes(DateTime.now());
+            if (start.isBefore(currentTime)) {
+              _errorMessage = CustomString.dateTimeInPast;
+              return;
+            }
+
+            _selectedDateTime = start;
+            _selectedEndDateTime = end;
+            notifyListeners();
+          },
+        ),
       );
-      if (timePicked != null) {
-        _selectedDateTime = DateTime(
-          picked.year,
-          picked.month,
-          picked.day,
-          timePicked.hour,
-          timePicked.minute,
-        );
-        notifyListeners();
-      }
+    } catch (e) {
+      AppLogger.error('Error selecting date time: $e');
+      _errorMessage = CustomString.someErrorOccurred;
+      notifyListeners();
     }
   }
 

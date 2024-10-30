@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // Turn model representing a specific event type, extending EventDataModel
 class Turn extends EventDataModel {
   final DateTime eventDateTime; // Date and time when the event occurs
+  final DateTime? endDateTime; // Add this line
   final List<String> attending; // List of people confirmed to attend
   final List<String> notSureAttending; // List of people unsure about attending
   final List<String> notAttending; // List of people who declined the invitation
@@ -14,6 +15,7 @@ class Turn extends EventDataModel {
   Turn({
     required String name,
     required this.eventDateTime,
+    this.endDateTime, // Add this line
     required String where,
     required List<String> invitees,
     this.address, // Changed: Now it's an optional field of Turn
@@ -60,6 +62,7 @@ class Turn extends EventDataModel {
       'turnId': eventId,
       'datePublished': datePublished.toIso8601String(),
       'eventDateTime': eventDateTime.toIso8601String(),
+      'endDateTime': endDateTime?.toIso8601String(),
       'turnImageUrl': imageUrl,
       'profilePictureUrl': profilePictureUrl,
       'where': where,
@@ -88,6 +91,9 @@ class Turn extends EventDataModel {
           ? DateTime.parse(json['datePublished'])
           : null,
       eventDateTime: DateTime.parse(json['eventDateTime']),
+      endDateTime: json['endDateTime'] != null
+          ? DateTime.parse(json['endDateTime'])
+          : null,
       imageUrl: json['turnImageUrl'],
       profilePictureUrl: json['profilePictureUrl'],
       where: json['where'] ?? '',
@@ -116,6 +122,9 @@ class Turn extends EventDataModel {
           ? (snapshot['datePublished'] as Timestamp).toDate()
           : null,
       eventDateTime: (snapshot['eventDateTime'] as Timestamp).toDate(),
+      endDateTime: snapshot['endDateTime'] != null
+          ? (snapshot['endDateTime'] as Timestamp).toDate()
+          : null,
       imageUrl: snapshot['imageUrl'],
       profilePictureUrl: snapshot['profilePictureUrl'],
       where: snapshot['where'] ?? '',

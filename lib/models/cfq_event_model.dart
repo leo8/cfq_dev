@@ -5,6 +5,7 @@ class Cfq extends EventDataModel {
   final String when; // When parameter
   final List<String> followingUp; // New field
   final DateTime? eventDateTime; // New optional field
+  final DateTime? endDateTime; // Add this field
 
   // Constructor to initialize CFQ properties
   Cfq({
@@ -12,6 +13,7 @@ class Cfq extends EventDataModel {
     required List<String> invitees,
     this.followingUp = const [],
     this.eventDateTime,
+    this.endDateTime, // Add to constructor
     String? description,
     List<String>? moods,
     String? uid,
@@ -61,6 +63,7 @@ class Cfq extends EventDataModel {
       'channelId': channelId,
       'followingUp': followingUp,
       'eventDateTime': eventDateTime?.toIso8601String(), // New field
+      'endDateTime': endDateTime?.toIso8601String(), // Add to JSON
     };
   }
 
@@ -72,6 +75,9 @@ class Cfq extends EventDataModel {
       eventDateTime: json['eventDateTime'] != null
           ? DateTime.parse(json['eventDateTime'])
           : null,
+      endDateTime: json['endDateTime'] != null
+          ? DateTime.parse(json['endDateTime'])
+          : null, // Parse from JSON
       description: json['description'] ?? '',
       moods: List<String>.from(json['moods'] ?? []),
       uid: json['uid'] ?? '',

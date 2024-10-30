@@ -162,7 +162,7 @@ class FavoritesViewModel extends ChangeNotifier {
         'followingUp': FieldValue.arrayUnion([userId]),
       });
     } catch (e) {
-      print('Error adding follow-up: $e');
+      AppLogger.debug('Error adding follow-up: $e');
       // You might want to rethrow the error or handle it differently
       rethrow;
     }
@@ -174,7 +174,7 @@ class FavoritesViewModel extends ChangeNotifier {
         'followingUp': FieldValue.arrayRemove([userId]),
       });
     } catch (e) {
-      print('Error removing follow-up: $e');
+      AppLogger.debug('Error removing follow-up: $e');
       // You might want to rethrow the error or handle it differently
       rethrow;
     }

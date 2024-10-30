@@ -12,6 +12,7 @@ class CustomString {
   static const add = "Ajouter";
   static const create = "Créer";
   static const done = "Terminé";
+  static const confirm = "Confirmer";
   static const success = "Succès";
   static const leave = "Quitter";
   static const orCapital = "OU";
@@ -234,4 +235,12 @@ class CustomString {
   static const String commonTeams = 'teams';
   static const String inCommon = 'en commun';
   static const String and = '&';
+
+  static const String eventDateTime = 'Date & Heure de début';
+  static const String addEndTime = 'Ajouter date & heure de fin (optionnel)';
+  static const String endDateTime = 'Date & Heure de fin';
+  static const String dateTimeInPast =
+      'Tu crées des événements dans le passé toi ?';
+  static const String invalidEndDate =
+      'Il va vraiment durer moins de 5 minutes, ton événement ?';
 }
