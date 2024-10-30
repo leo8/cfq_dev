@@ -91,38 +91,30 @@ class TeamsScreen extends StatelessWidget {
                                     ),
                                   )
                                 : ListView.builder(
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(
+                                      parent: BouncingScrollPhysics(),
+                                    ),
                                     itemCount: viewModel.teams.length,
                                     itemBuilder: (context, index) {
                                       Team team = viewModel.teams[index];
-                                      return FutureBuilder<List<model.User>>(
-                                        future: _fetchTeamMembers(team.members),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const SizedBox();
-                                          } else if (snapshot.hasData) {
-                                            List<model.User> members =
-                                                snapshot.data!;
-                                            return TeamCard(
-                                              team: team,
-                                              members: members,
-                                              onTap: () async {
-                                                final bool? result =
-                                                    await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TeamDetailsScreen(
-                                                            team: team),
-                                                  ),
-                                                );
-                                                if (result == true) {
-                                                  await viewModel.fetchTeams();
-                                                }
-                                              },
-                                            );
-                                          } else {
-                                            return const SizedBox();
+                                      final members =
+                                          viewModel.teamMembers[team.uid] ?? [];
+
+                                      return TeamCard(
+                                        team: team,
+                                        members: members,
+                                        onTap: () async {
+                                          final bool? result =
+                                              await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TeamDetailsScreen(team: team),
+                                            ),
+                                          );
+                                          if (result == true) {
+                                            await viewModel.fetchTeams();
                                           }
                                         },
                                       );
@@ -140,28 +132,5 @@ class TeamsScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<List<model.User>> _fetchTeamMembers(List memberUids) async {
-    // Firestore limits 'whereIn' queries to 10 items
-    List<model.User> allMembers = [];
-
-    List<List> chunks = [];
-    for (var i = 0; i < memberUids.length; i += 10) {
-      chunks.add(memberUids.sublist(
-          i, i + 10 > memberUids.length ? memberUids.length : i + 10));
-    }
-
-    for (var chunk in chunks) {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('uid', whereIn: chunk)
-          .get();
-
-      allMembers.addAll(
-          snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList());
-    }
-
-    return allMembers;
   }
 }
