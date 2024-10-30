@@ -21,6 +21,7 @@ import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
 import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../utils/date_time_utils.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -360,12 +361,27 @@ class CreateTurnViewModel extends ChangeNotifier
   // Date-Time Picker
   Future<void> selectDateTime(BuildContext context) async {
     try {
+      final now = DateTimeUtils.roundToNextFiveMinutes(DateTime.now());
+
+      // If current selected date is in the past, update it
+      if (_selectedDateTime == null || _selectedDateTime!.isBefore(now)) {
+        _selectedDateTime = now;
+      }
+
       await showDialog(
         context: context,
         builder: (context) => CustomDateTimeRangePicker(
           startInitialDate: _selectedDateTime,
           endInitialDate: _selectedEndDateTime,
           onDateTimeSelected: (start, end) {
+            // Do one final check before accepting the dates
+            final currentTime =
+                DateTimeUtils.roundToNextFiveMinutes(DateTime.now());
+            if (start.isBefore(currentTime)) {
+              _errorMessage = CustomString.dateTimeInPast;
+              return;
+            }
+
             _selectedDateTime = start;
             _selectedEndDateTime = end;
             notifyListeners();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import '../../../utils/styles/colors.dart';
+import '../../../utils/styles/string.dart';
 import '../../../utils/styles/text_styles.dart';
 import '../../../utils/styles/icons.dart';
 import '../../../utils/date_time_utils.dart';
@@ -56,106 +57,149 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
     return Dialog(
       backgroundColor: CustomColor.customBlack,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Select Date & Time',
-                style: CustomTextStyle.bigBody1,
-              ),
-              const SizedBox(height: 16),
-              OmniDateTimePicker(
-                initialDate: _startDate!,
-                firstDate: _minimumDate,
-                lastDate: DateTime.now().add(const Duration(days: 3650)),
-                is24HourMode: true,
-                isShowSeconds: false,
-                minutesInterval: 5,
-                onDateTimeChanged: (dateTime) {
-                  setState(() {
-                    _startDate = dateTime;
-                    // Adjust end date if necessary
-                    if (_endDate != null &&
-                        _endDate!.isBefore(
-                            dateTime.add(const Duration(minutes: 5)))) {
-                      _endDate = DateTimeUtils.roundToNextFiveMinutes(
-                          dateTime.add(const Duration(minutes: 5)));
-                    }
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              if (!_showEndDatePicker)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _showEndDatePicker = true;
-                    });
-                  },
-                  child: const Text('+ Add End Date/Time (Optional)'),
-                ),
-              if (_showEndDatePicker) ...[
-                const Divider(color: CustomColor.customDarkGrey),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'End Date & Time',
-                      style: CustomTextStyle.body1,
+                      CustomString.eventDateTime,
+                      style: CustomTextStyle.bigBody1,
                     ),
-                    IconButton(
-                      icon: CustomIcon.close,
-                      onPressed: () {
+                    const SizedBox(height: 16),
+                    OmniDateTimePicker(
+                      initialDate: _startDate!,
+                      firstDate: _minimumDate,
+                      lastDate: DateTime.now().add(const Duration(days: 3650)),
+                      is24HourMode: true,
+                      isShowSeconds: false,
+                      minutesInterval: 5,
+                      onDateTimeChanged: (dateTime) {
                         setState(() {
-                          _showEndDatePicker = false;
-                          _endDate = null;
+                          _startDate = dateTime;
+                          if (_endDate != null &&
+                              _endDate!.isBefore(
+                                  dateTime.add(const Duration(minutes: 5)))) {
+                            _endDate = DateTimeUtils.roundToNextFiveMinutes(
+                                dateTime.add(const Duration(minutes: 5)));
+                          }
                         });
                       },
                     ),
+                    const SizedBox(height: 16),
+                    if (!_showEndDatePicker)
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _showEndDatePicker = true;
+                          });
+                        },
+                        child: const Text(CustomString.addEndTime),
+                      ),
+                    if (_showEndDatePicker) ...[
+                      const Divider(color: CustomColor.customDarkGrey),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Centered title
+                          Center(
+                            child: Text(
+                              CustomString.endDateTime,
+                              style: CustomTextStyle.bigBody1,
+                            ),
+                          ),
+                          // Close icon positioned on the right
+                          Positioned(
+                            right: 0,
+                            child: IconButton(
+                              icon: CustomIcon.close,
+                              onPressed: () {
+                                setState(() {
+                                  _showEndDatePicker = false;
+                                  _endDate = null;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      OmniDateTimePicker(
+                        initialDate: _endDate ??
+                            _startDate?.add(const Duration(hours: 1)) ??
+                            DateTime.now(),
+                        firstDate: _startDate ?? DateTime.now(),
+                        lastDate:
+                            DateTime.now().add(const Duration(days: 3650)),
+                        is24HourMode: true,
+                        isShowSeconds: false,
+                        minutesInterval: 5,
+                        onDateTimeChanged: (dateTime) {
+                          setState(() {
+                            _endDate = dateTime;
+                          });
+                        },
+                      ),
+                    ],
                   ],
                 ),
-                OmniDateTimePicker(
-                  initialDate: _endDate ??
-                      _startDate?.add(const Duration(hours: 1)) ??
-                      DateTime.now(),
-                  firstDate: _startDate ?? DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 3650)),
-                  is24HourMode: true,
-                  isShowSeconds: false,
-                  minutesInterval: 5,
-                  onDateTimeChanged: (dateTime) {
-                    setState(() {
-                      _endDate = dateTime;
-                    });
-                  },
+              ),
+            ),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: CustomColor.customBlack,
+                  width: 1,
+                ),
+              ),
+            ),
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CustomColor.customDarkGrey,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    CustomString.cancel,
+                    style: CustomTextStyle.body1,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ElevatedButton(
+                  onPressed: _validateDates()
+                      ? () {
+                          widget.onDateTimeSelected(_startDate!, _endDate);
+                          Navigator.pop(context);
+                        }
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CustomColor.customPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    CustomString.confirm,
+                    style: CustomTextStyle.body1,
+                  ),
                 ),
               ],
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _validateDates()
-                        ? () {
-                            widget.onDateTimeSelected(_startDate!, _endDate);
-                            Navigator.pop(context);
-                          }
-                        : null,
-                    child: const Text('Confirm'),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

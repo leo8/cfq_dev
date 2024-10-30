@@ -121,8 +121,6 @@ class CreateTurnScreen extends StatelessWidget {
 
     final isNextDay = endDate.difference(startDate).inMinutes <= 1439;
 
-    print(isNextDay);
-
     if (isSameDay || isNextDay) {
       return 'Le $startDateStr de $startTimeStr à $endTimeStr';
     } else {
