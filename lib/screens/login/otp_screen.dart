@@ -1,14 +1,19 @@
 import 'dart:developer';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
+import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
+import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
+import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/registration_pageview_controller.dart';
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class OTPScreen extends StatefulWidget {
-  const OTPScreen({super.key, required this.verificationId});
+  const OTPScreen(
+      {super.key, required this.verificationId, required this.isSign});
   final String verificationId;
+  final bool isSign;
 
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -16,6 +21,32 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final otpController = TextEditingController();
+
+  void signUp(UserCredential cred) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NeonBackground(
+              child: RegistrationFlow(
+            cred: cred,
+          )),
+        ));
+  }
+
+  void signIn(UserCredential cred) {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => NeonBackground(
+            child: RepsonsiveLayout(
+          mobileScreenLayout: MobileScreenLayout(
+            userUIID: cred.user!.uid,
+          ),
+          webScreenLayout: WebScreenLayout(),
+        )),
+      ),
+      (route) => false,
+    );
+  }
 
   bool isLoading = false;
   @override
@@ -62,15 +93,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
                             final test = await FirebaseAuth.instance
                                 .signInWithCredential(cred);
-
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => NeonBackground(
-                                      child: RegistrationFlow(
-                                    cred: test,
-                                  )),
-                                ));
+                            log("@@@ ${cred}");
+                            widget.isSign ? signUp(test) : signIn(test);
                           } catch (e) {
                             log(e.toString());
                           }

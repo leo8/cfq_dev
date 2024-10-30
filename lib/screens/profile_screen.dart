@@ -9,9 +9,9 @@ import 'friends_list_screen.dart';
 import '../../utils/styles/icons.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final String? userId;
+  final String userId;
 
-  const ProfileScreen({super.key, this.userId});
+  const ProfileScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {

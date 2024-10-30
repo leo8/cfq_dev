@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(
           builder: (context) => const NeonBackground(
               child: RepsonsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(),
+            mobileScreenLayout: MobileScreenLayout(userUIID: ''),
             webScreenLayout: WebScreenLayout(),
           )),
         ),

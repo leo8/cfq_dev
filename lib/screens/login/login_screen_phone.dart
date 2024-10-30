@@ -4,6 +4,7 @@ import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/otp_screen.dart';
+import 'package:cfq_dev/screens/login/registration_pageview_controller.dart';
 import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
     });
   }
 
-  void signIn() async {
+  void OPTAuth() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: convertPhoneNumber(),
       verificationCompleted: (phoneAuthCredential) {},
@@ -56,6 +57,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
           MaterialPageRoute(
             builder: (context) => OTPScreen(
               verificationId: verificationId,
+              isSign: isSignIn,
             ),
           ),
         );
@@ -63,19 +65,6 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
       codeAutoRetrievalTimeout: (verificationId) {
         log("Auto Retrieval timeout");
       },
-    );
-  }
-
-  void signUp() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const NeonBackground(
-            child: RepsonsiveLayout(
-          mobileScreenLayout: MobileScreenLayout(),
-          webScreenLayout: WebScreenLayout(),
-        )),
-      ),
-      (route) => false,
     );
   }
 
@@ -167,7 +156,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 setState(() {
                                   isloading = true;
                                 });
-                                isSignIn ? signIn() : signUp();
+                                OPTAuth();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.black,

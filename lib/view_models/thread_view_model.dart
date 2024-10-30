@@ -41,7 +41,7 @@ class ThreadViewModel extends ChangeNotifier {
     try {
       DocumentSnapshot currentUserSnap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(currentUserUid)
+          .doc('0S39dG0HDBebY91XCP43UJEqGO02')
           .get();
 
       _currentUser = model.User.fromSnap(currentUserSnap);

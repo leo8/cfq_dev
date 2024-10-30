@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cfq_dev/providers/user_provider.dart'; // User provider for state management
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart'; // Mobile layout
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart'; // Responsive layout
@@ -22,21 +24,9 @@ void main() async {
   FlutterNativeSplash.preserve(
       widgetsBinding: widgetsBinding); // Preserve splash screen until ready
 
-  // Initialize Firebase for web
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: apiKey, // Your API key
-        appId: appId, // Your app ID
-        messagingSenderId: messagingSenderId, // Sender ID
-        projectId: projectId, // Project ID
-        storageBucket: storageBucket, // Storage bucket
-      ),
-    );
-  } else {
-    // Initialize Firebase for mobile platforms
-    await Firebase.initializeApp();
-  }
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase for mobile platforms
+  await Firebase.initializeApp();
 
   runApp(const CFQ()); // Run the application
 }
@@ -64,17 +54,17 @@ class _CFQState extends State<CFQ> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    /*
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
-        // home: NeonBackground(child: LoginScreenMobile()));
-        home: LoginScreenMobile());
-  }
+        title: 'cfq_dev',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: CustomColor.transparent,
+        ),
+        home: NeonBackground(child: LoginScreenMobile()));
+  }*/
 
-/*
-  // Root widget of the application
-  @override
-  Widget build(BuildContext context) {
-    MultiProvider(
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (_) =>
@@ -93,8 +83,10 @@ class _CFQState extends State<CFQ> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.hasData) {
-                  return const RepsonsiveLayout(
-                    mobileScreenLayout: MobileScreenLayout(),
+                  return RepsonsiveLayout(
+                    mobileScreenLayout: MobileScreenLayout(
+                      userUIID: snapshot.data!.uid,
+                    ),
                     webScreenLayout: WebScreenLayout(),
                   );
                 } else if (snapshot.hasError) {
@@ -118,5 +110,5 @@ class _CFQState extends State<CFQ> {
         },
       ),
     );
-  }*/
+  }
 }

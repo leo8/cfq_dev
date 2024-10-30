@@ -20,7 +20,8 @@ class TeamsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
+      String userId =
+          "0S39dG0HDBebY91XCP43UJEqGO02"; //FirebaseAuth.instance.currentUser!.uid;
       QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
           .collection('teams')
           .where('members', arrayContains: userId)

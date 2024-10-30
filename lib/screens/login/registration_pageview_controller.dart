@@ -33,7 +33,6 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
   final TextEditingController birthdayTextController = TextEditingController();
   final TextEditingController localisationTextController =
       TextEditingController();
-  late User userProfileCreated;
 
   /// Attempts to sign up the user with the provided information.
   void signUpUser() async {
@@ -42,6 +41,7 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
     });
 
     log("@@@ ${widget.cred}");
+    log("@@@ ${widget.cred.user!.uid}");
     // Call AuthMethods to sign up the user
     String res = await AuthMethods().signUpUser(
         email: "charles.ca@gmail.com",
@@ -63,8 +63,9 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
       // Navigate to the main layout on successful signup
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const RepsonsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(),
+          builder: (context) => RepsonsiveLayout(
+            mobileScreenLayout:
+                MobileScreenLayout(userUIID: widget.cred.user!.uid),
             webScreenLayout: WebScreenLayout(),
           ),
         ),

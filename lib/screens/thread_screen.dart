@@ -15,32 +15,14 @@ import '../widgets/organisms/active_friends_list.dart';
 import '../widgets/organisms/events_list.dart';
 
 class ThreadScreen extends StatelessWidget {
-  const ThreadScreen({super.key});
+  const ThreadScreen({super.key, required this.currentUserId});
+  final String currentUserId;
 
   @override
   Widget build(BuildContext context) {
-    // of<UserProvider>(context).getUser;
-
-    var user = model.User(
-      username: 'charles',
-      uid: "Uuly7Gias5Vb2IiKz5J9dvLIUD53",
-      friends: ["ZyI2RSoV9rTRNRKkz41rC9w51B23"],
-      email: 'calvignac.charles@gmail.com',
-      teams: ["f31442d0-85b9-11ef-a527-8baa1e0972f2"],
-      profilePictureUrl:
-          "https://firebasestorage.googleapis.com/v0/b/cfq-dev-11498.appspot.com/o/profilePicture%2FUuly7Gias5Vb2IiKz5J9dvLIUD53?alt=media&token=43b828d6-6af1-4202-94e8-aba20f34762e",
-      location: 'Paris',
-      birthDate: null,
-      searchKey: '"charles"',
-      isActive: true,
-      invitedTurns: ["fdf3a500-8655-11ef-b586-37fd4fb54a60"],
-      postedTurns: ["fdf3a500-8655-11ef-b586-37fd4fb54a60"],
-      postedCfqs: [],
-      invitedCfqs: ["d2658c60-8654-11ef-9187-d31817b08a22"],
-    );
-    final currentUser = user;
+    // final currentUser = Provider.of<UserProvider>(context).getUser;
     return ChangeNotifierProvider<ThreadViewModel>(
-      create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
+      create: (_) => ThreadViewModel(currentUserUid: currentUserId),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
