@@ -706,7 +706,6 @@ class ProfileViewModel extends ChangeNotifier {
   Stream<List<DocumentSnapshot>> fetchBirthdayEvents(String userId) {
     try {
       final now = DateTime.now();
-      final nextYear = DateTime(now.year + 1, now.month, now.day);
 
       return FirebaseFirestore.instance
           .collection('users')
