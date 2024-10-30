@@ -20,48 +20,72 @@ class ThreadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserProvider>(context).getUser;
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        // Check if user is initialized
+        if (!userProvider.isInitialized) {
+          // Initialize user data if not already done
+          userProvider.initialize();
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
 
-    return ChangeNotifierProvider<ThreadViewModel>(
-      create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: CustomColor.customBlack,
-          elevation: 0,
-          title: Consumer<ThreadViewModel>(
-            builder: (context, viewModel, child) {
-              return ThreadHeader(
-                onSearchTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchScreen(viewModel: viewModel),
-                    ),
+        // Check if user exists
+        final currentUser = userProvider.user;
+        if (currentUser == null) {
+          return const Scaffold(
+            body: Center(
+              child: Text('Unable to load user data'),
+            ),
+          );
+        }
+
+        return ChangeNotifierProvider<ThreadViewModel>(
+          create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: CustomColor.customBlack,
+              elevation: 0,
+              title: Consumer<ThreadViewModel>(
+                builder: (context, viewModel, child) {
+                  return ThreadHeader(
+                    onSearchTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              SearchScreen(viewModel: viewModel),
+                        ),
+                      );
+                    },
+                    onNotificationTap: () {
+                      // Add notification functionality later
+                    },
+                    onMessageTap: () {
+                      _navigateToConversationsScreen(
+                          context, viewModel.currentUser!);
+                    },
+                    unreadConversationsCountStream:
+                        viewModel.unreadConversationsCountStream,
                   );
                 },
-                onNotificationTap: () {
-                  // Add notification functionality later
-                },
-                onMessageTap: () {
-                  _navigateToConversationsScreen(
-                      context, viewModel.currentUser!);
-                },
-                unreadConversationsCountStream:
-                    viewModel.unreadConversationsCountStream,
-              );
-            },
+              ),
+            ),
+            body: Consumer<ThreadViewModel>(
+              builder: (context, viewModel, child) {
+                if (viewModel.isInitializing) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return _buildRegularContent(context, viewModel);
+              },
+            ),
           ),
-        ),
-        body: Consumer<ThreadViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isInitializing) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return _buildRegularContent(context, viewModel);
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 
