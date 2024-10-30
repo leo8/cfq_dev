@@ -16,14 +16,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
-  const ThreadScreen({super.key});
+  const ThreadScreen({super.key, required this.userId});
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserProvider>(context).getUser;
+    //final currentUser = Provider.of<UserProvider>(context).getUser;
 
     return ChangeNotifierProvider<ThreadViewModel>(
-      create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
+      create: (_) => ThreadViewModel(currentUserUid: userId),
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(

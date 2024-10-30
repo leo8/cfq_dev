@@ -1,3 +1,4 @@
+/*
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/auth_template.dart';
@@ -149,3 +150,4 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 }
+*/
