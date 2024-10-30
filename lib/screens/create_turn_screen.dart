@@ -73,9 +73,10 @@ class CreateTurnScreen extends StatelessWidget {
                     addressController: viewModel.addressController,
                     onSelectDateTime: () => viewModel.selectDateTime(context),
                     onSelectMoods: () => viewModel.selectMoods(context),
-                    dateTimeDisplay: viewModel.selectedDateTime != null
-                        ? '${viewModel.selectedDateTime!.day}/${viewModel.selectedDateTime!.month}/${viewModel.selectedDateTime!.year}'
-                        : CustomString.date,
+                    dateTimeDisplay: _formatDateTimeDisplay(
+                      viewModel.selectedDateTime,
+                      viewModel.selectedEndDateTime,
+                    ),
                     moodsDisplay: viewModel.selectedMoods != null &&
                             viewModel.selectedMoods!.isNotEmpty
                         ? viewModel.selectedMoods!.join(', ')
@@ -93,5 +94,39 @@ class CreateTurnScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  String _formatDateTimeDisplay(DateTime? startDate, DateTime? endDate) {
+    if (startDate == null) return CustomString.date;
+
+    final startDateStr =
+        '${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}/${startDate.year}';
+    final startTimeStr =
+        '${startDate.hour.toString().padLeft(2, '0')}:${startDate.minute.toString().padLeft(2, '0')}';
+
+    // If no end date, return simple format
+    if (endDate == null) {
+      return 'Le $startDateStr à $startTimeStr';
+    }
+
+    final endDateStr =
+        '${endDate.day.toString().padLeft(2, '0')}/${endDate.month.toString().padLeft(2, '0')}/${endDate.year}';
+    final endTimeStr =
+        '${endDate.hour.toString().padLeft(2, '0')}:${endDate.minute.toString().padLeft(2, '0')}';
+
+    // Check if same day or next day
+    final isSameDay = startDate.year == endDate.year &&
+        startDate.month == endDate.month &&
+        startDate.day == endDate.day;
+
+    final isNextDay = endDate.difference(startDate).inMinutes <= 1439;
+
+    print(isNextDay);
+
+    if (isSameDay || isNextDay) {
+      return 'Le $startDateStr de $startTimeStr à $endTimeStr';
+    } else {
+      return 'Du $startDateStr à $startTimeStr au $endDateStr à $endTimeStr';
+    }
   }
 }

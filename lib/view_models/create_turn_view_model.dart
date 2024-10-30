@@ -20,7 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
-import 'package:flutter/cupertino.dart';
+import '../widgets/atoms/dates/custom_date_time_picker.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -92,6 +92,9 @@ class CreateTurnViewModel extends ChangeNotifier
   bool get showEverybodyOption => _showEverybodyOption;
 
   final ConversationService _conversationService = ConversationService();
+
+  DateTime? _selectedEndDateTime;
+  DateTime? get selectedEndDateTime => _selectedEndDateTime;
 
   CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
     _initializeViewModel();
@@ -356,76 +359,24 @@ class CreateTurnViewModel extends ChangeNotifier
 
   // Date-Time Picker
   Future<void> selectDateTime(BuildContext context) async {
-    DateTime? selectedDate = _selectedDateTime ?? DateTime.now();
-
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: CustomColor.customBlack,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              height: 300,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Select Date & Time',
-                        style: CustomTextStyle.body1.copyWith(
-                          color: CustomColor.customWhite,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.close,
-                          color: CustomColor.customWhite,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: CupertinoDatePicker(
-                      mode: CupertinoDatePickerMode.dateAndTime,
-                      initialDateTime: DateTime.now(),
-                      minimumDate: DateTime.now().subtract(
-                        const Duration(
-                          hours: 1,
-                        ),
-                      ),
-                      maximumDate:
-                          DateTime.now().add(const Duration(days: 36500)),
-                      onDateTimeChanged: (DateTime newDateTime) {
-                        setState(() => selectedDate = newDateTime);
-                      },
-                      backgroundColor: CustomColor.customBlack,
-                      use24hFormat: true,
-                    ),
-                  ),
-                  CustomButton(
-                    label: 'Confirm',
-                    onTap: () {
-                      _selectedDateTime = selectedDate;
-                      notifyListeners();
-                      Navigator.pop(context);
-                    },
-                    color: CustomColor.customPurple,
-                    width: 200,
-                    borderRadius: 15,
-                  ),
-                ],
-              ),
-            );
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) => CustomDateTimeRangePicker(
+          startInitialDate: _selectedDateTime,
+          endInitialDate: _selectedEndDateTime,
+          onDateTimeSelected: (start, end) {
+            _selectedDateTime = start;
+            _selectedEndDateTime = end;
+            notifyListeners();
           },
-        );
-      },
-    );
+        ),
+      );
+    } catch (e) {
+      AppLogger.error('Error selecting date time: $e');
+      _errorMessage = CustomString.someErrorOccurred;
+      notifyListeners();
+    }
   }
 
   // Moods Selection
@@ -565,6 +516,7 @@ class CreateTurnViewModel extends ChangeNotifier
         eventId: turnId,
         datePublished: DateTime.now(),
         eventDateTime: _selectedDateTime!,
+        endDateTime: _selectedEndDateTime,
         imageUrl: turnImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
