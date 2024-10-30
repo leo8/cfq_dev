@@ -409,7 +409,7 @@ class ProfileViewModel extends ChangeNotifier {
             });
             return allEvents;
           },
-        ).asBroadcastStream();
+        );
       });
     } catch (error) {
       AppLogger.error("Error in fetchUserPosts: $error");
@@ -435,11 +435,11 @@ class ProfileViewModel extends ChangeNotifier {
               parseDate((doc.data() as Map<String, dynamic>)['eventDateTime']);
           return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
         }).toList();
-      }).asBroadcastStream();
+      });
 
       Stream<List<DocumentSnapshot>> birthdaysStream =
           userId == currentUser?.uid
-              ? fetchBirthdayEvents(userId).asBroadcastStream()
+              ? fetchBirthdayEvents(userId)
               : Stream.value([]);
       AppLogger.debug(birthdaysStream.toString());
       birthdaysStream = birthdaysStream.map((birthdays) {
