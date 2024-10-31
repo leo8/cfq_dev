@@ -42,7 +42,7 @@ class BirthdayCard extends StatelessWidget {
                     ),
                     TextSpan(
                       text:
-                          ' fête son anniversaire le ${DateTimeUtils.formatEventDateTime(birthDate)}',
+                          ' fête son anniversaire ${DateTimeUtils.formatBirthdayDateTime(birthDate)}',
                     ),
                   ],
                 ),
