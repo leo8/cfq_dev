@@ -63,20 +63,6 @@ class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
               style: TextStyle(fontSize: 24, color: Colors.white),
             ),
             const SizedBox(height: 40),
-            TextField(
-              controller: widget.birthdayTextController,
-              keyboardType: TextInputType.datetime,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  fillColor: Colors.black,
-                  filled: true,
-                  hintText: "01/01/2000",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 1.0))),
-            ),
-            const SizedBox(height: 20),
             CustomDateField(
               controller: widget.birthdayTextController,
               hintText: CustomString.yourBirthdate, // "Your Birth Date"
