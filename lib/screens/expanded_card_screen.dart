@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/organisms/turn_card_content.dart';
 import '../widgets/organisms/cfq_card_content.dart';
 import '../utils/logger.dart';
@@ -81,24 +80,10 @@ class ExpandedCardScreen extends StatelessWidget {
       return Consumer<ExpandedCardViewModel>(
         builder: (context, viewModel, child) {
           final cfqContent = cardContent as CFQCardContent;
-          return StreamBuilder<DocumentSnapshot>(
-            stream: viewModel.cfqStream,
+          return StreamBuilder<bool>(
+            stream: viewModel.isFollowingUpStream,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
-
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-
-              if (!snapshot.hasData || !snapshot.data!.exists) {
-                return const Text('CFQ not found');
-              }
-
-              final cfqData = snapshot.data!.data() as Map<String, dynamic>;
-              final List<String> followingUp =
-                  List<String>.from(cfqData['followingUp'] ?? []);
+              final isFollowingUp = snapshot.data ?? false;
 
               return CFQCardContent(
                 profilePictureUrl: cfqContent.profilePictureUrl,
@@ -111,7 +96,9 @@ class ExpandedCardScreen extends StatelessWidget {
                 cfqImageUrl: cfqContent.cfqImageUrl,
                 location: cfqContent.location,
                 when: cfqContent.when,
-                followingUp: followingUp,
+                followingUp: snapshot.data != null
+                    ? (isFollowingUp ? [cfqContent.currentUserId] : [])
+                    : [],
                 onFollowPressed: cfqContent.onFollowPressed,
                 onSharePressed: cfqContent.onSharePressed,
                 onSendPressed: cfqContent.onSendPressed,

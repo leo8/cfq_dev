@@ -67,6 +67,27 @@ class DateTimeUtils {
     }
   }
 
+  static String formatBirthdayDateTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final nextWeek = now.add(const Duration(days: 7));
+
+    if (dateTime.year == now.year &&
+        dateTime.month == now.month &&
+        dateTime.day == now.day) {
+      return "aujourd'hui";
+    } else if (dateTime.year == tomorrow.year &&
+        dateTime.month == tomorrow.month &&
+        dateTime.day == tomorrow.day) {
+      return "demain";
+    } else if (dateTime.isBefore(nextWeek)) {
+      final dayName = _getDayName(dateTime.weekday);
+      return dayName;
+    } else {
+      return 'le ${dateTime.day} ${getMonthNameFrench(dateTime.month)}';
+    }
+  }
+
   static String _getDayName(int weekday) {
     switch (weekday) {
       case DateTime.monday:

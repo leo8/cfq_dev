@@ -22,7 +22,7 @@ class ProfileImageAvatar extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 64,
-          backgroundColor: CustomColor.customBlack,
+          backgroundColor: CustomColor.transparent,
           child: isLoading
               ? const CircularProgressIndicator(
                   valueColor:
@@ -43,7 +43,10 @@ class ProfileImageAvatar extends StatelessWidget {
           right: 0,
           child: IconButton(
             onPressed: onImageSelected,
-            icon: CustomIcon.addImage,
+            icon: CustomIcon.addImage.copyWith(
+                color: image != null
+                    ? CustomColor.customWhite
+                    : CustomColor.grey300),
           ),
         ),
       ],

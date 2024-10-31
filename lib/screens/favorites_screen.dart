@@ -54,7 +54,7 @@ class FavoritesScreen extends StatelessWidget {
                   ),
                   SliverToBoxAdapter(
                     child: EventsList(
-                      eventsStream: Stream.value(viewModel.favoriteEvents),
+                      eventsStream: viewModel.fetchFavoriteEventsStream(),
                       currentUser: viewModel.currentUser,
                       onFavoriteToggle: viewModel.toggleFavorite,
                       addConversationToUserList:

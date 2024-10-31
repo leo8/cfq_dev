@@ -29,7 +29,7 @@ class CustomString {
   static const logIn = "Je me connecte";
   static const signUp = "Je m'inscris";
   static const alreadySignedUp = "Déjà inscrit(e) ?";
-  static const noAccountYet = "T'as pas encore de compte ?";
+  static const noAccountYet = "Pas encore de compte ?";
   static const forgotPassword = "T'as oublié ton mot de passe ?";
   static const logOut = "Se déconnecter";
 

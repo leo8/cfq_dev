@@ -10,7 +10,7 @@ import 'cfq_card_content.dart';
 import '../molecules/private_turn_card.dart';
 import '../molecules/birthday_card.dart';
 
-class EventsList extends StatelessWidget {
+class EventsList extends StatefulWidget {
   final Stream<List<DocumentSnapshot>> eventsStream;
   final model.User? currentUser;
   final Function(String, bool) onFavoriteToggle;
@@ -44,6 +44,19 @@ class EventsList extends StatelessWidget {
     super.key,
   });
 
+  @override
+  State<EventsList> createState() => _EventsListState();
+}
+
+class _EventsListState extends State<EventsList> {
+  late Stream<List<DocumentSnapshot>> _stream;
+
+  @override
+  void initState() {
+    super.initState();
+    _stream = widget.eventsStream.asBroadcastStream();
+  }
+
   DateTime parseDate(dynamic date) {
     if (date is Timestamp) {
       return date.toDate();
@@ -65,7 +78,7 @@ class EventsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<DocumentSnapshot>>(
-      stream: eventsStream,
+      stream: _stream,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return LayoutBuilder(
@@ -114,7 +127,7 @@ class EventsList extends StatelessWidget {
             final isCfq = event.reference.parent.id == 'cfqs';
 
             final isFavorite =
-                currentUser?.favorites.contains(documentId) ?? false;
+                widget.currentUser?.favorites.contains(documentId) ?? false;
 
             if (isTurn) {
               final List<String> invitees =
@@ -122,22 +135,23 @@ class EventsList extends StatelessWidget {
               final List<String> organizers =
                   List<String>.from(eventData['organizers'] ?? []);
 
-              if (!invitees.contains(currentUser!.uid) &&
-                  !organizers.contains(currentUser!.uid)) {
+              if (!invitees.contains(widget.currentUser!.uid) &&
+                  !organizers.contains(widget.currentUser!.uid)) {
                 return PrivateTurnCard(
                   eventDateTime: parseDate(eventData['eventDateTime']),
                 );
               }
 
               String attendingStatus = 'notAnswered';
-              if (eventData['attending']?.contains(currentUser!.uid) ?? false) {
+              if (eventData['attending']?.contains(widget.currentUser!.uid) ??
+                  false) {
                 attendingStatus = 'attending';
               } else if (eventData['notSureAttending']
-                      ?.contains(currentUser!.uid) ??
+                      ?.contains(widget.currentUser!.uid) ??
                   false) {
                 attendingStatus = 'notSureAttending';
               } else if (eventData['notAttending']
-                      ?.contains(currentUser!.uid) ??
+                      ?.contains(widget.currentUser!.uid) ??
                   false) {
                 attendingStatus = 'notAttending';
               }
@@ -159,16 +173,16 @@ class EventsList extends StatelessWidget {
                 moods: List<String>.from(eventData['moods'] ?? []),
                 turnId: eventData['turnId'] ?? CustomString.emptyString,
                 organizerId: eventData['uid'] ?? CustomString.emptyString,
-                currentUserId: currentUser!.uid,
-                favorites: currentUser!.favorites,
+                currentUserId: widget.currentUser!.uid,
+                favorites: widget.currentUser!.favorites,
                 onAttendingPressed: () {
                   // Handle attending action
                 },
-                attendingStatusStream:
-                    attendingStatusStream(documentId, currentUser!.uid),
-                attendingCountStream: attendingCountStream(documentId),
+                attendingStatusStream: widget.attendingStatusStream(
+                    documentId, widget.currentUser!.uid),
+                attendingCountStream: widget.attendingCountStream(documentId),
                 onAttendingStatusChanged: (status) =>
-                    onAttendingStatusChanged(documentId, status),
+                    widget.onAttendingStatusChanged(documentId, status),
                 onSharePressed: () {
                   // Handle share action
                 },
@@ -181,8 +195,8 @@ class EventsList extends StatelessWidget {
                       allMembers
                           .add(eventData['uid']); // Add the organizer's UID
                     }
-                    bool isInUserList =
-                        await isConversationInUserList(eventData['channelId']);
+                    bool isInUserList = await widget
+                        .isConversationInUserList(eventData['channelId']);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -197,15 +211,16 @@ class EventsList extends StatelessWidget {
                           organizerName: eventData['username'],
                           organizerProfilePicture:
                               eventData['profilePictureUrl'],
-                          currentUser: currentUser!,
-                          addConversationToUserList: addConversationToUserList,
+                          currentUser: widget.currentUser!,
+                          addConversationToUserList:
+                              widget.addConversationToUserList,
                           removeConversationFromUserList:
-                              removeConversationFromUserList,
+                              widget.removeConversationFromUserList,
                           initialIsInUserConversations: isInUserList,
                           eventPicture: isTurn
                               ? eventData['turnImageUrl']
                               : eventData['cfqImageUrl'],
-                          resetUnreadMessages: resetUnreadMessages,
+                          resetUnreadMessages: widget.resetUnreadMessages,
                         ),
                       ),
                     );
@@ -218,12 +233,13 @@ class EventsList extends StatelessWidget {
                 },
                 isFavorite: isFavorite,
                 onFavoritePressed: () =>
-                    onFavoriteToggle(documentId, !isFavorite),
+                    widget.onFavoriteToggle(documentId, !isFavorite),
                 attendingStatus: attendingStatus,
               );
             } else if (isCfq) {
               return StreamBuilder<bool>(
-                  stream: isFollowingUpStream(documentId, currentUser!.uid),
+                  stream: widget.isFollowingUpStream(
+                      documentId, widget.currentUser!.uid),
                   builder: (context, followUpSnapshot) {
                     return CFQCardContent(
                       cfqImageUrl:
@@ -245,19 +261,20 @@ class EventsList extends StatelessWidget {
                           List<String>.from(eventData['followingUp'] ?? []),
                       cfqId: documentId,
                       organizerId: eventData['uid'] ?? CustomString.emptyString,
-                      currentUserId: currentUser!.uid,
-                      favorites: currentUser!.favorites,
+                      currentUserId: widget.currentUser!.uid,
+                      favorites: widget.currentUser!.favorites,
                       isFavorite: isFavorite,
                       onFollowUpToggled: (bool newValue) {
-                        toggleFollowUp(documentId, currentUser!.uid);
+                        widget.toggleFollowUp(
+                            documentId, widget.currentUser!.uid);
                       },
                       onFollowPressed: () {
                         // Handle follow action
                       },
                       onSendPressed: () async {
                         if (eventData['channelId'] != null) {
-                          bool isInUserList = await isConversationInUserList(
-                              eventData['channelId']);
+                          bool isInUserList = await widget
+                              .isConversationInUserList(eventData['channelId']);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -271,14 +288,14 @@ class EventsList extends StatelessWidget {
                                 organizerName: eventData['username'],
                                 organizerProfilePicture:
                                     eventData['profilePictureUrl'],
-                                currentUser: currentUser!,
+                                currentUser: widget.currentUser!,
                                 addConversationToUserList:
-                                    addConversationToUserList,
+                                    widget.addConversationToUserList,
                                 removeConversationFromUserList:
-                                    removeConversationFromUserList,
+                                    widget.removeConversationFromUserList,
                                 initialIsInUserConversations: isInUserList,
                                 eventPicture: eventData['cfqImageUrl'],
-                                resetUnreadMessages: resetUnreadMessages,
+                                resetUnreadMessages: widget.resetUnreadMessages,
                               ),
                             ),
                           );
@@ -290,7 +307,7 @@ class EventsList extends StatelessWidget {
                         // Handle share action
                       },
                       onFavoritePressed: () =>
-                          onFavoriteToggle(documentId, !isFavorite),
+                          widget.onFavoriteToggle(documentId, !isFavorite),
                       onBellPressed: () {
                         // Handle comment action
                       },
