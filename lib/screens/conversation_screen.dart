@@ -121,13 +121,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        widget.eventName,
-                        style: CustomTextStyle.title1,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
+                    Text(
+                      widget.eventName,
+                      style: CustomTextStyle.title1,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     const SizedBox(width: 12),
                     IconButton(
@@ -163,9 +161,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
+          color: CustomColor.customBlack,
           child: Wrap(
             children: <Widget>[
+              const Divider(height: 20, color: CustomColor.transparent),
+              const Divider(),
               ListTile(
+                minTileHeight: 45,
                 leading:
                     Icon(_isInUserConversations ? Icons.remove : Icons.add),
                 title: Text(_isInUserConversations
@@ -184,13 +186,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   Navigator.pop(context);
                 },
               ),
+              const Divider(),
               ListTile(
+                minTileHeight: 45,
                 leading: const Icon(Icons.people),
                 title: const Text(CustomString.seeMembers),
                 onTap: () {
                   Navigator.pop(context);
                   _showInviteesList(context);
                 },
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 120,
               ),
             ],
           ),

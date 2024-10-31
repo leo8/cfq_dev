@@ -20,7 +20,9 @@ class ConversationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: CustomColor.customDarkGrey,
+      color: (unreadMessagesCount >= 1)
+          ? CustomColor.customDarkGrey
+          : CustomColor.transparent,
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(conversation.imageUrl),

@@ -101,8 +101,8 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -131,9 +131,13 @@ class TurnButtons extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Container(
+          color: CustomColor.customBlack,
           child: Wrap(
             children: <Widget>[
+              const Divider(height: 20, color: CustomColor.transparent),
+              const Divider(),
               ListTile(
+                minTileHeight: 45,
                 leading: const Icon(Icons.check, color: CustomColor.green),
                 title: const Text('Je suis là'),
                 onTap: () {
@@ -141,7 +145,9 @@ class TurnButtons extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
+              const Divider(),
               ListTile(
+                minTileHeight: 45,
                 leading:
                     const Icon(Icons.help_outline, color: CustomColor.yellow),
                 title: const Text('Je sais pas'),
@@ -150,13 +156,19 @@ class TurnButtons extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
+              const Divider(),
               ListTile(
+                minTileHeight: 45,
                 leading: const Icon(Icons.close, color: CustomColor.red),
                 title: const Text('Je peux pas'),
                 onTap: () {
                   onAttendingPressed('notAttending');
                   Navigator.pop(context);
                 },
+              ),
+              const Divider(),
+              const SizedBox(
+                height: 120,
               ),
             ],
           ),

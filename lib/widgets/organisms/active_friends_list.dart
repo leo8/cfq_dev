@@ -34,14 +34,14 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildUserAvatar(model.User user) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       child: Column(
         children: [
           AvatarNeonSwitch(
             imageUrl: user.profilePictureUrl,
             isActive: user.isActive,
             onChanged: onActiveChanged,
-            avatarRadius: 45,
+            avatarRadius: 38,
             switchSize: 1,
           ),
         ],
@@ -51,13 +51,13 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildFriendAvatar(model.User friend) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       child: Column(
         children: [
           ClickableAvatar(
             userId: friend.uid,
             imageUrl: friend.profilePictureUrl,
-            radius: 45,
+            radius: 38,
             onTap: () => onFriendTap(friend.uid),
             isActive: friend.isActive,
           ),
