@@ -29,7 +29,7 @@ class PrivateTurnCard extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Participe à un turn privé   -     ${DateTimeUtils.formatEventDateTime(eventDateTime)}',
+              'Participe à un turn privé   -   ${DateTimeUtils.formatEventDateTime(eventDateTime)}',
               style: CustomTextStyle.body1,
             ),
           ),
