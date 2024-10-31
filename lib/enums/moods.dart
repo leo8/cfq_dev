@@ -14,7 +14,7 @@ class CustomMood {
     MoodItem(CustomIcon.barMood, CustomString.barMood),
     MoodItem(CustomIcon.clubMood, CustomString.clubMood),
     MoodItem(CustomIcon.streetMood, CustomString.streetMood),
-    MoodItem(CustomIcon.turnMood, CustomString.turnMood),
+    MoodItem(CustomIcon.otherMood, CustomString.otherMood),
     MoodItem(CustomIcon.chillMood, CustomString.chillMood),
     MoodItem(CustomIcon.dinerMood, CustomString.dinerMood),
     MoodItem(CustomIcon.afterMood, CustomString.afterMood),

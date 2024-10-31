@@ -25,15 +25,19 @@ class SignUpOption extends StatelessWidget {
         // Display the question text in a subtle color
         Text(
           questionText,
-          style: CustomTextStyle.miniBody,
+          style: CustomTextStyle.body2,
+        ),
+        const SizedBox(
+          width: 8,
         ),
         // Display the action text, which is clickable and styled in a bold, accent color
         GestureDetector(
           onTap: onTap, // Calls the provided onTap function when tapped
           child: Text(
             actionText,
-            style: CustomTextStyle.getColoredTextStyle(
-                CustomTextStyle.title1, CustomColor.personnalizedPurple),
+            style: CustomTextStyle.body2.copyWith(
+                fontWeight: FontWeight.bold,
+                color: CustomColor.personnalizedPurple),
           ),
         ),
       ],

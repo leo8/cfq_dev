@@ -57,12 +57,11 @@ class AuthMethods {
     String res = CustomString.someErrorOccurred;
 
     try {
-      // Validate that required fields are not empty
-      // Register user with email and password
 
       // Upload profile picture to storage and get the URL
       String profilePictureUrl = CustomString.emptyString;
       if (profilePicture != null) {
+
         profilePictureUrl = await StorageMethods()
             .uploadImageToStorage('profilePicture', profilePicture, false);
 

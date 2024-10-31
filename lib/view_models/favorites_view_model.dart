@@ -4,6 +4,7 @@ import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import '../utils/logger.dart';
 import '../providers/conversation_service.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FavoritesViewModel extends ChangeNotifier {
   final String currentUserId;
@@ -191,9 +192,9 @@ class FavoritesViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> toggleFollowUp(String documentId, String userId) async {
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
     try {
-      DocumentReference cfqRef = _firestore.collection('cfqs').doc(documentId);
+      DocumentReference cfqRef = _firestore.collection('cfqs').doc(cfqId);
 
       await _firestore.runTransaction((transaction) async {
         DocumentSnapshot cfqSnapshot = await transaction.get(cfqRef);
@@ -212,13 +213,6 @@ class FavoritesViewModel extends ChangeNotifier {
         }
 
         transaction.update(cfqRef, {'followingUp': followingUp});
-
-        // Update local state
-        int index =
-            _favoriteEvents.indexWhere((event) => event.id == documentId);
-        if (index != -1) {
-          _favoriteEvents[index] = cfqSnapshot;
-        }
       });
 
       notifyListeners();
@@ -315,6 +309,54 @@ class FavoritesViewModel extends ChangeNotifier {
       if (!snapshot.exists) return 0;
       final data = snapshot.data() as Map<String, dynamic>;
       return (data['attending'] as List?)?.length ?? 0;
+    });
+  }
+
+  Stream<List<DocumentSnapshot>> fetchFavoriteEventsStream() {
+    return _firestore
+        .collection('users')
+        .doc(currentUserId)
+        .snapshots()
+        .switchMap((userSnap) {
+      if (!userSnap.exists) {
+        return Stream.value(<DocumentSnapshot>[]);
+      }
+
+      final userData = userSnap.data() as Map<String, dynamic>;
+      final favorites = List<String>.from(userData['favorites'] ?? []);
+
+      if (favorites.isEmpty) {
+        return Stream.value(<DocumentSnapshot>[]);
+      }
+
+      // Fetch both turns and cfqs that are in favorites
+      Stream<List<DocumentSnapshot>> cfqsStream = _firestore
+          .collection('cfqs')
+          .where(FieldPath.documentId, whereIn: favorites)
+          .snapshots()
+          .map((snapshot) => snapshot.docs);
+
+      Stream<List<DocumentSnapshot>> turnsStream = _firestore
+          .collection('turns')
+          .where(FieldPath.documentId, whereIn: favorites)
+          .snapshots()
+          .map((snapshot) => snapshot.docs);
+
+      return Rx.combineLatest2(
+        cfqsStream,
+        turnsStream,
+        (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
+          List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                (a.data() as Map<String, dynamic>)['datePublished'].toDate();
+            DateTime dateB =
+                (b.data() as Map<String, dynamic>)['datePublished'].toDate();
+            return dateB.compareTo(dateA);
+          });
+          return allEvents;
+        },
+      );
     });
   }
 }

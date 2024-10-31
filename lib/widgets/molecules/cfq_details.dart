@@ -132,7 +132,7 @@ class CFQDetails extends StatelessWidget {
       case 'bar':
         return CustomIcon.barMood;
       case 'turn':
-        return CustomIcon.turnMood;
+        return CustomIcon.otherMood;
       case 'club':
         return CustomIcon.clubMood;
       case 'before':
@@ -140,7 +140,7 @@ class CFQDetails extends StatelessWidget {
       case 'after':
         return CustomIcon.afterMood;
       default:
-        return CustomIcon.turnMood; // Default icon
+        return CustomIcon.otherMood; // Default icon
     }
   }
 

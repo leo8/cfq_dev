@@ -66,7 +66,7 @@ class ConversationsScreen extends StatelessWidget {
   Widget _buildConversationsList(
       List<Conversation> conversations, ConversationsViewModel viewModel) {
     if (conversations.isEmpty) {
-      return const Center(child: Text('No conversations found'));
+      return const Center(child: Text(CustomString.noConversationsYet));
     }
     return ListView.builder(
       itemCount: conversations.length,
