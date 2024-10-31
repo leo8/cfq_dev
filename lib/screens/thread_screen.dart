@@ -16,10 +16,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
-  const ThreadScreen({super.key});
+  const ThreadScreen({super.key, required this.userId});
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
+// <<<<<<< feature/CFQ-48_phone_authentification
+    //final currentUser = Provider.of<UserProvider>(context).getUser;
+
+    return ChangeNotifierProvider<ThreadViewModel>(
+      create: (_) => ThreadViewModel(currentUserUid: userId),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: CustomColor.customBlack,
+          elevation: 0,
+          title: Consumer<ThreadViewModel>(
+            builder: (context, viewModel, child) {
+              return ThreadHeader(
+                onSearchTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(viewModel: viewModel),
+                    ),
+/*
+--dev 
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         // Check if user is initialized
@@ -71,6 +93,8 @@ class ThreadScreen extends StatelessWidget {
                     },
                     unreadConversationsCountStream:
                         viewModel.unreadConversationsCountStream,
+---dev 
+*/
                   );
                 },
               ),

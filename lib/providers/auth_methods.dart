@@ -46,73 +46,60 @@ class AuthMethods {
   }
 
   // Sign up a new user
-  Future<String> signUpUser({
-    required String email,
-    required String password,
-    required String username,
-    String? location,
-    Uint8List? profilePicture,
-    DateTime? birthDate,
-  }) async {
+  Future<String> signUpUser(
+      {required String email,
+      required String password,
+      required String username,
+      String? location,
+      Uint8List? profilePicture,
+      DateTime? birthDate,
+      required String uid}) async {
     String res = CustomString.someErrorOccurred;
 
     try {
-      // Validate that required fields are not empty
-      if (email.isNotEmpty &&
-          password.isNotEmpty &&
-          username.isNotEmpty &&
-          birthDate != null &&
-          profilePicture != null &&
-          location != null &&
-          location.isNotEmpty) {
-        // Register user with email and password
-        UserCredential userCredential = await _auth
-            .createUserWithEmailAndPassword(email: email, password: password);
 
-        // Upload profile picture to storage and get the URL
-        String profilePictureUrl = CustomString.emptyString;
+      // Upload profile picture to storage and get the URL
+      String profilePictureUrl = CustomString.emptyString;
+      if (profilePicture != null) {
 
         profilePictureUrl = await StorageMethods()
             .uploadImageToStorage('profilePicture', profilePicture, false);
 
         // Log the profile picture URL for debugging
         AppLogger.debug('Profile picture URL: $profilePictureUrl');
-
-        // Check if profile picture upload failed
-        if (profilePictureUrl.isEmpty) {
-          return CustomString.failedToUploadProfilePicture;
-        }
-
-        // Create User model object with the provided data
-        model.User user = model.User(
-          username: username,
-          uid: userCredential.user!.uid,
-          email: email,
-          friends: [],
-          teams: [],
-          profilePictureUrl: profilePictureUrl,
-          location: location,
-          birthDate: birthDate,
-          isActive: false,
-          searchKey: username.toLowerCase(), // New users start as inactive
-          postedTurns: [],
-          invitedTurns: [],
-          postedCfqs: [],
-          invitedCfqs: [],
-          favorites: [],
-          conversations: [],
-        );
-
-        // Save the user data to Firestore under 'users' collection
-        await _firestore.collection('users').doc(userCredential.user!.uid).set(
-              user.toJson(),
-            );
-
-        res = CustomString.success; // Indicate successful sign-up
-      } else {
-        res = CustomString
-            .pleaseFillInAllRequiredFields; // Handle missing required fields
       }
+
+      // Check if profile picture upload failed
+      if (profilePictureUrl.isEmpty) {
+        return CustomString.failedToUploadProfilePicture;
+      }
+
+      // Create User model object with the provided data
+      model.User user = model.User(
+        username: username,
+        uid: uid,
+        email: email,
+        friends: [],
+        teams: [],
+        profilePictureUrl: profilePictureUrl,
+        location: location ?? CustomString.emptyString,
+        birthDate: birthDate,
+        isActive: false,
+        searchKey: username.toLowerCase(), // New users start as inactive
+        postedTurns: [],
+        invitedTurns: [],
+        postedCfqs: [],
+        invitedCfqs: [],
+        favorites: [],
+        conversations: [],
+      );
+
+      // Save the user data to Firestore under 'users' collection
+      await _firestore.collection('users').doc(uid).set(
+            user.toJson(),
+          );
+
+      res = CustomString.success; // Indicate successful sign-up
     } catch (err) {
       // Handle any errors and return them as a string
       res = err.toString();

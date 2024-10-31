@@ -8,13 +8,17 @@ import '../utils/logger.dart';
 class TeamsViewModel extends ChangeNotifier {
   List<Team> _teams = [];
   bool _isLoading = true;
+// <<<<<<< feature/CFQ-48_phone_authentification
+  final String currentUserUid;
+// =======
   Map<String, List<model.User>> _teamMembers = {};
 
+// >>>>>>> dev
   List<Team> get teams => _teams;
   bool get isLoading => _isLoading;
   Map<String, List<model.User>> get teamMembers => _teamMembers;
 
-  TeamsViewModel() {
+  TeamsViewModel(this.currentUserUid) {
     fetchTeams();
   }
 
@@ -23,10 +27,9 @@ class TeamsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      String userId = FirebaseAuth.instance.currentUser!.uid;
       QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
           .collection('teams')
-          .where('members', arrayContains: userId)
+          .where('members', arrayContains: currentUserUid)
           .get(const GetOptions(
               source: Source.server)); // Force fetch from server
 
