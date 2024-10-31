@@ -161,6 +161,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
+          color: CustomColor.customBlack,
           child: Wrap(
             children: <Widget>[
               const Divider(height: 20, color: CustomColor.transparent),

@@ -84,7 +84,7 @@ class CustomIcon extends StatelessWidget {
   static const eventConversation = CustomIcon('message.svg');
   static const followUp = CustomIcon('bell.svg');
   static const favorite = CustomIcon('heart.svg');
-  static const attending = CustomIcon('turn_attending_icon.svg');
+  static const attending = CustomIcon('turn_attending_icon_v2.svg');
 
   //Moods
   static const streetMood = CustomIcon('street_icon.svg');
