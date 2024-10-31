@@ -106,13 +106,13 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                         borderSide: BorderSide.none)),
               ),
               const SizedBox(height: 20),
+              /*
               Text("ou",
                   style: TextStyle(
                     fontSize: 25,
                     color: Colors.grey[300],
                   )),
               const SizedBox(height: 10),
-              /*
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
