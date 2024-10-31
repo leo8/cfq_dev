@@ -58,20 +58,25 @@ class AuthMethods {
 
     try {
       // Validate that required fields are not empty
-      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty) {
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
+          username.isNotEmpty &&
+          birthDate != null &&
+          profilePicture != null &&
+          location != null &&
+          location.isNotEmpty) {
         // Register user with email and password
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(email: email, password: password);
 
         // Upload profile picture to storage and get the URL
         String profilePictureUrl = CustomString.emptyString;
-        if (profilePicture != null) {
-          profilePictureUrl = await StorageMethods()
-              .uploadImageToStorage('profilePicture', profilePicture, false);
 
-          // Log the profile picture URL for debugging
-          AppLogger.debug('Profile picture URL: $profilePictureUrl');
-        }
+        profilePictureUrl = await StorageMethods()
+            .uploadImageToStorage('profilePicture', profilePicture, false);
+
+        // Log the profile picture URL for debugging
+        AppLogger.debug('Profile picture URL: $profilePictureUrl');
 
         // Check if profile picture upload failed
         if (profilePictureUrl.isEmpty) {
@@ -86,7 +91,7 @@ class AuthMethods {
           friends: [],
           teams: [],
           profilePictureUrl: profilePictureUrl,
-          location: location ?? CustomString.emptyString,
+          location: location,
           birthDate: birthDate,
           isActive: false,
           searchKey: username.toLowerCase(), // New users start as inactive
