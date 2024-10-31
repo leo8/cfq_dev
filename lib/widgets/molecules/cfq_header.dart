@@ -45,35 +45,8 @@ class CFQHeader extends StatelessWidget {
                       width: double.infinity,
                       height: 275,
                     )
-                  : Container(
-                      color: CustomColor.transparent,
-                      width: double.infinity,
-                      height: 75,
-                    ),
+                  : null,
         ),
-        isExpanded
-            ? Positioned.fill(
-                top: -130,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    CustomString.cfqCapital,
-                    style: CustomTextStyle.hugeTitle.copyWith(
-                      fontSize: 32,
-                    ),
-                  ),
-                ),
-              )
-            : Positioned(
-                top: 10,
-                right: 10,
-                child: Text(
-                  CustomString.cfqCapital,
-                  style: CustomTextStyle.hugeTitle.copyWith(
-                    fontSize: 32,
-                  ),
-                ),
-              ),
         if (isExpanded)
           Positioned(
             bottom: 10,

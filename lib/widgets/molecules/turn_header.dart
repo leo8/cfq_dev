@@ -43,7 +43,7 @@ class TurnHeader extends StatelessWidget {
                 )
               : isExpanded
                   ? Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           gradient: CustomColor.turnBackgroundGradient),
                       width: double.infinity,
                       height: 275,

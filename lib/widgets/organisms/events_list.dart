@@ -84,8 +84,7 @@ class _EventsListState extends State<EventsList> {
           return LayoutBuilder(
             builder: (context, constraints) {
               return Container(
-                height: MediaQuery.of(context).size.height *
-                    0.5, // 50% of screen height
+// 50% of screen height
                 child: Center(
                   child: Text(
                     CustomString.noEventsAvailable,
@@ -114,226 +113,234 @@ class _EventsListState extends State<EventsList> {
 
         final events = snapshot.data!;
 
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: events.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final event = events[index];
-            final documentId = event.id;
-            final eventData = event.data() as Map<String, dynamic>? ?? {};
-            final isTurn = event.reference.parent.id == 'turns';
-            final isCfq = event.reference.parent.id == 'cfqs';
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: events.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 15),
+            itemBuilder: (context, index) {
+              final event = events[index];
+              final documentId = event.id;
+              final eventData = event.data() as Map<String, dynamic>? ?? {};
+              final isTurn = event.reference.parent.id == 'turns';
+              final isCfq = event.reference.parent.id == 'cfqs';
 
-            final isFavorite =
-                widget.currentUser?.favorites.contains(documentId) ?? false;
+              final isFavorite =
+                  widget.currentUser?.favorites.contains(documentId) ?? false;
 
-            if (isTurn) {
-              final List<String> invitees =
-                  List<String>.from(eventData['invitees'] ?? []);
-              final List<String> organizers =
-                  List<String>.from(eventData['organizers'] ?? []);
+              if (isTurn) {
+                final List<String> invitees =
+                    List<String>.from(eventData['invitees'] ?? []);
+                final List<String> organizers =
+                    List<String>.from(eventData['organizers'] ?? []);
 
-              if (!invitees.contains(widget.currentUser!.uid) &&
-                  !organizers.contains(widget.currentUser!.uid)) {
-                return PrivateTurnCard(
+                if (!invitees.contains(widget.currentUser!.uid) &&
+                    !organizers.contains(widget.currentUser!.uid)) {
+                  return PrivateTurnCard(
+                    eventDateTime: parseDate(eventData['eventDateTime']),
+                  );
+                }
+
+                String attendingStatus = 'notAnswered';
+                if (eventData['attending']?.contains(widget.currentUser!.uid) ??
+                    false) {
+                  attendingStatus = 'attending';
+                } else if (eventData['notSureAttending']
+                        ?.contains(widget.currentUser!.uid) ??
+                    false) {
+                  attendingStatus = 'notSureAttending';
+                } else if (eventData['notAttending']
+                        ?.contains(widget.currentUser!.uid) ??
+                    false) {
+                  attendingStatus = 'notAttending';
+                }
+
+                return TurnCardContent(
+                  turnImageUrl:
+                      eventData['turnImageUrl'] ?? CustomString.emptyString,
+                  profilePictureUrl: eventData['profilePictureUrl'] ??
+                      CustomString.emptyString,
+                  username: eventData['username'] ?? CustomString.emptyString,
+                  organizers: List<String>.from(eventData['organizers'] ?? []),
+                  turnName: eventData['turnName'] ?? CustomString.emptyString,
+                  description:
+                      eventData['description'] ?? CustomString.emptyString,
                   eventDateTime: parseDate(eventData['eventDateTime']),
+                  where: eventData['where'] ?? CustomString.emptyString,
+                  address: eventData['address'] ?? CustomString.emptyString,
+                  datePublished: parseDate(eventData['datePublished']),
+                  moods: List<String>.from(eventData['moods'] ?? []),
+                  turnId: eventData['turnId'] ?? CustomString.emptyString,
+                  organizerId: eventData['uid'] ?? CustomString.emptyString,
+                  currentUserId: widget.currentUser!.uid,
+                  favorites: widget.currentUser!.favorites,
+                  onAttendingPressed: () {
+                    // Handle attending action
+                  },
+                  attendingStatusStream: widget.attendingStatusStream(
+                      documentId, widget.currentUser!.uid),
+                  attendingCountStream: widget.attendingCountStream(documentId),
+                  onAttendingStatusChanged: (status) =>
+                      widget.onAttendingStatusChanged(documentId, status),
+                  onSharePressed: () {
+                    // Handle share action
+                  },
+                  onSendPressed: () async {
+                    if (eventData['channelId'] != null) {
+                      // Create a new list that includes both invitees and the organizer
+                      List<String> allMembers =
+                          List<String>.from(eventData['invitees'] ?? []);
+                      if (!allMembers.contains(eventData['uid'])) {
+                        allMembers
+                            .add(eventData['uid']); // Add the organizer's UID
+                      }
+                      bool isInUserList = await widget
+                          .isConversationInUserList(eventData['channelId']);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConversationScreen(
+                            eventName: isTurn
+                                ? eventData['turnName']
+                                : eventData['cfqName'],
+                            channelId: eventData['channelId'],
+                            organizerId: eventData['uid'],
+                            members: (eventData['invitees'] as List<dynamic>)
+                                .cast<String>(), // Cast to List<String
+                            organizerName: eventData['username'],
+                            organizerProfilePicture:
+                                eventData['profilePictureUrl'],
+                            currentUser: widget.currentUser!,
+                            addConversationToUserList:
+                                widget.addConversationToUserList,
+                            removeConversationFromUserList:
+                                widget.removeConversationFromUserList,
+                            initialIsInUserConversations: isInUserList,
+                            eventPicture: isTurn
+                                ? eventData['turnImageUrl']
+                                : eventData['cfqImageUrl'],
+                            resetUnreadMessages: widget.resetUnreadMessages,
+                          ),
+                        ),
+                      );
+                    } else {
+                      // Handle the case where no channel exists for this event
+                    }
+                  },
+                  onCommentPressed: () {
+                    // Handle comment action
+                  },
+                  isFavorite: isFavorite,
+                  onFavoritePressed: () =>
+                      widget.onFavoriteToggle(documentId, !isFavorite),
+                  attendingStatus: attendingStatus,
+                );
+              } else if (isCfq) {
+                return StreamBuilder<bool>(
+                    stream: widget.isFollowingUpStream(
+                        documentId, widget.currentUser!.uid),
+                    builder: (context, followUpSnapshot) {
+                      return CFQCardContent(
+                        cfqImageUrl: eventData['cfqImageUrl'] ??
+                            CustomString.emptyString,
+                        profilePictureUrl: eventData['profilePictureUrl'] ??
+                            CustomString.emptyString,
+                        username:
+                            eventData['username'] ?? CustomString.emptyString,
+                        organizers:
+                            List<String>.from(eventData['organizers'] ?? []),
+                        cfqName:
+                            eventData['cfqName'] ?? CustomString.emptyString,
+                        description: eventData['description'] ??
+                            CustomString.emptyString,
+                        datePublished: parseDate(eventData['datePublished']),
+                        location:
+                            eventData['where'] ?? CustomString.emptyString,
+                        when: eventData['when'] ?? CustomString.emptyString,
+                        moods: List<String>.from(eventData['moods'] ?? []),
+                        followingUp:
+                            List<String>.from(eventData['followingUp'] ?? []),
+                        cfqId: documentId,
+                        organizerId:
+                            eventData['uid'] ?? CustomString.emptyString,
+                        currentUserId: widget.currentUser!.uid,
+                        favorites: widget.currentUser!.favorites,
+                        isFavorite: isFavorite,
+                        onFollowUpToggled: (bool newValue) {
+                          widget.toggleFollowUp(
+                              documentId, widget.currentUser!.uid);
+                        },
+                        onFollowPressed: () {
+                          // Handle follow action
+                        },
+                        onSendPressed: () async {
+                          if (eventData['channelId'] != null) {
+                            bool isInUserList =
+                                await widget.isConversationInUserList(
+                                    eventData['channelId']);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ConversationScreen(
+                                  eventName: eventData['cfqName'],
+                                  channelId: eventData['channelId'],
+                                  organizerId: eventData['uid'],
+                                  members: (eventData['invitees']
+                                          as List<dynamic>)
+                                      .cast<String>(), // Cast to List<String
+                                  organizerName: eventData['username'],
+                                  organizerProfilePicture:
+                                      eventData['profilePictureUrl'],
+                                  currentUser: widget.currentUser!,
+                                  addConversationToUserList:
+                                      widget.addConversationToUserList,
+                                  removeConversationFromUserList:
+                                      widget.removeConversationFromUserList,
+                                  initialIsInUserConversations: isInUserList,
+                                  eventPicture: eventData['cfqImageUrl'],
+                                  resetUnreadMessages:
+                                      widget.resetUnreadMessages,
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Handle the case where no channel exists for this event
+                          }
+                        },
+                        onSharePressed: () {
+                          // Handle share action
+                        },
+                        onFavoritePressed: () =>
+                            widget.onFavoriteToggle(documentId, !isFavorite),
+                        onBellPressed: () {
+                          // Handle comment action
+                        },
+                      );
+                    });
+              } else {
+                // This is a birthday event
+                final birthDate = parseDate(eventData['birthDate']);
+                final now = DateTime.now();
+                final nextBirthday = DateTime(
+                  now.year,
+                  birthDate.month,
+                  birthDate.day,
+                );
+
+                // If birthday has passed this year, use next year's date
+                final displayDate = nextBirthday.isBefore(now)
+                    ? DateTime(now.year + 1, birthDate.month, birthDate.day)
+                    : nextBirthday;
+
+                return BirthdayCard(
+                  username: eventData['username'] ?? CustomString.emptyString,
+                  birthDate: displayDate,
                 );
               }
-
-              String attendingStatus = 'notAnswered';
-              if (eventData['attending']?.contains(widget.currentUser!.uid) ??
-                  false) {
-                attendingStatus = 'attending';
-              } else if (eventData['notSureAttending']
-                      ?.contains(widget.currentUser!.uid) ??
-                  false) {
-                attendingStatus = 'notSureAttending';
-              } else if (eventData['notAttending']
-                      ?.contains(widget.currentUser!.uid) ??
-                  false) {
-                attendingStatus = 'notAttending';
-              }
-
-              return TurnCardContent(
-                turnImageUrl:
-                    eventData['turnImageUrl'] ?? CustomString.emptyString,
-                profilePictureUrl:
-                    eventData['profilePictureUrl'] ?? CustomString.emptyString,
-                username: eventData['username'] ?? CustomString.emptyString,
-                organizers: List<String>.from(eventData['organizers'] ?? []),
-                turnName: eventData['turnName'] ?? CustomString.emptyString,
-                description:
-                    eventData['description'] ?? CustomString.emptyString,
-                eventDateTime: parseDate(eventData['eventDateTime']),
-                where: eventData['where'] ?? CustomString.emptyString,
-                address: eventData['address'] ?? CustomString.emptyString,
-                datePublished: parseDate(eventData['datePublished']),
-                moods: List<String>.from(eventData['moods'] ?? []),
-                turnId: eventData['turnId'] ?? CustomString.emptyString,
-                organizerId: eventData['uid'] ?? CustomString.emptyString,
-                currentUserId: widget.currentUser!.uid,
-                favorites: widget.currentUser!.favorites,
-                onAttendingPressed: () {
-                  // Handle attending action
-                },
-                attendingStatusStream: widget.attendingStatusStream(
-                    documentId, widget.currentUser!.uid),
-                attendingCountStream: widget.attendingCountStream(documentId),
-                onAttendingStatusChanged: (status) =>
-                    widget.onAttendingStatusChanged(documentId, status),
-                onSharePressed: () {
-                  // Handle share action
-                },
-                onSendPressed: () async {
-                  if (eventData['channelId'] != null) {
-                    // Create a new list that includes both invitees and the organizer
-                    List<String> allMembers =
-                        List<String>.from(eventData['invitees'] ?? []);
-                    if (!allMembers.contains(eventData['uid'])) {
-                      allMembers
-                          .add(eventData['uid']); // Add the organizer's UID
-                    }
-                    bool isInUserList = await widget
-                        .isConversationInUserList(eventData['channelId']);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                          eventName: isTurn
-                              ? eventData['turnName']
-                              : eventData['cfqName'],
-                          channelId: eventData['channelId'],
-                          organizerId: eventData['uid'],
-                          members: (eventData['invitees'] as List<dynamic>)
-                              .cast<String>(), // Cast to List<String
-                          organizerName: eventData['username'],
-                          organizerProfilePicture:
-                              eventData['profilePictureUrl'],
-                          currentUser: widget.currentUser!,
-                          addConversationToUserList:
-                              widget.addConversationToUserList,
-                          removeConversationFromUserList:
-                              widget.removeConversationFromUserList,
-                          initialIsInUserConversations: isInUserList,
-                          eventPicture: isTurn
-                              ? eventData['turnImageUrl']
-                              : eventData['cfqImageUrl'],
-                          resetUnreadMessages: widget.resetUnreadMessages,
-                        ),
-                      ),
-                    );
-                  } else {
-                    // Handle the case where no channel exists for this event
-                  }
-                },
-                onCommentPressed: () {
-                  // Handle comment action
-                },
-                isFavorite: isFavorite,
-                onFavoritePressed: () =>
-                    widget.onFavoriteToggle(documentId, !isFavorite),
-                attendingStatus: attendingStatus,
-              );
-            } else if (isCfq) {
-              return StreamBuilder<bool>(
-                  stream: widget.isFollowingUpStream(
-                      documentId, widget.currentUser!.uid),
-                  builder: (context, followUpSnapshot) {
-                    return CFQCardContent(
-                      cfqImageUrl:
-                          eventData['cfqImageUrl'] ?? CustomString.emptyString,
-                      profilePictureUrl: eventData['profilePictureUrl'] ??
-                          CustomString.emptyString,
-                      username:
-                          eventData['username'] ?? CustomString.emptyString,
-                      organizers:
-                          List<String>.from(eventData['organizers'] ?? []),
-                      cfqName: eventData['cfqName'] ?? CustomString.emptyString,
-                      description:
-                          eventData['description'] ?? CustomString.emptyString,
-                      datePublished: parseDate(eventData['datePublished']),
-                      location: eventData['where'] ?? CustomString.emptyString,
-                      when: eventData['when'] ?? CustomString.emptyString,
-                      moods: List<String>.from(eventData['moods'] ?? []),
-                      followingUp:
-                          List<String>.from(eventData['followingUp'] ?? []),
-                      cfqId: documentId,
-                      organizerId: eventData['uid'] ?? CustomString.emptyString,
-                      currentUserId: widget.currentUser!.uid,
-                      favorites: widget.currentUser!.favorites,
-                      isFavorite: isFavorite,
-                      onFollowUpToggled: (bool newValue) {
-                        widget.toggleFollowUp(
-                            documentId, widget.currentUser!.uid);
-                      },
-                      onFollowPressed: () {
-                        // Handle follow action
-                      },
-                      onSendPressed: () async {
-                        if (eventData['channelId'] != null) {
-                          bool isInUserList = await widget
-                              .isConversationInUserList(eventData['channelId']);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ConversationScreen(
-                                eventName: eventData['cfqName'],
-                                channelId: eventData['channelId'],
-                                organizerId: eventData['uid'],
-                                members:
-                                    (eventData['invitees'] as List<dynamic>)
-                                        .cast<String>(), // Cast to List<String
-                                organizerName: eventData['username'],
-                                organizerProfilePicture:
-                                    eventData['profilePictureUrl'],
-                                currentUser: widget.currentUser!,
-                                addConversationToUserList:
-                                    widget.addConversationToUserList,
-                                removeConversationFromUserList:
-                                    widget.removeConversationFromUserList,
-                                initialIsInUserConversations: isInUserList,
-                                eventPicture: eventData['cfqImageUrl'],
-                                resetUnreadMessages: widget.resetUnreadMessages,
-                              ),
-                            ),
-                          );
-                        } else {
-                          // Handle the case where no channel exists for this event
-                        }
-                      },
-                      onSharePressed: () {
-                        // Handle share action
-                      },
-                      onFavoritePressed: () =>
-                          widget.onFavoriteToggle(documentId, !isFavorite),
-                      onBellPressed: () {
-                        // Handle comment action
-                      },
-                    );
-                  });
-            } else {
-              // This is a birthday event
-              final birthDate = parseDate(eventData['birthDate']);
-              final now = DateTime.now();
-              final nextBirthday = DateTime(
-                now.year,
-                birthDate.month,
-                birthDate.day,
-              );
-
-              // If birthday has passed this year, use next year's date
-              final displayDate = nextBirthday.isBefore(now)
-                  ? DateTime(now.year + 1, birthDate.month, birthDate.day)
-                  : nextBirthday;
-
-              return BirthdayCard(
-                username: eventData['username'] ?? CustomString.emptyString,
-                birthDate: displayDate,
-              );
-            }
-          },
+            },
+          ),
         );
       },
     );
