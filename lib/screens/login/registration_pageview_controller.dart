@@ -14,6 +14,7 @@ import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegistrationFlow extends StatefulWidget {
   final UserCredential cred;
@@ -33,25 +34,38 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
   final TextEditingController birthdayTextController = TextEditingController();
   final TextEditingController localisationTextController =
       TextEditingController();
+  DateTime? _selectedBirthDate;
+  Uint8List? _image;
+  bool _isLoading = false;
+
+  void selectImage() async {
+    final ImageSource? source = await showImageSourceDialog(context);
+    if (source != null) {
+      Uint8List? im = await pickImage(source);
+      setState(() {
+        _image = im;
+      });
+    }
+  }
 
   /// Attempts to sign up the user with the provided information.
   void signUpUser() async {
     setState(() {
-      //_isLoading = true; // Show loading state
+      _isLoading = true; // Show loading state
     });
 
     // Call AuthMethods to sign up the user
     String res = await AuthMethods().signUpUser(
-        email: "charles.ca@gmail.com",
+        email: "X@gmail.com",
         password: firstNameTextController.text,
         username: nameTextController.text,
-        profilePicture: Uint8List(1),
+        profilePicture: _image,
         location: localisationTextController.text,
-        birthDate: null, // Pass selected birth date
+        birthDate: _selectedBirthDate, // Pass selected birth date
         uid: widget.cred.user!.uid);
 
     setState(() {
-      //_isLoading = false; // Hide loading state
+      _isLoading = false; // Hide loading state
     });
 
     if (res != CustomString.success) {
@@ -121,12 +135,21 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                   currentPages: _currentIndex,
                   totalPages: totalPages,
                   birthdayTextController: birthdayTextController,
+                  selectedBirthDate: _selectedBirthDate,
+                  onBirthDateChanged: (DateTime? newDate) {
+                    setState(() {
+                      _selectedBirthDate =
+                          newDate; // Update selected birth date
+                    });
+                  },
                 ),
                 LoginPhoto(
                   onNext: _nextPage,
                   onPrevious: _previousPage,
                   currentPages: _currentIndex,
                   totalPages: totalPages,
+                  image: _image,
+                  onImageSelected: selectImage,
                 ),
                 InscriptionLocalisation(
                   onNext: _nextPage,

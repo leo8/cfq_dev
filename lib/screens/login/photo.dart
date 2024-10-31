@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:cfq_dev/utils/styles/neon_background.dart';
+import 'package:cfq_dev/widgets/atoms/avatars/profile_image_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:flutter/material.dart';
 
@@ -7,13 +10,17 @@ class LoginPhoto extends StatefulWidget {
   final VoidCallback onPrevious;
   final int currentPages;
   final int totalPages;
+  final Uint8List? image;
+  final VoidCallback onImageSelected;
 
   const LoginPhoto(
       {super.key,
       required this.onNext,
       required this.onPrevious,
       required this.currentPages,
-      required this.totalPages});
+      required this.totalPages,
+      required this.image,
+      required this.onImageSelected});
 
   @override
   State<LoginPhoto> createState() => _LoginPhotoState();
@@ -49,6 +56,10 @@ class _LoginPhotoState extends State<LoginPhoto> {
                   "UNE PHOTO",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 24, color: Colors.white),
+                ),
+                ProfileImageAvatar(
+                  image: widget.image,
+                  onImageSelected: widget.onImageSelected,
                 ),
                 Expanded(
                   child: Align(

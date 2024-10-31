@@ -68,15 +68,6 @@ class _CFQState extends State<CFQ> {
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'cfq_dev',
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: CustomColor.transparent,
-        ),
-        home: NeonBackground(child: LoginScreenMobile()));
-
-    /*
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -123,6 +114,6 @@ class _CFQState extends State<CFQ> {
               const NeonBackground(child: LoginScreenMobile()),
         },
       ),
-    );*/
+    );
   }
 }

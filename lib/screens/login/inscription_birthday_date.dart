@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:cfq_dev/utils/styles/neon_background.dart';
+import 'package:cfq_dev/utils/styles/string.dart';
+import 'package:cfq_dev/widgets/atoms/dates/custom_date_field.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +12,9 @@ class InscriptionBirthdayDate extends StatefulWidget {
   final int currentPages;
   final int totalPages;
   final TextEditingController birthdayTextController;
+  final DateTime? selectedBirthDate;
+  final Function(DateTime?)
+      onBirthDateChanged; // Callback for changes in birth date
 
   const InscriptionBirthdayDate(
       {super.key,
@@ -15,7 +22,9 @@ class InscriptionBirthdayDate extends StatefulWidget {
       required this.onPrevious,
       required this.currentPages,
       required this.totalPages,
-      required this.birthdayTextController});
+      required this.birthdayTextController,
+      required this.selectedBirthDate,
+      required this.onBirthDateChanged});
 
   @override
   State<InscriptionBirthdayDate> createState() =>
@@ -25,6 +34,10 @@ class InscriptionBirthdayDate extends StatefulWidget {
 class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
   final otpController = TextEditingController();
   final double constaint = 30.0;
+
+  void test(DateTime) {
+    log("@@@ test ${widget.birthdayTextController.text}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +77,14 @@ class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
                           const BorderSide(color: Colors.white, width: 1.0))),
             ),
             const SizedBox(height: 20),
+            CustomDateField(
+              controller: widget.birthdayTextController,
+              hintText: CustomString.yourBirthdate, // "Your Birth Date"
+              selectedDate:
+                  widget.selectedBirthDate, // Pass the currently selected date
+              onDateChanged: widget.onBirthDateChanged,
+              // Trigger callback on date selection
+            ),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
