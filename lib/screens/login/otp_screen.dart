@@ -60,8 +60,9 @@ class _OTPScreenState extends State<OTPScreen> {
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                const SizedBox(height: 200),
                 Text(
                   CustomString.verificationCodeCapital,
                   textAlign: TextAlign.center,
@@ -74,8 +75,9 @@ class _OTPScreenState extends State<OTPScreen> {
                 BorderedTextField(
                   controller: otpController,
                   hintText: CustomString.yourVerificationCode,
+                  keyboardType: TextInputType.number,
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 60),
                 isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(

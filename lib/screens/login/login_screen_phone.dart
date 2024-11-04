@@ -98,8 +98,10 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
               ),
               const SizedBox(height: 30),
               BorderedTextField(
-                  controller: phoneController,
-                  hintText: CustomString.yourNumber),
+                controller: phoneController,
+                hintText: CustomString.yourNumber,
+                keyboardType: TextInputType.number,
+              ),
               /*
               Text("ou",
                   style: TextStyle(
