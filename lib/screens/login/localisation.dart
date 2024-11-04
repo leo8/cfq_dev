@@ -1,6 +1,10 @@
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
+import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
 import 'package:flutter/material.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
+import 'package:cfq_dev/utils/styles/string.dart';
 
 class InscriptionLocalisation extends StatefulWidget {
   final VoidCallback onNext;
@@ -45,24 +49,18 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
               ],
             ),
             const SizedBox(height: 100),
-            const Text(
-              "TA LOCALISATION",
+            Text(
+              CustomString.yourLocationCapital,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 24, color: Colors.white),
+              style: CustomTextStyle.body1.copyWith(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 40),
-            TextField(
+            BorderedTextField(
               controller: widget.localisationTextController,
-              keyboardType: TextInputType.name,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  fillColor: Colors.black,
-                  filled: true,
-                  hintText: "Paris",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 1.0))),
+              hintText: CustomString.yourLocation,
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -76,15 +74,16 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
                         widget.onNext();
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
+                          backgroundColor: CustomColor.customBlack,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                               side: const BorderSide(
-                                  color: Colors.white30, width: 1.0))),
+                                  color: CustomColor.customWhite, width: 1.0))),
                       child: const Text(
-                        "Verify",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                        CustomString.authProcessStep4,
+                        style: TextStyle(
+                            fontSize: 20, color: CustomColor.customWhite),
                       )),
                 ),
               ),
@@ -94,23 +93,23 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
               width: double.infinity,
               height: 30,
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: const BorderSide(
-                              color: Colors.transparent, width: 0))),
-                  onPressed: () {
-                    widget.onPrevious();
-                  },
-                  child: const Text(
-                    "Revenir en arrière",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.purple),
-                  )),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: CustomColor.transparent,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: const BorderSide(
+                            color: CustomColor.transparent, width: 0))),
+                onPressed: () {
+                  widget.onPrevious();
+                },
+                child: Text(
+                  CustomString.lastStep,
+                  style: CustomTextStyle.body1.copyWith(
+                    color: CustomColor.customPurple,
+                  ),
+                ),
+              ),
             )
           ],
         ),

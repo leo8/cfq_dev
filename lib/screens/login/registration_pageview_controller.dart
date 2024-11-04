@@ -28,7 +28,6 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
   int _currentIndex = 0;
   final int totalPages = 4;
   final TextEditingController nameTextController = TextEditingController();
-  final TextEditingController firstNameTextController = TextEditingController();
   final TextEditingController birthdayTextController = TextEditingController();
   final TextEditingController localisationTextController =
       TextEditingController();
@@ -54,8 +53,8 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
 
     // Call AuthMethods to sign up the user
     String res = await AuthMethods().signUpUser(
-        email: "X@gmail.com",
-        password: firstNameTextController.text,
+        email: "",
+        password: "",
         username: nameTextController.text,
         profilePicture: _image,
         location: localisationTextController.text,
@@ -127,7 +126,6 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                         currentPages: _currentIndex,
                         totalPages: totalPages,
                         nameTextController: nameTextController,
-                        firstNameTextController: firstNameTextController,
                       ),
                       InscriptionBirthdayDate(
                         onNext: _nextPage,

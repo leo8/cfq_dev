@@ -4,8 +4,12 @@ import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/registration_pageview_controller.dart';
 import 'package:cfq_dev/utils/styles/neon_background.dart';
+import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen(
@@ -52,31 +56,26 @@ class _OTPScreenState extends State<OTPScreen> {
     return NeonBackground(
       child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Colors.transparent,
+          backgroundColor: CustomColor.transparent,
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  "CODE DE VERIFICATION",
+                Text(
+                  CustomString.verificationCodeCapital,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: CustomTextStyle.body1.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 40),
-                TextField(
+                BorderedTextField(
                   controller: otpController,
-                  keyboardType: TextInputType.phone,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                      fillColor: Colors.black,
-                      filled: true,
-                      hintText: "12345",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none)),
+                  hintText: CustomString.yourVerificationCode,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
                 isLoading
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
@@ -100,11 +99,13 @@ class _OTPScreenState extends State<OTPScreen> {
                             isLoading = false;
                           });
                         },
-                        child: const Text(
-                          "Verify",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w500),
-                        ))
+                        child: Text(
+                          CustomString.check,
+                          style: CustomTextStyle.bigBody1.copyWith(
+                            color: CustomColor.customPurple,
+                          ),
+                        ),
+                      )
               ],
             ),
           )),

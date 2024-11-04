@@ -1,7 +1,11 @@
-import 'dart:developer';
 import 'package:cfq_dev/screens/login/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
+import '../../widgets/atoms/texts/bordered_text_field.dart';
+import '../../utils/logger.dart';
 
 class LoginScreenMobile extends StatefulWidget {
   const LoginScreenMobile({super.key});
@@ -14,18 +18,20 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
   final phoneController = TextEditingController();
 
   bool isloading = false;
-  bool isSignIn = true;
-  String titleConnexion = "INSCRIPTION";
-  String buttonConnectionTitle = "inscrit toi";
-  String buttonBackTitle = "Deja un compte";
+  bool isSignIn = false;
+  String titleConnexion = CustomString.logInCapital;
+  String buttonConnectionTitle = CustomString.logIn;
+  String buttonBackTitle = CustomString.noAccountYet;
 
   void _toggleConnectionPage() {
     isSignIn = !isSignIn;
     setState(() {
-      titleConnexion = isSignIn ? "INSCRIPTION" : "CONNEXION";
-      buttonConnectionTitle = isSignIn ? "inscrit toi" : "Connencte toi";
+      titleConnexion =
+          isSignIn ? CustomString.signUpCapital : CustomString.logInCapital;
+      buttonConnectionTitle =
+          isSignIn ? CustomString.signUp : CustomString.logIn;
       buttonBackTitle =
-          isSignIn ? "Deja un compte ?" : "Pas encore de compte ?";
+          isSignIn ? CustomString.alreadySignedUp : CustomString.noAccountYet;
     });
   }
 
@@ -34,17 +40,16 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
       phoneNumber: convertPhoneNumber(),
       verificationCompleted: (phoneAuthCredential) {},
       verificationFailed: (error) {
-        log("@@@ error ${error.toString()}");
-        log("@@@ error.tenantId ${error.tenantId}");
-        log("@@@ error.stackTrace ${error.stackTrace.toString()}");
-        log("@@@ error.tenantId ${error.message}");
-        log("@@@ ${error.phoneNumber}");
+        AppLogger.debug("@@@ error ${error.toString()}");
+        AppLogger.debug("@@@ error.tenantId ${error.tenantId}");
+        AppLogger.debug("@@@ error.stackTrace ${error.stackTrace.toString()}");
+        AppLogger.debug("@@@ error.tenantId ${error.message}");
+        AppLogger.debug("@@@ ${error.phoneNumber}");
       },
       codeSent: (verificationId, forceResendingToken) {
         setState(() {
           isloading = false;
         });
-        log("here");
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -56,7 +61,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
         );
       },
       codeAutoRetrievalTimeout: (verificationId) {
-        log("Auto Retrieval timeout");
+        AppLogger.debug("Auto Retrieval timeout");
       },
     );
   }
@@ -79,26 +84,22 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
           child: Column(
             children: [
               const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
-                  child:
-                      Image(image: AssetImage('assets/images/logo_white.png'))),
-              Text(titleConnexion,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, color: Colors.white)),
-              const SizedBox(height: 40),
-              TextField(
-                keyboardType: TextInputType.phone,
-                controller: phoneController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                    fillColor: Colors.black,
-                    filled: true,
-                    hintText: "Ton num ...",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none)),
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: Image(
+                  image: AssetImage('assets/images/logo_white.png'),
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 60),
+              Text(
+                titleConnexion,
+                textAlign: TextAlign.center,
+                style: CustomTextStyle.body1
+                    .copyWith(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 30),
+              BorderedTextField(
+                  controller: phoneController,
+                  hintText: CustomString.yourNumber),
               /*
               Text("ou",
                   style: TextStyle(
@@ -114,7 +115,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                       width: 65,
                       height: 40,
                       child: ElevatedButton(
-                        onPressed: () => {log("@@@ click google")},
+                        onPressed: () => {AppLogger.debug("@@@ click google")},
                         child: const Image(
                           image: AssetImage("assets/google_logo.png"),
                           height: 20,
@@ -127,7 +128,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                       width: 65,
                       height: 40,
                       child: ElevatedButton(
-                          onPressed: () => {log("@@@ click apple")},
+                          onPressed: () => {AppLogger.debug("@@@ click apple")},
                           child: const Image(
                             image: AssetImage("assets/apple_logo.png"),
                             height: 20,
@@ -156,12 +157,12 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 isloading = false;
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.black,
+                                backgroundColor: CustomColor.customBlack,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(7),
                                   side: const BorderSide(
-                                    color: Colors.white30,
+                                    color: CustomColor.customWhite,
                                     width: 1.0,
                                   ),
                                 ),
@@ -170,7 +171,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 buttonConnectionTitle,
                                 style: const TextStyle(
                                   fontSize: 20,
-                                  color: Colors.white,
+                                  color: CustomColor.customWhite,
                                 ),
                               ),
                             ),
@@ -184,7 +185,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 backgroundColor: Colors.transparent,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(7),
                                   side: const BorderSide(
                                     color: Colors.transparent,
                                     width: 0,
@@ -198,14 +199,14 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   buttonBackTitle,
-                                  style: const TextStyle(
-                                    fontSize: 25,
-                                    color: Colors.purple,
+                                  style: CustomTextStyle.body1.copyWith(
+                                    color: CustomColor.customPurple,
                                   ),
                                 ),
                               ),
                             ),
                           ),
+                          const SizedBox(height: 50)
                         ],
                       ),
                     )

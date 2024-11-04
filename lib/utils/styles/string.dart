@@ -11,6 +11,7 @@ class CustomString {
   static const cancel = "Annuler";
   static const add = "Ajouter";
   static const create = "Créer";
+  static const check = "Vérifier";
   static const done = "Terminé";
   static const confirm = "Confirmer";
   static const success = "Succès";
@@ -34,11 +35,28 @@ class CustomString {
   static const logOut = "Se déconnecter";
 
   // Authentication Form
+  static const yourNumber = "Ton 06...";
+  static const yourVerificationCode = "Entre le code reçu par SMS";
   static const yourEmail = "Ton email";
   static const yourPassword = "Ton mot de passe";
-  static const yourUsername = "Comment on t'appelle ?";
+  static const yourUsername = "Ton petit nom ?";
   static const yourLocation = "T'y es vers où le sang ?";
   static const yourBirthdate = "Ta date de naissance";
+
+  static const yourUsernameCapital = "TON NOM D'UTILISATEUR";
+  static const verificationCodeCapital = "CODE DE VÉRIFICATION";
+  static const yourBirthdateCapital = "TA DATE DE NAISSANCE";
+  static const profilePictureCapital = "UNE PHOTO";
+  static const yourLocationCapital = "TA LOCALISATION";
+  static const addYourFriendsCapital = "AJOUTE TES AMIS";
+
+  static const authProcessStep1 = "Confirmer";
+  static const authProcessStep2 = "Ensuite...";
+  static const authProcessStep3 = "C'est presque terminé";
+  static const authProcessStep4 = "Un dernier effort...";
+  static const authProcessStep5 = "C'est bon, tu peux turn !";
+
+  static const lastStep = "Étape précédente";
 
   // User Information
   static const username = "Nom d'utilisateur";
