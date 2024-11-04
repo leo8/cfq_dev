@@ -117,38 +117,36 @@ class ConversationService {
         AppLogger.info(
             'Conversation $channelId updated with new message details');
 
-        // Update unreadMessagesCount for members and create notification
+        // Create notifications for each member
         for (String memberId in userSnapshots.keys) {
           DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
-          Map<String, dynamic> userData =
-              userSnapshot.data() as Map<String, dynamic>;
-          String notificationsChannelId = userData['notificationsChannelId'];
+          String notificationsChannelId =
+              userSnapshot.get('notificationsChannelId');
+          String notificationId = const Uuid().v1();
 
-          if (userData['conversations']
-              .any((e) => e['conversationId'] == channelId)) {
-            String notificationId = const Uuid().v1();
+          DocumentReference notificationRef = _firestore
+              .collection('notifications')
+              .doc(notificationsChannelId)
+              .collection('userNotifications')
+              .doc(notificationId);
 
-            // Create notification document
-            DocumentReference notificationRef = _firestore
-                .collection('notifications')
-                .doc(notificationsChannelId);
-            transaction.set(notificationRef, {
-              'id': notificationId,
-              'timestamp': FieldValue.serverTimestamp(),
-              'type': 'message',
-              'content': {
-                'senderProfilePictureUrl': senderProfilePicture,
-                'messageContent': message,
-                'timestampSent': FieldValue.serverTimestamp(),
-                'senderUsername': senderUsername,
-                'conversationId': channelId,
-              }
-            });
-          }
+          transaction.set(notificationRef, {
+            'id': notificationId,
+            'timestamp': FieldValue.serverTimestamp(),
+            'type': 'message',
+            'content': {
+              'senderProfilePictureUrl': senderProfilePicture,
+              'messageContent': message,
+              'timestampSent': FieldValue.serverTimestamp(),
+              'senderUsername': senderUsername,
+              'conversationId': channelId,
+            }
+          });
 
           // Update unreadMessagesCount
           List<Map<String, dynamic>> conversations =
-              List<Map<String, dynamic>>.from(userData['conversations'] ?? []);
+              List<Map<String, dynamic>>.from(
+                  userSnapshot['conversations'] ?? []);
 
           int index = conversations
               .indexWhere((conv) => conv['conversationId'] == channelId);
