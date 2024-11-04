@@ -14,6 +14,7 @@ import '../widgets/organisms/events_list.dart';
 import 'conversations_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
+import 'notifications_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key, required this.userId});
@@ -40,7 +41,14 @@ class ThreadScreen extends StatelessWidget {
                   );
                 },
                 onNotificationTap: () {
-                  // Add notification functionality later
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsScreen(
+                        currentUserUid: userId,
+                      ),
+                    ),
+                  );
                 },
                 onMessageTap: () {
                   _navigateToConversationsScreen(

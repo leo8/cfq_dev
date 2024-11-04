@@ -82,12 +82,12 @@ class EventInvitationNotificationContent extends NotificationContent {
   factory EventInvitationNotificationContent.fromJson(
       Map<String, dynamic> json) {
     return EventInvitationNotificationContent(
-      eventId: json['eventId'],
-      eventName: json['eventName'],
-      eventImageUrl: json['eventImageUrl'],
-      organizerId: json['organizerId'],
-      organizerUsername: json['organizerUsername'],
-      organizerProfilePictureUrl: json['organizerProfilePictureUrl'],
+      eventId: json['eventId'] as String,
+      eventName: json['eventName'] as String,
+      eventImageUrl: json['eventImageUrl'] as String,
+      organizerId: json['organizerId'] as String,
+      organizerUsername: json['organizerUsername'] as String,
+      organizerProfilePictureUrl: json['organizerProfilePictureUrl'] as String,
     );
   }
 }
@@ -106,38 +106,60 @@ class Notification {
     required this.content,
   });
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'timestamp': timestamp.toIso8601String(),
-        'type': type.toString(),
-        'content': content.toJson(),
-      };
-
   factory Notification.fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
+
+    // Convert the string type to enum
     NotificationType type = NotificationType.values.firstWhere(
-      (e) => e.toString() == snapshot['type'],
+      (e) => e.toString().split('.').last == snapshot['type'],
+      orElse: () =>
+          throw Exception('Unknown notification type: ${snapshot['type']}'),
     );
+
+    // Handle timestamp
+    DateTime timestamp;
+    var timestampData = snapshot['timestamp'];
+    if (timestampData is Timestamp) {
+      timestamp = timestampData.toDate();
+    } else if (timestampData is String) {
+      timestamp = DateTime.parse(timestampData);
+    } else {
+      throw Exception('Invalid timestamp format');
+    }
 
     NotificationContent content;
     switch (type) {
       case NotificationType.message:
-        content = MessageNotificationContent.fromJson(snapshot['content']);
+        var contentData = Map<String, dynamic>.from(snapshot['content']);
+        // Convert Timestamp to String for MessageNotificationContent
+        if (contentData['timestampSent'] is Timestamp) {
+          contentData['timestampSent'] =
+              (contentData['timestampSent'] as Timestamp)
+                  .toDate()
+                  .toIso8601String();
+        }
+        content = MessageNotificationContent.fromJson(contentData);
         break;
       case NotificationType.eventInvitation:
-        content =
-            EventInvitationNotificationContent.fromJson(snapshot['content']);
+        content = EventInvitationNotificationContent.fromJson(
+            Map<String, dynamic>.from(snapshot['content']));
         break;
-      // Add other cases as you implement more notification types
       default:
-        throw Exception('Unknown notification type');
+        throw Exception('Unhandled notification type: $type');
     }
 
     return Notification(
-      id: snap.id,
-      timestamp: DateTime.parse(snapshot['timestamp']),
+      id: snapshot['id'],
+      timestamp: timestamp,
       type: type,
       content: content,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'timestamp': timestamp.toIso8601String(),
+        'type': type.toString().split('.').last,
+        'content': content.toJson(),
+      };
 }
