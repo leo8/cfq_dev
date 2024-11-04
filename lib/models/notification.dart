@@ -51,6 +51,47 @@ class MessageNotificationContent extends NotificationContent {
   }
 }
 
+// Event invitation specific notification content
+class EventInvitationNotificationContent extends NotificationContent {
+  final String eventId;
+  final String eventName;
+  final String eventImageUrl;
+  final String organizerId;
+  final String organizerUsername;
+  final String organizerProfilePictureUrl;
+
+  EventInvitationNotificationContent({
+    required this.eventId,
+    required this.eventName,
+    required this.eventImageUrl,
+    required this.organizerId,
+    required this.organizerUsername,
+    required this.organizerProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'eventId': eventId,
+        'eventName': eventName,
+        'eventImageUrl': eventImageUrl,
+        'organizerId': organizerId,
+        'organizerUsername': organizerUsername,
+        'organizerProfilePictureUrl': organizerProfilePictureUrl,
+      };
+
+  factory EventInvitationNotificationContent.fromJson(
+      Map<String, dynamic> json) {
+    return EventInvitationNotificationContent(
+      eventId: json['eventId'],
+      eventName: json['eventName'],
+      eventImageUrl: json['eventImageUrl'],
+      organizerId: json['organizerId'],
+      organizerUsername: json['organizerUsername'],
+      organizerProfilePictureUrl: json['organizerProfilePictureUrl'],
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -82,6 +123,10 @@ class Notification {
     switch (type) {
       case NotificationType.message:
         content = MessageNotificationContent.fromJson(snapshot['content']);
+        break;
+      case NotificationType.eventInvitation:
+        content =
+            EventInvitationNotificationContent.fromJson(snapshot['content']);
         break;
       // Add other cases as you implement more notification types
       default:
