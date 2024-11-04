@@ -57,6 +57,7 @@ class CustomString {
   static const authProcessStep5 = "C'est bon, tu peux turn !";
 
   static const lastStep = "Étape précédente";
+  static const backToLogInScreen = "Retour vers l'écran de connexion";
 
   // User Information
   static const username = "Nom d'utilisateur";

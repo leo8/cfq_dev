@@ -110,7 +110,10 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),

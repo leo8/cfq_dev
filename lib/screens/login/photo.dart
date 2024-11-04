@@ -118,7 +118,10 @@ class _LoginPhotoState extends State<LoginPhoto> {
                       ),
                     ),
                   ),
-                )
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
               ],
             ),
           )),

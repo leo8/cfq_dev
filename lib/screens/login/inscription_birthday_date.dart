@@ -124,7 +124,10 @@ class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),

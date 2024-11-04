@@ -109,7 +109,10 @@ class _InscriptionFriendsState extends State<InscriptionFriends> {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),
