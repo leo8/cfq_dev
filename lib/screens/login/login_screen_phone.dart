@@ -1,12 +1,5 @@
 import 'dart:developer';
-import 'package:cfq_dev/providers/auth_methods.dart';
-import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
-import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
-import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/otp_screen.dart';
-import 'package:cfq_dev/screens/login/registration_pageview_controller.dart';
-import 'package:cfq_dev/screens/thread_screen.dart';
-import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

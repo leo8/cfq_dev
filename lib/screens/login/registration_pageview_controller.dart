@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:typed_data';
-import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
@@ -113,62 +111,64 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.transparent,
-      body: Column(
-        children: [
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              physics:
-                  const NeverScrollableScrollPhysics(), // Désactive le swipe manuel
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
               children: [
-                Inscription(
-                  onNext: _nextPage,
-                  onPrevious: _previousPage,
-                  currentPages: _currentIndex,
-                  totalPages: totalPages,
-                  nameTextController: nameTextController,
-                  firstNameTextController: firstNameTextController,
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Désactive le swipe manuel
+                    children: [
+                      Inscription(
+                        onNext: _nextPage,
+                        onPrevious: _previousPage,
+                        currentPages: _currentIndex,
+                        totalPages: totalPages,
+                        nameTextController: nameTextController,
+                        firstNameTextController: firstNameTextController,
+                      ),
+                      InscriptionBirthdayDate(
+                        onNext: _nextPage,
+                        onPrevious: _previousPage,
+                        currentPages: _currentIndex,
+                        totalPages: totalPages,
+                        birthdayTextController: birthdayTextController,
+                        selectedBirthDate: _selectedBirthDate,
+                        onBirthDateChanged: (DateTime? newDate) {
+                          setState(() {
+                            _selectedBirthDate =
+                                newDate; // Update selected birth date
+                          });
+                        },
+                      ),
+                      LoginPhoto(
+                        onNext: _nextPage,
+                        onPrevious: _previousPage,
+                        currentPages: _currentIndex,
+                        totalPages: totalPages,
+                        image: _image,
+                        onImageSelected: selectImage,
+                      ),
+                      InscriptionLocalisation(
+                        onNext: _nextPage,
+                        onPrevious: _previousPage,
+                        currentPages: _currentIndex,
+                        totalPages: totalPages,
+                        localisationTextController: localisationTextController,
+                      ),
+                      InscriptionFriends(
+                          onNext: _nextPage,
+                          onPrevious: _previousPage,
+                          currentPages: _currentIndex,
+                          totalPages: totalPages,
+                          signUp: signUpUser)
+                    ],
+                  ),
                 ),
-                InscriptionBirthdayDate(
-                  onNext: _nextPage,
-                  onPrevious: _previousPage,
-                  currentPages: _currentIndex,
-                  totalPages: totalPages,
-                  birthdayTextController: birthdayTextController,
-                  selectedBirthDate: _selectedBirthDate,
-                  onBirthDateChanged: (DateTime? newDate) {
-                    setState(() {
-                      _selectedBirthDate =
-                          newDate; // Update selected birth date
-                    });
-                  },
-                ),
-                LoginPhoto(
-                  onNext: _nextPage,
-                  onPrevious: _previousPage,
-                  currentPages: _currentIndex,
-                  totalPages: totalPages,
-                  image: _image,
-                  onImageSelected: selectImage,
-                ),
-                InscriptionLocalisation(
-                  onNext: _nextPage,
-                  onPrevious: _previousPage,
-                  currentPages: _currentIndex,
-                  totalPages: totalPages,
-                  localisationTextController: localisationTextController,
-                ),
-                InscriptionFriends(
-                    onNext: _nextPage,
-                    onPrevious: _previousPage,
-                    currentPages: _currentIndex,
-                    totalPages: totalPages,
-                    signUp: signUpUser)
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

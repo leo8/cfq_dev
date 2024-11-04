@@ -1,4 +1,3 @@
-import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:cfq_dev/view_models/conversations_view_model.dart';
