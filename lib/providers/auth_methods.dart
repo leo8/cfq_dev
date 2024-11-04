@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import '../utils/styles/string.dart';
+import 'package:uuid/uuid.dart';
 
 // Provider class for authentication-related methods
 class AuthMethods {
@@ -55,13 +56,12 @@ class AuthMethods {
       DateTime? birthDate,
       required String uid}) async {
     String res = CustomString.someErrorOccurred;
+    final String notificationId;
 
     try {
-
       // Upload profile picture to storage and get the URL
       String profilePictureUrl = CustomString.emptyString;
       if (profilePicture != null) {
-
         profilePictureUrl = await StorageMethods()
             .uploadImageToStorage('profilePicture', profilePicture, false);
 
@@ -73,6 +73,9 @@ class AuthMethods {
       if (profilePictureUrl.isEmpty) {
         return CustomString.failedToUploadProfilePicture;
       }
+
+      // Generate notificationId
+      notificationId = const Uuid().v1();
 
       // Create User model object with the provided data
       model.User user = model.User(
@@ -92,6 +95,7 @@ class AuthMethods {
         invitedCfqs: [],
         favorites: [],
         conversations: [],
+        notificationId: notificationId,
       );
 
       // Save the user data to Firestore under 'users' collection
