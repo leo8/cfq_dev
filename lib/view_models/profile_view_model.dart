@@ -284,7 +284,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedCfqs: _user!.invitedCfqs,
         favorites: _user!.favorites,
         conversations: _user!.conversations,
-        notificationId: _user!.notificationId,
+        notificationsChannelId: _user!.notificationsChannelId,
       );
 
       _isLoading = false;
@@ -331,7 +331,7 @@ class ProfileViewModel extends ChangeNotifier {
         invitedCfqs: _user!.invitedCfqs,
         favorites: _user!.favorites,
         conversations: _user!.conversations,
-        notificationId: _user!.notificationId,
+        notificationsChannelId: _user!.notificationsChannelId,
       );
 
       _isLoading = false;

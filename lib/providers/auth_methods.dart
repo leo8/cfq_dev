@@ -56,7 +56,7 @@ class AuthMethods {
       DateTime? birthDate,
       required String uid}) async {
     String res = CustomString.someErrorOccurred;
-    final String notificationId;
+    final String notificationsChannelId;
 
     try {
       // Upload profile picture to storage and get the URL
@@ -74,8 +74,8 @@ class AuthMethods {
         return CustomString.failedToUploadProfilePicture;
       }
 
-      // Generate notificationId
-      notificationId = const Uuid().v1();
+      // Generate notificationsChannelId
+      notificationsChannelId = const Uuid().v1();
 
       // Create User model object with the provided data
       model.User user = model.User(
@@ -95,7 +95,7 @@ class AuthMethods {
         invitedCfqs: [],
         favorites: [],
         conversations: [],
-        notificationId: notificationId,
+        notificationsChannelId: notificationsChannelId,
       );
 
       // Save the user data to Firestore under 'users' collection

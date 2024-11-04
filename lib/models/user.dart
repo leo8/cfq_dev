@@ -18,7 +18,7 @@ class User {
   final List invitedCfqs; // List of cfqs 'uid
   final List favorites; // List of favorite items
   final List<ConversationInfo> conversations; // List of favorite items
-  final String notificationId;
+  final String notificationsChannelId;
 
   // Constructor for initializing a User object
   User({
@@ -38,7 +38,7 @@ class User {
     required this.invitedCfqs,
     required this.favorites,
     required this.conversations,
-    required this.notificationId,
+    required this.notificationsChannelId,
   });
 
   // Convert User object to a JSON format for storage
@@ -60,7 +60,7 @@ class User {
         "invitedCfqs": invitedCfqs,
         "favorites": favorites,
         "conversations": conversations.map((e) => e.toMap()).toList(),
-        "notificationId": notificationId,
+        "notificationsChannelId": notificationsChannelId,
       };
 
   // Create a User object from a Firestore snapshot
@@ -89,7 +89,7 @@ class User {
               ?.map((e) => ConversationInfo.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
-      notificationId: snapshot['notificationId'],
+      notificationsChannelId: snapshot['notificationsChannelId'],
     );
   }
 
@@ -116,7 +116,7 @@ class User {
               ?.map((e) => ConversationInfo.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
-      notificationId: map['notificationId'] as String,
+      notificationsChannelId: map['notificationsChannelId'] as String,
     );
   }
 
@@ -138,7 +138,7 @@ class User {
       "invitedCfqs": invitedCfqs,
       "favorites": favorites,
       "conversations": conversations.map((e) => e.toMap()).toList(),
-      "notificationId": notificationId
+      "notificationsChannelId": notificationsChannelId
     };
   }
 }
