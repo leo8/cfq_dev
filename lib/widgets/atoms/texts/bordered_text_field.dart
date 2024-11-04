@@ -12,6 +12,7 @@ class BorderedTextField extends StatelessWidget {
   final BorderRadius? borderRadius;
   final TextStyle? hintTextStyle;
   final Function(String)? onChanged;
+  final TextInputType? keyboardType;
 
   const BorderedTextField(
       {super.key,
@@ -23,7 +24,8 @@ class BorderedTextField extends StatelessWidget {
       this.onTap,
       this.borderRadius,
       this.hintTextStyle,
-      this.onChanged});
+      this.onChanged,
+      this.keyboardType});
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class BorderedTextField extends StatelessWidget {
               readOnly: readOnly,
               onTap: onTap,
               onChanged: onChanged,
+              keyboardType: keyboardType,
             ),
           ),
         ],
