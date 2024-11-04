@@ -5,6 +5,7 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../widgets/atoms/texts/bordered_text_field.dart';
+import '../../screens/login/login_screen_phone.dart';
 
 class Inscription extends StatefulWidget {
   final VoidCallback onNext;
@@ -82,6 +83,39 @@ class _InscriptionState extends State<Inscription> {
                     )),
               ),
             ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 30,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomColor.transparent,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(
+                          color: CustomColor.transparent, width: 0))),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const NeonBackground(
+                      child: LoginScreenMobile(),
+                    ),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: Text(
+                CustomString.backToLogInScreen,
+                style: CustomTextStyle.body1.copyWith(
+                  color: CustomColor.customPurple,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 50,
           ),
         ],
       ),
