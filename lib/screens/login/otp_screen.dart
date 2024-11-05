@@ -122,16 +122,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
                               final data = await FirebaseAuth.instance
                                   .signInWithCredential(cred);
-
-                              Fluttertoast.showToast(
-                                  msg: data.user!.uid,
-                                  toastLength: Toast.LENGTH_LONG,
-                                  gravity: ToastGravity.TOP,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0);
-                              //widget.isSign ? signUp(data) : signIn(data);
+                              widget.isSign ? signUp(data) : signIn(data);
                               // ignore: empty_catches
                             } catch (e) {}
                             setState(() {
