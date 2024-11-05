@@ -95,11 +95,51 @@ class AddTeamMembersScreen extends StatelessWidget {
                 title: Text(user.username),
                 trailing: isTeamMember
                     ? const Icon(Icons.check_circle, color: CustomColor.green)
-                    : ElevatedButton(
-                        onPressed: () => viewModel.addMemberToTeam(
-                          user.uid,
-                        ),
-                        child: const Text(CustomString.addFriend),
+                    : FutureBuilder<model.Request?>(
+                        future: viewModel.getExistingRequest(user.uid),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const SizedBox(
+                              width: 85,
+                              height: 36,
+                              child: Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          final request = snapshot.data;
+                          if (request?.status == model.RequestStatus.pending) {
+                            return Container(
+                              width: 85,
+                              height: 36,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: CustomColor.customDarkGrey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'En attente',
+                                style: CustomTextStyle.body2.copyWith(
+                                  color: CustomColor.grey300,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return ElevatedButton(
+                            onPressed: () =>
+                                viewModel.addMemberToTeam(user.uid),
+                            child: const Text(CustomString.addFriend),
+                          );
+                        },
                       ),
               ),
             ],

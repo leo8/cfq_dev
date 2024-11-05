@@ -97,26 +97,55 @@ class AddTeamMembersViewModel extends ChangeNotifier {
           .get();
 
       model.User user = model.User.fromSnap(userDoc);
-      model.Request? existingRequest = user.requests.firstWhere(
-        (request) =>
-            request.type == model.RequestType.team && request.teamId == teamId,
-      );
 
+      // Find existing request if any
+      model.Request? existingRequest;
+      try {
+        existingRequest = user.requests.firstWhere(
+          (request) =>
+              request.type == model.RequestType.team &&
+              request.teamId == teamId,
+        );
+      } catch (e) {
+        existingRequest = null;
+      }
+
+      // Get team data
       DocumentSnapshot teamDoc = await FirebaseFirestore.instance
           .collection('teams')
           .doc(teamId)
           .get();
-
       Team team = Team.fromSnap(teamDoc);
 
-      if (existingRequest.status == model.RequestStatus.denied) {
-        // Create new request or update existing one
-        model.Request request = model.Request(
-          id: existingRequest.id,
+      // Get current user data
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot currentUserDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+      Map<String, dynamic> currentUserData =
+          currentUserDoc.data() as Map<String, dynamic>;
+
+      // Create or update request
+      if (existingRequest == null ||
+          existingRequest.status == model.RequestStatus.denied) {
+        // Remove old request if it exists
+        if (existingRequest != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .update({
+            'requests': FieldValue.arrayRemove([existingRequest.toJson()])
+          });
+        }
+
+        // Create new request
+        model.Request newRequest = model.Request(
+          id: existingRequest?.id ?? const Uuid().v4(),
           type: model.RequestType.team,
-          requesterId: FirebaseAuth.instance.currentUser!.uid,
-          requesterUsername: user.username,
-          requesterProfilePictureUrl: user.profilePictureUrl,
+          requesterId: currentUserId,
+          requesterUsername: currentUserData['username'],
+          requesterProfilePictureUrl: currentUserData['profilePictureUrl'],
           teamId: teamId,
           teamName: team.name,
           teamImageUrl: team.imageUrl,
@@ -124,22 +153,55 @@ class AddTeamMembersViewModel extends ChangeNotifier {
           status: model.RequestStatus.pending,
         );
 
-        // Add new/updated request
+        // Add new request
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
             .update({
-          'requests': FieldValue.arrayUnion([request.toJson()])
+          'requests': FieldValue.arrayUnion([newRequest.toJson()])
         });
 
         // Create notification
-        await _createTeamRequestNotification(userId, teamId);
+        final String notificationId = const Uuid().v4();
+        final notification = {
+          'id': notificationId,
+          'timestamp': DateTime.now().toIso8601String(),
+          'type': notificationModel.NotificationType.teamRequest
+              .toString()
+              .split('.')
+              .last,
+          'content': {
+            'teamId': teamId,
+            'teamName': team.name,
+            'teamImageUrl': team.imageUrl,
+            'inviterId': currentUserId,
+            'inviterUsername': currentUserData['username'],
+            'inviterProfilePictureUrl': currentUserData['profilePictureUrl'],
+          },
+        };
+
+        // Add notification to user's notifications collection
+        await FirebaseFirestore.instance
+            .collection('notifications')
+            .doc(userDoc['notificationsChannelId'])
+            .collection('userNotifications')
+            .doc(notificationId)
+            .set(notification);
+
+        // Increment unread notifications count
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'unreadNotificationsCount': FieldValue.increment(1),
+        });
 
         _hasChanges = true;
         notifyListeners();
       }
     } catch (e) {
       AppLogger.error('Error adding member to team: $e');
+      rethrow;
     }
   }
 
@@ -155,60 +217,27 @@ class AddTeamMembersViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _createTeamRequestNotification(String userId, teamId) async {
+  Future<model.Request?> getExistingRequest(String userId) async {
     try {
-      DocumentSnapshot teamDoc = await FirebaseFirestore.instance
-          .collection('teams')
-          .doc(teamId)
-          .get();
-
-      // Get the invited user's notification channel ID
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .get();
-      String notificationChannelId =
-          (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
 
-      // Get current user data
-      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot currentUserDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUserId)
-          .get();
-      Map<String, dynamic> currentUserData =
-          currentUserDoc.data() as Map<String, dynamic>;
+      model.User user = model.User.fromSnap(userDoc);
 
-      final notification = {
-        'id': const Uuid().v4(),
-        'timestamp': FieldValue.serverTimestamp(),
-        'type': notificationModel.NotificationType.teamRequest
-            .toString()
-            .split('.')
-            .last,
-        'content': {
-          'teamId': teamId,
-          'teamName': teamDoc['teamName'] ?? '',
-          'teamImageUrl': teamDoc['teamImageUrl'] ?? '',
-          'inviterId': currentUserId,
-          'inviterUsername': currentUserData['username'],
-          'inviterProfilePictureUrl': currentUserData['profilePictureUrl'],
-        },
-      };
-
-      // Add notification
-      await FirebaseFirestore.instance
-          .collection('notifications')
-          .doc(notificationChannelId)
-          .collection('userNotifications')
-          .add(notification);
-
-      // Increment unread notifications count
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'unreadNotificationsCount': FieldValue.increment(1),
-      });
+      try {
+        return user.requests.firstWhere(
+          (request) =>
+              request.type == model.RequestType.team &&
+              request.teamId == teamId,
+        );
+      } catch (e) {
+        return null;
+      }
     } catch (e) {
-      AppLogger.error('Error creating team request notification: $e');
+      AppLogger.error('Error getting existing request: $e');
+      return null;
     }
   }
 }
