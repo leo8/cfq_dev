@@ -84,13 +84,14 @@ class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
                       if (widget.birthdayTextController.text.isEmpty) {
                         Fluttertoast.showToast(
                             msg: "Quelle est ta date d'anniv' ?",
-                            toastLength: Toast.LENGTH_SHORT,
+                            toastLength: Toast.LENGTH_LONG,
                             gravity: ToastGravity.TOP,
                             timeInSecForIosWeb: 1,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
                             fontSize: 16.0);
                       } else {
+                        Fluttertoast.cancel();
                         widget.onNext();
                       }
                     },

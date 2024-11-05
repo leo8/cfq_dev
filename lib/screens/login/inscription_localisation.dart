@@ -75,13 +75,14 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
                         if (widget.localisationTextController.text.isEmpty) {
                           Fluttertoast.showToast(
                               msg: "Quelle est ta loc ?",
-                              toastLength: Toast.LENGTH_SHORT,
+                              toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.TOP,
                               timeInSecForIosWeb: 1,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);
                         } else {
+                          Fluttertoast.cancel();
                           widget.onNext();
                         }
                       },

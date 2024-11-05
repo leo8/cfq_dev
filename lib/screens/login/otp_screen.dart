@@ -86,13 +86,14 @@ class _OTPScreenState extends State<OTPScreen> {
                           if (otpController.text.isEmpty) {
                             Fluttertoast.showToast(
                                 msg: "Pas de code de confirmation ?",
-                                toastLength: Toast.LENGTH_SHORT,
+                                toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.red,
                                 textColor: Colors.white,
                                 fontSize: 16.0);
                           } else {
+                            Fluttertoast.cancel();
                             setState(() {
                               isLoading = true;
                             });
