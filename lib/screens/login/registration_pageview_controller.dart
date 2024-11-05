@@ -3,13 +3,14 @@ import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
-import 'package:cfq_dev/screens/login/inscription.dart';
+import 'package:cfq_dev/screens/login/inscription_username.dart';
 import 'package:cfq_dev/screens/login/inscription_birthday_date.dart';
 import 'package:cfq_dev/screens/login/inscription_friends.dart';
 import 'package:cfq_dev/screens/login/inscription_localisation.dart';
 import 'package:cfq_dev/screens/login/inscription_photo.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,6 +35,30 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
   DateTime? _selectedBirthDate;
   Uint8List? _image;
   bool _isLoading = false;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<String> userNames = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserNames();
+  }
+
+  // Fonction pour récupérer tous les noms d'utilisateur
+  Future<void> fetchUserNames() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+      List<String> names = snapshot.docs.map((doc) {
+        return doc['searchKey'] as String;
+      }).toList();
+
+      setState(() {
+        userNames = names;
+      });
+    } catch (e) {
+      print("Erreur lors de la récupération des noms d'utilisateur : $e");
+    }
+  }
 
   void selectImage() async {
     final ImageSource? source = await showImageSourceDialog(context);
@@ -121,12 +146,12 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                         const NeverScrollableScrollPhysics(), // Désactive le swipe manuel
                     children: [
                       Inscription(
-                        onNext: _nextPage,
-                        onPrevious: _previousPage,
-                        currentPages: _currentIndex,
-                        totalPages: totalPages,
-                        nameTextController: nameTextController,
-                      ),
+                          onNext: _nextPage,
+                          onPrevious: _previousPage,
+                          currentPages: _currentIndex,
+                          totalPages: totalPages,
+                          nameTextController: nameTextController,
+                          userNames: userNames),
                       InscriptionBirthdayDate(
                         onNext: _nextPage,
                         onPrevious: _previousPage,

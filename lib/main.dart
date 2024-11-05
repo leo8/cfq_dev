@@ -1,8 +1,14 @@
+import 'package:cfq_dev/providers/user_provider.dart';
+import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
+import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
+import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/login_screen_phone.dart';
 import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart'; // Firebase core
 import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
 import 'package:flutter/material.dart'; // Flutter material components
+import 'package:provider/provider.dart';
 import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
@@ -61,15 +67,6 @@ class _CFQState extends State<CFQ> {
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'cfq_dev',
-        theme: ThemeData.dark().copyWith(
-          scaffoldBackgroundColor: CustomColor.transparent,
-        ),
-        home: NeonBackground(child: LoginScreenMobile()));
-  }
-  /*
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -117,5 +114,5 @@ class _CFQState extends State<CFQ> {
         },
       ),
     );
-  }*/
+  }
 }

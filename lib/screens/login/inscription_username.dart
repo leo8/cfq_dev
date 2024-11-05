@@ -14,15 +14,16 @@ class Inscription extends StatefulWidget {
   final int currentPages;
   final int totalPages;
   final TextEditingController nameTextController;
+  final List<String> userNames;
 
-  const Inscription({
-    super.key,
-    required this.onNext,
-    required this.onPrevious,
-    required this.currentPages,
-    required this.totalPages,
-    required this.nameTextController,
-  });
+  const Inscription(
+      {super.key,
+      required this.onNext,
+      required this.onPrevious,
+      required this.currentPages,
+      required this.totalPages,
+      required this.nameTextController,
+      required this.userNames});
 
   @override
   State<Inscription> createState() => _InscriptionState();
@@ -31,6 +32,10 @@ class Inscription extends StatefulWidget {
 class _InscriptionState extends State<Inscription> {
   final otpController = TextEditingController();
   final double constaint = 30.0;
+
+  bool userNameIsAlreadyTaken(userName) {
+    return widget.userNames.contains(userName);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +83,20 @@ class _InscriptionState extends State<Inscription> {
                             textColor: Colors.white,
                             fontSize: 16.0);
                       } else {
-                        widget.onNext();
+                        if (userNameIsAlreadyTaken(
+                            widget.nameTextController.text)) {
+                          Fluttertoast.showToast(
+                              msg: "Cet username est déjà pris",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.TOP,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          Fluttertoast.cancel();
+                          widget.onNext();
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
