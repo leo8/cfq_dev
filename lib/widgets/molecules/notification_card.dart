@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/notification.dart' as model;
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/colors.dart';
-import '../../utils/styles/string.dart';
 import '../atoms/avatars/custom_avatar.dart';
-import '../atoms/buttons/custom_button.dart';
 
 class NotificationCard extends StatelessWidget {
   final model.Notification notification;

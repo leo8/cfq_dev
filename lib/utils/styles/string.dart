@@ -165,6 +165,7 @@ class CustomString {
   static const myProfile = "Mon profil";
   static const myProfileCapital = "MON PROFIL";
   static const favorites = "Favoris";
+  static const requests = "Demandes d'ajout";
   static const privacy = "Confidentialité";
 
   // Favorites
