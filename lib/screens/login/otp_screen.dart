@@ -5,6 +5,7 @@ import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/registration_pageview_controller.dart';
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +25,23 @@ class OTPScreen extends StatefulWidget {
 
 class _OTPScreenState extends State<OTPScreen> {
   final otpController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<String> userNames = [];
+
+  Future<void> fetchUserNames() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+      List<String> names = snapshot.docs.map((doc) {
+        return doc['searchKey'] as String;
+      }).toList();
+
+      setState(() {
+        userNames = names;
+      });
+    } catch (e) {
+      print("Erreur lors de la récupération des noms d'utilisateur : $e");
+    }
+  }
 
   void signUp(UserCredential cred) {
     Navigator.pushReplacement(
@@ -86,13 +104,14 @@ class _OTPScreenState extends State<OTPScreen> {
                           if (otpController.text.isEmpty) {
                             Fluttertoast.showToast(
                                 msg: "Pas de code de confirmation ?",
-                                toastLength: Toast.LENGTH_SHORT,
+                                toastLength: Toast.LENGTH_LONG,
                                 gravity: ToastGravity.TOP,
                                 timeInSecForIosWeb: 1,
                                 backgroundColor: Colors.red,
                                 textColor: Colors.white,
                                 fontSize: 16.0);
                           } else {
+                            Fluttertoast.cancel();
                             setState(() {
                               isLoading = true;
                             });
@@ -103,10 +122,18 @@ class _OTPScreenState extends State<OTPScreen> {
 
                               final data = await FirebaseAuth.instance
                                   .signInWithCredential(cred);
-                              widget.isSign ? signUp(data) : signIn(data);
-                            } catch (e) {
-                              log(e.toString());
-                            }
+
+                              Fluttertoast.showToast(
+                                  msg: data.user!.uid,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              //widget.isSign ? signUp(data) : signIn(data);
+                              // ignore: empty_catches
+                            } catch (e) {}
                             setState(() {
                               isLoading = false;
                             });

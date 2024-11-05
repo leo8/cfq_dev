@@ -78,6 +78,9 @@ class CustomString {
   static const userNotFound = "Utilisateur non trouvé";
   static const noResults = "Pas de résultats.";
 
+  //Notifications
+  static const notificationsCapital = "NOTIFICATIONS";
+
   // Friends
   static const myFriends = "Mes amis";
   static const myFriendsCapital = "MES AMIS";
