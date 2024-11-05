@@ -13,6 +13,7 @@ import '../widgets/organisms/events_list.dart';
 import 'conversations_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
+import 'notifications_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
   const ThreadScreen({super.key, required this.userId});
@@ -39,7 +40,18 @@ class ThreadScreen extends StatelessWidget {
                   );
                 },
                 onNotificationTap: () {
-                  // Add notification functionality later
+                  Navigator.of(context)
+                      .push(
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsScreen(
+                        currentUserUid: userId,
+                      ),
+                    ),
+                  )
+                      .then((_) {
+                    // Refresh any necessary data after returning from notifications
+                    viewModel.loadConversations();
+                  });
                 },
                 onMessageTap: () {
                   _navigateToConversationsScreen(
@@ -47,6 +59,8 @@ class ThreadScreen extends StatelessWidget {
                 },
                 unreadConversationsCountStream:
                     viewModel.unreadConversationsCountStream,
+                unreadNotificationsCountStream:
+                    viewModel.unreadNotificationsCountStream,
               );
             },
           ),

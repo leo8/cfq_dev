@@ -494,6 +494,13 @@ class CreateCfqViewModel extends ChangeNotifier
         channelId: channelId,
       );
 
+      await _createEventInvitationNotifications(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        cfqId,
+        'ÇFQ ${whenController.text.toUpperCase()} ?',
+        cfqImageUrl ?? '',
+      );
+
       // Create conversation first
       await _conversationService.createConversation(
         channelId,
@@ -739,6 +746,58 @@ class CreateCfqViewModel extends ChangeNotifier
       removeEverybody();
     } else {
       selectEverybody();
+    }
+  }
+
+  Future<void> _createEventInvitationNotifications(
+    List<String> inviteesIds,
+    String eventId,
+    String eventName,
+    String eventImageUrl,
+  ) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (String uid in inviteesIds) {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+        if (userDoc.exists) {
+          // Increment unread notifications count
+          batch.update(
+            FirebaseFirestore.instance.collection('users').doc(uid),
+            {'unreadNotificationsCount': FieldValue.increment(1)},
+          );
+
+          String notificationsChannelId = userDoc.get('notificationsChannelId');
+          String notificationId = const Uuid().v1();
+
+          DocumentReference notificationRef = FirebaseFirestore.instance
+              .collection('notifications')
+              .doc(notificationsChannelId)
+              .collection('userNotifications')
+              .doc(notificationId);
+
+          batch.set(notificationRef, {
+            'id': notificationId,
+            'timestamp': FieldValue.serverTimestamp(),
+            'type': 'eventInvitation',
+            'content': {
+              'eventId': eventId,
+              'eventName': eventName,
+              'eventImageUrl': eventImageUrl,
+              'organizerId': _currentUser!.uid,
+              'organizerUsername': _currentUser!.username,
+              'organizerProfilePictureUrl': _currentUser!.profilePictureUrl,
+            }
+          });
+        }
+      }
+
+      await batch.commit();
+    } catch (e) {
+      AppLogger.error('Error creating event invitation notifications: $e');
+      rethrow;
     }
   }
 }

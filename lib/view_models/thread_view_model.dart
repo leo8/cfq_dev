@@ -45,6 +45,11 @@ class ThreadViewModel extends ChangeNotifier {
   Stream<int> get unreadConversationsCountStream =>
       _unreadConversationsCountSubject.stream;
 
+  final BehaviorSubject<int> _unreadNotificationsCountSubject =
+      BehaviorSubject<int>.seeded(0);
+  Stream<int> get unreadNotificationsCountStream =>
+      _unreadNotificationsCountSubject.stream;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
@@ -59,6 +64,7 @@ class ThreadViewModel extends ChangeNotifier {
     searchController.dispose();
     _userSubscription?.cancel();
     _unreadConversationsCountSubject.close();
+    _unreadNotificationsCountSubject.close();
     super.dispose();
   }
 
@@ -321,30 +327,18 @@ class ThreadViewModel extends ChangeNotifier {
         .snapshots()
         .listen((snapshot) {
       if (snapshot.exists) {
-        final userData = snapshot.data() as Map<String, dynamic>;
+        _currentUser = model.User.fromSnap(snapshot);
 
-        // Add this section to update favorites
-        if (_currentUser != null) {
-          _currentUser!.favorites.clear();
-          _currentUser!.favorites
-              .addAll(List<String>.from(userData['favorites'] ?? []));
-        }
+        // Update notifications count
+        _unreadNotificationsCountSubject
+            .add(_currentUser?.unreadNotificationsCount ?? 0);
 
-        final updatedConversations = (userData['conversations']
-                    as List<dynamic>?)
-                ?.map((e) =>
-                    model.ConversationInfo.fromMap(e as Map<String, dynamic>))
-                .toList() ??
-            [];
-
-        currentUser!.conversations.clear();
-        currentUser!.conversations.addAll(updatedConversations);
-
-        // Calculate and update unread conversations count
-        int unreadCount = updatedConversations
-            .where((conv) => conv.unreadMessagesCount > 0)
-            .length;
-        _unreadConversationsCountSubject.add(unreadCount);
+        // Update conversations count
+        final unreadConversationsCount = _currentUser?.conversations
+                .where((conv) => conv.unreadMessagesCount > 0)
+                .length ??
+            0;
+        _unreadConversationsCountSubject.add(unreadConversationsCount);
 
         notifyListeners();
       }
