@@ -16,7 +16,9 @@ class RequestsViewModel extends ChangeNotifier {
         .snapshots()
         .map((snapshot) {
       final user = User.fromSnap(snapshot);
-      return user.requests;
+      final sortedRequests = user.requests
+        ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      return sortedRequests;
     });
   }
 
