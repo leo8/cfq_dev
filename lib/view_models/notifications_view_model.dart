@@ -32,34 +32,38 @@ class NotificationsViewModel extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      // Get user's notifications channel ID
-      DocumentSnapshot userDoc =
+      final userDoc =
           await _firestore.collection('users').doc(currentUserUid).get();
-      String notificationsChannelId = userDoc.get('notificationsChannelId');
-      _unreadNotificationsCount = userDoc.get('unreadNotificationsCount') ?? 0;
+      final String notificationChannelId =
+          userDoc.get('notificationsChannelId');
 
-      // Listen to notifications
-      _firestore
+      final querySnapshot = await _firestore
           .collection('notifications')
-          .doc(notificationsChannelId)
+          .doc(notificationChannelId)
           .collection('userNotifications')
           .orderBy('timestamp', descending: true)
-          .snapshots()
-          .listen((snapshot) {
-        _notifications = snapshot.docs
-            .map((doc) => model.Notification.fromSnap(doc))
-            .where((notification) =>
-                notification.type == model.NotificationType.eventInvitation ||
-                notification.type == model.NotificationType.followUp ||
-                notification.type == model.NotificationType.attending)
-            .toList();
+          .get();
 
-        _isLoading = false;
-        notifyListeners();
-      });
-    } catch (e) {
+      AppLogger.debug('Found ${querySnapshot.docs.length} notifications');
+      AppLogger.debug(
+          'Notification types: ${querySnapshot.docs.map((doc) => (doc.data()['type'] as String)).toList()}');
+
+      _notifications = querySnapshot.docs
+          .map((doc) => model.Notification.fromSnap(doc))
+          .where((notification) =>
+              notification.type == model.NotificationType.eventInvitation ||
+              notification.type == model.NotificationType.followUp ||
+              notification.type == model.NotificationType.attending ||
+              notification.type == model.NotificationType.teamRequest)
+          .toList();
+
+      AppLogger.debug('Filtered to ${_notifications.length} notifications');
+
       _isLoading = false;
+      notifyListeners();
+    } catch (e) {
       AppLogger.error('Error loading notifications: $e');
+      _isLoading = false;
       notifyListeners();
     }
   }

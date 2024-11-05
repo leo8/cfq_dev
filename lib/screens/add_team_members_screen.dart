@@ -96,7 +96,9 @@ class AddTeamMembersScreen extends StatelessWidget {
                 trailing: isTeamMember
                     ? const Icon(Icons.check_circle, color: CustomColor.green)
                     : ElevatedButton(
-                        onPressed: () => viewModel.addMemberToTeam(user.uid),
+                        onPressed: () => viewModel.addMemberToTeam(
+                          user.uid,
+                        ),
                         child: const Text(CustomString.addFriend),
                       ),
               ),

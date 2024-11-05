@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../models/notification.dart' as notificationModel;
 import '../utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class AddTeamMembersViewModel extends ChangeNotifier {
   final String teamId;
@@ -87,6 +89,11 @@ class AddTeamMembersViewModel extends ChangeNotifier {
 
   Future<void> addMemberToTeam(String userId) async {
     try {
+      await _createTeamRequestNotification(
+        userId,
+        teamId,
+      );
+
       // Update team document
       await FirebaseFirestore.instance.collection('teams').doc(teamId).update({
         'members': FieldValue.arrayUnion([userId])
@@ -116,5 +123,62 @@ class AddTeamMembersViewModel extends ChangeNotifier {
           .toList();
     }
     notifyListeners();
+  }
+
+  Future<void> _createTeamRequestNotification(String userId, teamId) async {
+    try {
+      DocumentSnapshot teamDoc = await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .get();
+
+      // Get the invited user's notification channel ID
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      String notificationChannelId =
+          (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
+
+      // Get current user data
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot currentUserDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+      Map<String, dynamic> currentUserData =
+          currentUserDoc.data() as Map<String, dynamic>;
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': FieldValue.serverTimestamp(),
+        'type': notificationModel.NotificationType.teamRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'teamId': teamId,
+          'teamName': teamDoc['teamName'] ?? '',
+          'teamImageUrl': teamDoc['teamImageUrl'] ?? '',
+          'inviterId': currentUserId,
+          'inviterUsername': currentUserData['username'],
+          'inviterProfilePictureUrl': currentUserData['profilePictureUrl'],
+        },
+      };
+
+      // Add notification
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(notificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating team request notification: $e');
+    }
   }
 }

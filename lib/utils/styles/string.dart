@@ -7,6 +7,8 @@ class CustomString {
   static const interrogationMark = "?";
 
   // General
+  static const accept = "Accepter";
+  static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
   static const add = "Ajouter";

@@ -80,6 +80,11 @@ class NotificationsList extends StatelessWidget {
                           // Navigate to turn details
                           // TODO: Implement navigation to turn
                           break;
+                        case model.NotificationType.teamRequest:
+                          //final content = notification.content
+                          //as model.TeamRequestNotificationContent;
+                          // Handle team request navigation/action
+                          break;
                         default:
                           break;
                       }
