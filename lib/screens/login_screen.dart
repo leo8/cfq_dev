@@ -1,3 +1,4 @@
+/*
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
@@ -6,12 +7,13 @@ import 'package:cfq_dev/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/templates/auth_template.dart';
 import 'package:cfq_dev/utils/utils.dart';
-
 import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
 import '../widgets/molecules/signup_option.dart';
 import '../widgets/organisms/login_form.dart';
+import '../../utils/styles/text_styles.dart';
 
+/// Login screen where users can log in or navigate to the sign-up screen.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -20,17 +22,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
+  final TextEditingController _emailController =
+      TextEditingController(); // Controller for the email field
+  final TextEditingController _passwordController =
+      TextEditingController(); // Controller for the password field
+  bool _isLoading = false; // Tracks if the login process is in progress
 
   @override
   void dispose() {
-    super.dispose();
+    // Dispose of the controllers when the widget is removed from the widget tree
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
+  /// Function to handle the login process.
   void logInUser() async {
     setState(() {
       _isLoading = true;
@@ -43,19 +49,23 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
     if (res == CustomString.success) {
-      Navigator.of(context).pushReplacement(
+      // Navigate to the appropriate layout after successful login
+      Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const RepsonsiveLayout(
             mobileScreenLayout: MobileScreenLayout(),
             webScreenLayout: WebScreenLayout(),
           ),
         ),
+        (route) => false,
       );
     } else {
+      // Show error message if login fails
       showSnackBar(res, context);
     }
   }
 
+  /// Navigate to the sign-up screen.
   void navigateToSignUp() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -70,15 +80,13 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-          // Logo
           Image.asset(
-            'assets/logo_white.png',
-            height: 250,
-            color: CustomColor.deepPurpleAccent,
+            'assets/images/logo_white.png',
+            height: 200,
+            color: CustomColor.customWhite,
           ),
           const SizedBox(height: 64),
-          // Login Form
+          // Login form that includes email and password fields
           LoginForm(
             emailController: _emailController,
             passwordController: _passwordController,
@@ -87,15 +95,15 @@ class _LoginScreenState extends State<LoginScreen> {
             isLoading: _isLoading,
           ),
           const SizedBox(height: 16),
-          const Text(
-            CustomString.ouCapital,
-            style: TextStyle(color: CustomColor.white70),
+          Text(
+            CustomString.orCapital,
+            style: CustomTextStyle.title3,
           ),
           const SizedBox(height: 16),
-          // Sign-Up Option
+          // Sign-up option below the form
           SignUpOption(
-            questionText: CustomString.tAsPasEncoreDeCompte,
-            actionText: CustomString.jemInscris,
+            questionText: CustomString.noAccountYet,
+            actionText: CustomString.signUp,
             onTap: navigateToSignUp,
           ),
         ],
@@ -103,3 +111,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+*/

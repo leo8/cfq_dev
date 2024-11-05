@@ -1,25 +1,49 @@
 import 'event_data_model.dart';
 
+// Model for representing a CFQ (event) that extends EventDataModel
 class Cfq extends EventDataModel {
-  final List<String> followers;         // List of followers of the CFQ
+  final String when; // When parameter
+  final List<String> followingUp; // New field
+  final DateTime? eventDateTime; // New optional field
+  final DateTime? endDateTime; // Add this field
 
+  // Constructor to initialize CFQ properties
   Cfq({
-    required this.followers,
-    required super.name,
-    required super.description,
-    required super.moods,
-    required super.uid,
-    required super.username,
-    required super.eventId,
-    required super.datePublished,
-    required super.imageUrl,
-    required super.profilePictureUrl,
-    required super.where,
-    required super.organizers,
-    required super.comments,
-  });
+    required this.when,
+    required List<String> invitees,
+    this.followingUp = const [],
+    this.eventDateTime,
+    this.endDateTime, // Add to constructor
+    String? description,
+    List<String>? moods,
+    String? uid,
+    String? username,
+    String? eventId,
+    DateTime? datePublished,
+    String? imageUrl,
+    String? profilePictureUrl,
+    String? where,
+    List<String>? organizers,
+    List<String>? teamInvitees,
+    String? channelId,
+  }) : super(
+          name: 'ÇFQ ${when.toUpperCase()} ?',
+          description: description ?? '',
+          moods: moods ?? [],
+          uid: uid ?? '',
+          username: username ?? '',
+          eventId: eventId ?? '',
+          datePublished: datePublished ?? DateTime.now(),
+          imageUrl: imageUrl ?? '',
+          profilePictureUrl: profilePictureUrl ?? '',
+          where: where ?? '',
+          organizers: organizers ?? [],
+          invitees: invitees,
+          teamInvitees: teamInvitees ?? [],
+          channelId: channelId ?? '',
+        );
 
-  // Convert Cfq object to JSON format
+  // Convert CFQ object into a JSON map
   Map<String, dynamic> toJson() {
     return {
       'cfqName': name,
@@ -33,27 +57,40 @@ class Cfq extends EventDataModel {
       'profilePictureUrl': profilePictureUrl,
       'where': where,
       'organizers': organizers,
-      'followers': followers,
-      'comments': comments, // Included comments in toJson
+      'when': when,
+      'invitees': invitees,
+      'teamInvitees': teamInvitees,
+      'channelId': channelId,
+      'followingUp': followingUp,
+      'eventDateTime': eventDateTime?.toIso8601String(), // New field
+      'endDateTime': endDateTime?.toIso8601String(), // Add to JSON
     };
   }
 
-  // Convert JSON to Cfq object
-  static Cfq fromJson(Map<String, dynamic> json) {
+  // Create a CFQ object from a JSON map
+  factory Cfq.fromJson(Map<String, dynamic> json) {
     return Cfq(
-      name: json['cfqName'],
-      description: json['description'],
-      moods: json['moods'],
-      uid: json['uid'],
-      username: json['username'],
-      eventId: json['cfqId'],
+      when: json['when'] ?? '',
+      followingUp: List<String>.from(json['followingUp'] ?? []),
+      eventDateTime: json['eventDateTime'] != null
+          ? DateTime.parse(json['eventDateTime'])
+          : null,
+      endDateTime: json['endDateTime'] != null
+          ? DateTime.parse(json['endDateTime'])
+          : null, // Parse from JSON
+      description: json['description'] ?? '',
+      moods: List<String>.from(json['moods'] ?? []),
+      uid: json['uid'] ?? '',
+      username: json['username'] ?? '',
+      eventId: json['cfqId'] ?? '',
       datePublished: DateTime.parse(json['datePublished']),
-      imageUrl: json['cfqImageUrl'],
-      profilePictureUrl: json['profilePictureUrl'],
-      where: json['where'],
-      organizers: List<String>.from(json['organizers']),
-      followers: List<String>.from(json['followers']),
-      comments: List<String>.from(json['comments'] ?? []), // Included comments in fromJson
+      imageUrl: json['cfqImageUrl'] ?? '',
+      profilePictureUrl: json['profilePictureUrl'] ?? '',
+      where: json['where'] ?? '',
+      organizers: List<String>.from(json['organizers'] ?? []),
+      invitees: List<String>.from(json['invitees'] ?? []),
+      teamInvitees: List<String>.from(json['teamInvitees'] ?? []),
+      channelId: json['channelId'] ?? '',
     );
   }
 }

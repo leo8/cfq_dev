@@ -1,34 +1,37 @@
 import 'package:flutter/material.dart';
-
 import '../../../utils/styles/colors.dart';
-import '../../../utils/styles/fonts.dart';
 
 class CustomText extends StatelessWidget {
-  final String text;
-  final double? fontSize;
-  final FontWeight? fontWeight;
-  final Color? color;
-  final TextAlign? textAlign;
+  final String text; // The text to display
+  final double? fontSize; // Optional font size for the text
+  final FontWeight? fontWeight; // Optional font weight for the text
+  final Color? color; // Optional color for the text
+  final TextAlign? textAlign; // Optional alignment for the text
+  final TextStyle? textStyle; // New parameter for custom text style
 
   const CustomText({
-    required this.text,
-    this.fontSize,
-    this.fontWeight,
-    this.color,
-    this.textAlign,
+    required this.text, // Requires a string text to be displayed
+    this.fontSize, // Allows setting a custom font size
+    this.fontWeight, // Allows setting a custom font weight
+    this.color, // Allows setting a custom text colosr
+    this.textAlign, // Allows setting the text alignment
+    this.textStyle,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
-      textAlign: textAlign,
-      style: TextStyle(
-        fontSize: fontSize ?? CustomFont.fontSize16,
-        fontWeight: fontWeight ?? FontWeight.normal,
-        color: color ?? CustomColor.primaryColor,
-      ),
+      text, // The actual text displayed in the widget
+      textAlign: textAlign, // Aligns text if specified
+      style: textStyle ??
+          TextStyle(
+            fontSize: fontSize ?? 16, // Default font size if not provided
+            fontWeight: fontWeight ??
+                FontWeight.normal, // Default font weight if not provided
+            color: color ??
+                CustomColor.customWhite, // Default color if not provided
+          ),
     );
   }
 }

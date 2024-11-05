@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:cfq_dev/widgets/molecules/date_time_picker.dart';
-import 'package:cfq_dev/widgets/molecules/moods_selector.dart';
-
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
+import '../atoms/image_selectors/event_image_selector.dart';
+import '../../models/user.dart' as model;
+import '../atoms/texts/bordered_icon_text_field.dart';
+import '../../utils/styles/text_styles.dart';
+import '../atoms/texts/custom_text_field.dart';
 import '../../utils/styles/string.dart';
-import '../molecules/address_fields_row.dart';
-import '../molecules/image_selector.dart';
-import '../molecules/labeled_input_field.dart';
+import '../../utils/styles/icons.dart';
+import '../atoms/buttons/custom_button.dart';
+import '../molecules/event_organizer.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -23,8 +23,12 @@ class TurnForm extends StatelessWidget {
   final String moodsDisplay;
   final bool isLoading;
   final VoidCallback onSubmit;
+  final model.User currentUser;
+  final TextEditingController inviteesController;
+  final VoidCallback openInviteesSelectorScreen;
 
   const TurnForm({
+    super.key,
     required this.image,
     required this.onSelectImage,
     required this.nameController,
@@ -37,95 +41,90 @@ class TurnForm extends StatelessWidget {
     required this.moodsDisplay,
     required this.isLoading,
     required this.onSubmit,
-    super.key,
+    required this.currentUser,
+    required this.inviteesController,
+    required this.openInviteesSelectorScreen,
   });
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: CustomColor.primaryColor,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              CustomString.turnCapital,
+              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
             ),
-          )
-        : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                // Image Selector
-                ImageSelector(
-                  image: image,
-                  onSelectImage: onSelectImage,
-                  placeholderText: CustomString.aucuneImage,
-                ),
-                const SizedBox(height: 12),
-                // Turn Name Field
-                LabeledInputField(
-                  label: CustomString.nomDuTurn,
-                  controller: nameController,
-                  hintText: CustomString.nomDuTurn,
-                ),
-                const SizedBox(height: 12),
-                // Date & Moods Selectors
-                Row(
-                  children: [
-                    Expanded(
-                      child: DateTimePicker(
-                        label: CustomString.ajouterUneDate,
-                        onSelectDateTime: onSelectDateTime,
-                        displayText: dateTimeDisplay,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: MoodsSelector(
-                        label: CustomString.moods,
-                        onSelectMoods: onSelectMoods,
-                        displayText: moodsDisplay,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // Address Fields Row
-                AddressFieldsRow(
-                  locationController: locationController,
-                  addressController: addressController,
-                ),
-                const SizedBox(height: 12),
-                // Description Field
-                LabeledInputField(
-                  label: CustomString.description,
-                  controller: descriptionController,
-                  hintText: CustomString.racontePasTaVieDisNousJusteOuTuSors,
-                  isMultiline: true,
-                ),
-                const SizedBox(height: 12),
-                // Submit Button
-                Center(
-                  child: ElevatedButton(
-                    onPressed: onSubmit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: CustomColor.purple,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
-                    ),
-                    child: const Text(
-                      CustomString.publier,
-                      style: TextStyle(
-                        color: CustomColor.primaryColor,
-                        fontWeight: CustomFont.fontWeightBold,
-                        fontSize: CustomFont.fontSize16,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+          ),
+          const SizedBox(height: 15),
+          Center(
+            child:
+                EventImageSelector(image: image, onSelectImage: onSelectImage),
+          ),
+          const SizedBox(height: 15),
+          EventOrganizer(
+            profilePictureUrl: currentUser.profilePictureUrl,
+            username: currentUser.username,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventTitle,
+            controller: nameController,
+            hintText: CustomString.eventTitle,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventMood,
+            controller: TextEditingController(text: moodsDisplay),
+            hintText: CustomString.whatMood,
+            readOnly: true,
+            onTap: onSelectMoods,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.calendar,
+            controller: TextEditingController(text: dateTimeDisplay),
+            hintText: CustomString.when,
+            readOnly: true,
+            onTap: onSelectDateTime,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventLocation,
+            controller: locationController,
+            hintText: CustomString.where,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventAddress,
+            controller: addressController,
+            hintText: CustomString.address,
+          ),
+          const SizedBox(height: 15),
+          CustomTextField(
+            controller: descriptionController,
+            hintText: CustomString.describeTurn,
+            maxLines: 50,
+            height: 100,
+          ),
+          const SizedBox(height: 15),
+          BorderedIconTextField(
+            icon: CustomIcon.eventInvitees,
+            controller: inviteesController,
+            hintText: CustomString.who,
+            readOnly: true,
+            onTap: openInviteesSelectorScreen,
+          ),
+          const SizedBox(height: 15),
+          CustomButton(
+            label: CustomString.create,
+            onTap: isLoading ? () {} : onSubmit,
+            isLoading: isLoading,
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../utils/styles/colors.dart';
-import '../../utils/styles/fonts.dart';
 import '../../utils/styles/string.dart';
+import '../../../utils/styles/text_styles.dart';
 
 class ForgotPasswordLink extends StatelessWidget {
-  final VoidCallback onTap;
+  final VoidCallback onTap; // Callback when the link is tapped
 
-  const ForgotPasswordLink({super.key, required this.onTap});
+  const ForgotPasswordLink({
+    super.key,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.centerRight, // Aligns the link to the right
       child: TextButton(
-        onPressed: onTap,
-        child: const Text(
-          CustomString.tAsOublieTonMotDePasse,
-          style: TextStyle(
-              color: CustomColor.white70, fontSize: CustomFont.fontSize12),
-        ),
+        onPressed: onTap, // Triggers the provided onTap callback
+        child: Text(CustomString.forgotPassword, // "Forgot Password" text
+            style: CustomTextStyle.xsBody),
       ),
     );
   }

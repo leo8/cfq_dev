@@ -1,16 +1,40 @@
 # CFQ Application
 
-A new Flutter project.
+CFQ project that allows you to connect with your friends around evening in your city.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is made in flutter.
 
-A few resources to get you started if this is your first Flutter project:
+To set up this project follow these steps:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+`git clone git@github.com:cafoutquoi/cfq_dev.git`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+When the projext is clone, run 
+`flutter pub get`
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Architecture 
+
+Atomique programation 
+![image](https://github.com/user-attachments/assets/081c6132-7b58-4d28-a97d-5c0490c4246d)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## Techicals details
+
+### Change Splash Screen 
+
+Toutes les modifications se font dans le fichier pubspec.yaml 
+ue fois changer run ce script : 
+`./scripts/gen-splash-screen.sh`
+
+App icon without an icon background, as shown on the left: This should be 1152×1152 pixels, and fit within a circle 768 pixels in diameter.
+App icon with an icon background, as shown on the right: This should be 960×960 pixels, and fit within a circle 640 pixels in diameter.
+
+
+### Change AppIcon App
+
+All modifications are made in the pubspec.yaml file
+`dart run flutter_launcher_icons`
+`./scripts/gen-app-icon.sh`

@@ -3,13 +3,15 @@ import '../../utils/styles/string.dart';
 import '../atoms/texts/custom_text_field.dart';
 
 class UsernameLocationFields extends StatelessWidget {
-  final TextEditingController usernameController;
-  final TextEditingController locationController;
+  final TextEditingController
+      usernameController; // Controller for the username input
+  final TextEditingController
+      locationController; // Controller for the location input
 
   const UsernameLocationFields({
     super.key,
-    required this.usernameController,
-    required this.locationController,
+    required this.usernameController, // Requires a username controller
+    required this.locationController, // Requires a location controller
   });
 
   @override
@@ -18,15 +20,15 @@ class UsernameLocationFields extends StatelessWidget {
       children: [
         Expanded(
           child: CustomTextField(
-            controller: usernameController,
-            hintText: CustomString.unPetitNom,
+            controller: usernameController, // Username input field
+            hintText: CustomString.yourUsername, // Placeholder text
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 10), // Space between the two text fields
         Expanded(
           child: CustomTextField(
-            controller: locationController,
-            hintText: CustomString.taLocalisation,
+            controller: locationController, // Location input field
+            hintText: CustomString.yourLocation, // Placeholder text
           ),
         ),
       ],
