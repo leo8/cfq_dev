@@ -12,6 +12,8 @@ class NotificationsViewModel extends ChangeNotifier {
   StreamSubscription? _unreadCountSubscription;
   int _unreadNotificationsCount = 0;
 
+  int get unreadNotificationsCount => _unreadNotificationsCount;
+
   List<model.Notification> get notifications => _notifications;
   bool get isLoading => _isLoading;
   Stream<int> get unreadCountStream => _firestore
