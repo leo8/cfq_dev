@@ -5,6 +5,8 @@ import '../models/conversation.dart';
 import '../utils/logger.dart';
 import '../providers/conversation_service.dart';
 import 'package:rxdart/rxdart.dart';
+import '../models/notification.dart' as model;
+import 'package:uuid/uuid.dart';
 
 class FavoritesViewModel extends ChangeNotifier {
   final String currentUserId;
@@ -192,6 +194,52 @@ class FavoritesViewModel extends ChangeNotifier {
     });
   }
 
+  Future<void> _createFollowUpNotification(String cfqId) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the CFQ document to get the organizer's ID and name
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
+      String organizerId = cfqData['uid'] as String;
+      String cfqName = cfqData['cfqName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': model.NotificationType.followUp.toString().split('.').last,
+        'content': {
+          'cfqId': cfqId,
+          'cfqName': cfqName,
+          'followerId': _currentUser!.uid,
+          'followerUsername': _currentUser!.username,
+          'followerProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
   Future<void> toggleFollowUp(String cfqId, String userId) async {
     try {
       DocumentReference cfqRef = _firestore.collection('cfqs').doc(cfqId);
@@ -206,10 +254,14 @@ class FavoritesViewModel extends ChangeNotifier {
         Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
         List<dynamic> followingUp = data['followingUp'] ?? [];
 
-        if (followingUp.contains(userId)) {
-          followingUp.remove(userId);
-        } else {
+        bool isNowFollowing = !followingUp.contains(userId);
+
+        if (isNowFollowing) {
           followingUp.add(userId);
+          // Create notification only when following up, not when unfollowing
+          await _createFollowUpNotification(cfqId);
+        } else {
+          followingUp.remove(userId);
         }
 
         transaction.update(cfqRef, {'followingUp': followingUp});

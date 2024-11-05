@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 import '../providers/user_provider.dart';
+import 'package:uuid/uuid.dart';
+import '../models/notification.dart' as model;
 
 class ExpandedCardViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -197,6 +199,56 @@ class ExpandedCardViewModel extends ChangeNotifier {
     return Stream.value(false);
   }
 
+  Future<void> _createFollowUpNotification(String cfqId) async {
+    try {
+      // Get the CFQ document to get the organizer's ID and name
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
+      String organizerId = cfqData['uid'] as String;
+      String cfqName = cfqData['cfqName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      // Get current user data
+      DocumentSnapshot currentUserSnapshot =
+          await _firestore.collection('users').doc(currentUserId).get();
+      Map<String, dynamic> currentUserData =
+          currentUserSnapshot.data() as Map<String, dynamic>;
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': model.NotificationType.followUp.toString().split('.').last,
+        'content': {
+          'cfqId': cfqId,
+          'cfqName': cfqName,
+          'followerId': currentUserId,
+          'followerUsername': currentUserData['username'],
+          'followerProfilePictureUrl': currentUserData['profilePictureUrl'],
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
   Future<void> toggleFollowUp() async {
     if (isTurn) return; // Only proceed for CFQ cards
 
@@ -213,17 +265,18 @@ class ExpandedCardViewModel extends ChangeNotifier {
         Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
         List<String> followingUp = List<String>.from(data['followingUp'] ?? []);
 
-        if (followingUp.contains(currentUserId)) {
-          followingUp.remove(currentUserId);
-        } else {
+        bool isNowFollowing = !followingUp.contains(currentUserId);
+
+        if (isNowFollowing) {
           followingUp.add(currentUserId);
+          // Create notification only when following up, not when unfollowing
+          await _createFollowUpNotification(eventId);
+        } else {
+          followingUp.remove(currentUserId);
         }
 
         transaction.update(cfqRef, {'followingUp': followingUp});
       });
-
-      // We don't need to update local state or call notifyListeners() here
-      // because the stream will automatically update the UI
     } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
     }
