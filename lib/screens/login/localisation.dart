@@ -2,6 +2,7 @@ import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
@@ -71,7 +72,18 @@ class _InscriptionLocalisationState extends State<InscriptionLocalisation> {
                   height: 50,
                   child: ElevatedButton(
                       onPressed: () {
-                        widget.onNext();
+                        if (widget.localisationTextController.text.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Quelle est ta loc ?",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.TOP,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        } else {
+                          widget.onNext();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: CustomColor.customBlack,

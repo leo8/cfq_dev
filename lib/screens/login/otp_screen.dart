@@ -7,6 +7,7 @@ import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
@@ -82,24 +83,34 @@ class _OTPScreenState extends State<OTPScreen> {
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          try {
-                            final cred = PhoneAuthProvider.credential(
-                                verificationId: widget.verificationId,
-                                smsCode: otpController.text);
+                          if (otpController.text.isEmpty) {
+                            Fluttertoast.showToast(
+                                msg: "Pas de code de confirmation ?",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.TOP,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          } else {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            try {
+                              final cred = PhoneAuthProvider.credential(
+                                  verificationId: widget.verificationId,
+                                  smsCode: otpController.text);
 
-                            final test = await FirebaseAuth.instance
-                                .signInWithCredential(cred);
-                            log("@@@ ${cred}");
-                            widget.isSign ? signUp(test) : signIn(test);
-                          } catch (e) {
-                            log(e.toString());
+                              final data = await FirebaseAuth.instance
+                                  .signInWithCredential(cred);
+                              widget.isSign ? signUp(data) : signIn(data);
+                            } catch (e) {
+                              log(e.toString());
+                            }
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
-                          setState(() {
-                            isLoading = false;
-                          });
                         },
                         child: Text(
                           CustomString.check,

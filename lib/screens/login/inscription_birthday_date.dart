@@ -5,6 +5,7 @@ import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/widgets/atoms/dates/custom_date_field.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 
@@ -36,10 +37,6 @@ class InscriptionBirthdayDate extends StatefulWidget {
 class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
   final otpController = TextEditingController();
   final double constaint = 30.0;
-
-  void test(DateTime) {
-    log("@@@ test ${widget.birthdayTextController.text}");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +81,18 @@ class _InscriptionBirthdayDateState extends State<InscriptionBirthdayDate> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      widget.onNext();
+                      if (widget.birthdayTextController.text.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "Quelle est ta date d'anniv' ?",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else {
+                        widget.onNext();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: CustomColor.customBlack,

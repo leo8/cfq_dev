@@ -1,6 +1,7 @@
 import 'package:cfq_dev/screens/login/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
@@ -152,11 +153,22 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                             height: 50,
                             child: ElevatedButton(
                               onPressed: () async {
-                                setState(() {
-                                  isloading = true;
-                                });
-                                OPTAuth();
-                                isloading = false;
+                                if (phoneController.text.isEmpty) {
+                                  Fluttertoast.showToast(
+                                      msg: "Quel est ton num ?",
+                                      //toastLength: Toast.LENGTH_LONG,
+                                      gravity: ToastGravity.TOP,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0);
+                                } else {
+                                  setState(() {
+                                    isloading = true;
+                                  });
+                                  OPTAuth();
+                                  isloading = false;
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: CustomColor.customBlack,
