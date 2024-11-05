@@ -1,14 +1,8 @@
-import 'package:cfq_dev/providers/user_provider.dart'; // User provider for state management
-import 'package:cfq_dev/responsive/mobile_screen_layout.dart'; // Mobile layout
-import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart'; // Responsive layout
-import 'package:cfq_dev/responsive/web_screen_layout.dart'; // Web layout
-import 'package:cfq_dev/screens/login_screen.dart'; // Login screen
+import 'package:cfq_dev/screens/login/login_screen_phone.dart';
 import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
 import 'package:firebase_core/firebase_core.dart'; // Firebase core
 import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
 import 'package:flutter/material.dart'; // Flutter material components
-import 'package:provider/provider.dart'; // State management using Provider
 import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
@@ -67,6 +61,15 @@ class _CFQState extends State<CFQ> {
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'cfq_dev',
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: CustomColor.transparent,
+        ),
+        home: NeonBackground(child: LoginScreenMobile()));
+  }
+  /*
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -85,9 +88,12 @@ class _CFQState extends State<CFQ> {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.active) {
-                if (snapshot.hasData) {
-                  return const RepsonsiveLayout(
-                    mobileScreenLayout: MobileScreenLayout(),
+                if (snapshot.hasData && snapshot.data?.uid != null) {
+                  final uid = snapshot.data!.uid;
+                  return RepsonsiveLayout(
+                    mobileScreenLayout: MobileScreenLayout(
+                      uid: uid,
+                    ),
                     webScreenLayout: WebScreenLayout(),
                   );
                 } else if (snapshot.hasError) {
@@ -101,14 +107,15 @@ class _CFQState extends State<CFQ> {
                   ),
                 );
               }
-              return const LoginScreen();
+              return const LoginScreenMobile();
             },
           ),
         ),
         routes: {
-          '/login': (context) => const NeonBackground(child: LoginScreen()),
+          '/login': (context) =>
+              const NeonBackground(child: LoginScreenMobile()),
         },
       ),
     );
-  }
+  }*/
 }

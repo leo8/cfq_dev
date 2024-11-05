@@ -13,12 +13,12 @@ import '../utils/styles/icons.dart';
 import '../utils/styles/colors.dart';
 
 class TeamsScreen extends StatelessWidget {
-  const TeamsScreen({super.key});
-
+  const TeamsScreen({super.key, required this.currentUserId});
+  final String currentUserId;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TeamsViewModel>(
-      create: (_) => TeamsViewModel(),
+      create: (_) => TeamsViewModel(currentUserId),
       child: Consumer<TeamsViewModel>(
         builder: (context, viewModel, child) {
           return Center(

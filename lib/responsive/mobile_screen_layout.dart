@@ -11,8 +11,8 @@ import '../utils/styles/string.dart';
 import 'dart:async';
 
 class MobileScreenLayout extends StatefulWidget {
-  const MobileScreenLayout({super.key});
-
+  const MobileScreenLayout({super.key, required this.uid});
+  final String uid;
   @override
   State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
 }
@@ -261,11 +261,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             }, // Capture les taps en dehors de la barre de navigation
             child: IndexedStack(
               index: currentPageIndex,
-              children: const [
-                ThreadScreen(),
+              children: [
+                ThreadScreen(userId: widget.uid),
                 MapScreen(),
-                TeamsScreen(),
-                ProfileScreen(),
+                TeamsScreen(currentUserId: widget.uid),
+                ProfileScreen(userId: widget.uid),
               ],
             ),
           ),

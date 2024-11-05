@@ -1,4 +1,3 @@
-import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/screens/profile_screen.dart';
 import 'package:cfq_dev/view_models/thread_view_model.dart';
 import 'package:cfq_dev/view_models/conversations_view_model.dart';
@@ -16,76 +15,51 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
 
 class ThreadScreen extends StatelessWidget {
-  const ThreadScreen({super.key});
+  const ThreadScreen({super.key, required this.userId});
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) {
-        // Check if user is initialized
-        if (!userProvider.isInitialized) {
-          // Initialize user data if not already done
-          userProvider.initialize();
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        // Check if user exists
-        final currentUser = userProvider.user;
-        if (currentUser == null) {
-          return const Scaffold(
-            body: Center(
-              child: Text('Unable to load user data'),
-            ),
-          );
-        }
-
-        return ChangeNotifierProvider<ThreadViewModel>(
-          create: (_) => ThreadViewModel(currentUserUid: currentUser.uid),
-          child: Scaffold(
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              backgroundColor: CustomColor.customBlack,
-              elevation: 0,
-              title: Consumer<ThreadViewModel>(
-                builder: (context, viewModel, child) {
-                  return ThreadHeader(
-                    onSearchTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              SearchScreen(viewModel: viewModel),
-                        ),
-                      );
-                    },
-                    onNotificationTap: () {
-                      // Add notification functionality later
-                    },
-                    onMessageTap: () {
-                      _navigateToConversationsScreen(
-                          context, viewModel.currentUser!);
-                    },
-                    unreadConversationsCountStream:
-                        viewModel.unreadConversationsCountStream,
+    return ChangeNotifierProvider<ThreadViewModel>(
+      create: (_) => ThreadViewModel(currentUserUid: userId),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: CustomColor.customBlack,
+          elevation: 0,
+          title: Consumer<ThreadViewModel>(
+            builder: (context, viewModel, child) {
+              return ThreadHeader(
+                onSearchTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(viewModel: viewModel),
+                    ),
                   );
                 },
-              ),
-            ),
-            body: Consumer<ThreadViewModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.isInitializing) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                return _buildRegularContent(context, viewModel);
-              },
-            ),
+                onNotificationTap: () {
+                  // Add notification functionality later
+                },
+                onMessageTap: () {
+                  _navigateToConversationsScreen(
+                      context, viewModel.currentUser!);
+                },
+                unreadConversationsCountStream:
+                    viewModel.unreadConversationsCountStream,
+              );
+            },
           ),
-        );
-      },
+        ),
+        body: Consumer<ThreadViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.isInitializing) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return _buildRegularContent(context, viewModel);
+          },
+        ),
+      ),
     );
   }
 

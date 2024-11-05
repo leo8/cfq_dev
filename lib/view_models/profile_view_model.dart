@@ -27,6 +27,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   List<Conversation> _conversations = [];
   List<Conversation> _filteredConversations = [];
+  List<Conversation> get filteredConversations => _filteredConversations;
 
   // Status variables for UI feedback
   bool _friendAdded = false;

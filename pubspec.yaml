@@ -20,6 +20,7 @@ dependencies:
   firebase_auth: ^5.3.0
   firebase_core: ^3.5.0
   firebase_storage: ^12.3.1
+  fluttertoast: ^8.2.8
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.10+1
