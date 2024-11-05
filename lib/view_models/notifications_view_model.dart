@@ -50,7 +50,8 @@ class NotificationsViewModel extends ChangeNotifier {
             .map((doc) => model.Notification.fromSnap(doc))
             .where((notification) =>
                 notification.type == model.NotificationType.eventInvitation ||
-                notification.type == model.NotificationType.followUp)
+                notification.type == model.NotificationType.followUp ||
+                notification.type == model.NotificationType.attending)
             .toList();
 
         _isLoading = false;
