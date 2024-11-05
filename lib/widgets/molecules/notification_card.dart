@@ -51,16 +51,6 @@ class NotificationCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    if (content.eventImageUrl.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          content.eventImageUrl,
-                          height: 150,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                   ],
                 ),
               ),
