@@ -20,22 +20,31 @@ class ProfileImageAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        CircleAvatar(
-          radius: 64,
-          backgroundColor: CustomColor.transparent,
-          child: isLoading
-              ? const CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(CustomColor.customWhite),
-                )
-              : CircleAvatar(
-                  radius: 62,
-                  backgroundImage: image != null
-                      ? MemoryImage(image!)
-                      : const NetworkImage(
-                          'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
-                        ) as ImageProvider,
-                ),
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: CustomColor.customWhite,
+              width: 0.5,
+            ),
+          ),
+          child: CircleAvatar(
+            radius: 70,
+            backgroundColor: CustomColor.transparent,
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(CustomColor.customWhite),
+                  )
+                : CircleAvatar(
+                    radius: 70,
+                    backgroundImage: image != null
+                        ? MemoryImage(image!)
+                        : const NetworkImage(
+                            'https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
+                          ) as ImageProvider,
+                  ),
+          ),
         ),
         Positioned(
           bottom: -5,

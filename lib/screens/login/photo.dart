@@ -4,6 +4,10 @@ import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/avatars/profile_image_avatar.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
+import 'package:cfq_dev/utils/styles/string.dart';
 
 class LoginPhoto extends StatefulWidget {
   final VoidCallback onNext;
@@ -52,10 +56,16 @@ class _LoginPhotoState extends State<LoginPhoto> {
                   ],
                 ),
                 const SizedBox(height: 100),
-                const Text(
-                  "UNE PHOTO",
+                Text(
+                  CustomString.profilePictureCapital,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, color: Colors.white),
+                  style: CustomTextStyle.body1.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 ProfileImageAvatar(
                   image: widget.image,
@@ -69,18 +79,31 @@ class _LoginPhotoState extends State<LoginPhoto> {
                       height: 50,
                       child: ElevatedButton(
                           onPressed: () {
-                            widget.onNext();
+                            if (widget.image == null) {
+                              Fluttertoast.showToast(
+                                  msg: "Monte ta bouille",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            } else {
+                              widget.onNext();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
+                              backgroundColor: CustomColor.customBlack,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                   side: const BorderSide(
-                                      color: Colors.white30, width: 1.0))),
+                                      color: CustomColor.customWhite,
+                                      width: 1.0))),
                           child: const Text(
-                            "Verify",
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                            CustomString.authProcessStep3,
+                            style: TextStyle(
+                                fontSize: 20, color: CustomColor.customWhite),
                           )),
                     ),
                   ),
@@ -90,24 +113,27 @@ class _LoginPhotoState extends State<LoginPhoto> {
                   width: double.infinity,
                   height: 30,
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: const BorderSide(
-                                  color: Colors.transparent, width: 0))),
-                      onPressed: () {
-                        widget.onPrevious();
-                      },
-                      child: const Text(
-                        "Revenir en arrière",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.purple),
-                      )),
-                )
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: CustomColor.transparent,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: const BorderSide(
+                                color: CustomColor.transparent, width: 0))),
+                    onPressed: () {
+                      widget.onPrevious();
+                    },
+                    child: Text(
+                      CustomString.lastStep,
+                      style: CustomTextStyle.body1.copyWith(
+                        color: CustomColor.customPurple,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
               ],
             ),
           )),

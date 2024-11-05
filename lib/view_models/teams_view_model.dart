@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/logger.dart';
 
 class TeamsViewModel extends ChangeNotifier {

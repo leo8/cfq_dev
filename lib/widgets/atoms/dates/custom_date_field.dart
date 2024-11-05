@@ -28,10 +28,9 @@ class CustomDateField extends StatelessWidget {
       firstDate: DateTime(1900), // Sets the earliest selectable date
       lastDate: DateTime.now(), // Sets the latest selectable date
     );
-
     if (pickedDate != null) {
       controller.text =
-          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}"; // Formats and sets the selected date in the controller
+          "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}"; // Formats and sets the selected date in the controller with padding
       onDateChanged(
           pickedDate); // Passes the selected date back via the callback
     }
@@ -48,7 +47,7 @@ class CustomDateField extends StatelessWidget {
           decoration: BoxDecoration(
             color: CustomColor.customBlack,
             border: Border.all(color: CustomColor.customWhite, width: 0.5),
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(7),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(

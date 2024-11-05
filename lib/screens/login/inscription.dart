@@ -1,6 +1,12 @@
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../../utils/styles/string.dart';
+import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
+import '../../widgets/atoms/texts/bordered_text_field.dart';
+import '../../screens/login/login_screen_phone.dart';
 
 class Inscription extends StatefulWidget {
   final VoidCallback onNext;
@@ -8,7 +14,6 @@ class Inscription extends StatefulWidget {
   final int currentPages;
   final int totalPages;
   final TextEditingController nameTextController;
-  final TextEditingController firstNameTextController;
 
   const Inscription({
     super.key,
@@ -17,7 +22,6 @@ class Inscription extends StatefulWidget {
     required this.currentPages,
     required this.totalPages,
     required this.nameTextController,
-    required this.firstNameTextController,
   });
 
   @override
@@ -42,36 +46,18 @@ class _InscriptionState extends State<Inscription> {
             pourcentProgression: widget.currentPages / widget.totalPages,
           ),
           const SizedBox(height: 100),
-          const Text(
-            "QUEL EST TON IDENTIFIANT",
+          Text(
+            CustomString.yourUsernameCapital,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 24, color: Colors.white),
+            style: CustomTextStyle.body1.copyWith(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 40),
-          TextField(
-            controller: widget.firstNameTextController,
-            keyboardType: TextInputType.name,
-            decoration: InputDecoration(
-                fillColor: Colors.black,
-                filled: true,
-                hintText: "Nom",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: Colors.white, width: 1.0))),
-          ),
-          const SizedBox(height: 20),
-          TextField(
+          BorderedTextField(
             controller: widget.nameTextController,
-            keyboardType: TextInputType.name,
-            decoration: InputDecoration(
-                fillColor: Colors.black,
-                filled: true,
-                hintText: "Prenom",
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: Colors.white, width: 1.0))),
+            hintText: CustomString.yourUsername,
           ),
           const SizedBox(height: 20),
           Expanded(
@@ -82,21 +68,66 @@ class _InscriptionState extends State<Inscription> {
                 height: 50,
                 child: ElevatedButton(
                     onPressed: () {
-                      widget.onNext();
+                      if (widget.nameTextController.text.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "Comment on t'appelle ?",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else {
+                        widget.onNext();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
+                        backgroundColor: CustomColor.customBlack,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(7),
                             side: const BorderSide(
-                                color: Colors.white30, width: 1.0))),
+                                color: CustomColor.customWhite, width: 1.0))),
                     child: const Text(
-                      "Verify",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      CustomString.authProcessStep1,
+                      style: TextStyle(
+                          fontSize: 20, color: CustomColor.customWhite),
                     )),
               ),
             ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 30,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: CustomColor.transparent,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: const BorderSide(
+                          color: CustomColor.transparent, width: 0))),
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => const NeonBackground(
+                      child: LoginScreenMobile(),
+                    ),
+                  ),
+                  (route) => false,
+                );
+              },
+              child: Text(
+                CustomString.backToLogInScreen,
+                style: CustomTextStyle.body1.copyWith(
+                  color: CustomColor.customPurple,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 50,
           ),
         ],
       ),
