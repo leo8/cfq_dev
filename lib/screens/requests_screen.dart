@@ -25,7 +25,7 @@ class RequestsScreen extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<List<model.Request>>(
-        stream: viewModel.pendingRequestsStream,
+        stream: viewModel.requestsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

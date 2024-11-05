@@ -202,7 +202,7 @@ class CreateTeamViewModel extends ChangeNotifier {
       }
 
       // Generate unique team ID
-      String teamId = const Uuid().v1();
+      String teamId = const Uuid().v4();
 
       // Get current user UID
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -219,7 +219,7 @@ class CreateTeamViewModel extends ChangeNotifier {
         uid: teamId,
         name: teamNameController.text.trim(),
         imageUrl: teamImageUrl,
-        members: memberUids,
+        members: [currentUserId],
         invitedCfqs: [],
         invitedTurns: [],
       );
@@ -230,36 +230,47 @@ class CreateTeamViewModel extends ChangeNotifier {
           .doc(teamId)
           .set(team.toJson());
 
-      // Update teams list for members
-      await _updateUsersTeams(memberUids, teamId);
-
-      // Save team to Firestore
-      await FirebaseFirestore.instance
-          .collection('teams')
-          .doc(teamId)
-          .set(team.toJson());
-
-      // Update teams list for current user and selected friends
-      await _updateUsersTeams(memberUids, teamId);
-
+      // Create pending requests for all selected friends except creator
       for (model.User friend in _selectedFriends) {
-        if (friend.uid != FirebaseAuth.instance.currentUser!.uid) {
+        if (friend.uid != _currentUser!.uid) {
+          model.Request request = model.Request(
+            id: const Uuid().v4(),
+            type: model.RequestType.team,
+            requesterId: _currentUser!.uid,
+            requesterUsername: _currentUser!.username,
+            requesterProfilePictureUrl: _currentUser!.profilePictureUrl,
+            teamId: teamId,
+            teamName: teamNameController.text,
+            teamImageUrl: teamImageUrl,
+            timestamp: DateTime.now(),
+            status: model.RequestStatus.pending,
+          );
+
+          // Add request to user's requests array
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(friend.uid)
+              .update({
+            'requests': FieldValue.arrayUnion([request.toJson()])
+          });
+
+          // Create notification
           await _createTeamRequestNotification(
               friend.uid, teamId, teamImageUrl);
         }
       }
 
-      // Success
+      // Update creator's teams array
+      await _updateUsersTeams([_currentUser!.uid], teamId);
+
       _successMessage = CustomString.successCreatingTeam;
       _isLoading = false;
       notifyListeners();
-
-      // Optionally, reset the form or navigate back
     } catch (e) {
-      AppLogger.error('Error creating team: $e');
       _errorMessage = CustomString.errorCreatingTeam;
       _isLoading = false;
       notifyListeners();
+      AppLogger.error('Error creating team: $e');
     }
   }
 

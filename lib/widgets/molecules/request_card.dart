@@ -45,9 +45,7 @@ class RequestCard extends StatelessWidget {
                             style: CustomTextStyle.body1Bold,
                           ),
                           TextSpan(
-                            text: request.type == RequestType.team
-                                ? ' t\'invite à rejoindre '
-                                : ' souhaite t\'ajouter en ami',
+                            text: _getRequestText(),
                           ),
                           if (request.type == RequestType.team)
                             TextSpan(
@@ -57,7 +55,14 @@ class RequestCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
+                    Text(
+                      _getStatusText(),
+                      style: CustomTextStyle.body2.copyWith(
+                        color: _getStatusColor(),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       _getTimeAgo(request.timestamp),
                       style: CustomTextStyle.body2.copyWith(
@@ -69,29 +74,61 @@ class RequestCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  label: CustomString.addFriend,
-                  onTap: onAccept,
-                  color: CustomColor.customPurple,
+          if (request.status == RequestStatus.pending) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    label: CustomString.addFriend,
+                    onTap: onAccept,
+                    color: CustomColor.customPurple,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: CustomButton(
-                  label: CustomString.removeFriend,
-                  onTap: onDeny,
-                  color: CustomColor.customDarkGrey,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomButton(
+                    label: CustomString.removeFriend,
+                    onTap: onDeny,
+                    color: CustomColor.customDarkGrey,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  String _getRequestText() {
+    if (request.type == RequestType.team) {
+      return ' t\'invite à rejoindre ';
+    } else {
+      return ' souhaite t\'ajouter en ami';
+    }
+  }
+
+  String _getStatusText() {
+    switch (request.status) {
+      case RequestStatus.accepted:
+        return 'Accepté';
+      case RequestStatus.denied:
+        return 'Refusé';
+      case RequestStatus.pending:
+        return 'En attente';
+    }
+  }
+
+  Color _getStatusColor() {
+    switch (request.status) {
+      case RequestStatus.accepted:
+        return CustomColor.green;
+      case RequestStatus.denied:
+        return CustomColor.red;
+      case RequestStatus.pending:
+        return CustomColor.grey300;
+    }
   }
 
   String _getTimeAgo(DateTime timestamp) {

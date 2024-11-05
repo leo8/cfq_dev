@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
 import '../models/notification.dart' as notificationModel;
+import '../models/team.dart';
 import '../utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -89,25 +90,54 @@ class AddTeamMembersViewModel extends ChangeNotifier {
 
   Future<void> addMemberToTeam(String userId) async {
     try {
-      await _createTeamRequestNotification(
-        userId,
-        teamId,
+      // Check for existing request
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      model.User user = model.User.fromSnap(userDoc);
+      model.Request? existingRequest = user.requests.firstWhere(
+        (request) =>
+            request.type == model.RequestType.team && request.teamId == teamId,
       );
 
-      // Update team document
-      await FirebaseFirestore.instance.collection('teams').doc(teamId).update({
-        'members': FieldValue.arrayUnion([userId])
-      });
+      DocumentSnapshot teamDoc = await FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .get();
 
-      // Update user document
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'teams': FieldValue.arrayUnion([teamId])
-      });
+      Team team = Team.fromSnap(teamDoc);
 
-      _teamMemberIds.add(userId);
-      _hasChanges = true;
-      _sortUsers();
-      notifyListeners();
+      if (existingRequest.status == model.RequestStatus.denied) {
+        // Create new request or update existing one
+        model.Request request = model.Request(
+          id: existingRequest.id,
+          type: model.RequestType.team,
+          requesterId: FirebaseAuth.instance.currentUser!.uid,
+          requesterUsername: user.username,
+          requesterProfilePictureUrl: user.profilePictureUrl,
+          teamId: teamId,
+          teamName: team.name,
+          teamImageUrl: team.imageUrl,
+          timestamp: DateTime.now(),
+          status: model.RequestStatus.pending,
+        );
+
+        // Add new/updated request
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'requests': FieldValue.arrayUnion([request.toJson()])
+        });
+
+        // Create notification
+        await _createTeamRequestNotification(userId, teamId);
+
+        _hasChanges = true;
+        notifyListeners();
+      }
     } catch (e) {
       AppLogger.error('Error adding member to team: $e');
     }
