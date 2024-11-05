@@ -40,13 +40,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: convertPhoneNumber(),
       verificationCompleted: (phoneAuthCredential) {},
-      verificationFailed: (error) {
-        AppLogger.debug("@@@ error ${error.toString()}");
-        AppLogger.debug("@@@ error.tenantId ${error.tenantId}");
-        AppLogger.debug("@@@ error.stackTrace ${error.stackTrace.toString()}");
-        AppLogger.debug("@@@ error.tenantId ${error.message}");
-        AppLogger.debug("@@@ ${error.phoneNumber}");
-      },
+      verificationFailed: (error) {},
       codeSent: (verificationId, forceResendingToken) {
         setState(() {
           isloading = false;
