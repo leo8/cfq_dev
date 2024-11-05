@@ -63,14 +63,14 @@ class NotificationsList extends StatelessWidget {
                       // Handle navigation based on notification type
                       switch (notification.type) {
                         case model.NotificationType.followUp:
-                          final content = notification.content
-                              as model.FollowUpNotificationContent;
+                          //final content = notification.content
+                          //as model.FollowUpNotificationContent;
                           // Navigate to CFQ details
                           // TODO: Implement navigation to CFQ
                           break;
                         case model.NotificationType.eventInvitation:
-                          final content = notification.content
-                              as model.EventInvitationNotificationContent;
+                          //final content = notification.content
+                          //as model.EventInvitationNotificationContent;
                           // Navigate to event details
                           // TODO: Implement navigation to event
                           break;
