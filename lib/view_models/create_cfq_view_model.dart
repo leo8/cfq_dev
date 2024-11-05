@@ -763,6 +763,12 @@ class CreateCfqViewModel extends ChangeNotifier
             await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
         if (userDoc.exists) {
+          // Increment unread notifications count
+          batch.update(
+            FirebaseFirestore.instance.collection('users').doc(uid),
+            {'unreadNotificationsCount': FieldValue.increment(1)},
+          );
+
           String notificationsChannelId = userDoc.get('notificationsChannelId');
           String notificationId = const Uuid().v1();
 

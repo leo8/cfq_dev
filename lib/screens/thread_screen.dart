@@ -41,14 +41,18 @@ class ThreadScreen extends StatelessWidget {
                   );
                 },
                 onNotificationTap: () {
-                  Navigator.push(
-                    context,
+                  Navigator.of(context)
+                      .push(
                     MaterialPageRoute(
                       builder: (context) => NotificationsScreen(
                         currentUserUid: userId,
                       ),
                     ),
-                  );
+                  )
+                      .then((_) {
+                    // Refresh any necessary data after returning from notifications
+                    viewModel.loadConversations();
+                  });
                 },
                 onMessageTap: () {
                   _navigateToConversationsScreen(
@@ -56,6 +60,8 @@ class ThreadScreen extends StatelessWidget {
                 },
                 unreadConversationsCountStream:
                     viewModel.unreadConversationsCountStream,
+                unreadNotificationsCountStream:
+                    viewModel.unreadNotificationsCountStream,
               );
             },
           ),

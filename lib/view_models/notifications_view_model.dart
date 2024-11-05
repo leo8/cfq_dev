@@ -2,18 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/notification.dart' as model;
 import '../utils/logger.dart';
+import 'dart:async';
 
 class NotificationsViewModel extends ChangeNotifier {
   final String currentUserUid;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<model.Notification> _notifications = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
+  StreamSubscription? _unreadCountSubscription;
+  int _unreadNotificationsCount = 0;
 
   List<model.Notification> get notifications => _notifications;
   bool get isLoading => _isLoading;
+  Stream<int> get unreadCountStream => _firestore
+      .collection('users')
+      .doc(currentUserUid)
+      .snapshots()
+      .map((snapshot) => snapshot.get('unreadNotificationsCount') ?? 0);
 
   NotificationsViewModel({required this.currentUserUid}) {
     _loadNotifications();
+    _setupUnreadCountStream();
   }
 
   Future<void> _loadNotifications() async {
@@ -25,6 +34,7 @@ class NotificationsViewModel extends ChangeNotifier {
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(currentUserUid).get();
       String notificationsChannelId = userDoc.get('notificationsChannelId');
+      _unreadNotificationsCount = userDoc.get('unreadNotificationsCount') ?? 0;
 
       // Listen to notifications
       _firestore
@@ -47,6 +57,34 @@ class NotificationsViewModel extends ChangeNotifier {
       _isLoading = false;
       AppLogger.error('Error loading notifications: $e');
       notifyListeners();
+    }
+  }
+
+  void _setupUnreadCountStream() {
+    _unreadCountSubscription = _firestore
+        .collection('users')
+        .doc(currentUserUid)
+        .snapshots()
+        .listen((snapshot) {
+      _unreadNotificationsCount = snapshot.get('unreadNotificationsCount') ?? 0;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    _unreadCountSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> resetUnreadCount() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserUid)
+          .update({'unreadNotificationsCount': 0});
+    } catch (e) {
+      AppLogger.error('Error resetting unread notifications count: $e');
     }
   }
 }
