@@ -92,6 +92,42 @@ class EventInvitationNotificationContent extends NotificationContent {
   }
 }
 
+// Follow up specific notification content
+class FollowUpNotificationContent extends NotificationContent {
+  final String cfqId;
+  final String cfqName;
+  final String followerId;
+  final String followerUsername;
+  final String followerProfilePictureUrl;
+
+  FollowUpNotificationContent({
+    required this.cfqId,
+    required this.cfqName,
+    required this.followerId,
+    required this.followerUsername,
+    required this.followerProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'cfqId': cfqId,
+        'cfqName': cfqName,
+        'followerId': followerId,
+        'followerUsername': followerUsername,
+        'followerProfilePictureUrl': followerProfilePictureUrl,
+      };
+
+  factory FollowUpNotificationContent.fromJson(Map<String, dynamic> json) {
+    return FollowUpNotificationContent(
+      cfqId: json['cfqId'] as String,
+      cfqName: json['cfqName'] as String,
+      followerId: json['followerId'] as String,
+      followerUsername: json['followerUsername'] as String,
+      followerProfilePictureUrl: json['followerProfilePictureUrl'] as String,
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -142,6 +178,10 @@ class Notification {
         break;
       case NotificationType.eventInvitation:
         content = EventInvitationNotificationContent.fromJson(
+            Map<String, dynamic>.from(snapshot['content']));
+        break;
+      case NotificationType.followUp:
+        content = FollowUpNotificationContent.fromJson(
             Map<String, dynamic>.from(snapshot['content']));
         break;
       default:

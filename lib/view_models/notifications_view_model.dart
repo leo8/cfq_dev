@@ -49,7 +49,8 @@ class NotificationsViewModel extends ChangeNotifier {
         _notifications = snapshot.docs
             .map((doc) => model.Notification.fromSnap(doc))
             .where((notification) =>
-                notification.type == model.NotificationType.eventInvitation)
+                notification.type == model.NotificationType.eventInvitation ||
+                notification.type == model.NotificationType.followUp)
             .toList();
 
         _isLoading = false;
