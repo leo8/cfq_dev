@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utils/logger.dart';
 
 // Enum to define different notification types
 enum NotificationType {
   message,
-  teamInvite,
+  teamRequest,
   followUp,
   friendRequest,
   eventInvitation,
@@ -164,6 +165,46 @@ class AttendingNotificationContent extends NotificationContent {
   }
 }
 
+// Team request specific notification content
+class TeamRequestNotificationContent extends NotificationContent {
+  final String teamId;
+  final String teamName;
+  final String teamImageUrl;
+  final String inviterId;
+  final String inviterUsername;
+  final String inviterProfilePictureUrl;
+
+  TeamRequestNotificationContent({
+    required this.teamId,
+    required this.teamName,
+    required this.teamImageUrl,
+    required this.inviterId,
+    required this.inviterUsername,
+    required this.inviterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'teamId': teamId,
+        'teamName': teamName,
+        'teamImageUrl': teamImageUrl,
+        'inviterId': inviterId,
+        'inviterUsername': inviterUsername,
+        'inviterProfilePictureUrl': inviterProfilePictureUrl,
+      };
+
+  factory TeamRequestNotificationContent.fromJson(Map<String, dynamic> json) {
+    return TeamRequestNotificationContent(
+      teamId: json['teamId'] as String,
+      teamName: json['teamName'] as String,
+      teamImageUrl: json['teamImageUrl'] as String,
+      inviterId: json['inviterId'] as String,
+      inviterUsername: json['inviterUsername'] as String,
+      inviterProfilePictureUrl: json['inviterProfilePictureUrl'] as String,
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -179,59 +220,49 @@ class Notification {
   });
 
   factory Notification.fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
-
-    // Convert the string type to enum
-    NotificationType type = NotificationType.values.firstWhere(
-      (e) => e.toString().split('.').last == snapshot['type'],
-      orElse: () =>
-          throw Exception('Unknown notification type: ${snapshot['type']}'),
-    );
-
-    // Handle timestamp
-    DateTime timestamp;
-    var timestampData = snapshot['timestamp'];
-    if (timestampData is Timestamp) {
-      timestamp = timestampData.toDate();
-    } else if (timestampData is String) {
-      timestamp = DateTime.parse(timestampData);
-    } else {
-      throw Exception('Invalid timestamp format');
-    }
+    final data = snap.data() as Map<String, dynamic>;
+    final contentData = data['content'] as Map<String, dynamic>;
+    final typeStr = data['type'] as String;
 
     NotificationContent content;
-    switch (type) {
-      case NotificationType.message:
-        var contentData = Map<String, dynamic>.from(snapshot['content']);
-        // Convert Timestamp to String for MessageNotificationContent
-        if (contentData['timestampSent'] is Timestamp) {
-          contentData['timestampSent'] =
-              (contentData['timestampSent'] as Timestamp)
-                  .toDate()
-                  .toIso8601String();
-        }
+    switch (typeStr) {
+      case 'message':
         content = MessageNotificationContent.fromJson(contentData);
         break;
-      case NotificationType.eventInvitation:
-        content = EventInvitationNotificationContent.fromJson(
-            Map<String, dynamic>.from(snapshot['content']));
+      case 'eventInvitation':
+        content = EventInvitationNotificationContent.fromJson(contentData);
         break;
-      case NotificationType.followUp:
-        content = FollowUpNotificationContent.fromJson(
-            Map<String, dynamic>.from(snapshot['content']));
+      case 'followUp':
+        content = FollowUpNotificationContent.fromJson(contentData);
         break;
-      case NotificationType.attending:
-        content = AttendingNotificationContent.fromJson(
-            Map<String, dynamic>.from(snapshot['content']));
+      case 'attending':
+        content = AttendingNotificationContent.fromJson(contentData);
+        break;
+      case 'teamRequest':
+        content = TeamRequestNotificationContent.fromJson(contentData);
         break;
       default:
-        throw Exception('Unhandled notification type: $type');
+        throw Exception('Unknown notification type: $typeStr');
+    }
+
+    // Convert Firestore Timestamp to DateTime
+    DateTime timestamp;
+    if (data['timestamp'] is Timestamp) {
+      timestamp = (data['timestamp'] as Timestamp).toDate();
+    } else if (data['timestamp'] is String) {
+      timestamp = DateTime.parse(data['timestamp']);
+    } else {
+      timestamp = DateTime.now(); // Fallback
+      AppLogger.error(
+          'Unexpected timestamp type: ${data['timestamp'].runtimeType}');
     }
 
     return Notification(
-      id: snapshot['id'],
+      id: data['id'] as String,
+      type: NotificationType.values.firstWhere(
+        (t) => t.toString().split('.').last == typeStr,
+      ),
       timestamp: timestamp,
-      type: type,
       content: content,
     );
   }

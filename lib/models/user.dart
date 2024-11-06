@@ -20,6 +20,7 @@ class User {
   final List<ConversationInfo> conversations; // List of favorite items
   final String notificationsChannelId;
   final int unreadNotificationsCount;
+  final List<Request> requests;
 
   // Constructor for initializing a User object
   User({
@@ -41,6 +42,7 @@ class User {
     required this.conversations,
     required this.notificationsChannelId,
     required this.unreadNotificationsCount,
+    required this.requests,
   });
 
   // Convert User object to a JSON format for storage
@@ -94,6 +96,10 @@ class User {
           [],
       notificationsChannelId: snapshot['notificationsChannelId'],
       unreadNotificationsCount: snapshot['unreadNotificationsCount'] ?? 0,
+      requests: (snapshot['requests'] as List<dynamic>?)
+              ?.map((e) => Request.fromMap(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -122,6 +128,10 @@ class User {
           [],
       notificationsChannelId: map['notificationsChannelId'] as String,
       unreadNotificationsCount: map['unreadNotificationsCount'] as int,
+      requests: (map['requests'] as List<dynamic>?)
+              ?.map((e) => Request.fromMap(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 
@@ -170,5 +180,89 @@ class ConversationInfo {
       'conversationId': conversationId,
       'unreadMessagesCount': unreadMessagesCount,
     };
+  }
+}
+
+enum RequestType {
+  team,
+  friend,
+}
+
+enum RequestStatus {
+  pending,
+  accepted,
+  denied,
+}
+
+class Request {
+  final String id;
+  final RequestType type;
+  final String requesterId;
+  final String requesterUsername;
+  final String requesterProfilePictureUrl;
+  final String? teamId;
+  final String? teamName;
+  final String? teamImageUrl;
+  final DateTime timestamp;
+  final RequestStatus status;
+
+  Request({
+    required this.id,
+    required this.type,
+    required this.requesterId,
+    required this.requesterUsername,
+    required this.requesterProfilePictureUrl,
+    this.teamId,
+    this.teamName,
+    this.teamImageUrl,
+    required this.timestamp,
+    required this.status,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.toString().split('.').last,
+        'requesterId': requesterId,
+        'requesterUsername': requesterUsername,
+        'requesterProfilePictureUrl': requesterProfilePictureUrl,
+        'teamId': teamId,
+        'teamName': teamName,
+        'teamImageUrl': teamImageUrl,
+        'timestamp': timestamp.toIso8601String(),
+        'status': status.toString().split('.').last,
+      };
+
+  factory Request.fromJson(Map<String, dynamic> json) {
+    return Request(
+      id: json['id'],
+      type: RequestType.values
+          .firstWhere((t) => t.toString().split('.').last == json['type']),
+      requesterId: json['requesterId'],
+      requesterUsername: json['requesterUsername'],
+      requesterProfilePictureUrl: json['requesterProfilePictureUrl'],
+      teamId: json['teamId'],
+      teamName: json['teamName'],
+      teamImageUrl: json['teamImageUrl'],
+      timestamp: DateTime.parse(json['timestamp']),
+      status: RequestStatus.values
+          .firstWhere((s) => s.toString().split('.').last == json['status']),
+    );
+  }
+
+  factory Request.fromMap(Map<String, dynamic> map) {
+    return Request(
+      id: map['id'],
+      type: RequestType.values
+          .firstWhere((t) => t.toString().split('.').last == map['type']),
+      requesterId: map['requesterId'],
+      requesterUsername: map['requesterUsername'],
+      requesterProfilePictureUrl: map['requesterProfilePictureUrl'],
+      teamId: map['teamId'],
+      teamName: map['teamName'],
+      teamImageUrl: map['teamImageUrl'],
+      timestamp: DateTime.parse(map['timestamp']),
+      status: RequestStatus.values
+          .firstWhere((s) => s.toString().split('.').last == map['status']),
+    );
   }
 }

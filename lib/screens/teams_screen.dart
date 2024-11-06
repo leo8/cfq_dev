@@ -15,6 +15,7 @@ import '../utils/styles/colors.dart';
 class TeamsScreen extends StatelessWidget {
   const TeamsScreen({super.key, required this.currentUserId});
   final String currentUserId;
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<TeamsViewModel>(
@@ -31,16 +32,11 @@ class TeamsScreen extends StatelessWidget {
                   automaticallyImplyLeading: false,
                   backgroundColor: CustomColor.transparent,
                 ),
-                body: Consumer<TeamsViewModel>(
-                  builder: (context, viewModel, child) {
-                    if (viewModel.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else {
-                      return Column(
+                body: viewModel.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Column(
                         children: [
-                          const SizedBox(
-                            height: 15,
-                          ),
+                          const SizedBox(height: 15),
                           Center(
                             child: Text(
                               CustomString.myTeamsCapital,
@@ -48,30 +44,22 @@ class TeamsScreen extends StatelessWidget {
                                   .copyWith(fontSize: 32),
                             ),
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          // Create Team Button
+                          const SizedBox(height: 15),
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               children: [
-                                // Centered OutlinedIconButton
                                 Center(
                                   child: OutlinedIconButton(
                                     icon: CustomIcon.add,
                                     onPressed: () {
-                                      // Navigate to CreateTeamScreen
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               const CreateTeamScreen(),
                                         ),
-                                      ).then((_) {
-                                        // Refresh teams after returning
-                                        viewModel.fetchTeams();
-                                      });
+                                      );
                                     },
                                   ),
                                 ),
@@ -79,7 +67,6 @@ class TeamsScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          // Teams List
                           Expanded(
                             child: viewModel.teams.isEmpty
                                 ? Center(
@@ -98,32 +85,24 @@ class TeamsScreen extends StatelessWidget {
                                       Team team = viewModel.teams[index];
                                       final members =
                                           viewModel.teamMembers[team.uid] ?? [];
-
                                       return TeamCard(
                                         team: team,
                                         members: members,
-                                        onTap: () async {
-                                          final bool? result =
-                                              await Navigator.push(
+                                        onTap: () {
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   TeamDetailsScreen(team: team),
                                             ),
                                           );
-                                          if (result == true) {
-                                            await viewModel.fetchTeams();
-                                          }
                                         },
                                       );
                                     },
                                   ),
                           ),
                         ],
-                      );
-                    }
-                  },
-                ),
+                      ),
               ),
             ),
           );

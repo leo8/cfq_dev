@@ -6,6 +6,8 @@ import '../screens/edit_profile_screen.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
 import '../screens/favorites_screen.dart';
+import '../view_models/requests_view_model.dart';
+import '../screens/requests_screen.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -75,6 +77,26 @@ class ParametersScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => FavoritesScreen(
                       currentUserId: viewModel.currentUser!.uid),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: CustomIcon.addMember,
+            title: Text(
+              CustomString.requests,
+              style: CustomTextStyle.body1,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RequestsScreen(
+                    viewModel: RequestsViewModel(
+                      currentUserId: viewModel.currentUser!.uid,
+                    ),
+                  ),
                 ),
               );
             },
