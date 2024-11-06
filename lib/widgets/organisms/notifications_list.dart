@@ -34,22 +34,55 @@ class NotificationsList extends StatelessWidget {
     return StreamBuilder<int>(
       stream: unreadCountStream,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Erreur de chargement des notifications',
+              style: CustomTextStyle.body1,
+            ),
+          );
+        }
+
         final unreadCount = snapshot.data ?? 0;
 
-        return ListView.separated(
+        return ListView.builder(
           itemCount: notifications.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 1),
           itemBuilder: (context, index) {
-            return Container(
-              color: index < unreadCount
-                  ? CustomColor.customDarkGrey
-                  : Colors.transparent,
-              child: NotificationCard(
-                notification: notifications[index],
-                onTap: () {
-                  // TODO: Navigate to event details
-                },
-              ),
+            final notification = notifications[index];
+            final bool isUnread = index < unreadCount;
+
+            return Column(
+              children: [
+                Container(
+                  color: isUnread
+                      ? CustomColor.customDarkGrey
+                      : Colors.transparent,
+                  child: NotificationCard(
+                    notification: notification,
+                    onTap: () {
+                      // Handle navigation based on notification type
+                      switch (notification.type) {
+                        case model.NotificationType.followUp:
+                          //final content = notification.content
+                          //as model.FollowUpNotificationContent;
+                          // Navigate to CFQ details
+                          // TODO: Implement navigation to CFQ
+                          break;
+                        case model.NotificationType.eventInvitation:
+                          //final content = notification.content
+                          //as model.EventInvitationNotificationContent;
+                          // Navigate to event details
+                          // TODO: Implement navigation to event
+                          break;
+                        default:
+                          break;
+                      }
+                    },
+                  ),
+                ),
+                if (index < notifications.length - 1)
+                  const Divider(height: 1, color: CustomColor.customDarkGrey),
+              ],
             );
           },
         );

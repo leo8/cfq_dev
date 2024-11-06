@@ -6,6 +6,8 @@ import 'package:rxdart/rxdart.dart';
 import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import '../providers/conversation_service.dart';
+import 'package:uuid/uuid.dart';
+import '../models/notification.dart';
 
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
@@ -424,10 +426,22 @@ class ThreadViewModel extends ChangeNotifier {
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
 
+      // Get organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(data['uid'] as String).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
       if (followingUp.contains(userId)) {
         await removeFollowUp(cfqId, userId);
       } else {
         await addFollowUp(cfqId, userId);
+        // Create notification only when following up, not when removing
+        await _createFollowUpNotification(
+          cfqId,
+          data['cfqName'] as String,
+          organizerNotificationChannelId,
+        );
       }
       notifyListeners();
     } catch (e) {
@@ -521,5 +535,48 @@ class ThreadViewModel extends ChangeNotifier {
   void clearSearchResults() {
     _users = [];
     notifyListeners();
+  }
+
+  Future<void> _createFollowUpNotification(
+    String cfqId,
+    String cfqName,
+    String organizerNotificationChannelId,
+  ) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the CFQ document to get the organizer's ID
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      String organizerId =
+          (cfqSnapshot.data() as Map<String, dynamic>)['uid'] as String;
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': NotificationType.followUp.toString().split('.').last,
+        'content': {
+          'cfqId': cfqId,
+          'cfqName': cfqName,
+          'followerId': _currentUser!.uid,
+          'followerUsername': _currentUser!.username,
+          'followerProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer using their user ID
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating follow-up notification: $e');
+    }
   }
 }

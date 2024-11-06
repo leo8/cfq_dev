@@ -12,6 +12,8 @@ class NotificationsViewModel extends ChangeNotifier {
   StreamSubscription? _unreadCountSubscription;
   int _unreadNotificationsCount = 0;
 
+  int get unreadNotificationsCount => _unreadNotificationsCount;
+
   List<model.Notification> get notifications => _notifications;
   bool get isLoading => _isLoading;
   Stream<int> get unreadCountStream => _firestore
@@ -47,7 +49,8 @@ class NotificationsViewModel extends ChangeNotifier {
         _notifications = snapshot.docs
             .map((doc) => model.Notification.fromSnap(doc))
             .where((notification) =>
-                notification.type == model.NotificationType.eventInvitation)
+                notification.type == model.NotificationType.eventInvitation ||
+                notification.type == model.NotificationType.followUp)
             .toList();
 
         _isLoading = false;
