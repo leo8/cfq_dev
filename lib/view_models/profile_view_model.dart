@@ -89,6 +89,10 @@ class ProfileViewModel extends ChangeNotifier {
               _currentUser!.favorites.clear();
               _currentUser!.favorites
                   .addAll(List<String>.from(userData['favorites'] ?? []));
+              _currentUser =
+                  model.User.fromSnap(snapshot); // Update entire user object
+              _isFriend = _currentUser!.friends.contains(_user!.uid);
+              checkFriendRequestStatus(); // This will trigger UI updates via notifyListeners()
             }
             notifyListeners();
           }
