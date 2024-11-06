@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
