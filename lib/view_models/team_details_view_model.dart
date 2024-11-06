@@ -377,6 +377,11 @@ class TeamDetailsViewModel extends ChangeNotifier {
         }
         userData['attendingStatus'][turnId] = status;
 
+        // Create notification only when status is 'attending'
+        if (status == 'attending') {
+          await _createAttendingNotification(turnId);
+        }
+
         transaction.update(turnRef, turnData);
         transaction.update(userRef, userData);
       });
@@ -536,6 +541,53 @@ class TeamDetailsViewModel extends ChangeNotifier {
       });
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
+  Future<void> _createAttendingNotification(String turnId) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the turn document to get the organizer's ID and name
+      DocumentSnapshot turnSnapshot =
+          await _firestore.collection('turns').doc(turnId).get();
+      Map<String, dynamic> turnData =
+          turnSnapshot.data() as Map<String, dynamic>;
+      String organizerId = turnData['uid'] as String;
+      String turnName = turnData['turnName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': model.NotificationType.attending.toString().split('.').last,
+        'content': {
+          'turnId': turnId,
+          'turnName': turnName,
+          'attendingId': _currentUser!.uid,
+          'attendingUsername': _currentUser!.username,
+          'attendingProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating attending notification: $e');
     }
   }
 }

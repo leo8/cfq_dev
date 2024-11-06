@@ -5,9 +5,9 @@ enum NotificationType {
   message,
   teamInvite,
   followUp,
-  eventParticipation,
   friendRequest,
   eventInvitation,
+  attending,
 }
 
 // Base class for notification content
@@ -128,6 +128,42 @@ class FollowUpNotificationContent extends NotificationContent {
   }
 }
 
+// Attending specific notification content
+class AttendingNotificationContent extends NotificationContent {
+  final String turnId;
+  final String turnName;
+  final String attendingId;
+  final String attendingUsername;
+  final String attendingProfilePictureUrl;
+
+  AttendingNotificationContent({
+    required this.turnId,
+    required this.turnName,
+    required this.attendingId,
+    required this.attendingUsername,
+    required this.attendingProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'turnId': turnId,
+        'turnName': turnName,
+        'attendingId': attendingId,
+        'attendingUsername': attendingUsername,
+        'attendingProfilePictureUrl': attendingProfilePictureUrl,
+      };
+
+  factory AttendingNotificationContent.fromJson(Map<String, dynamic> json) {
+    return AttendingNotificationContent(
+      turnId: json['turnId'] as String,
+      turnName: json['turnName'] as String,
+      attendingId: json['attendingId'] as String,
+      attendingUsername: json['attendingUsername'] as String,
+      attendingProfilePictureUrl: json['attendingProfilePictureUrl'] as String,
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -182,6 +218,10 @@ class Notification {
         break;
       case NotificationType.followUp:
         content = FollowUpNotificationContent.fromJson(
+            Map<String, dynamic>.from(snapshot['content']));
+        break;
+      case NotificationType.attending:
+        content = AttendingNotificationContent.fromJson(
             Map<String, dynamic>.from(snapshot['content']));
         break;
       default:

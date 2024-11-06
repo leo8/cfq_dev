@@ -74,6 +74,12 @@ class NotificationsList extends StatelessWidget {
                           // Navigate to event details
                           // TODO: Implement navigation to event
                           break;
+                        case model.NotificationType.attending:
+                          //final content = notification.content
+                          //as model.AttendingNotificationContent;
+                          // Navigate to turn details
+                          // TODO: Implement navigation to turn
+                          break;
                         default:
                           break;
                       }

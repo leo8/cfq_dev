@@ -65,6 +65,25 @@ class NotificationCard extends StatelessWidget {
           timestamp: notification.timestamp,
         );
 
+      case model.NotificationType.attending:
+        final content =
+            notification.content as model.AttendingNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.attendingProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.attendingUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' participera à '),
+            TextSpan(
+              text: content.turnName,
+              style: CustomTextStyle.body1Bold,
+            ),
+          ],
+          timestamp: notification.timestamp,
+        );
+
       default:
         return const SizedBox.shrink();
     }
