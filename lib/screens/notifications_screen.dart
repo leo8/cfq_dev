@@ -54,10 +54,11 @@ class NotificationsScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Expanded(
                   child: NotificationsList(
-                    currentUserId: viewModel.currentUserUid,
                     notifications: viewModel.notifications,
                     isLoading: viewModel.isLoading,
                     unreadCountStream: viewModel.unreadCountStream,
+                    currentUserId: viewModel.currentUserUid,
+                    viewModel: viewModel,
                   ),
                 ),
               ],

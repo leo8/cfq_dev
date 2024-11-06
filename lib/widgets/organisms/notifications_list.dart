@@ -1,6 +1,6 @@
 import 'package:cfq_dev/view_models/requests_view_model.dart';
 import 'package:flutter/material.dart';
-import '../../models/notification.dart' as model;
+import '../../models/notification.dart' as notificationModel;
 import '../molecules/notification_card.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/colors.dart';
@@ -10,12 +10,15 @@ import 'turn_card_content.dart';
 import '../../screens/expanded_card_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../screens/requests_screen.dart';
+import 'package:cfq_dev/view_models/notifications_view_model.dart';
+import '../../screens/conversation_screen.dart';
 
 class NotificationsList extends StatelessWidget {
-  final List<model.Notification> notifications;
+  final List<notificationModel.Notification> notifications;
   final bool isLoading;
   final Stream<int> unreadCountStream;
   final String currentUserId;
+  final NotificationsViewModel viewModel;
 
   const NotificationsList({
     super.key,
@@ -23,6 +26,7 @@ class NotificationsList extends StatelessWidget {
     required this.isLoading,
     required this.unreadCountStream,
     required this.currentUserId,
+    required this.viewModel,
   });
 
   Future<Map<String, dynamic>> _fetchEventData(
@@ -110,13 +114,14 @@ class NotificationsList extends StatelessWidget {
   }
 
   Future<Widget> _buildCardContent(
-      BuildContext context, model.Notification notification) async {
+      BuildContext context, notificationModel.Notification notification) async {
     try {
       final content = notification.content;
 
       switch (notification.type) {
-        case model.NotificationType.followUp:
-          final followUpContent = content as model.FollowUpNotificationContent;
+        case notificationModel.NotificationType.followUp:
+          final followUpContent =
+              content as notificationModel.FollowUpNotificationContent;
           final cfqData = await _fetchEventData(followUpContent.cfqId, false);
           final userData = await _fetchUserData(cfqData['uid']);
 
@@ -135,19 +140,69 @@ class NotificationsList extends StatelessWidget {
             followingUp: cfqData['followingUp'],
             onFollowPressed: () {},
             onSharePressed: () {},
-            onSendPressed: () {},
-            onFavoritePressed: () {},
             onBellPressed: () {},
             organizerId: cfqData['uid'],
             currentUserId: currentUserId,
             favorites: cfqData['favorites'],
             isFavorite: cfqData['favorites'].contains(currentUserId),
-            onFollowUpToggled: (_) {},
+            onFollowUpToggled: (isFollowingUp) async {
+              await viewModel.toggleFollowUp(
+                  followUpContent.cfqId, currentUserId);
+            },
+            onFavoritePressed: () async {
+              await viewModel.toggleFavorite(
+                followUpContent.cfqId,
+                !cfqData['favorites'].contains(currentUserId),
+              );
+            },
+            onSendPressed: () async {
+              if (context.mounted) {
+                try {
+                  final channelId = followUpContent.cfqId;
+                  final isInList =
+                      await viewModel.isConversationInUserList(channelId);
+                  final currentUser = await viewModel.getCurrentUser();
+
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                          eventName: cfqData['cfqName'],
+                          channelId: channelId,
+                          organizerId: cfqData['uid'],
+                          members: List<String>.from(cfqData['invitees'] ?? []),
+                          organizerName: userData['username'],
+                          organizerProfilePicture:
+                              userData['profilePictureUrl'],
+                          currentUser: currentUser,
+                          addConversationToUserList:
+                              viewModel.addConversationToUserList,
+                          removeConversationFromUserList:
+                              viewModel.removeConversationFromUserList,
+                          initialIsInUserConversations: isInList,
+                          eventPicture: cfqData['cfqImageUrl'],
+                          resetUnreadMessages: viewModel.resetUnreadMessages,
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  AppLogger.error('Error navigating to conversation: $e');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Error opening conversation')),
+                    );
+                  }
+                }
+              }
+            },
           );
 
-        case model.NotificationType.eventInvitation:
+        case notificationModel.NotificationType.eventInvitation:
           final eventContent =
-              content as model.EventInvitationNotificationContent;
+              content as notificationModel.EventInvitationNotificationContent;
           final eventData =
               await _fetchEventData(eventContent.eventId, eventContent.isTurn);
           final userData = await _fetchUserData(eventData['uid']);
@@ -171,14 +226,70 @@ class NotificationsList extends StatelessWidget {
                   favorites: eventData['favorites'],
                   isFavorite: eventData['favorites'].contains(currentUserId),
                   attendingStatus: 'notAnswered',
-                  onAttendingStatusChanged: (_) {},
+                  onAttendingStatusChanged: (status) async {
+                    await viewModel.updateAttendingStatus(
+                        eventContent.eventId, status);
+                  },
                   onSharePressed: () {},
-                  onSendPressed: () {},
-                  onFavoritePressed: () {},
+                  onSendPressed: () async {
+                    if (context.mounted) {
+                      try {
+                        final channelId = eventContent.eventId;
+                        final isInList =
+                            await viewModel.isConversationInUserList(channelId);
+                        final currentUser = await viewModel.getCurrentUser();
+
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConversationScreen(
+                                eventName: eventData['turnName'],
+                                channelId: channelId,
+                                organizerId: eventData['uid'],
+                                members: List<String>.from(
+                                    eventData['invitees'] ?? []),
+                                organizerName: userData['username'],
+                                organizerProfilePicture:
+                                    userData['profilePictureUrl'],
+                                currentUser: currentUser,
+                                addConversationToUserList:
+                                    viewModel.addConversationToUserList,
+                                removeConversationFromUserList:
+                                    viewModel.removeConversationFromUserList,
+                                initialIsInUserConversations: isInList,
+                                eventPicture: eventData['turnImageUrl'],
+                                resetUnreadMessages:
+                                    viewModel.resetUnreadMessages,
+                              ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        AppLogger.error('Error navigating to conversation: $e');
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Error opening conversation')),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  onFavoritePressed: () async {
+                    await viewModel.toggleFavorite(
+                      eventContent.eventId,
+                      !eventData['favorites'].contains(currentUserId),
+                    );
+                  },
                   onCommentPressed: () {},
                   onAttendingPressed: () {},
-                  attendingStatusStream: Stream.value('notAnswered'),
-                  attendingCountStream: Stream.value(0),
+                  attendingStatusStream: viewModel.attendingStatusStream(
+                    eventContent.eventId,
+                    currentUserId,
+                  ),
+                  attendingCountStream:
+                      viewModel.attendingCountStream(eventContent.eventId),
                 )
               : CFQCardContent(
                   cfqId: eventContent.eventId,
@@ -195,8 +306,57 @@ class NotificationsList extends StatelessWidget {
                   followingUp: eventData['followingUp'],
                   onFollowPressed: () {},
                   onSharePressed: () {},
-                  onSendPressed: () {},
-                  onFavoritePressed: () {},
+                  onSendPressed: () async {
+                    if (context.mounted) {
+                      try {
+                        final channelId = eventContent.eventId;
+                        final isInList =
+                            await viewModel.isConversationInUserList(channelId);
+                        final currentUser = await viewModel.getCurrentUser();
+
+                        if (context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConversationScreen(
+                                eventName: eventData['turnName'],
+                                channelId: channelId,
+                                organizerId: eventData['uid'],
+                                members: List<String>.from(
+                                    eventData['invitees'] ?? []),
+                                organizerName: userData['username'],
+                                organizerProfilePicture:
+                                    userData['profilePictureUrl'],
+                                currentUser: currentUser,
+                                addConversationToUserList:
+                                    viewModel.addConversationToUserList,
+                                removeConversationFromUserList:
+                                    viewModel.removeConversationFromUserList,
+                                initialIsInUserConversations: isInList,
+                                eventPicture: eventData['turnImageUrl'],
+                                resetUnreadMessages:
+                                    viewModel.resetUnreadMessages,
+                              ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        AppLogger.error('Error navigating to conversation: $e');
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Error opening conversation')),
+                          );
+                        }
+                      }
+                    }
+                  },
+                  onFavoritePressed: () async {
+                    await viewModel.toggleFavorite(
+                      eventContent.eventId,
+                      !eventData['favorites'].contains(currentUserId),
+                    );
+                  },
                   onBellPressed: () {},
                   organizerId: eventData['uid'],
                   currentUserId: currentUserId,
@@ -205,9 +365,9 @@ class NotificationsList extends StatelessWidget {
                   onFollowUpToggled: (_) {},
                 );
 
-        case model.NotificationType.attending:
+        case notificationModel.NotificationType.attending:
           final attendingContent =
-              content as model.AttendingNotificationContent;
+              content as notificationModel.AttendingNotificationContent;
           final turnData = await _fetchEventData(attendingContent.turnId, true);
           final userData = await _fetchUserData(turnData['uid']);
 
@@ -239,8 +399,8 @@ class NotificationsList extends StatelessWidget {
             attendingCountStream: Stream.value(0),
           );
 
-        case model.NotificationType.teamRequest:
-        case model.NotificationType.friendRequest:
+        case notificationModel.NotificationType.teamRequest:
+        case notificationModel.NotificationType.friendRequest:
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -310,9 +470,11 @@ class NotificationsList extends StatelessWidget {
                     onTap: () async {
                       try {
                         if (notification.type ==
-                                model.NotificationType.teamRequest ||
+                                notificationModel
+                                    .NotificationType.teamRequest ||
                             notification.type ==
-                                model.NotificationType.friendRequest) {
+                                notificationModel
+                                    .NotificationType.friendRequest) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
