@@ -48,15 +48,25 @@ class NotificationsViewModel extends ChangeNotifier {
       AppLogger.debug(
           'Notification types: ${querySnapshot.docs.map((doc) => (doc.data()['type'] as String)).toList()}');
 
-      _notifications = querySnapshot.docs
-          .map((doc) => model.Notification.fromSnap(doc))
-          .where((notification) =>
-              notification.type == model.NotificationType.eventInvitation ||
-              notification.type == model.NotificationType.followUp ||
-              notification.type == model.NotificationType.attending ||
-              notification.type == model.NotificationType.teamRequest ||
-              notification.type == model.NotificationType.friendRequest)
-          .toList();
+      _notifications = await Future.wait(querySnapshot.docs.map((doc) async {
+        final notification = model.Notification.fromSnap(doc);
+
+        // Enrich notification content with additional data if needed
+        switch (notification.type) {
+          case model.NotificationType.followUp:
+          case model.NotificationType.eventInvitation:
+          case model.NotificationType.attending:
+            return notification;
+
+          case model.NotificationType.teamRequest:
+          case model.NotificationType.friendRequest:
+            // These don't need additional data for navigation
+            return notification;
+
+          default:
+            return notification;
+        }
+      }).toList());
 
       AppLogger.debug('Filtered to ${_notifications.length} notifications');
 

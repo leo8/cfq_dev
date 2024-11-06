@@ -60,6 +60,7 @@ class EventInvitationNotificationContent extends NotificationContent {
   final String organizerId;
   final String organizerUsername;
   final String organizerProfilePictureUrl;
+  final bool isTurn;
 
   EventInvitationNotificationContent({
     required this.eventId,
@@ -68,12 +69,14 @@ class EventInvitationNotificationContent extends NotificationContent {
     required this.organizerId,
     required this.organizerUsername,
     required this.organizerProfilePictureUrl,
+    required this.isTurn,
   });
 
   @override
   Map<String, dynamic> toJson() => {
         'eventId': eventId,
         'eventName': eventName,
+        'isTurn': isTurn,
         'eventImageUrl': eventImageUrl,
         'organizerId': organizerId,
         'organizerUsername': organizerUsername,
@@ -85,6 +88,7 @@ class EventInvitationNotificationContent extends NotificationContent {
     return EventInvitationNotificationContent(
       eventId: json['eventId'] as String,
       eventName: json['eventName'] as String,
+      isTurn: json['isTurn'] as bool,
       eventImageUrl: json['eventImageUrl'] as String,
       organizerId: json['organizerId'] as String,
       organizerUsername: json['organizerUsername'] as String,
