@@ -6,6 +6,7 @@ import '../models/team.dart';
 import '../utils/logger.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:async';
 
 class AddTeamMembersViewModel extends ChangeNotifier {
   final String teamId;
@@ -29,6 +30,9 @@ class AddTeamMembersViewModel extends ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
   List<model.User> _allNonTeamMembers = [];
 
+  StreamSubscription<DocumentSnapshot>? _teamSubscription;
+  StreamSubscription<QuerySnapshot>? _friendsSubscription;
+
   void _sortUsers() {
     _teamMembers = _friends
         .where((friend) => _teamMemberIds.contains(friend.uid))
@@ -41,14 +45,24 @@ class AddTeamMembersViewModel extends ChangeNotifier {
   }
 
   AddTeamMembersViewModel({required this.teamId}) {
-    _initializeData();
+    _initStreams();
   }
 
-  Future<void> _initializeData() async {
+  Future<void> _initStreams() async {
     try {
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
-      // Fetch current user's friends
+      // Stream for team members
+      _teamSubscription = FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .snapshots()
+          .listen((teamDoc) {
+        _teamMemberIds = List<String>.from(teamDoc['members']);
+        _sortUsers();
+      });
+
+      // Get current user's friends first
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(currentUserId)
@@ -56,32 +70,31 @@ class AddTeamMembersViewModel extends ChangeNotifier {
 
       List<String> friendIds = List<String>.from(userDoc['friends']);
 
-      // Fetch friend details
-      QuerySnapshot friendsSnapshot = await FirebaseFirestore.instance
+      // Stream for friends
+      _friendsSubscription = FirebaseFirestore.instance
           .collection('users')
           .where('uid', whereIn: friendIds)
-          .get();
+          .snapshots()
+          .listen((snapshot) {
+        _friends =
+            snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+        _sortUsers();
 
-      _friends =
-          friendsSnapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
-
-      // Fetch team members
-      DocumentSnapshot teamDoc = await FirebaseFirestore.instance
-          .collection('teams')
-          .doc(teamId)
-          .get();
-
-      _teamMemberIds = List<String>.from(teamDoc['members']);
-
-      _sortUsers();
-
-      _isLoading = false;
-      notifyListeners();
+        _isLoading = false;
+        notifyListeners();
+      });
     } catch (e) {
-      AppLogger.error('Error initializing data: $e');
+      AppLogger.error('Error initializing streams: $e');
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _teamSubscription?.cancel();
+    _friendsSubscription?.cancel();
+    super.dispose();
   }
 
   bool isTeamMember(String userId) {

@@ -3,46 +3,55 @@ import '../models/team.dart';
 import '../models/user.dart' as model;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
 
 class TeamsViewModel extends ChangeNotifier {
   List<Team> _teams = [];
   bool _isLoading = true;
-// <<<<<<< feature/CFQ-48_phone_authentification
   final String currentUserUid;
-// =======
   Map<String, List<model.User>> _teamMembers = {};
+  StreamSubscription<QuerySnapshot>? _teamsSubscription;
 
-// >>>>>>> dev
   List<Team> get teams => _teams;
   bool get isLoading => _isLoading;
   Map<String, List<model.User>> get teamMembers => _teamMembers;
 
   TeamsViewModel(this.currentUserUid) {
-    fetchTeams();
+    _initTeamsStream();
   }
 
-  Future<void> fetchTeams() async {
+  void _initTeamsStream() {
     _isLoading = true;
     notifyListeners();
 
     try {
-      QuerySnapshot teamsSnapshot = await FirebaseFirestore.instance
+      final teamsStream = FirebaseFirestore.instance
           .collection('teams')
           .where('members', arrayContains: currentUserUid)
-          .get(const GetOptions(
-              source: Source.server)); // Force fetch from server
+          .snapshots();
 
-      _teams = teamsSnapshot.docs.map((doc) => Team.fromSnap(doc)).toList()
-        ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+      _teamsSubscription = teamsStream.listen((snapshot) async {
+        _teams = snapshot.docs.map((doc) => Team.fromSnap(doc)).toList()
+          ..sort(
+              (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
-      await _fetchAllTeamMembers();
+        await _fetchAllTeamMembers();
+
+        _isLoading = false;
+        notifyListeners();
+      });
     } catch (e) {
-      // Handle error
-      AppLogger.error('Error fetching teams: $e');
+      AppLogger.error('Error setting up teams stream: $e');
+      _isLoading = false;
+      notifyListeners();
     }
+  }
 
-    _isLoading = false;
-    notifyListeners();
+  @override
+  void dispose() {
+    _teamsSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchAllTeamMembers() async {

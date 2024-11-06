@@ -15,59 +15,64 @@ class AddTeamMembersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AddTeamMembersViewModel(teamId: teamId),
-      child: Consumer<AddTeamMembersViewModel>(
-        builder: (context, viewModel, child) {
-          return Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 40,
-              backgroundColor: CustomColor.transparent,
-              elevation: 0,
-              leading: IconButton(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(true);
+        return true;
+      },
+      child: ChangeNotifierProvider(
+        create: (_) => AddTeamMembersViewModel(teamId: teamId),
+        child: Consumer<AddTeamMembersViewModel>(
+          builder: (context, viewModel, child) {
+            return Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 40,
+                backgroundColor: CustomColor.transparent,
+                elevation: 0,
+                leading: IconButton(
                   icon: CustomIcon.arrowBack,
-                  onPressed: () {
-                    Navigator.of(context).pop(viewModel.hasChanges);
-                  }),
-            ),
-            body: viewModel.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView(
-                    children: [
-                      _buildMembersList(
-                        CustomString.teamMembers,
-                        viewModel.teamMembers,
-                        viewModel,
-                        true,
-                      ),
-                      const SizedBox(height: 30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Center(
-                          child: Text(CustomString.otherFriends,
-                              style: CustomTextStyle.bigBody1),
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ),
+              body: viewModel.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView(
+                      children: [
+                        _buildMembersList(
+                          CustomString.teamMembers,
+                          viewModel.teamMembers,
+                          viewModel,
+                          true,
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: CustomSearchBar(
-                          controller: viewModel.searchController,
-                          hintText: CustomString.searchFriends,
-                          onChanged: (value) => viewModel.performSearch(value),
+                        const SizedBox(height: 30),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Center(
+                            child: Text(CustomString.otherFriends,
+                                style: CustomTextStyle.bigBody1),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      _buildMembersList(
-                        '',
-                        viewModel.nonTeamMembers,
-                        viewModel,
-                        false,
-                      ),
-                    ],
-                  ),
-          );
-        },
+                        const SizedBox(height: 15),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: CustomSearchBar(
+                            controller: viewModel.searchController,
+                            hintText: CustomString.searchFriends,
+                            onChanged: viewModel.performSearch,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        _buildMembersList(
+                          '',
+                          viewModel.nonTeamMembers,
+                          viewModel,
+                          false,
+                        ),
+                      ],
+                    ),
+            );
+          },
+        ),
       ),
     );
   }
