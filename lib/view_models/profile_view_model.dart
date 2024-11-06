@@ -12,6 +12,7 @@ import '../models/conversation.dart';
 import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
 import '../view_models/requests_view_model.dart';
+import 'dart:async';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -58,6 +59,16 @@ class ProfileViewModel extends ChangeNotifier {
 
   bool get hasIncomingRequest => _hasIncomingRequest;
 
+  StreamSubscription<DocumentSnapshot>? _userSubscription;
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _userSubscription?.cancel();
+    super.dispose();
+  }
+
   ProfileViewModel({this.userId}) {
     fetchUserData();
   }
@@ -77,13 +88,17 @@ class ProfileViewModel extends ChangeNotifier {
       // Set up real-time listener for current user
       if (profileUserId != currentUserId) {
         _currentUser = await AuthMethods().getUserDetailsById(currentUserId);
+
+        // Cancel existing subscription if any
+        await _userSubscription?.cancel();
+
         // Add real-time listener for current user
-        FirebaseFirestore.instance
+        _userSubscription = FirebaseFirestore.instance
             .collection('users')
             .doc(currentUserId)
             .snapshots()
             .listen((snapshot) {
-          if (snapshot.exists) {
+          if (!_disposed && snapshot.exists) {
             final userData = snapshot.data() as Map<String, dynamic>;
             if (_currentUser != null) {
               _currentUser!.favorites.clear();
@@ -92,9 +107,13 @@ class ProfileViewModel extends ChangeNotifier {
               _currentUser =
                   model.User.fromSnap(snapshot); // Update entire user object
               _isFriend = _currentUser!.friends.contains(_user!.uid);
-              checkFriendRequestStatus(); // This will trigger UI updates via notifyListeners()
+              if (!_disposed) {
+                checkFriendRequestStatus(); // This will trigger UI updates via notifyListeners()
+              }
             }
-            notifyListeners();
+            if (!_disposed) {
+              notifyListeners();
+            }
           }
         });
       } else {
@@ -927,6 +946,10 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   Future<void> checkFriendRequestStatus() async {
+    if (_disposed) {
+      AppLogger.debug('Skipping friend request check: ViewModel is disposed');
+      return;
+    }
     if (_isCurrentUser || _isFriend) {
       AppLogger.debug(
           'Skipping friend request check: isCurrentUser=$_isCurrentUser, isFriend=$_isFriend');
@@ -1001,7 +1024,9 @@ class ProfileViewModel extends ChangeNotifier {
         AppLogger.debug('No requests found, cleared status');
       }
 
-      notifyListeners();
+      if (!_disposed) {
+        notifyListeners();
+      }
     } catch (e) {
       AppLogger.error('Error checking friend request status: $e');
       AppLogger.error('Stack trace: ${StackTrace.current}');
@@ -1024,13 +1049,17 @@ class ProfileViewModel extends ChangeNotifier {
       await requestsViewModel.acceptRequest(_incomingRequestId!);
       AppLogger.debug('Request accepted in RequestsViewModel');
 
-      await checkFriendRequestStatus();
-      AppLogger.debug('Friend request status updated');
-
+      // Update local state immediately
       _isFriend = true;
-      AppLogger.debug('Local isFriend status updated to true');
+      _hasIncomingRequest = false;
+      _friendRequestStatus = null;
+      _incomingRequestId = null;
 
-      notifyListeners();
+      AppLogger.debug('Local state updated: isFriend=$_isFriend');
+      notifyListeners(); // Trigger UI update immediately
+
+      // Fetch latest data to ensure consistency
+      await fetchUserData();
     } catch (e) {
       AppLogger.error('Error accepting friend request: $e');
       AppLogger.error('Stack trace: ${StackTrace.current}');
@@ -1041,13 +1070,25 @@ class ProfileViewModel extends ChangeNotifier {
     if (_incomingRequestId == null) return;
 
     try {
+      AppLogger.debug('Denying friend request: $_incomingRequestId');
+
       final requestsViewModel =
           RequestsViewModel(currentUserId: _currentUser!.uid);
       await requestsViewModel.denyRequest(_incomingRequestId!);
-      await checkFriendRequestStatus();
-      notifyListeners();
+
+      // Update local state immediately
+      _hasIncomingRequest = false;
+      _friendRequestStatus = null;
+      _incomingRequestId = null;
+
+      AppLogger.debug('Local state cleared after denial');
+      notifyListeners(); // Trigger UI update immediately
+
+      // Fetch latest data to ensure consistency
+      await fetchUserData();
     } catch (e) {
       AppLogger.error('Error denying friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
     }
   }
 }

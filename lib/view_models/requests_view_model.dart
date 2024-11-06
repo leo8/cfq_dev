@@ -119,6 +119,8 @@ class RequestsViewModel extends ChangeNotifier {
 
   Future<void> denyRequest(String requestId) async {
     try {
+      AppLogger.debug('Denying request: $requestId');
+
       final userDoc =
           await _firestore.collection('users').doc(currentUserId).get();
       final user = User.fromSnap(userDoc);
@@ -127,64 +129,30 @@ class RequestsViewModel extends ChangeNotifier {
       // Start a batch write
       WriteBatch batch = _firestore.batch();
 
-      // Update request status to denied for current user
-      final updatedRequests = user.requests.map((r) {
-        if (r.id == requestId) {
-          return Request(
-            id: r.id,
-            type: r.type,
-            requesterId: r.requesterId,
-            requesterUsername: r.requesterUsername,
-            requesterProfilePictureUrl: r.requesterProfilePictureUrl,
-            teamId: r.teamId,
-            teamName: r.teamName,
-            teamImageUrl: r.teamImageUrl,
-            timestamp: r.timestamp,
-            status: RequestStatus.denied,
-          );
-        }
-        return r;
-      }).toList();
-
+      // Remove request from current user's requests
+      final updatedRequests =
+          user.requests.where((r) => r.id != requestId).toList();
       batch.update(_firestore.collection('users').doc(currentUserId), {
         'requests': updatedRequests.map((r) => r.toJson()).toList(),
       });
 
-      // If it's a friend request, update the request status for the requester as well
+      // Remove request from requester's requests
       if (request.type == RequestType.friend) {
         final requesterDoc =
             await _firestore.collection('users').doc(request.requesterId).get();
+        final requesterUser = User.fromSnap(requesterDoc);
+        final updatedRequesterRequests =
+            requesterUser.requests.where((r) => r.id != requestId).toList();
 
-        if (requesterDoc.exists) {
-          final requesterUser = User.fromSnap(requesterDoc);
-          final updatedRequesterRequests = requesterUser.requests.map((r) {
-            if (r.id == requestId) {
-              return Request(
-                id: r.id,
-                type: r.type,
-                requesterId: r.requesterId,
-                requesterUsername: r.requesterUsername,
-                requesterProfilePictureUrl: r.requesterProfilePictureUrl,
-                teamId: r.teamId,
-                teamName: r.teamName,
-                teamImageUrl: r.teamImageUrl,
-                timestamp: r.timestamp,
-                status: RequestStatus.denied,
-              );
-            }
-            return r;
-          }).toList();
-
-          batch
-              .update(_firestore.collection('users').doc(request.requesterId), {
-            'requests':
-                updatedRequesterRequests.map((r) => r.toJson()).toList(),
-          });
-        }
+        batch.update(_firestore.collection('users').doc(request.requesterId), {
+          'requests': updatedRequesterRequests.map((r) => r.toJson()).toList(),
+        });
       }
 
       // Commit the batch
       await batch.commit();
+      AppLogger.debug('Request denied and removed successfully');
+
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error denying request: $e');
