@@ -80,7 +80,7 @@ class RequestCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: CustomButton(
-                    label: CustomString.addFriend,
+                    label: CustomString.accept,
                     onTap: onAccept,
                     color: CustomColor.customPurple,
                   ),
@@ -88,7 +88,7 @@ class RequestCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: CustomButton(
-                    label: CustomString.removeFriend,
+                    label: CustomString.deny,
                     onTap: onDeny,
                     color: CustomColor.customDarkGrey,
                   ),
@@ -112,11 +112,11 @@ class RequestCard extends StatelessWidget {
   String _getStatusText() {
     switch (request.status) {
       case RequestStatus.accepted:
-        return 'Accepté';
+        return CustomString.accepted;
       case RequestStatus.denied:
-        return 'Refusé';
+        return CustomString.denied;
       case RequestStatus.pending:
-        return 'En attente';
+        return CustomString.pending;
     }
   }
 
@@ -142,7 +142,7 @@ class RequestCard extends StatelessWidget {
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes}min';
     } else {
-      return 'maintenant';
+      return CustomString.now;
     }
   }
 }
