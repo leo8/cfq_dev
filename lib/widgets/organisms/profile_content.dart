@@ -245,31 +245,74 @@ class _ProfileContentState extends State<ProfileContent>
                       Column(
                         children: [
                           Center(
-                            child: CustomButton(
-                                label: widget.isFriend
-                                    ? CustomString.removeFriend
-                                    : widget.viewModel.friendRequestStatus ==
-                                            'pending'
-                                        ? CustomString.pending
-                                        : CustomString.addFriend,
-                                onTap: widget.isFriend
-                                    ? widget.onRemoveFriendTap ?? () {}
-                                    : widget.viewModel.friendRequestStatus ==
-                                            'pending'
-                                        ? () {}
-                                        : widget.onAddFriendTap ?? () {},
-                                color: widget.isFriend
-                                    ? CustomColor.customBlack
-                                    : widget.viewModel.friendRequestStatus ==
-                                            'pending'
-                                        ? CustomColor.customDarkGrey
-                                        : CustomColor.customPurple,
-                                textStyle: CustomTextStyle.subButton
-                                    .copyWith(color: CustomColor.customWhite),
-                                borderRadius: 5,
-                                borderWidth: 0.5,
-                                width: 220,
-                                height: 50),
+                            child: widget.viewModel.hasIncomingRequest
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: CustomButton(
+                                          label: CustomString.accept,
+                                          onTap: widget
+                                              .viewModel.acceptFriendRequest,
+                                          color: CustomColor.customPurple,
+                                          textStyle: CustomTextStyle.subButton
+                                              .copyWith(
+                                            color: CustomColor.customWhite,
+                                          ),
+                                          borderRadius: 5,
+                                          borderWidth: 0.5,
+                                          height: 50,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: CustomButton(
+                                          label: CustomString.deny,
+                                          onTap: widget
+                                              .viewModel.denyFriendRequest,
+                                          color: CustomColor.customDarkGrey,
+                                          textStyle: CustomTextStyle.subButton
+                                              .copyWith(
+                                            color: CustomColor.customWhite,
+                                          ),
+                                          borderRadius: 5,
+                                          borderWidth: 0.5,
+                                          height: 50,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : CustomButton(
+                                    label: widget.isFriend
+                                        ? CustomString.removeFriend
+                                        : widget.viewModel
+                                                    .friendRequestStatus ==
+                                                'pending'
+                                            ? CustomString.pending
+                                            : CustomString.addFriend,
+                                    onTap: widget.isFriend
+                                        ? widget.onRemoveFriendTap!
+                                        : widget.viewModel
+                                                    .friendRequestStatus ==
+                                                'pending'
+                                            ? () {}
+                                            : widget.onAddFriendTap!,
+                                    color: widget.isFriend
+                                        ? CustomColor.customBlack
+                                        : widget.viewModel
+                                                    .friendRequestStatus ==
+                                                'pending'
+                                            ? CustomColor.customDarkGrey
+                                            : CustomColor.customPurple,
+                                    textStyle:
+                                        CustomTextStyle.subButton.copyWith(
+                                      color: CustomColor.customWhite,
+                                    ),
+                                    borderRadius: 5,
+                                    borderWidth: 0.5,
+                                    width: 220,
+                                    height: 50,
+                                  ),
                           ),
                           const SizedBox(
                             height: 12,

@@ -11,6 +11,7 @@ import '../providers/conversation_service.dart';
 import '../models/conversation.dart';
 import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
+import '../view_models/requests_view_model.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -51,6 +52,11 @@ class ProfileViewModel extends ChangeNotifier {
 
   String? _friendRequestStatus;
   String? get friendRequestStatus => _friendRequestStatus;
+
+  String? _incomingRequestId;
+  bool _hasIncomingRequest = false;
+
+  bool get hasIncomingRequest => _hasIncomingRequest;
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
@@ -124,7 +130,10 @@ class ProfileViewModel extends ChangeNotifier {
             .length;
       }
 
+      await checkFriendRequestStatus();
+
       _isLoading = false;
+
       _userStream = FirebaseFirestore.instance
           .collection('users')
           .doc(profileUserId)
@@ -139,58 +148,46 @@ class ProfileViewModel extends ChangeNotifier {
 
   /// Adds the profile user as a friend
   Future<void> addFriend({required VoidCallback onSuccess}) async {
-    if (_isCurrentUser || _isFriend) return;
+    if (_isCurrentUser || _isFriend) {
+      AppLogger.debug(
+          'Skipping add friend: isCurrentUser=$_isCurrentUser, isFriend=$_isFriend');
+      return;
+    }
 
     try {
-      // Check for existing request
-      final existingRequestQuery = await _firestore
-          .collection('requests')
-          .where('type', isEqualTo: 'friendRequest')
-          .where('requesterId', isEqualTo: _currentUser!.uid)
-          .where('receiverId', isEqualTo: _user!.uid)
-          .get();
+      AppLogger.debug(
+          'Adding friend request from ${_currentUser!.uid} to ${_user!.uid}');
 
-      String requestId;
-      if (existingRequestQuery.docs.isNotEmpty) {
-        final existingRequest = existingRequestQuery.docs.first;
-        if (existingRequest['status'] == 'denied') {
-          // Reset denied request to pending
-          requestId = existingRequest.id;
-          await _firestore.collection('requests').doc(requestId).update({
-            'status': 'pending',
-            'timestamp': DateTime.now().toIso8601String(),
-          });
-        } else {
-          // Request exists and is not denied
-          return;
-        }
-      } else {
-        // Create new request
-        requestId = const Uuid().v4();
-        final request = {
-          'id': requestId,
-          'type': 'friend',
-          'requesterId': _currentUser!.uid,
-          'requesterUsername': _currentUser!.username,
-          'requesterProfilePictureUrl': _currentUser!.profilePictureUrl,
-          'receiverId': _user!.uid,
-          'timestamp': DateTime.now().toIso8601String(),
-          'status': 'pending',
-        };
+      final request = model.Request(
+        id: const Uuid().v4(),
+        type: model.RequestType.friend,
+        requesterId: _currentUser!.uid,
+        requesterUsername: _currentUser!.username,
+        requesterProfilePictureUrl: _currentUser!.profilePictureUrl,
+        timestamp: DateTime.now(),
+        status: model.RequestStatus.pending,
+      );
 
-        await _firestore.collection('users').doc(_user!.uid).update({
-          'requests': FieldValue.arrayUnion([request])
-        });
+      AppLogger.debug('Created request: ${request.toJson()}');
 
-        // Create notification
-        await _createFriendRequestNotification();
-      }
+      // Add request to receiver's requests
+      await _firestore.collection('users').doc(_user!.uid).update({
+        'requests': FieldValue.arrayUnion([request.toJson()]),
+      });
+      AppLogger.debug('Added request to receiver\'s requests');
+
+      // Create notification
+      await _createFriendRequestNotification();
+      AppLogger.debug('Created friend request notification');
 
       _friendRequestStatus = 'pending';
       notifyListeners();
+
+      AppLogger.debug('Friend request successfully added');
       onSuccess();
     } catch (e) {
       AppLogger.error('Error adding friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
     }
   }
 
@@ -926,25 +923,127 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   Future<void> checkFriendRequestStatus() async {
-    if (_isCurrentUser || _isFriend) return;
+    if (_isCurrentUser || _isFriend) {
+      AppLogger.debug(
+          'Skipping friend request check: isCurrentUser=$_isCurrentUser, isFriend=$_isFriend');
+      return;
+    }
 
     try {
-      final requestsQuery = await _firestore
-          .collection('requests')
-          .where('type', isEqualTo: 'friend')
-          .where('requesterId', isEqualTo: _currentUser!.uid)
-          .where('receiverId', isEqualTo: _user!.uid)
-          .get();
+      AppLogger.debug(
+          'Checking friend request status between current user (${_currentUser!.uid}) and viewed user (${_user!.uid})');
 
-      if (requestsQuery.docs.isNotEmpty) {
-        final request = requestsQuery.docs.first.data();
-        _friendRequestStatus = request['status'];
+      // Get current user's requests
+      final currentUserDoc =
+          await _firestore.collection('users').doc(_currentUser!.uid).get();
+      final currentUserRequests = model.User.fromSnap(currentUserDoc).requests;
+      AppLogger.debug(
+          'Current user has ${currentUserRequests.length} requests');
+
+      // Get viewed user's requests
+      final viewedUserDoc =
+          await _firestore.collection('users').doc(_user!.uid).get();
+      final viewedUserRequests = model.User.fromSnap(viewedUserDoc).requests;
+      AppLogger.debug('Viewed user has ${viewedUserRequests.length} requests');
+
+      // First check if there's an incoming request (from viewed user to current user)
+      final incomingRequest = currentUserRequests.firstWhere(
+        (r) =>
+            r.type == model.RequestType.friend &&
+            r.requesterId == _user!.uid &&
+            r.status == model.RequestStatus.pending,
+        orElse: () => model.Request.empty(),
+      );
+
+      // If no incoming request, check for outgoing request (from current user to viewed user)
+      final outgoingRequest = incomingRequest.id.isEmpty
+          ? viewedUserRequests.firstWhere(
+              (r) =>
+                  r.type == model.RequestType.friend &&
+                  r.requesterId == _currentUser!.uid &&
+                  r.status == model.RequestStatus.pending,
+              orElse: () => model.Request.empty(),
+            )
+          : model.Request.empty();
+
+      AppLogger.debug(
+          'Incoming request found: ${incomingRequest.id.isNotEmpty}');
+      if (incomingRequest.id.isNotEmpty) {
+        AppLogger.debug('Incoming request status: ${incomingRequest.status}');
+      }
+
+      AppLogger.debug(
+          'Outgoing request found: ${outgoingRequest.id.isNotEmpty}');
+      if (outgoingRequest.id.isNotEmpty) {
+        AppLogger.debug('Outgoing request status: ${outgoingRequest.status}');
+      }
+
+      if (incomingRequest.id.isNotEmpty) {
+        _incomingRequestId = incomingRequest.id;
+        _hasIncomingRequest = true;
+        _friendRequestStatus =
+            incomingRequest.status.toString().split('.').last;
+        AppLogger.debug(
+            'Set status from incoming request: $_friendRequestStatus, hasIncoming: $_hasIncomingRequest');
+      } else if (outgoingRequest.id.isNotEmpty) {
+        _friendRequestStatus =
+            outgoingRequest.status.toString().split('.').last;
+        _hasIncomingRequest = false;
+        AppLogger.debug(
+            'Set status from outgoing request: $_friendRequestStatus');
       } else {
         _friendRequestStatus = null;
+        _hasIncomingRequest = false;
+        AppLogger.debug('No requests found, cleared status');
       }
+
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error checking friend request status: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> acceptFriendRequest() async {
+    if (_incomingRequestId == null) {
+      AppLogger.debug('No incoming request ID found');
+      return;
+    }
+
+    try {
+      AppLogger.debug('Accepting friend request: $_incomingRequestId');
+      AppLogger.debug(
+          'Current user: ${_currentUser!.uid}, Requester: ${_user!.uid}');
+
+      final requestsViewModel =
+          RequestsViewModel(currentUserId: _currentUser!.uid);
+      await requestsViewModel.acceptRequest(_incomingRequestId!);
+      AppLogger.debug('Request accepted in RequestsViewModel');
+
+      await checkFriendRequestStatus();
+      AppLogger.debug('Friend request status updated');
+
+      _isFriend = true;
+      AppLogger.debug('Local isFriend status updated to true');
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error accepting friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> denyFriendRequest() async {
+    if (_incomingRequestId == null) return;
+
+    try {
+      final requestsViewModel =
+          RequestsViewModel(currentUserId: _currentUser!.uid);
+      await requestsViewModel.denyRequest(_incomingRequestId!);
+      await checkFriendRequestStatus();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error denying friend request: $e');
     }
   }
 }
