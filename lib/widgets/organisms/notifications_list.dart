@@ -85,6 +85,11 @@ class NotificationsList extends StatelessWidget {
                           //as model.TeamRequestNotificationContent;
                           // Handle team request navigation/action
                           break;
+                        case model.NotificationType.friendRequest:
+                          //final content = notification.content
+                          //as model.FriendRequestNotificationContent;
+                          // Handle friend request navigation/action
+                          break;
                         default:
                           break;
                       }
