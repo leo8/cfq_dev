@@ -49,6 +49,9 @@ class ProfileViewModel extends ChangeNotifier {
   int _commonTeamsCount = 0;
   int get commonTeamsCount => _commonTeamsCount;
 
+  String? _friendRequestStatus;
+  String? get friendRequestStatus => _friendRequestStatus;
+
   ProfileViewModel({this.userId}) {
     fetchUserData();
   }
@@ -139,45 +142,84 @@ class ProfileViewModel extends ChangeNotifier {
     if (_isCurrentUser || _isFriend) return;
 
     try {
-      // Get references to the user documents
-      DocumentReference currentUserRef =
-          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
-      DocumentReference viewedUserRef =
-          FirebaseFirestore.instance.collection('users').doc(_user!.uid);
+      // Check for existing request
+      final existingRequestQuery = await _firestore
+          .collection('requests')
+          .where('type', isEqualTo: 'friendRequest')
+          .where('requesterId', isEqualTo: _currentUser!.uid)
+          .where('receiverId', isEqualTo: _user!.uid)
+          .get();
 
-      // Update the friends lists atomically
-      WriteBatch batch = FirebaseFirestore.instance.batch();
+      String requestId;
+      if (existingRequestQuery.docs.isNotEmpty) {
+        final existingRequest = existingRequestQuery.docs.first;
+        if (existingRequest['status'] == 'denied') {
+          // Reset denied request to pending
+          requestId = existingRequest.id;
+          await _firestore.collection('requests').doc(requestId).update({
+            'status': 'pending',
+            'timestamp': DateTime.now().toIso8601String(),
+          });
+        } else {
+          // Request exists and is not denied
+          return;
+        }
+      } else {
+        // Create new request
+        requestId = const Uuid().v4();
+        final request = {
+          'id': requestId,
+          'type': 'friend',
+          'requesterId': _currentUser!.uid,
+          'requesterUsername': _currentUser!.username,
+          'requesterProfilePictureUrl': _currentUser!.profilePictureUrl,
+          'receiverId': _user!.uid,
+          'timestamp': DateTime.now().toIso8601String(),
+          'status': 'pending',
+        };
 
-      // Add viewed user's ID to current user's friends list
-      batch.update(currentUserRef, {
-        'friends': FieldValue.arrayUnion([_user!.uid])
-      });
+        await _firestore.collection('users').doc(_user!.uid).update({
+          'requests': FieldValue.arrayUnion([request])
+        });
 
-      // Add current user's ID to viewed user's friends list
-      batch.update(viewedUserRef, {
-        'friends': FieldValue.arrayUnion([_currentUser!.uid])
-      });
+        // Create notification
+        await _createFriendRequestNotification();
+      }
 
-      // Commit the batch
-      await batch.commit();
-
-      // Update the local model.User objects
-      _currentUser!.friends.add(_user!.uid);
-      _user!.friends.add(_currentUser!.uid);
-
-      // Update isFriend status
-      _isFriend = true;
-
-      // Set friendAdded to true
-      _friendAdded = true;
-
+      _friendRequestStatus = 'pending';
       notifyListeners();
-
-      // Call the success callback
       onSuccess();
     } catch (e) {
-      AppLogger.error('Error adding friend: $e');
-      // Optionally, handle the error
+      AppLogger.error('Error adding friend request: $e');
+    }
+  }
+
+  Future<void> _createFriendRequestNotification() async {
+    try {
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': 'friendRequest',
+        'content': {
+          'requesterId': _currentUser!.uid,
+          'requesterUsername': _currentUser!.username,
+          'requesterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to receiver's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(_user!.notificationsChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(_user!.uid).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating friend request notification: $e');
     }
   }
 
@@ -880,6 +922,29 @@ class ProfileViewModel extends ChangeNotifier {
       });
     } catch (e) {
       AppLogger.error('Error creating attending notification: $e');
+    }
+  }
+
+  Future<void> checkFriendRequestStatus() async {
+    if (_isCurrentUser || _isFriend) return;
+
+    try {
+      final requestsQuery = await _firestore
+          .collection('requests')
+          .where('type', isEqualTo: 'friend')
+          .where('requesterId', isEqualTo: _currentUser!.uid)
+          .where('receiverId', isEqualTo: _user!.uid)
+          .get();
+
+      if (requestsQuery.docs.isNotEmpty) {
+        final request = requestsQuery.docs.first.data();
+        _friendRequestStatus = request['status'];
+      } else {
+        _friendRequestStatus = null;
+      }
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error checking friend request status: $e');
     }
   }
 }

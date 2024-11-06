@@ -205,6 +205,34 @@ class TeamRequestNotificationContent extends NotificationContent {
   }
 }
 
+// Friend request specific notification content
+class FriendRequestNotificationContent extends NotificationContent {
+  final String requesterId;
+  final String requesterUsername;
+  final String requesterProfilePictureUrl;
+
+  FriendRequestNotificationContent({
+    required this.requesterId,
+    required this.requesterUsername,
+    required this.requesterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'requesterId': requesterId,
+        'requesterUsername': requesterUsername,
+        'requesterProfilePictureUrl': requesterProfilePictureUrl,
+      };
+
+  factory FriendRequestNotificationContent.fromJson(Map<String, dynamic> json) {
+    return FriendRequestNotificationContent(
+      requesterId: json['requesterId'] as String,
+      requesterUsername: json['requesterUsername'] as String,
+      requesterProfilePictureUrl: json['requesterProfilePictureUrl'] as String,
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -240,6 +268,9 @@ class Notification {
         break;
       case 'teamRequest':
         content = TeamRequestNotificationContent.fromJson(contentData);
+        break;
+      case 'friendRequest':
+        content = FriendRequestNotificationContent.fromJson(contentData);
         break;
       default:
         throw Exception('Unknown notification type: $typeStr');

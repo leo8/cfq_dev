@@ -130,6 +130,21 @@ class NotificationCard extends StatelessWidget {
           timestamp: notification.timestamp,
         );
 
+      case model.NotificationType.friendRequest:
+        final content =
+            notification.content as model.FriendRequestNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.requesterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.requesterUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' souhaite t\'ajouter en ami'),
+          ],
+          timestamp: notification.timestamp,
+        );
+
       default:
         return const SizedBox.shrink();
     }

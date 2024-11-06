@@ -248,13 +248,22 @@ class _ProfileContentState extends State<ProfileContent>
                             child: CustomButton(
                                 label: widget.isFriend
                                     ? CustomString.removeFriend
-                                    : CustomString.addFriend,
+                                    : widget.viewModel.friendRequestStatus ==
+                                            'pending'
+                                        ? CustomString.pending
+                                        : CustomString.addFriend,
                                 onTap: widget.isFriend
-                                    ? widget.onRemoveFriendTap!
-                                    : widget.onAddFriendTap!,
+                                    ? widget.onRemoveFriendTap ?? () {}
+                                    : widget.viewModel.friendRequestStatus ==
+                                            'pending'
+                                        ? () {}
+                                        : widget.onAddFriendTap ?? () {},
                                 color: widget.isFriend
                                     ? CustomColor.customBlack
-                                    : CustomColor.customPurple,
+                                    : widget.viewModel.friendRequestStatus ==
+                                            'pending'
+                                        ? CustomColor.customDarkGrey
+                                        : CustomColor.customPurple,
                                 textStyle: CustomTextStyle.subButton
                                     .copyWith(color: CustomColor.customWhite),
                                 borderRadius: 5,
