@@ -49,47 +49,20 @@ class NotificationCard extends StatelessWidget {
       case model.NotificationType.teamRequest:
         final content =
             notification.content as model.TeamRequestNotificationContent;
-        return InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CustomAvatar(
-                      imageUrl: content.inviterProfilePictureUrl,
-                      radius: 25,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              style: CustomTextStyle.body1,
-                              children: [
-                                TextSpan(
-                                  text: content.inviterUsername,
-                                  style: CustomTextStyle.body1Bold,
-                                ),
-                                const TextSpan(text: ' t\'invite à rejoindre '),
-                                TextSpan(
-                                  text: content.teamName,
-                                  style: CustomTextStyle.body1Bold,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+        return _buildNotificationRow(
+          avatarUrl: content.inviterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.inviterUsername,
+              style: CustomTextStyle.body1Bold,
             ),
-          ),
+            const TextSpan(text: ' t\'invite à rejoindre '),
+            TextSpan(
+              text: content.teamName,
+              style: CustomTextStyle.body1Bold,
+            ),
+          ],
+          timestamp: notification.timestamp,
         );
 
       case model.NotificationType.followUp:
