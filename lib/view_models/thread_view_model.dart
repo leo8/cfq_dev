@@ -502,49 +502,64 @@ class ThreadViewModel extends ChangeNotifier {
 
   Future<void> updateAttendingStatus(String turnId, String status) async {
     try {
+      final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(turnId);
-      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
+      final userRef = _firestore.collection('users').doc(currentUser!.uid);
 
-      await _firestore.runTransaction((transaction) async {
-        DocumentSnapshot turnDoc = await transaction.get(turnRef);
-        DocumentSnapshot userDoc = await transaction.get(userRef);
+      final turnDoc = await turnRef.get();
+      final userDoc = await userRef.get();
 
-        if (!turnDoc.exists) {
-          throw Exception('Turn document does not exist');
-        }
+      if (!turnDoc.exists || !userDoc.exists) {
+        throw Exception('Turn or User document does not exist');
+      }
 
-        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final turnData = turnDoc.data()!;
+      final userData = userDoc.data()!;
 
-        // Remove user from all attending lists
-        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
-            .forEach((field) {
-          if (turnData[field] != null) {
-            turnData[field] = (turnData[field] as List)
-                .where((id) => id != _currentUser!.uid)
-                .toList();
-          }
-        });
+      // Remove user from all lists first
+      final List<String> attending =
+          List<String>.from(turnData['attending'] ?? []);
+      final List<String> notAttending =
+          List<String>.from(turnData['notAttending'] ?? []);
+      final List<String> notSureAttending =
+          List<String>.from(turnData['notSureAttending'] ?? []);
 
-        // Add user to the appropriate list
-        if (status != 'notAnswered') {
-          turnData[status] = [...(turnData[status] ?? []), _currentUser!.uid];
-        }
+      attending.remove(currentUser!.uid);
+      notAttending.remove(currentUser!.uid);
+      notSureAttending.remove(currentUser!.uid);
 
-        // Update user's attending status for this turn
-        if (userData['attendingStatus'] == null) {
-          userData['attendingStatus'] = {};
-        }
-        userData['attendingStatus'][turnId] = status;
+      // Add user to appropriate list
+      switch (status) {
+        case 'attending':
+          attending.add(currentUser!.uid);
+          break;
+        case 'notAttending':
+          notAttending.add(currentUser!.uid);
+          break;
+        case 'notSureAttending':
+          notSureAttending.add(currentUser!.uid);
+          break;
+      }
 
-        // Create notification only when status is 'attending'
-        if (status == 'attending') {
-          await _createAttendingNotification(turnId);
-        }
-
-        transaction.update(turnRef, turnData);
-        transaction.update(userRef, userData);
+      // Update turn document
+      batch.update(turnRef, {
+        'attending': attending,
+        'notAttending': notAttending,
+        'notSureAttending': notSureAttending,
       });
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+      attendingStatus[turnId] = status;
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
+
+      // Create notification if attending
+      if (status == 'attending') {
+        await _createAttendingNotification(turnId);
+      }
 
       notifyListeners();
     } catch (e) {

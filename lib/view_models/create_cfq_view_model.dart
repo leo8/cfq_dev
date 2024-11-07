@@ -785,6 +785,7 @@ class CreateCfqViewModel extends ChangeNotifier
             'content': {
               'eventId': eventId,
               'eventName': eventName,
+              'isTurn': false,
               'eventImageUrl': eventImageUrl,
               'organizerId': _currentUser!.uid,
               'organizerUsername': _currentUser!.username,
