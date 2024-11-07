@@ -137,60 +137,69 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
       backgroundColor: Colors.transparent,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics:
-                        const NeverScrollableScrollPhysics(), // Désactive le swipe manuel
-                    children: [
-                      Inscription(
-                          onNext: _nextPage,
-                          onPrevious: _previousPage,
-                          currentPages: _currentIndex,
-                          totalPages: totalPages,
-                          nameTextController: nameTextController,
-                          userNames: userNames),
-                      InscriptionBirthdayDate(
-                        onNext: _nextPage,
-                        onPrevious: _previousPage,
-                        currentPages: _currentIndex,
-                        totalPages: totalPages,
-                        birthdayTextController: birthdayTextController,
-                        selectedBirthDate: _selectedBirthDate,
-                        onBirthDateChanged: (DateTime? newDate) {
-                          setState(() {
-                            _selectedBirthDate =
-                                newDate; // Update selected birth date
-                          });
-                        },
+          : GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        physics:
+                            const NeverScrollableScrollPhysics(), // Désactive le swipe manuel
+                        children: [
+                          Inscription(
+                              onNext: _nextPage,
+                              onPrevious: _previousPage,
+                              currentPages: _currentIndex,
+                              totalPages: totalPages,
+                              nameTextController: nameTextController,
+                              userNames: userNames),
+                          InscriptionBirthdayDate(
+                            onNext: _nextPage,
+                            onPrevious: _previousPage,
+                            currentPages: _currentIndex,
+                            totalPages: totalPages,
+                            birthdayTextController: birthdayTextController,
+                            selectedBirthDate: _selectedBirthDate,
+                            onBirthDateChanged: (DateTime? newDate) {
+                              setState(() {
+                                _selectedBirthDate =
+                                    newDate; // Update selected birth date
+                              });
+                            },
+                          ),
+                          LoginPhoto(
+                            onNext: _nextPage,
+                            onPrevious: _previousPage,
+                            currentPages: _currentIndex,
+                            totalPages: totalPages,
+                            image: _image,
+                            onImageSelected: selectImage,
+                          ),
+                          InscriptionLocalisation(
+                            onNext: _nextPage,
+                            onPrevious: _previousPage,
+                            currentPages: _currentIndex,
+                            totalPages: totalPages,
+                            localisationTextController:
+                                localisationTextController,
+                          ),
+                          InscriptionFriends(
+                              onNext: _nextPage,
+                              onPrevious: _previousPage,
+                              currentPages: _currentIndex,
+                              totalPages: totalPages,
+                              signUp: signUpUser)
+                        ],
                       ),
-                      LoginPhoto(
-                        onNext: _nextPage,
-                        onPrevious: _previousPage,
-                        currentPages: _currentIndex,
-                        totalPages: totalPages,
-                        image: _image,
-                        onImageSelected: selectImage,
-                      ),
-                      InscriptionLocalisation(
-                        onNext: _nextPage,
-                        onPrevious: _previousPage,
-                        currentPages: _currentIndex,
-                        totalPages: totalPages,
-                        localisationTextController: localisationTextController,
-                      ),
-                      InscriptionFriends(
-                          onNext: _nextPage,
-                          onPrevious: _previousPage,
-                          currentPages: _currentIndex,
-                          totalPages: totalPages,
-                          signUp: signUpUser)
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
     );
   }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
@@ -26,20 +25,21 @@ class OTPScreen extends StatefulWidget {
 class _OTPScreenState extends State<OTPScreen> {
   final otpController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<String> userNames = [];
+  List<String> userUIDs = [];
 
-  Future<void> fetchUserNames() async {
+// Fonction pour récupérer tous les noms d'utilisateur
+  Future<void> fetchUserUID() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('users').get();
-      List<String> names = snapshot.docs.map((doc) {
-        return doc['searchKey'] as String;
+      List<String> uids = snapshot.docs.map((doc) {
+        return doc['uid'] as String;
       }).toList();
 
       setState(() {
-        userNames = names;
+        userUIDs = uids;
       });
     } catch (e) {
-      print("Erreur lors de la récupération des noms d'utilisateur : $e");
+      print("Erreur lors de la récupération des uid : $e");
     }
   }
 
@@ -67,6 +67,11 @@ class _OTPScreenState extends State<OTPScreen> {
       ),
       (route) => false,
     );
+  }
+
+  @override
+  void initState() {
+    fetchUserUID();
   }
 
   bool isLoading = false;
@@ -122,7 +127,16 @@ class _OTPScreenState extends State<OTPScreen> {
 
                               final data = await FirebaseAuth.instance
                                   .signInWithCredential(cred);
-                              widget.isSign ? signUp(data) : signIn(data);
+
+                              if (widget.isSign) {
+                                signIn(data);
+                              } else if (!widget.isSign &&
+                                  userUIDs.contains(data.user!.uid)) {
+                                signIn(data);
+                              } else {
+                                signUp(data);
+                              }
+
                               // ignore: empty_catches
                             } catch (e) {}
                             setState(() {

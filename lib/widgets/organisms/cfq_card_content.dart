@@ -36,6 +36,7 @@ class CFQCardContent extends StatelessWidget {
   final Function(bool) onFollowUpToggled; // New callback
   final bool isExpanded;
   final VoidCallback? onClose;
+  final Stream<int>? followersCountStream;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -62,6 +63,7 @@ class CFQCardContent extends StatelessWidget {
     required this.onFollowUpToggled,
     this.isExpanded = false,
     this.onClose,
+    this.followersCountStream,
     super.key,
   });
 
@@ -173,6 +175,7 @@ class CFQCardContent extends StatelessWidget {
                           description: description,
                           cfqId: cfqId,
                           isExpanded: isExpanded,
+                          followersCountStream: followersCountStream,
                         ),
                       ),
                     ],
@@ -254,6 +257,7 @@ class CFQCardContent extends StatelessWidget {
                       description: description,
                       cfqId: cfqId,
                       isExpanded: isExpanded,
+                      followersCountStream: followersCountStream,
                     ),
                   ),
                 ],

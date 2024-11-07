@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/widgets/atoms/dates/custom_date_field.dart';

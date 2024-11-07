@@ -9,6 +9,10 @@ import 'dart:typed_data';
 import 'package:rxdart/rxdart.dart';
 import '../providers/conversation_service.dart';
 import '../models/conversation.dart';
+import 'package:uuid/uuid.dart';
+import '../models/notification.dart' as notificationModel;
+import '../view_models/requests_view_model.dart';
+import 'dart:async';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -47,6 +51,24 @@ class ProfileViewModel extends ChangeNotifier {
   int _commonTeamsCount = 0;
   int get commonTeamsCount => _commonTeamsCount;
 
+  String? _friendRequestStatus;
+  String? get friendRequestStatus => _friendRequestStatus;
+
+  String? _incomingRequestId;
+  bool _hasIncomingRequest = false;
+
+  bool get hasIncomingRequest => _hasIncomingRequest;
+
+  StreamSubscription<DocumentSnapshot>? _userSubscription;
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _userSubscription?.cancel();
+    super.dispose();
+  }
+
   ProfileViewModel({this.userId}) {
     fetchUserData();
   }
@@ -66,20 +88,32 @@ class ProfileViewModel extends ChangeNotifier {
       // Set up real-time listener for current user
       if (profileUserId != currentUserId) {
         _currentUser = await AuthMethods().getUserDetailsById(currentUserId);
+
+        // Cancel existing subscription if any
+        await _userSubscription?.cancel();
+
         // Add real-time listener for current user
-        FirebaseFirestore.instance
+        _userSubscription = FirebaseFirestore.instance
             .collection('users')
             .doc(currentUserId)
             .snapshots()
             .listen((snapshot) {
-          if (snapshot.exists) {
+          if (!_disposed && snapshot.exists) {
             final userData = snapshot.data() as Map<String, dynamic>;
             if (_currentUser != null) {
               _currentUser!.favorites.clear();
               _currentUser!.favorites
                   .addAll(List<String>.from(userData['favorites'] ?? []));
+              _currentUser =
+                  model.User.fromSnap(snapshot); // Update entire user object
+              _isFriend = _currentUser!.friends.contains(_user!.uid);
+              if (!_disposed) {
+                checkFriendRequestStatus(); // This will trigger UI updates via notifyListeners()
+              }
             }
-            notifyListeners();
+            if (!_disposed) {
+              notifyListeners();
+            }
           }
         });
       } else {
@@ -119,7 +153,10 @@ class ProfileViewModel extends ChangeNotifier {
             .length;
       }
 
+      await checkFriendRequestStatus();
+
       _isLoading = false;
+
       _userStream = FirebaseFirestore.instance
           .collection('users')
           .doc(profileUserId)
@@ -134,48 +171,75 @@ class ProfileViewModel extends ChangeNotifier {
 
   /// Adds the profile user as a friend
   Future<void> addFriend({required VoidCallback onSuccess}) async {
-    if (_isCurrentUser || _isFriend) return;
+    if (_isCurrentUser || _isFriend) {
+      AppLogger.debug(
+          'Skipping add friend: isCurrentUser=$_isCurrentUser, isFriend=$_isFriend');
+      return;
+    }
 
     try {
-      // Get references to the user documents
-      DocumentReference currentUserRef =
-          FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid);
-      DocumentReference viewedUserRef =
-          FirebaseFirestore.instance.collection('users').doc(_user!.uid);
+      AppLogger.debug(
+          'Adding friend request from ${_currentUser!.uid} to ${_user!.uid}');
 
-      // Update the friends lists atomically
-      WriteBatch batch = FirebaseFirestore.instance.batch();
+      final request = model.Request(
+        id: const Uuid().v4(),
+        type: model.RequestType.friend,
+        requesterId: _currentUser!.uid,
+        requesterUsername: _currentUser!.username,
+        requesterProfilePictureUrl: _currentUser!.profilePictureUrl,
+        timestamp: DateTime.now(),
+        status: model.RequestStatus.pending,
+      );
 
-      // Add viewed user's ID to current user's friends list
-      batch.update(currentUserRef, {
-        'friends': FieldValue.arrayUnion([_user!.uid])
+      AppLogger.debug('Created request: ${request.toJson()}');
+
+      // Add request to receiver's requests
+      await _firestore.collection('users').doc(_user!.uid).update({
+        'requests': FieldValue.arrayUnion([request.toJson()]),
       });
+      AppLogger.debug('Added request to receiver\'s requests');
 
-      // Add current user's ID to viewed user's friends list
-      batch.update(viewedUserRef, {
-        'friends': FieldValue.arrayUnion([_currentUser!.uid])
-      });
+      // Create notification
+      await _createFriendRequestNotification();
+      AppLogger.debug('Created friend request notification');
 
-      // Commit the batch
-      await batch.commit();
-
-      // Update the local model.User objects
-      _currentUser!.friends.add(_user!.uid);
-      _user!.friends.add(_currentUser!.uid);
-
-      // Update isFriend status
-      _isFriend = true;
-
-      // Set friendAdded to true
-      _friendAdded = true;
-
+      _friendRequestStatus = 'pending';
       notifyListeners();
 
-      // Call the success callback
+      AppLogger.debug('Friend request successfully added');
       onSuccess();
     } catch (e) {
-      AppLogger.error('Error adding friend: $e');
-      // Optionally, handle the error
+      AppLogger.error('Error adding friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> _createFriendRequestNotification() async {
+    try {
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': 'friendRequest',
+        'content': {
+          'requesterId': _currentUser!.uid,
+          'requesterUsername': _currentUser!.username,
+          'requesterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to receiver's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(_user!.notificationsChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(_user!.uid).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating friend request notification: $e');
     }
   }
 
@@ -287,6 +351,7 @@ class ProfileViewModel extends ChangeNotifier {
         conversations: _user!.conversations,
         notificationsChannelId: _user!.notificationsChannelId,
         unreadNotificationsCount: _user!.unreadNotificationsCount,
+        requests: _user!.requests,
       );
 
       _isLoading = false;
@@ -335,6 +400,7 @@ class ProfileViewModel extends ChangeNotifier {
         conversations: _user!.conversations,
         notificationsChannelId: _user!.notificationsChannelId,
         unreadNotificationsCount: _user!.unreadNotificationsCount,
+        requests: _user!.requests,
       );
 
       _isLoading = false;
@@ -530,44 +596,64 @@ class ProfileViewModel extends ChangeNotifier {
 
   Future<void> updateAttendingStatus(String turnId, String status) async {
     try {
+      final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(turnId);
-      final userRef = _firestore.collection('users').doc(currentUser!.uid);
+      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
 
-      await _firestore.runTransaction((transaction) async {
-        final turnDoc = await transaction.get(turnRef);
-        final userDoc = await transaction.get(userRef);
+      final turnDoc = await turnRef.get();
+      final userDoc = await userRef.get();
 
-        if (!turnDoc.exists || !userDoc.exists) {
-          throw Exception('Turn or User document does not exist');
-        }
+      if (!turnDoc.exists || !userDoc.exists) {
+        throw Exception('Turn or User document does not exist');
+      }
 
-        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final turnData = turnDoc.data()!;
+      final userData = userDoc.data()!;
 
-        // Remove user from all attending lists
-        ['attending', 'notSureAttending', 'notAttending', 'notAnswered']
-            .forEach((field) {
-          if (turnData[field] != null) {
-            turnData[field] = (turnData[field] as List)
-                .where((id) => id != currentUser!.uid)
-                .toList();
-          }
-        });
+      // Remove user from all lists first
+      final List<String> attending =
+          List<String>.from(turnData['attending'] ?? []);
+      final List<String> notAttending =
+          List<String>.from(turnData['notAttending'] ?? []);
+      final List<String> notSureAttending =
+          List<String>.from(turnData['notSureAttending'] ?? []);
 
-        // Add user to the appropriate list
-        if (status != 'notAnswered') {
-          turnData[status] = [...(turnData[status] ?? []), currentUser!.uid];
-        }
+      attending.remove(_currentUser!.uid);
+      notAttending.remove(_currentUser!.uid);
+      notSureAttending.remove(_currentUser!.uid);
 
-        // Update user's attending status for this turn
-        if (userData['attendingStatus'] == null) {
-          userData['attendingStatus'] = {};
-        }
-        userData['attendingStatus'][turnId] = status;
+      // Add user to appropriate list
+      switch (status) {
+        case 'attending':
+          attending.add(_currentUser!.uid);
+          break;
+        case 'notAttending':
+          notAttending.add(_currentUser!.uid);
+          break;
+        case 'notSureAttending':
+          notSureAttending.add(_currentUser!.uid);
+          break;
+      }
 
-        transaction.update(turnRef, turnData);
-        transaction.update(userRef, userData);
+      // Update turn document
+      batch.update(turnRef, {
+        'attending': attending,
+        'notAttending': notAttending,
+        'notSureAttending': notSureAttending,
       });
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+      attendingStatus[turnId] = status;
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
+
+      // Create notification if attending
+      if (status == 'attending') {
+        await _createAttendingNotification(turnId);
+      }
 
       notifyListeners();
     } catch (e) {
@@ -582,12 +668,17 @@ class ProfileViewModel extends ChangeNotifier {
         .snapshots()
         .map((snapshot) {
       if (!snapshot.exists) return 'notAnswered';
+
       final data = snapshot.data() as Map<String, dynamic>;
-      if (data['attending']?.contains(userId) ?? false) return 'attending';
-      if (data['notSureAttending']?.contains(userId) ?? false)
-        return 'notSureAttending';
-      if (data['notAttending']?.contains(userId) ?? false)
+      if ((data['attending'] as List?)?.contains(userId) ?? false) {
+        return 'attending';
+      }
+      if ((data['notAttending'] as List?)?.contains(userId) ?? false) {
         return 'notAttending';
+      }
+      if ((data['notSureAttending'] as List?)?.contains(userId) ?? false) {
+        return 'notSureAttending';
+      }
       return 'notAnswered';
     });
   }
@@ -684,10 +775,13 @@ class ProfileViewModel extends ChangeNotifier {
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
 
-      if (followingUp.contains(userId)) {
-        await removeFollowUp(cfqId, userId);
-      } else {
+      bool isNowFollowing = !followingUp.contains(userId);
+
+      if (isNowFollowing) {
         await addFollowUp(cfqId, userId);
+        await _createFollowUpNotification(cfqId);
+      } else {
+        await removeFollowUp(cfqId, userId);
       }
       notifyListeners();
     } catch (e) {
@@ -773,6 +867,252 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (error) {
       AppLogger.error("Error in fetchBirthdayEvents: $error");
       return Stream.value([]);
+    }
+  }
+
+  Future<void> _createFollowUpNotification(String cfqId) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the CFQ document to get the organizer's ID and name
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
+      String organizerId = cfqData['uid'] as String;
+      String cfqName = cfqData['cfqName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.followUp
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'cfqId': cfqId,
+          'cfqName': cfqName,
+          'followerId': _currentUser!.uid,
+          'followerUsername': _currentUser!.username,
+          'followerProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
+  Future<void> _createAttendingNotification(String turnId) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the turn document to get the organizer's ID and name
+      DocumentSnapshot turnSnapshot =
+          await _firestore.collection('turns').doc(turnId).get();
+      Map<String, dynamic> turnData =
+          turnSnapshot.data() as Map<String, dynamic>;
+      String organizerId = turnData['uid'] as String;
+      String turnName = turnData['turnName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.attending
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'turnId': turnId,
+          'turnName': turnName,
+          'attendingId': _currentUser!.uid,
+          'attendingUsername': _currentUser!.username,
+          'attendingProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating attending notification: $e');
+    }
+  }
+
+  Future<void> checkFriendRequestStatus() async {
+    if (_disposed) {
+      AppLogger.debug('Skipping friend request check: ViewModel is disposed');
+      return;
+    }
+    if (_isCurrentUser || _isFriend) {
+      AppLogger.debug(
+          'Skipping friend request check: isCurrentUser=$_isCurrentUser, isFriend=$_isFriend');
+      return;
+    }
+
+    try {
+      AppLogger.debug(
+          'Checking friend request status between current user (${_currentUser!.uid}) and viewed user (${_user!.uid})');
+
+      // Get current user's requests
+      final currentUserDoc =
+          await _firestore.collection('users').doc(_currentUser!.uid).get();
+      final currentUserRequests = model.User.fromSnap(currentUserDoc).requests;
+      AppLogger.debug(
+          'Current user has ${currentUserRequests.length} requests');
+
+      // Get viewed user's requests
+      final viewedUserDoc =
+          await _firestore.collection('users').doc(_user!.uid).get();
+      final viewedUserRequests = model.User.fromSnap(viewedUserDoc).requests;
+      AppLogger.debug('Viewed user has ${viewedUserRequests.length} requests');
+
+      // First check if there's an incoming request (from viewed user to current user)
+      final incomingRequest = currentUserRequests.firstWhere(
+        (r) =>
+            r.type == model.RequestType.friend &&
+            r.requesterId == _user!.uid &&
+            r.status == model.RequestStatus.pending,
+        orElse: () => model.Request.empty(),
+      );
+
+      // If no incoming request, check for outgoing request (from current user to viewed user)
+      final outgoingRequest = incomingRequest.id.isEmpty
+          ? viewedUserRequests.firstWhere(
+              (r) =>
+                  r.type == model.RequestType.friend &&
+                  r.requesterId == _currentUser!.uid &&
+                  r.status == model.RequestStatus.pending,
+              orElse: () => model.Request.empty(),
+            )
+          : model.Request.empty();
+
+      AppLogger.debug(
+          'Incoming request found: ${incomingRequest.id.isNotEmpty}');
+      if (incomingRequest.id.isNotEmpty) {
+        AppLogger.debug('Incoming request status: ${incomingRequest.status}');
+      }
+
+      AppLogger.debug(
+          'Outgoing request found: ${outgoingRequest.id.isNotEmpty}');
+      if (outgoingRequest.id.isNotEmpty) {
+        AppLogger.debug('Outgoing request status: ${outgoingRequest.status}');
+      }
+
+      if (incomingRequest.id.isNotEmpty) {
+        _incomingRequestId = incomingRequest.id;
+        _hasIncomingRequest = true;
+        _friendRequestStatus =
+            incomingRequest.status.toString().split('.').last;
+        AppLogger.debug(
+            'Set status from incoming request: $_friendRequestStatus, hasIncoming: $_hasIncomingRequest');
+      } else if (outgoingRequest.id.isNotEmpty) {
+        _friendRequestStatus =
+            outgoingRequest.status.toString().split('.').last;
+        _hasIncomingRequest = false;
+        AppLogger.debug(
+            'Set status from outgoing request: $_friendRequestStatus');
+      } else {
+        _friendRequestStatus = null;
+        _hasIncomingRequest = false;
+        AppLogger.debug('No requests found, cleared status');
+      }
+
+      if (!_disposed) {
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error checking friend request status: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> acceptFriendRequest() async {
+    if (_incomingRequestId == null) {
+      AppLogger.debug('No incoming request ID found');
+      return;
+    }
+
+    try {
+      AppLogger.debug('Accepting friend request: $_incomingRequestId');
+      AppLogger.debug(
+          'Current user: ${_currentUser!.uid}, Requester: ${_user!.uid}');
+
+      final requestsViewModel =
+          RequestsViewModel(currentUserId: _currentUser!.uid);
+      await requestsViewModel.acceptRequest(_incomingRequestId!);
+      AppLogger.debug('Request accepted in RequestsViewModel');
+
+      // Update local state immediately
+      _isFriend = true;
+      _hasIncomingRequest = false;
+      _friendRequestStatus = null;
+      _incomingRequestId = null;
+
+      AppLogger.debug('Local state updated: isFriend=$_isFriend');
+      notifyListeners(); // Trigger UI update immediately
+
+      // Fetch latest data to ensure consistency
+      await fetchUserData();
+    } catch (e) {
+      AppLogger.error('Error accepting friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> denyFriendRequest() async {
+    if (_incomingRequestId == null) return;
+
+    try {
+      AppLogger.debug('Denying friend request: $_incomingRequestId');
+
+      final requestsViewModel =
+          RequestsViewModel(currentUserId: _currentUser!.uid);
+      await requestsViewModel.denyRequest(_incomingRequestId!);
+
+      // Update local state immediately
+      _hasIncomingRequest = false;
+      _friendRequestStatus = null;
+      _incomingRequestId = null;
+
+      AppLogger.debug('Local state cleared after denial');
+      notifyListeners(); // Trigger UI update immediately
+
+      // Fetch latest data to ensure consistency
+      await fetchUserData();
+    } catch (e) {
+      AppLogger.error('Error denying friend request: $e');
+      AppLogger.error('Stack trace: ${StackTrace.current}');
     }
   }
 }

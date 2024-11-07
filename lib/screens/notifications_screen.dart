@@ -57,6 +57,8 @@ class NotificationsScreen extends StatelessWidget {
                     notifications: viewModel.notifications,
                     isLoading: viewModel.isLoading,
                     unreadCountStream: viewModel.unreadCountStream,
+                    currentUserId: viewModel.currentUserUid,
+                    viewModel: viewModel,
                   ),
                 ),
               ],

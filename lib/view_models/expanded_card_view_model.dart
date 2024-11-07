@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 import '../providers/user_provider.dart';
+import 'package:uuid/uuid.dart';
+import '../models/notification.dart' as model;
 
 class ExpandedCardViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -136,46 +138,65 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> updateAttendingStatus(String status) async {
-    if (!isTurn) return;
-
     try {
+      final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(eventId);
       final userRef = _firestore.collection('users').doc(currentUserId);
 
-      await _firestore.runTransaction((transaction) async {
-        final turnDoc = await transaction.get(turnRef);
-        final userDoc = await transaction.get(userRef);
+      final turnDoc = await turnRef.get();
+      final userDoc = await userRef.get();
 
-        if (!turnDoc.exists || !userDoc.exists) {
-          throw Exception('Turn or User document does not exist');
-        }
+      if (!turnDoc.exists || !userDoc.exists) {
+        throw Exception('Turn or User document does not exist');
+      }
 
-        Map<String, dynamic> turnData = turnDoc.data() as Map<String, dynamic>;
-        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      final turnData = turnDoc.data()!;
+      final userData = userDoc.data()!;
 
-        // Remove user from all attending lists
-        ['attending', 'notSureAttending', 'notAttending'].forEach((field) {
-          if (turnData[field] != null) {
-            turnData[field] = (turnData[field] as List)
-                .where((id) => id != currentUserId)
-                .toList();
-          }
-        });
+      // Remove user from all lists first
+      final List<String> attending =
+          List<String>.from(turnData['attending'] ?? []);
+      final List<String> notAttending =
+          List<String>.from(turnData['notAttending'] ?? []);
+      final List<String> notSureAttending =
+          List<String>.from(turnData['notSureAttending'] ?? []);
 
-        // Add user to the appropriate list
-        if (status != 'notAnswered') {
-          turnData[status] = [...(turnData[status] ?? []), currentUserId];
-        }
+      attending.remove(currentUserId);
+      notAttending.remove(currentUserId);
+      notSureAttending.remove(currentUserId);
 
-        // Update user's attending status for this turn
-        if (userData['attendingStatus'] == null) {
-          userData['attendingStatus'] = {};
-        }
-        userData['attendingStatus'][eventId] = status;
+      // Add user to appropriate list
+      switch (status) {
+        case 'attending':
+          attending.add(currentUserId);
+          break;
+        case 'notAttending':
+          notAttending.add(currentUserId);
+          break;
+        case 'notSureAttending':
+          notSureAttending.add(currentUserId);
+          break;
+      }
 
-        transaction.update(turnRef, turnData);
-        transaction.update(userRef, userData);
+      // Update turn document
+      batch.update(turnRef, {
+        'attending': attending,
+        'notAttending': notAttending,
+        'notSureAttending': notSureAttending,
       });
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+      attendingStatus[eventId] = status;
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
+
+      // Create notification if attending
+      if (status == 'attending') {
+        await _createAttendingNotification(eventId);
+      }
 
       notifyListeners();
     } catch (e) {
@@ -197,6 +218,56 @@ class ExpandedCardViewModel extends ChangeNotifier {
     return Stream.value(false);
   }
 
+  Future<void> _createFollowUpNotification(String cfqId) async {
+    try {
+      // Get the CFQ document to get the organizer's ID and name
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
+      String organizerId = cfqData['uid'] as String;
+      String cfqName = cfqData['cfqName'] as String;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      // Get current user data
+      DocumentSnapshot currentUserSnapshot =
+          await _firestore.collection('users').doc(currentUserId).get();
+      Map<String, dynamic> currentUserData =
+          currentUserSnapshot.data() as Map<String, dynamic>;
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': model.NotificationType.followUp.toString().split('.').last,
+        'content': {
+          'cfqId': cfqId,
+          'cfqName': cfqName,
+          'followerId': currentUserId,
+          'followerUsername': currentUserData['username'],
+          'followerProfilePictureUrl': currentUserData['profilePictureUrl'],
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
   Future<void> toggleFollowUp() async {
     if (isTurn) return; // Only proceed for CFQ cards
 
@@ -213,17 +284,18 @@ class ExpandedCardViewModel extends ChangeNotifier {
         Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
         List<String> followingUp = List<String>.from(data['followingUp'] ?? []);
 
-        if (followingUp.contains(currentUserId)) {
-          followingUp.remove(currentUserId);
-        } else {
+        bool isNowFollowing = !followingUp.contains(currentUserId);
+
+        if (isNowFollowing) {
           followingUp.add(currentUserId);
+          // Create notification only when following up, not when unfollowing
+          await _createFollowUpNotification(eventId);
+        } else {
+          followingUp.remove(currentUserId);
         }
 
         transaction.update(cfqRef, {'followingUp': followingUp});
       });
-
-      // We don't need to update local state or call notifyListeners() here
-      // because the stream will automatically update the UI
     } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
     }
@@ -231,5 +303,68 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
   Stream<DocumentSnapshot> get cfqStream {
     return _firestore.collection('cfqs').doc(eventId).snapshots();
+  }
+
+  Future<void> _createAttendingNotification(String turnId) async {
+    try {
+      // Get the turn document to get the organizer's ID and name
+      DocumentSnapshot turnSnapshot =
+          await _firestore.collection('turns').doc(turnId).get();
+      Map<String, dynamic> turnData =
+          turnSnapshot.data() as Map<String, dynamic>;
+      String organizerId = turnData['uid'] as String;
+      String turnName = turnData['turnName'] as String;
+
+      // Get current user data
+      DocumentSnapshot currentUserSnapshot =
+          await _firestore.collection('users').doc(currentUserId).get();
+      Map<String, dynamic> currentUserData =
+          currentUserSnapshot.data() as Map<String, dynamic>;
+
+      // Get the organizer's notification channel ID
+      DocumentSnapshot organizerSnapshot =
+          await _firestore.collection('users').doc(organizerId).get();
+      String organizerNotificationChannelId = (organizerSnapshot.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': model.NotificationType.attending.toString().split('.').last,
+        'content': {
+          'turnId': turnId,
+          'turnName': turnName,
+          'attendingId': currentUserId,
+          'attendingUsername': currentUserData['username'],
+          'attendingProfilePictureUrl': currentUserData['profilePictureUrl'],
+        },
+      };
+
+      // Add notification to organizer's notification channel
+      await _firestore
+          .collection('notifications')
+          .doc(organizerNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count for the organizer
+      await _firestore.collection('users').doc(organizerId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating attending notification: $e');
+    }
+  }
+
+  Stream<int> get followersCountStream {
+    return _firestore
+        .collection('cfqs')
+        .doc(eventId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['followingUp'] as List?)?.length ?? 0;
+    });
   }
 }

@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../utils/logger.dart';
 
 // Enum to define different notification types
 enum NotificationType {
   message,
-  teamInvite,
+  teamRequest,
   followUp,
-  eventParticipation,
   friendRequest,
   eventInvitation,
+  attending,
 }
 
 // Base class for notification content
@@ -59,6 +60,7 @@ class EventInvitationNotificationContent extends NotificationContent {
   final String organizerId;
   final String organizerUsername;
   final String organizerProfilePictureUrl;
+  final bool isTurn;
 
   EventInvitationNotificationContent({
     required this.eventId,
@@ -67,12 +69,14 @@ class EventInvitationNotificationContent extends NotificationContent {
     required this.organizerId,
     required this.organizerUsername,
     required this.organizerProfilePictureUrl,
+    required this.isTurn,
   });
 
   @override
   Map<String, dynamic> toJson() => {
         'eventId': eventId,
         'eventName': eventName,
+        'isTurn': isTurn,
         'eventImageUrl': eventImageUrl,
         'organizerId': organizerId,
         'organizerUsername': organizerUsername,
@@ -84,10 +88,151 @@ class EventInvitationNotificationContent extends NotificationContent {
     return EventInvitationNotificationContent(
       eventId: json['eventId'] as String,
       eventName: json['eventName'] as String,
+      isTurn: json['isTurn'] as bool,
       eventImageUrl: json['eventImageUrl'] as String,
       organizerId: json['organizerId'] as String,
       organizerUsername: json['organizerUsername'] as String,
       organizerProfilePictureUrl: json['organizerProfilePictureUrl'] as String,
+    );
+  }
+}
+
+// Follow up specific notification content
+class FollowUpNotificationContent extends NotificationContent {
+  final String cfqId;
+  final String cfqName;
+  final String followerId;
+  final String followerUsername;
+  final String followerProfilePictureUrl;
+
+  FollowUpNotificationContent({
+    required this.cfqId,
+    required this.cfqName,
+    required this.followerId,
+    required this.followerUsername,
+    required this.followerProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'cfqId': cfqId,
+        'cfqName': cfqName,
+        'followerId': followerId,
+        'followerUsername': followerUsername,
+        'followerProfilePictureUrl': followerProfilePictureUrl,
+      };
+
+  factory FollowUpNotificationContent.fromJson(Map<String, dynamic> json) {
+    return FollowUpNotificationContent(
+      cfqId: json['cfqId'] as String,
+      cfqName: json['cfqName'] as String,
+      followerId: json['followerId'] as String,
+      followerUsername: json['followerUsername'] as String,
+      followerProfilePictureUrl: json['followerProfilePictureUrl'] as String,
+    );
+  }
+}
+
+// Attending specific notification content
+class AttendingNotificationContent extends NotificationContent {
+  final String turnId;
+  final String turnName;
+  final String attendingId;
+  final String attendingUsername;
+  final String attendingProfilePictureUrl;
+
+  AttendingNotificationContent({
+    required this.turnId,
+    required this.turnName,
+    required this.attendingId,
+    required this.attendingUsername,
+    required this.attendingProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'turnId': turnId,
+        'turnName': turnName,
+        'attendingId': attendingId,
+        'attendingUsername': attendingUsername,
+        'attendingProfilePictureUrl': attendingProfilePictureUrl,
+      };
+
+  factory AttendingNotificationContent.fromJson(Map<String, dynamic> json) {
+    return AttendingNotificationContent(
+      turnId: json['turnId'] as String,
+      turnName: json['turnName'] as String,
+      attendingId: json['attendingId'] as String,
+      attendingUsername: json['attendingUsername'] as String,
+      attendingProfilePictureUrl: json['attendingProfilePictureUrl'] as String,
+    );
+  }
+}
+
+// Team request specific notification content
+class TeamRequestNotificationContent extends NotificationContent {
+  final String teamId;
+  final String teamName;
+  final String teamImageUrl;
+  final String inviterId;
+  final String inviterUsername;
+  final String inviterProfilePictureUrl;
+
+  TeamRequestNotificationContent({
+    required this.teamId,
+    required this.teamName,
+    required this.teamImageUrl,
+    required this.inviterId,
+    required this.inviterUsername,
+    required this.inviterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'teamId': teamId,
+        'teamName': teamName,
+        'teamImageUrl': teamImageUrl,
+        'inviterId': inviterId,
+        'inviterUsername': inviterUsername,
+        'inviterProfilePictureUrl': inviterProfilePictureUrl,
+      };
+
+  factory TeamRequestNotificationContent.fromJson(Map<String, dynamic> json) {
+    return TeamRequestNotificationContent(
+      teamId: json['teamId'] as String,
+      teamName: json['teamName'] as String,
+      teamImageUrl: json['teamImageUrl'] as String,
+      inviterId: json['inviterId'] as String,
+      inviterUsername: json['inviterUsername'] as String,
+      inviterProfilePictureUrl: json['inviterProfilePictureUrl'] as String,
+    );
+  }
+}
+
+// Friend request specific notification content
+class FriendRequestNotificationContent extends NotificationContent {
+  final String requesterId;
+  final String requesterUsername;
+  final String requesterProfilePictureUrl;
+
+  FriendRequestNotificationContent({
+    required this.requesterId,
+    required this.requesterUsername,
+    required this.requesterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'requesterId': requesterId,
+        'requesterUsername': requesterUsername,
+        'requesterProfilePictureUrl': requesterProfilePictureUrl,
+      };
+
+  factory FriendRequestNotificationContent.fromJson(Map<String, dynamic> json) {
+    return FriendRequestNotificationContent(
+      requesterId: json['requesterId'] as String,
+      requesterUsername: json['requesterUsername'] as String,
+      requesterProfilePictureUrl: json['requesterProfilePictureUrl'] as String,
     );
   }
 }
@@ -107,51 +252,52 @@ class Notification {
   });
 
   factory Notification.fromSnap(DocumentSnapshot snap) {
-    var snapshot = snap.data() as Map<String, dynamic>;
-
-    // Convert the string type to enum
-    NotificationType type = NotificationType.values.firstWhere(
-      (e) => e.toString().split('.').last == snapshot['type'],
-      orElse: () =>
-          throw Exception('Unknown notification type: ${snapshot['type']}'),
-    );
-
-    // Handle timestamp
-    DateTime timestamp;
-    var timestampData = snapshot['timestamp'];
-    if (timestampData is Timestamp) {
-      timestamp = timestampData.toDate();
-    } else if (timestampData is String) {
-      timestamp = DateTime.parse(timestampData);
-    } else {
-      throw Exception('Invalid timestamp format');
-    }
+    final data = snap.data() as Map<String, dynamic>;
+    final contentData = data['content'] as Map<String, dynamic>;
+    final typeStr = data['type'] as String;
 
     NotificationContent content;
-    switch (type) {
-      case NotificationType.message:
-        var contentData = Map<String, dynamic>.from(snapshot['content']);
-        // Convert Timestamp to String for MessageNotificationContent
-        if (contentData['timestampSent'] is Timestamp) {
-          contentData['timestampSent'] =
-              (contentData['timestampSent'] as Timestamp)
-                  .toDate()
-                  .toIso8601String();
-        }
+    switch (typeStr) {
+      case 'message':
         content = MessageNotificationContent.fromJson(contentData);
         break;
-      case NotificationType.eventInvitation:
-        content = EventInvitationNotificationContent.fromJson(
-            Map<String, dynamic>.from(snapshot['content']));
+      case 'eventInvitation':
+        content = EventInvitationNotificationContent.fromJson(contentData);
+        break;
+      case 'followUp':
+        content = FollowUpNotificationContent.fromJson(contentData);
+        break;
+      case 'attending':
+        content = AttendingNotificationContent.fromJson(contentData);
+        break;
+      case 'teamRequest':
+        content = TeamRequestNotificationContent.fromJson(contentData);
+        break;
+      case 'friendRequest':
+        content = FriendRequestNotificationContent.fromJson(contentData);
         break;
       default:
-        throw Exception('Unhandled notification type: $type');
+        throw Exception('Unknown notification type: $typeStr');
+    }
+
+    // Convert Firestore Timestamp to DateTime
+    DateTime timestamp;
+    if (data['timestamp'] is Timestamp) {
+      timestamp = (data['timestamp'] as Timestamp).toDate();
+    } else if (data['timestamp'] is String) {
+      timestamp = DateTime.parse(data['timestamp']);
+    } else {
+      timestamp = DateTime.now(); // Fallback
+      AppLogger.error(
+          'Unexpected timestamp type: ${data['timestamp'].runtimeType}');
     }
 
     return Notification(
-      id: snapshot['id'],
+      id: data['id'] as String,
+      type: NotificationType.values.firstWhere(
+        (t) => t.toString().split('.').last == typeStr,
+      ),
       timestamp: timestamp,
-      type: type,
       content: content,
     );
   }

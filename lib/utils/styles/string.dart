@@ -7,6 +7,8 @@ class CustomString {
   static const interrogationMark = "?";
 
   // General
+  static const accept = "Accepter";
+  static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
   static const add = "Ajouter";
@@ -163,17 +165,29 @@ class CustomString {
   static const myProfile = "Mon profil";
   static const myProfileCapital = "MON PROFIL";
   static const favorites = "Favoris";
+  static const requests = "Demandes d'ajout";
   static const privacy = "Confidentialité";
 
   // Favorites
   static const favoritesCapital = "FAVORIS";
   static const noFavoriteEvents = "Pas encore de favoris";
 
+  // Requests
+  static const requestsCapital = "DEMANDES D'AJOUT";
+  static const accepted = "Accepté";
+  static const denied = "Refusé";
+  static const pending = "En attente";
+  static const errorLoadingRequests = "Erreur lors du chargement des demandes";
+  static const noPendingRequests = "Pas de demandes en attente";
+
   // Image Related
   static const noImage = "Aucune image";
   static const pickImageFromGallery = "Choisir une photo de la galerie";
   static const takePictureWithDevice = "Prendre une photo avec l'appareil";
   static const pleaseSelectAnImage = "Veuillez sélectionner une image";
+
+  // Date & Time Related
+  static const now = "Maintenant";
 
   // Moods
   static const houseMood = "Maison";

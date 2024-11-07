@@ -806,6 +806,7 @@ class CreateTurnViewModel extends ChangeNotifier
             'content': {
               'eventId': eventId,
               'eventName': eventName,
+              'isTurn': true,
               'eventImageUrl': eventImageUrl,
               'organizerId': _currentUser!.uid,
               'organizerUsername': _currentUser!.username,
