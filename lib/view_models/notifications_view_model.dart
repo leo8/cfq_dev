@@ -91,6 +91,9 @@ class NotificationsViewModel extends ChangeNotifier {
         }
       }).toList());
 
+      // Sort notifications by timestamp in descending order (newest first)
+      _notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
       AppLogger.debug('Filtered to ${_notifications.length} notifications');
 
       _isLoading = false;
