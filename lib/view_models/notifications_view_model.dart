@@ -72,6 +72,14 @@ class NotificationsViewModel extends ChangeNotifier {
           'Notification types: ${querySnapshot.docs.map((doc) => (doc.data()['type'] as String)).toList()}');
 
       _notifications = await Future.wait(querySnapshot.docs.map((doc) async {
+        final data = doc.data();
+
+        // Convert Timestamp to ISO8601 string if needed
+        if (data['timestamp'] is Timestamp) {
+          data['timestamp'] =
+              (data['timestamp'] as Timestamp).toDate().toIso8601String();
+        }
+
         final notification = notificationModel.Notification.fromSnap(doc);
 
         // Enrich notification content with additional data if needed
@@ -83,7 +91,6 @@ class NotificationsViewModel extends ChangeNotifier {
 
           case notificationModel.NotificationType.teamRequest:
           case notificationModel.NotificationType.friendRequest:
-            // These don't need additional data for navigation
             return notification;
 
           default:
