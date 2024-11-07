@@ -21,7 +21,7 @@ class ActiveFriendsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120,
+      height: 140,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
@@ -34,7 +34,7 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildUserAvatar(model.User user) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
       child: Column(
         children: [
           AvatarNeonSwitch(
@@ -51,7 +51,7 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildFriendAvatar(model.User friend) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
       child: Column(
         children: [
           ClickableAvatar(

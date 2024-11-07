@@ -115,7 +115,7 @@ class _EventsListState extends State<EventsList> {
 
         return Transform.translate(
           // e.g: vertical negative margin
-          offset: const Offset(0, -90),
+          offset: const Offset(0, -100),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 10,
