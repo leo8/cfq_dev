@@ -471,13 +471,7 @@ class FavoritesViewModel extends ChangeNotifier {
         turnsStream,
         (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
           List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
-          allEvents.sort((a, b) {
-            DateTime dateA =
-                (a.data() as Map<String, dynamic>)['datePublished'].toDate();
-            DateTime dateB =
-                (b.data() as Map<String, dynamic>)['datePublished'].toDate();
-            return dateB.compareTo(dateA);
-          });
+          allEvents = allEvents.reversed.toList();
           return allEvents;
         },
       );
