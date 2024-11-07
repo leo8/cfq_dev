@@ -492,4 +492,12 @@ class NotificationsViewModel extends ChangeNotifier {
     _currentUser = model.User.fromSnap(userDoc);
     return _currentUser!;
   }
+
+  Stream<int> followersCountStream(String cfqId) {
+    return _firestore.collection('cfqs').doc(cfqId).snapshots().map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['followingUp'] as List?)?.length ?? 0;
+    });
+  }
 }

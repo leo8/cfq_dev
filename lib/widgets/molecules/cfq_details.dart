@@ -18,6 +18,7 @@ class CFQDetails extends StatelessWidget {
   final String description;
   final String cfqId;
   final bool isExpanded;
+  final Stream<int>? followersCountStream;
 
   const CFQDetails({
     Key? key,
@@ -32,6 +33,7 @@ class CFQDetails extends StatelessWidget {
     required this.description,
     required this.cfqId,
     required this.isExpanded,
+    this.followersCountStream,
   }) : super(key: key);
 
   @override
@@ -82,20 +84,36 @@ class CFQDetails extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CFQInviteesScreen(cfqId: cfqId)),
+                builder: (context) => CFQInviteesScreen(
+                  cfqId: cfqId,
+                ),
+              ),
             );
           },
-          child: RichText(
-            text: TextSpan(
-              style: CustomTextStyle.body1,
-              children: [
-                TextSpan(
-                  text: _getFollowersCount(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+          child: StreamBuilder<int>(
+            stream: followersCountStream ?? Stream.value(followersCount),
+            builder: (context, snapshot) {
+              final count = snapshot.data ?? followersCount;
+              return RichText(
+                text: TextSpan(
+                  style: CustomTextStyle.body1,
+                  children: [
+                    if (count > 0)
+                      TextSpan(
+                        text: '$count ',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    TextSpan(
+                      text: count == 0
+                          ? CustomString.noFollowersYet
+                          : count == 1
+                              ? CustomString.onePersonFollows
+                              : CustomString.peopleFollow,
+                    ),
+                  ],
                 ),
-                TextSpan(text: ' ${_getFollowersText()}'),
-              ],
-            ),
+              );
+            },
           ),
         ),
         isExpanded
@@ -141,21 +159,6 @@ class CFQDetails extends StatelessWidget {
         return CustomIcon.afterMood;
       default:
         return CustomIcon.otherMood; // Default icon
-    }
-  }
-
-  String _getFollowersCount() {
-    if (followersCount == 0) return '';
-    return '$followersCount';
-  }
-
-  String _getFollowersText() {
-    if (followersCount == 0) {
-      return CustomString.noFollowersYet;
-    } else if (followersCount == 1) {
-      return CustomString.onePersonFollows;
-    } else {
-      return CustomString.peopleFollow;
     }
   }
 }

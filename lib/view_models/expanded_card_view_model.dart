@@ -355,4 +355,16 @@ class ExpandedCardViewModel extends ChangeNotifier {
       AppLogger.error('Error creating attending notification: $e');
     }
   }
+
+  Stream<int> get followersCountStream {
+    return _firestore
+        .collection('cfqs')
+        .doc(eventId)
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) return 0;
+      final data = snapshot.data() as Map<String, dynamic>;
+      return (data['followingUp'] as List?)?.length ?? 0;
+    });
+  }
 }

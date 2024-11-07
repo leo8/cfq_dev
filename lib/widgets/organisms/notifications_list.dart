@@ -198,6 +198,8 @@ class NotificationsList extends StatelessWidget {
                 }
               }
             },
+            followersCountStream:
+                viewModel.followersCountStream(followUpContent.cfqId),
           );
 
         case notificationModel.NotificationType.eventInvitation:
@@ -363,6 +365,8 @@ class NotificationsList extends StatelessWidget {
                   favorites: eventData['favorites'],
                   isFavorite: eventData['favorites'].contains(currentUserId),
                   onFollowUpToggled: (_) {},
+                  followersCountStream:
+                      viewModel.followersCountStream(eventContent.eventId),
                 );
 
         case notificationModel.NotificationType.attending:
