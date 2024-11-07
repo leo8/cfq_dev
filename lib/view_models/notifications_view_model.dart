@@ -48,6 +48,7 @@ class NotificationsViewModel extends ChangeNotifier {
     _loadNotifications();
     _setupUnreadCountStream();
     _initializeCurrentUser();
+    _listenToUserChanges();
   }
 
   Future<void> _loadNotifications() async {
@@ -126,7 +127,7 @@ class NotificationsViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _unreadCountSubscription?.cancel();
-    _userSubscription!.cancel();
+    _userSubscription?.cancel();
     super.dispose();
   }
 
