@@ -123,7 +123,7 @@ class _ProfileContentState extends State<ProfileContent>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 100,
+          height: 125,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
