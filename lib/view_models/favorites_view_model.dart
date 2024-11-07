@@ -453,26 +453,36 @@ class FavoritesViewModel extends ChangeNotifier {
         return Stream.value(<DocumentSnapshot>[]);
       }
 
-      // Fetch both turns and cfqs that are in favorites
-      Stream<List<DocumentSnapshot>> cfqsStream = _firestore
+      // Create a map to store events by their IDs
+      Stream<Map<String, DocumentSnapshot>> cfqsStream = _firestore
           .collection('cfqs')
           .where(FieldPath.documentId, whereIn: favorites)
           .snapshots()
-          .map((snapshot) => snapshot.docs);
+          .map((snapshot) => Map.fromEntries(
+              snapshot.docs.map((doc) => MapEntry(doc.id, doc))));
 
-      Stream<List<DocumentSnapshot>> turnsStream = _firestore
+      Stream<Map<String, DocumentSnapshot>> turnsStream = _firestore
           .collection('turns')
           .where(FieldPath.documentId, whereIn: favorites)
           .snapshots()
-          .map((snapshot) => snapshot.docs);
+          .map((snapshot) => Map.fromEntries(
+              snapshot.docs.map((doc) => MapEntry(doc.id, doc))));
 
       return Rx.combineLatest2(
         cfqsStream,
         turnsStream,
-        (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
-          List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
-          allEvents = allEvents.reversed.toList();
-          return allEvents;
+        (Map<String, DocumentSnapshot> cfqs,
+            Map<String, DocumentSnapshot> turns) {
+          Map<String, DocumentSnapshot> eventsMap = {...cfqs, ...turns};
+
+          // Reconstruct list in original order and reverse it
+          return favorites
+              .map((id) => eventsMap[id])
+              .where((doc) => doc != null)
+              .cast<DocumentSnapshot>()
+              .toList()
+              .reversed
+              .toList();
         },
       );
     });
