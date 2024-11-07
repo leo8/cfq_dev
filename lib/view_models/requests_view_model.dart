@@ -29,42 +29,87 @@ class RequestsViewModel extends ChangeNotifier {
       final user = User.fromSnap(userDoc);
       final request = user.requests.firstWhere((r) => r.id == requestId);
 
-      // Remove old request
-      await _firestore.collection('users').doc(currentUserId).update({
-        'requests': FieldValue.arrayRemove([request.toJson()]),
-      });
+      // Start a batch write
+      WriteBatch batch = _firestore.batch();
 
-      // Create updated request
-      final updatedRequest = Request(
-        id: request.id,
-        type: request.type,
-        requesterId: request.requesterId,
-        requesterUsername: request.requesterUsername,
-        requesterProfilePictureUrl: request.requesterProfilePictureUrl,
-        teamId: request.teamId,
-        teamName: request.teamName,
-        teamImageUrl: request.teamImageUrl,
-        timestamp: request.timestamp,
-        status: RequestStatus.accepted,
-      );
+      // Update request status to accepted for current user
+      final updatedRequests = user.requests.map((r) {
+        if (r.id == requestId) {
+          return Request(
+            id: r.id,
+            type: r.type,
+            requesterId: r.requesterId,
+            requesterUsername: r.requesterUsername,
+            requesterProfilePictureUrl: r.requesterProfilePictureUrl,
+            teamId: r.teamId,
+            teamName: r.teamName,
+            teamImageUrl: r.teamImageUrl,
+            timestamp: r.timestamp,
+            status: RequestStatus.accepted,
+          );
+        }
+        return r;
+      }).toList();
 
-      // Add updated request
-      await _firestore.collection('users').doc(currentUserId).update({
-        'requests': FieldValue.arrayUnion([updatedRequest.toJson()]),
+      batch.update(_firestore.collection('users').doc(currentUserId), {
+        'requests': updatedRequests.map((r) => r.toJson()).toList(),
       });
 
       if (request.type == RequestType.team) {
-        // Update team members
-        await _firestore.collection('teams').doc(request.teamId).update({
+        // Add user to team members
+        batch.update(_firestore.collection('teams').doc(request.teamId), {
           'members': FieldValue.arrayUnion([currentUserId])
         });
 
-        // Update user's teams
-        await _firestore.collection('users').doc(currentUserId).update({
+        // Add team to user's teams
+        batch.update(_firestore.collection('users').doc(currentUserId), {
           'teams': FieldValue.arrayUnion([request.teamId])
         });
+      } else if (request.type == RequestType.friend) {
+        // Add requester to current user's friends list
+        batch.update(_firestore.collection('users').doc(currentUserId), {
+          'friends': FieldValue.arrayUnion([request.requesterId])
+        });
+
+        // Add current user to requester's friends list
+        batch.update(_firestore.collection('users').doc(request.requesterId), {
+          'friends': FieldValue.arrayUnion([currentUserId])
+        });
+
+        // Update request status for requester
+        final requesterDoc =
+            await _firestore.collection('users').doc(request.requesterId).get();
+
+        if (requesterDoc.exists) {
+          final requesterUser = User.fromSnap(requesterDoc);
+          final updatedRequesterRequests = requesterUser.requests.map((r) {
+            if (r.id == requestId) {
+              return Request(
+                id: r.id,
+                type: r.type,
+                requesterId: r.requesterId,
+                requesterUsername: r.requesterUsername,
+                requesterProfilePictureUrl: r.requesterProfilePictureUrl,
+                teamId: r.teamId,
+                teamName: r.teamName,
+                teamImageUrl: r.teamImageUrl,
+                timestamp: r.timestamp,
+                status: RequestStatus.accepted,
+              );
+            }
+            return r;
+          }).toList();
+
+          batch
+              .update(_firestore.collection('users').doc(request.requesterId), {
+            'requests':
+                updatedRequesterRequests.map((r) => r.toJson()).toList(),
+          });
+        }
       }
 
+      // Commit the batch
+      await batch.commit();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error accepting request: $e');
@@ -74,34 +119,39 @@ class RequestsViewModel extends ChangeNotifier {
 
   Future<void> denyRequest(String requestId) async {
     try {
+      AppLogger.debug('Denying request: $requestId');
+
       final userDoc =
           await _firestore.collection('users').doc(currentUserId).get();
       final user = User.fromSnap(userDoc);
       final request = user.requests.firstWhere((r) => r.id == requestId);
 
-      // Remove old request
-      await _firestore.collection('users').doc(currentUserId).update({
-        'requests': FieldValue.arrayRemove([request.toJson()]),
+      // Start a batch write
+      WriteBatch batch = _firestore.batch();
+
+      // Remove request from current user's requests
+      final updatedRequests =
+          user.requests.where((r) => r.id != requestId).toList();
+      batch.update(_firestore.collection('users').doc(currentUserId), {
+        'requests': updatedRequests.map((r) => r.toJson()).toList(),
       });
 
-      // Create updated request
-      final updatedRequest = Request(
-        id: request.id,
-        type: request.type,
-        requesterId: request.requesterId,
-        requesterUsername: request.requesterUsername,
-        requesterProfilePictureUrl: request.requesterProfilePictureUrl,
-        teamId: request.teamId,
-        teamName: request.teamName,
-        teamImageUrl: request.teamImageUrl,
-        timestamp: request.timestamp,
-        status: RequestStatus.denied,
-      );
+      // Remove request from requester's requests
+      if (request.type == RequestType.friend) {
+        final requesterDoc =
+            await _firestore.collection('users').doc(request.requesterId).get();
+        final requesterUser = User.fromSnap(requesterDoc);
+        final updatedRequesterRequests =
+            requesterUser.requests.where((r) => r.id != requestId).toList();
 
-      // Add updated request
-      await _firestore.collection('users').doc(currentUserId).update({
-        'requests': FieldValue.arrayUnion([updatedRequest.toJson()]),
-      });
+        batch.update(_firestore.collection('users').doc(request.requesterId), {
+          'requests': updatedRequesterRequests.map((r) => r.toJson()).toList(),
+        });
+      }
+
+      // Commit the batch
+      await batch.commit();
+      AppLogger.debug('Request denied and removed successfully');
 
       notifyListeners();
     } catch (e) {

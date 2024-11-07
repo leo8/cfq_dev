@@ -54,7 +54,8 @@ class NotificationsViewModel extends ChangeNotifier {
               notification.type == model.NotificationType.eventInvitation ||
               notification.type == model.NotificationType.followUp ||
               notification.type == model.NotificationType.attending ||
-              notification.type == model.NotificationType.teamRequest)
+              notification.type == model.NotificationType.teamRequest ||
+              notification.type == model.NotificationType.friendRequest)
           .toList();
 
       AppLogger.debug('Filtered to ${_notifications.length} notifications');

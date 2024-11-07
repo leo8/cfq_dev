@@ -69,7 +69,7 @@ class User {
       };
 
   // Create a User object from a Firestore snapshot
-  static User fromSnap(DocumentSnapshot snap) {
+  factory User.fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return User(
@@ -263,6 +263,18 @@ class Request {
       timestamp: DateTime.parse(map['timestamp']),
       status: RequestStatus.values
           .firstWhere((s) => s.toString().split('.').last == map['status']),
+    );
+  }
+
+  factory Request.empty() {
+    return Request(
+      id: '',
+      type: RequestType.friend,
+      requesterId: '',
+      requesterUsername: '',
+      requesterProfilePictureUrl: '',
+      timestamp: DateTime.now(),
+      status: RequestStatus.pending,
     );
   }
 }
