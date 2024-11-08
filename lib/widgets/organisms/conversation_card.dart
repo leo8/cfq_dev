@@ -4,6 +4,7 @@ import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/date_time_utils.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ConversationCard extends StatelessWidget {
   final Conversation conversation;
@@ -25,8 +26,17 @@ class ConversationCard extends StatelessWidget {
           : CustomColor.transparent,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(conversation.imageUrl),
+          backgroundImage: conversation.imageUrl.isNotEmpty
+              ? NetworkImage(conversation.imageUrl)
+              : null,
           radius: 25,
+          child: conversation.imageUrl.isEmpty
+              ? SvgPicture.asset(
+                  conversation.name.contains('ÇFQ')
+                      ? 'assets/images/cfq_button.svg'
+                      : 'assets/images/turn_button.svg',
+                )
+              : null,
         ),
         title: Text(
           conversation.name,
