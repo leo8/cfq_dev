@@ -3,6 +3,7 @@ import 'package:cfq_dev/screens/create_turn_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/models/team.dart';
 import 'package:cfq_dev/models/user.dart' as model;
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TurnButton extends StatelessWidget {
   final Team? prefillTeam;
@@ -27,8 +28,8 @@ class TurnButton extends StatelessWidget {
                   )),
         );
       },
-      child: Image.asset(
-        'assets/images/turn_button.png',
+      child: SvgPicture.asset(
+        'assets/images/turn_button.svg',
         width: 60,
         height: 60,
       ),
