@@ -41,7 +41,9 @@ class ConversationCard extends StatelessWidget {
                 ),
               )
             : Text(
-                '${_getLastSenderDisplay()}: ${conversation.lastMessageContent}',
+                conversation.lastMessageContent.isEmpty
+                    ? CustomString.noMessagesYet
+                    : '${_getLastSenderDisplay()}: ${conversation.lastMessageContent}',
                 style: CustomTextStyle.miniBody,
                 overflow: TextOverflow.ellipsis,
               ),
