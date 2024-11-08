@@ -3,6 +3,7 @@ import 'package:cfq_dev/screens/create_cfq_screen.dart';
 import 'package:cfq_dev/utils/logger.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/models/team.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CfqButton extends StatelessWidget {
   final Team? prefillTeam;
@@ -27,8 +28,8 @@ class CfqButton extends StatelessWidget {
                   )),
         );
       },
-      child: Image.asset(
-        'assets/images/cfq_button.png',
+      child: SvgPicture.asset(
+        'assets/images/cfq_button.svg',
         width: 60,
         height: 60,
       ),
