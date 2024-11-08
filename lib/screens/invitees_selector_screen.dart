@@ -29,6 +29,7 @@ class InviteesSelectorScreen extends StatelessWidget {
               },
             ),
             backgroundColor: CustomColor.customBlack,
+            surfaceTintColor: CustomColor.customBlack,
             actions: [
               TextButton(
                 onPressed: () {

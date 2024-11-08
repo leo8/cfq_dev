@@ -22,6 +22,7 @@ class RequestsScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
+        surfaceTintColor: CustomColor.customBlack,
         leading: IconButton(
           icon: CustomIcon.arrowBack,
           onPressed: () {

@@ -26,7 +26,8 @@ class TeamDetailsScreen extends StatelessWidget {
               backgroundColor: CustomColor.transparent,
               appBar: AppBar(
                 toolbarHeight: 40,
-                backgroundColor: CustomColor.transparent,
+                backgroundColor: CustomColor.customBlack,
+                surfaceTintColor: CustomColor.customBlack,
                 elevation: 0,
                 leading: IconButton(
                   icon: CustomIcon.arrowBack,

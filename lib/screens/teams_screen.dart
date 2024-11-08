@@ -30,7 +30,8 @@ class TeamsScreen extends StatelessWidget {
                 appBar: AppBar(
                   toolbarHeight: 40,
                   automaticallyImplyLeading: false,
-                  backgroundColor: CustomColor.transparent,
+                  backgroundColor: CustomColor.customBlack,
+                  surfaceTintColor: CustomColor.customBlack,
                 ),
                 body: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())

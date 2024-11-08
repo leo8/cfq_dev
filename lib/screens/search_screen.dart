@@ -47,6 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
       backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
         backgroundColor: CustomColor.customBlack,
+        surfaceTintColor: CustomColor.customBlack,
         elevation: 0,
         leading: IconButton(
           icon: CustomIcon.arrowBack,

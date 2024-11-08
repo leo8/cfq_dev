@@ -88,7 +88,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
         appBar: AppBar(
           toolbarHeight: 40,
           automaticallyImplyLeading: false,
-          backgroundColor: CustomColor.transparent,
+          backgroundColor: CustomColor.customBlack,
+          surfaceTintColor: CustomColor.customBlack,
           actions: [
             IconButton(
               icon: CustomIcon.close,
