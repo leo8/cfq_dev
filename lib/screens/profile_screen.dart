@@ -24,6 +24,7 @@ class ProfileScreen extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: CustomColor.customBlack,
+            surfaceTintColor: CustomColor.customBlack,
             elevation: 0,
             automaticallyImplyLeading: false,
             leading: Consumer<ProfileViewModel>(

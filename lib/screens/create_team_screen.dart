@@ -23,6 +23,7 @@ class CreateTeamScreen extends StatelessWidget {
           toolbarHeight: 40,
           automaticallyImplyLeading: false,
           backgroundColor: CustomColor.customBlack,
+          surfaceTintColor: CustomColor.customBlack,
           actions: [
             IconButton(
               icon: CustomIcon.close,

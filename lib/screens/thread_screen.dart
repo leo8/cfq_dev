@@ -27,6 +27,8 @@ class ThreadScreen extends StatelessWidget {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: CustomColor.customBlack,
+          surfaceTintColor:
+              CustomColor.customBlack, // Prevents color tint when scrolling
           elevation: 0,
           title: Consumer<ThreadViewModel>(
             builder: (context, viewModel, child) {
