@@ -54,8 +54,8 @@ class TurnButtons extends StatelessWidget {
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.favorite.copyWith(color: CustomColor.red, size: 24)
-          : CustomIcon.favorite.copyWith(size: 24),
+          ? CustomIcon.saved.copyWith(color: CustomColor.yellow, size: 24)
+          : CustomIcon.saved.copyWith(size: 24),
       onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(8),
     );
