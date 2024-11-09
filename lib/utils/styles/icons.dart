@@ -83,6 +83,7 @@ class CustomIcon extends StatelessWidget {
   //Events Cards
   static const eventConversation = CustomIcon('message.svg');
   static const followUp = CustomIcon('bell.svg');
+  static const saved = CustomIcon('bookmark.svg');
   static const favorite = CustomIcon('heart.svg');
   static const attending = CustomIcon('turn_attending_icon_v2.svg');
 
