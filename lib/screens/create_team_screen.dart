@@ -103,7 +103,7 @@ class CreateTeamScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         BorderedIconTextField(
-                          icon: CustomIcon.favorite,
+                          icon: CustomIcon.heart,
                           controller: viewModel.teamNameController,
                           hintText: CustomString.teamName,
                         ),

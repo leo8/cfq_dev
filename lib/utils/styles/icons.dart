@@ -71,6 +71,7 @@ class CustomIcon extends StatelessWidget {
   //Teams
   static const addMember = CustomIcon('add_member.svg');
   static const leaveTeam = CustomIcon('open_door.svg');
+  static const heart = CustomIcon('heart.svg');
 
   //Events Forms
   static const eventTitle = CustomIcon('pencil.svg');
@@ -83,7 +84,7 @@ class CustomIcon extends StatelessWidget {
   //Events Cards
   static const eventConversation = CustomIcon('message.svg');
   static const followUp = CustomIcon('bell.svg');
-  static const favorite = CustomIcon('heart.svg');
+  static const saved = CustomIcon('bookmark.svg');
   static const attending = CustomIcon('turn_attending_icon_v2.svg');
 
   //Moods
