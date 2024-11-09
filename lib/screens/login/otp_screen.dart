@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
@@ -81,77 +83,89 @@ class _OTPScreenState extends State<OTPScreen> {
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: CustomColor.transparent,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const SizedBox(height: 200),
-                Text(
-                  CustomString.verificationCodeCapital,
-                  textAlign: TextAlign.center,
-                  style: CustomTextStyle.body1.copyWith(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 40),
-                BorderedTextField(
-                  controller: otpController,
-                  hintText: CustomString.yourVerificationCode,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 60),
-                isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: () async {
-                          if (otpController.text.isEmpty) {
-                            Fluttertoast.showToast(
-                                msg: "Pas de code de confirmation ?",
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.TOP,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0);
-                          } else {
-                            Fluttertoast.cancel();
-                            setState(() {
-                              isLoading = true;
-                            });
-                            try {
-                              final cred = PhoneAuthProvider.credential(
-                                  verificationId: widget.verificationId,
-                                  smsCode: otpController.text);
-
-                              final data = await FirebaseAuth.instance
-                                  .signInWithCredential(cred);
-
-                              if (widget.isSign) {
-                                signIn(data);
-                              } else if (!widget.isSign &&
-                                  userUIDs.contains(data.user!.uid)) {
-                                signIn(data);
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Container(
+              color: Colors.white.withAlpha(0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 200),
+                    Text(
+                      CustomString.verificationCodeCapital,
+                      textAlign: TextAlign.center,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    BorderedTextField(
+                      controller: otpController,
+                      hintText: CustomString.yourVerificationCode,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 60),
+                    isLoading
+                        ? const CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: () async {
+                              if (otpController.text.isEmpty) {
+                                Fluttertoast.showToast(
+                                    msg: "Pas de code de confirmation ?",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.TOP,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
                               } else {
-                                signUp(data);
-                              }
+                                Fluttertoast.cancel();
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                try {
+                                  final cred = PhoneAuthProvider.credential(
+                                      verificationId: widget.verificationId,
+                                      smsCode: otpController.text);
 
-                              // ignore: empty_catches
-                            } catch (e) {}
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }
-                        },
-                        child: Text(
-                          CustomString.check,
-                          style: CustomTextStyle.bigBody1.copyWith(
-                            color: CustomColor.customPurple,
-                          ),
-                        ),
-                      )
-              ],
+                                  final data = await FirebaseAuth.instance
+                                      .signInWithCredential(cred);
+
+                                  if (widget.isSign &&
+                                      userUIDs.contains(data.user!.uid)) {
+                                    signIn(data);
+                                  } else if (!widget.isSign &&
+                                      userUIDs.contains(data.user!.uid)) {
+                                    signIn(data);
+                                  } else if (widget.isSign &&
+                                      !userUIDs.contains(data.user!.uid)) {
+                                    signUp(data);
+                                  } else {
+                                    signUp(data);
+                                  }
+
+                                  // ignore: empty_catches
+                                } catch (e) {}
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
+                            },
+                            child: Text(
+                              CustomString.check,
+                              style: CustomTextStyle.bigBody1.copyWith(
+                                color: CustomColor.customPurple,
+                              ),
+                            ),
+                          )
+                  ],
+                ),
+              ),
             ),
           )),
     );

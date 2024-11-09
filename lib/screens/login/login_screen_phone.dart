@@ -78,7 +78,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Container(
-          color: Colors.transparent,
+          color: Colors.white.withAlpha(0),
           child: Padding(
             padding: const EdgeInsets.all(30),
             child: Column(

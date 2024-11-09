@@ -142,7 +142,7 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: Container(
-                color: Colors.transparent,
+                color: Colors.white.withAlpha(0),
                 child: Column(
                   children: [
                     Expanded(
