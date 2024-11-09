@@ -67,11 +67,6 @@ class _CFQState extends State<CFQ> {
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      body: NeonBackground(child: LoginScreenMobile()),
-    ));
-    /*
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -118,6 +113,6 @@ class _CFQState extends State<CFQ> {
               const NeonBackground(child: LoginScreenMobile()),
         },
       ),
-    );*/
+    );
   }
 }
