@@ -123,7 +123,7 @@ class _ProfileContentState extends State<ProfileContent>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 125,
+          height: 90,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,6 +430,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel
                                 .fetchUserPosts(), // This line is correct but needs proper handling in viewModel
@@ -461,6 +462,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel.fetchAttendingEvents(
                                 widget.viewModel.user!.uid),
@@ -537,6 +539,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream:
                                 widget.user.uid == widget.currentUser!.uid
@@ -571,6 +574,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel.fetchAttendingEvents(
                                 widget.viewModel.currentUser!.uid),

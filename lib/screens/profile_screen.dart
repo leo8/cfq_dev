@@ -26,6 +26,7 @@ class ProfileScreen extends StatelessWidget {
             backgroundColor: CustomColor.customBlack,
             surfaceTintColor: CustomColor.customBlack,
             elevation: 0,
+            toolbarHeight: 40,
             automaticallyImplyLeading: false,
             leading: Consumer<ProfileViewModel>(
               builder: (context, viewModel, child) {
