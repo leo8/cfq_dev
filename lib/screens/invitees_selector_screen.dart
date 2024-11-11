@@ -9,6 +9,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/search_bars/invitee_search_bar.dart';
 import '../widgets/atoms/chips/invitee_chip.dart';
 import '../widgets/atoms/chips/team_chip.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class InviteesSelectorScreen extends StatelessWidget {
   const InviteesSelectorScreen({Key? key}) : super(key: key);
@@ -71,9 +72,10 @@ class InviteesSelectorScreen extends StatelessWidget {
                 children: [
                   if (viewModel.isEverybodySelected)
                     Chip(
-                      avatar: const CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/turn_button.png'),
+                      avatar: SvgPicture.asset(
+                        'assets/images/turn_button.svg',
+                        width: 40,
+                        height: 40,
                       ),
                       label: const Text(CustomString.everybody),
                       deleteIcon: CustomIcon.close.copyWith(size: 18),

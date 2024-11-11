@@ -4,12 +4,21 @@ import '../utils/logger.dart';
 import '../providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as model;
+import 'package:flutter/foundation.dart';
+import 'dart:async';
 
 class ExpandedCardViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String eventId;
   final String currentUserId;
   final bool isTurn;
+
+  // Add stream controllers
+  StreamController<DocumentSnapshot>? _cfqStreamController;
+  StreamController<int>? _attendingCountStreamController;
+  StreamController<String>? _attendingStatusStreamController;
+  StreamController<bool>? _isFollowingUpStreamController;
+  StreamController<int>? _followersCountStreamController;
 
   bool _isFavorite = false;
   bool _isFollowingUp = false;
@@ -21,6 +30,27 @@ class ExpandedCardViewModel extends ChangeNotifier {
     required this.isTurn,
   }) {
     _initializeData();
+    _initializeStreams();
+  }
+
+  // Initialize all streams
+  void _initializeStreams() {
+    _cfqStreamController = StreamController<DocumentSnapshot>();
+    _attendingCountStreamController = StreamController<int>();
+    _attendingStatusStreamController = StreamController<String>();
+    _isFollowingUpStreamController = StreamController<bool>();
+    _followersCountStreamController = StreamController<int>();
+  }
+
+  @override
+  void dispose() {
+    // Cancel all stream subscriptions
+    _cfqStreamController?.close();
+    _attendingCountStreamController?.close();
+    _attendingStatusStreamController?.close();
+    _isFollowingUpStreamController?.close();
+    _followersCountStreamController?.close();
+    super.dispose();
   }
 
   bool get isFavorite => _isFavorite;
