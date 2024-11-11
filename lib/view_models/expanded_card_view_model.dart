@@ -52,28 +52,32 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> _fetchFollowUpStatus() async {
-    try {
-      DocumentSnapshot cfqDoc =
-          await _firestore.collection('cfqs').doc(eventId).get();
-      List<dynamic> followingUp =
-          (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
-      _isFollowingUp = followingUp.contains(currentUserId);
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching follow-up status: $e');
+    if (!isTurn) {
+      try {
+        DocumentSnapshot cfqDoc =
+            await _firestore.collection('cfqs').doc(eventId).get();
+        List<dynamic> followingUp =
+            (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
+        _isFollowingUp = followingUp.contains(currentUserId);
+        notifyListeners();
+      } catch (e) {
+        AppLogger.error('Error fetching follow-up status: $e');
+      }
     }
   }
 
   Future<void> _fetchFollowersCount() async {
-    try {
-      DocumentSnapshot cfqDoc =
-          await _firestore.collection('cfqs').doc(eventId).get();
-      List<dynamic> followingUp =
-          (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
-      _followersCount = followingUp.length;
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching followers count: $e');
+    if (!isTurn) {
+      try {
+        DocumentSnapshot cfqDoc =
+            await _firestore.collection('cfqs').doc(eventId).get();
+        List<dynamic> followingUp =
+            (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
+        _followersCount = followingUp.length;
+        notifyListeners();
+      } catch (e) {
+        AppLogger.error('Error fetching followers count: $e');
+      }
     }
   }
 
@@ -214,8 +218,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
         List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
         return followingUp.contains(currentUserId);
       });
+    } else {
+      return Stream.value(false);
     }
-    return Stream.value(false);
   }
 
   Future<void> _createFollowUpNotification(String cfqId) async {
