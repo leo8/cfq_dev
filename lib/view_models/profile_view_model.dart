@@ -446,7 +446,19 @@ class ProfileViewModel extends ChangeNotifier {
                 .collection('cfqs')
                 .where(FieldPath.documentId, whereIn: postedCfqs)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs.where((doc) {
+                      // Only include CFQs where current user is invited or is the organizer
+                      if (_isCurrentUser)
+                        return true; // Show all for own profile
+
+                      final data = doc.data() as Map<String, dynamic>;
+                      final invitees =
+                          List<String>.from(data['invitees'] ?? []);
+                      final currentUserId =
+                          FirebaseAuth.instance.currentUser!.uid;
+                      return invitees.contains(currentUserId) ||
+                          data['uid'] == currentUserId;
+                    }).toList());
 
         Stream<List<DocumentSnapshot>> turnsStream = postedTurns.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
