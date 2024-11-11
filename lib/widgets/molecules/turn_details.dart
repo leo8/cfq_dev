@@ -42,7 +42,7 @@ class TurnDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10),
+        if (!isExpanded) const SizedBox(height: 10),
         if (!isExpanded)
           Text(turnName,
               style: CustomTextStyle.hugeTitle.copyWith(
