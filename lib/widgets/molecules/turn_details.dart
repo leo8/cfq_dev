@@ -42,6 +42,7 @@ class TurnDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 10),
         if (!isExpanded)
           Text(turnName,
               style: CustomTextStyle.hugeTitle.copyWith(
@@ -53,30 +54,32 @@ class TurnDetails extends StatelessWidget {
                 height: 4,
               )
             : const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          children: moods
-              .map((mood) => MoodChip(
-                    icon: _getMoodIcon(mood),
-                    label: mood,
-                    isSelected: false,
-                    onTap: () {},
-                  ))
-              .toList(),
-        ),
-        isExpanded
-            ? const SizedBox(
-                height: 20,
-              )
-            : const SizedBox(height: 15),
+        if (!moods.isEmpty)
+          Wrap(
+            spacing: 8,
+            children: moods
+                .map((mood) => MoodChip(
+                      icon: _getMoodIcon(mood),
+                      label: mood,
+                      isSelected: false,
+                      onTap: () {},
+                    ))
+                .toList(),
+          ),
+        if (!moods.isEmpty)
+          isExpanded
+              ? const SizedBox(
+                  height: 12,
+                )
+              : const SizedBox(height: 8),
         Text(DateTimeUtils.formatEventDateTime(eventDateTime),
             style: CustomTextStyle.title3.copyWith(
                 color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
         isExpanded
             ? const SizedBox(
-                height: 15,
+                height: 30,
               )
-            : const SizedBox(height: 8),
+            : const SizedBox(height: 25),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -93,26 +96,41 @@ class TurnDetails extends StatelessWidget {
               children: [
                 TextSpan(
                   text: _getAttendeesCount(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
-                TextSpan(text: ' ${_getAttendeesText()}'),
+                TextSpan(
+                  text: ' ${_getAttendeesText()}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ],
             ),
           ),
         ),
         isExpanded
             ? const SizedBox(
-                height: 35,
+                height: 30,
               )
-            : const SizedBox(height: 20),
+            : const SizedBox(height: 25),
         isExpanded
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    where,
-                    style: CustomTextStyle.body1,
-                    maxLines: 3,
+                  Row(
+                    children: [
+                      CustomIcon.eventLocation.copyWith(size: 18),
+                      const SizedBox(width: 12),
+                      Text(
+                        where,
+                        style: CustomTextStyle.body1,
+                        maxLines: 3,
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 12,
@@ -126,25 +144,31 @@ class TurnDetails extends StatelessWidget {
               )
             : Row(
                 children: [
+                  CustomIcon.eventLocation.copyWith(size: 18),
+                  const SizedBox(width: 12),
                   Text(where, style: CustomTextStyle.body1),
-                  Text(' | ', style: CustomTextStyle.body1),
-                  Expanded(
-                      child: Text(address,
-                          style: CustomTextStyle.body1,
-                          overflow: TextOverflow.ellipsis)),
+                  if (address.isNotEmpty)
+                    Text(' | ', style: CustomTextStyle.body1),
+                  if (address.isNotEmpty)
+                    Expanded(
+                        child: Text(address,
+                            style: CustomTextStyle.body1,
+                            overflow: TextOverflow.ellipsis)),
                 ],
               ),
-        isExpanded
-            ? const SizedBox(
-                height: 35,
-              )
-            : const SizedBox(height: 8),
-        Text(
-          description,
-          style: CustomTextStyle.body1,
-          maxLines: isExpanded ? 50 : 3,
-          overflow: isExpanded ? null : TextOverflow.ellipsis,
-        ),
+        if (description.isNotEmpty)
+          isExpanded
+              ? const SizedBox(
+                  height: 25,
+                )
+              : const SizedBox(height: 20),
+        if (description.isNotEmpty)
+          Text(
+            description,
+            style: CustomTextStyle.body1,
+            maxLines: isExpanded ? 50 : 3,
+            overflow: isExpanded ? null : TextOverflow.ellipsis,
+          ),
       ],
     );
   }
