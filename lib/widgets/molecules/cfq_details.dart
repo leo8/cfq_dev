@@ -41,6 +41,7 @@ class CFQDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (!isExpanded) const SizedBox(height: 10),
         if (!isExpanded)
           RichText(
             text: TextSpan(
@@ -58,27 +59,22 @@ class CFQDetails extends StatelessWidget {
               ],
             ),
           ),
-        isExpanded
-            ? const SizedBox(
-                height: 4,
-              )
-            : const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          children: moods
-              .map((mood) => MoodChip(
-                    icon: _getMoodIcon(mood),
-                    label: mood,
-                    isSelected: false,
-                    onTap: () {},
-                  ))
-              .toList(),
-        ),
-        isExpanded
-            ? const SizedBox(
-                height: 35,
-              )
-            : const SizedBox(height: 20),
+        isExpanded ? const SizedBox(height: 4) : const SizedBox(height: 12),
+        if (moods.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            children: moods
+                .map((mood) => MoodChip(
+                      icon: _getMoodIcon(mood),
+                      label: mood,
+                      isSelected: false,
+                      onTap: () {},
+                    ))
+                .toList(),
+          ),
+        if (moods.isNotEmpty)
+          isExpanded ? const SizedBox(height: 12) : const SizedBox(height: 8),
+        isExpanded ? const SizedBox(height: 10) : const SizedBox(height: 25),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -101,7 +97,10 @@ class CFQDetails extends StatelessWidget {
                     if (count > 0)
                       TextSpan(
                         text: '$count ',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     TextSpan(
                       text: count == 0
@@ -109,6 +108,10 @@ class CFQDetails extends StatelessWidget {
                           : count == 1
                               ? CustomString.onePersonFollows
                               : CustomString.peopleFollow,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ],
                 ),
@@ -116,23 +119,16 @@ class CFQDetails extends StatelessWidget {
             },
           ),
         ),
-        isExpanded
-            ? const SizedBox(
-                height: 35,
-              )
-            : const SizedBox(height: 20),
+        isExpanded ? const SizedBox(height: 30) : const SizedBox(height: 25),
         Text(location, style: CustomTextStyle.body1),
-        isExpanded
-            ? const SizedBox(
-                height: 15,
-              )
-            : const SizedBox(height: 8),
-        Text(
-          description,
-          style: CustomTextStyle.body1,
-          maxLines: isExpanded ? 50 : 3,
-          overflow: isExpanded ? null : TextOverflow.ellipsis,
-        ),
+        isExpanded ? const SizedBox(height: 25) : const SizedBox(height: 20),
+        if (description.isNotEmpty)
+          Text(
+            description,
+            style: CustomTextStyle.body1,
+            maxLines: isExpanded ? 50 : 3,
+            overflow: isExpanded ? null : TextOverflow.ellipsis,
+          ),
       ],
     );
   }

@@ -15,17 +15,17 @@ class CustomColor {
   static const purpleNeon = Color.fromRGBO(67, 56, 98, 1);
 
   static const turnBackgroundGradient = LinearGradient(
-      begin: Alignment.bottomLeft,
-      end: Alignment.topRight,
+      begin: Alignment.topRight,
+      end: Alignment.bottomLeft,
       stops: [
         0,
-        0.65,
+        0.45,
         1
       ],
       colors: [
-        CustomColor.customBlack,
-        CustomColor.customBlack,
         CustomColor.blueNeon,
+        CustomColor.customBlack,
+        CustomColor.customBlack,
       ]);
 
   static const cfqBackgroundGradient =
