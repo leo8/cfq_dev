@@ -191,18 +191,21 @@ class _ProfileContentState extends State<ProfileContent>
                               style: CustomTextStyle.bigBody1),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text('|', style: CustomTextStyle.bigBody1),
-                          const SizedBox(width: 8),
+                            if (widget.user.location.isNotEmpty)
+                              Text('|', style: CustomTextStyle.bigBody1),
+                          if (widget.user.location.isNotEmpty)
+                            const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            CustomIcon.userLocation,
-                          const SizedBox(width: 4),
+                            if (widget.user.location.isNotEmpty)
+                              CustomIcon.userLocation,
+                          if (widget.user.location.isNotEmpty)
+                            const SizedBox(width: 4),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text(
-                                widget.user.location.isNotEmpty
-                                    ? widget.user.location[0].toUpperCase() +
-                                        widget.user.location.substring(1)
-                                    : CustomString.noLocation,
-                                style: CustomTextStyle.bigBody1),
+                            if (widget.user.location.isNotEmpty)
+                              Text(
+                                  widget.user.location[0].toUpperCase() +
+                                      widget.user.location.substring(1),
+                                  style: CustomTextStyle.bigBody1),
                         ],
                       ),
                     ),
