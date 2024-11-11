@@ -34,7 +34,6 @@ class ConversationsScreen extends StatelessWidget {
           ),
           body: Column(
             children: [
-              const SizedBox(height: 15),
               Center(
                 child: Text(
                   CustomString.messagerieCapital,

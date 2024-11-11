@@ -137,7 +137,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const SizedBox(height: 15),
           Center(
             child: Text(
               CustomString.myProfileCapital,
@@ -145,9 +144,9 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           _buildProfileImage(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           BorderedIconTextField(
               icon: CustomIcon.editProfile,
               controller: _usernameController,

@@ -36,9 +36,6 @@ class ParametersScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(
-            height: 15,
-          ),
           Center(
             child: Text(
               CustomString.parametersCapital,
@@ -47,7 +44,7 @@ class ParametersScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 70,
+            height: 25,
           ),
           const Divider(),
           ListTile(

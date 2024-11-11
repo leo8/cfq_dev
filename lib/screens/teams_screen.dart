@@ -37,7 +37,6 @@ class TeamsScreen extends StatelessWidget {
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
                         children: [
-                          const SizedBox(height: 15),
                           Center(
                             child: Text(
                               CustomString.myTeamsCapital,
