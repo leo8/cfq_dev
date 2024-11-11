@@ -42,7 +42,6 @@ class TeamDetailsScreen extends StatelessWidget {
                     : SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(height: 15),
                             TeamHeader(team: viewModel.team),
                             const SizedBox(height: 20),
                             TeamOptions(
@@ -59,7 +58,7 @@ class TeamDetailsScreen extends StatelessWidget {
                               isCurrentUserActive:
                                   viewModel.isCurrentUserActive,
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 125),
                             EventsList(
                               eventsStream: viewModel.fetchTeamCombinedEvents(),
                               currentUser: viewModel.currentUser,
