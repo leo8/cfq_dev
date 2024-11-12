@@ -801,7 +801,7 @@ class CreateTurnViewModel extends ChangeNotifier
 
           batch.set(notificationRef, {
             'id': notificationId,
-            'timestamp': FieldValue.serverTimestamp(),
+            'timestamp': DateTime.now().toIso8601String(),
             'type': 'eventInvitation',
             'content': {
               'eventId': eventId,

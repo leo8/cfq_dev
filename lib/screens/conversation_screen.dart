@@ -8,6 +8,7 @@ import '../utils/styles/string.dart';
 import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 import '../utils/logger.dart';
+import '../utils/loading_overlay.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String channelId;
@@ -46,6 +47,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   late bool _isInUserConversations;
   final ConversationService _conversationService = ConversationService();
   bool _isDisposed = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -67,10 +69,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> _resetUnreadAndPop() async {
     if (!_isDisposed) {
+      _setLoadingState(true);
       await widget.resetUnreadMessages(widget.channelId);
       if (!_isDisposed) {
         Navigator.of(context).pop();
       }
+      _setLoadingState(false);
     }
   }
 
@@ -83,28 +87,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return NeonBackground(
-      child: Scaffold(
-        backgroundColor: CustomColor.transparent,
-        appBar: AppBar(
-          toolbarHeight: 40,
-          automaticallyImplyLeading: false,
+      child: LoadingOverlay(
+        isLoading: _isLoading,
+        child: Scaffold(
           backgroundColor: CustomColor.transparent,
-          actions: [
-            IconButton(
-              icon: CustomIcon.close,
-              onPressed: _resetUnreadAndPop,
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            _buildHeader(context),
-            Divider(color: CustomColor.customWhite.withOpacity(0.2)),
-            Expanded(
-              child: _buildMessageList(),
-            ),
-            _buildMessageInput(),
-          ],
+          appBar: AppBar(
+            toolbarHeight: 40,
+            automaticallyImplyLeading: false,
+            backgroundColor: CustomColor.customBlack,
+            surfaceTintColor: CustomColor.customBlack,
+            actions: [
+              IconButton(
+                icon: CustomIcon.close,
+                onPressed: _resetUnreadAndPop,
+              ),
+            ],
+          ),
+          body: Column(
+            children: [
+              _buildHeader(context),
+              Divider(color: CustomColor.customWhite.withOpacity(0.2)),
+              Expanded(
+                child: _buildMessageList(),
+              ),
+              _buildMessageInput(),
+            ],
+          ),
         ),
       ),
     );
@@ -356,5 +364,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
         );
       },
     );
+  }
+
+  void _setLoadingState(bool loading) {
+    if (!_isDisposed) {
+      setState(() {
+        _isLoading = loading;
+      });
+    }
   }
 }

@@ -21,20 +21,31 @@ class ActiveFriendsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildUserAvatar(currentUser),
-          ...activeFriends.map((friend) => _buildFriendAvatar(friend)),
-        ],
-      ),
+      height: 140,
+      child: activeFriends.isEmpty
+          ? _buildEmptyState()
+          : ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _buildUserAvatar(currentUser),
+                ...activeFriends.map((friend) => _buildFriendAvatar(friend)),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        _buildUserAvatar(currentUser),
+      ],
     );
   }
 
   Widget _buildUserAvatar(model.User user) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
       child: Column(
         children: [
           AvatarNeonSwitch(
@@ -51,7 +62,7 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildFriendAvatar(model.User friend) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
       child: Column(
         children: [
           ClickableAvatar(

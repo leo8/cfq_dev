@@ -31,10 +31,11 @@ class TurnButtons extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildIconButton(CustomIcon.eventConversation, onSendPressed),
             const SizedBox(width: 6),
+            _buildIconButton(CustomIcon.eventConversation, onSendPressed),
+            const SizedBox(width: 2),
             _buildFavoriteButton(),
-            const SizedBox(width: 9),
+            const SizedBox(width: 4),
             _buildAttendingButton(context, attendingStatus),
           ],
         );
@@ -47,17 +48,17 @@ class TurnButtons extends StatelessWidget {
       icon: icon.copyWith(size: 24),
       onPressed: onPressed,
       color: CustomColor.customWhite,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(2),
     );
   }
 
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.favorite.copyWith(color: CustomColor.red, size: 24)
-          : CustomIcon.favorite.copyWith(size: 24),
+          ? CustomIcon.saved.copyWith(color: CustomColor.yellow, size: 24)
+          : CustomIcon.saved.copyWith(size: 24),
       onPressed: onFavoritePressed,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(2),
     );
   }
 
@@ -85,7 +86,6 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
-        // ... existing container properties ...
         child: Center(
           child: Icon(
             iconData,

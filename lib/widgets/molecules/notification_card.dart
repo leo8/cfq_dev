@@ -39,7 +39,9 @@ class NotificationCard extends StatelessWidget {
             ),
             const TextSpan(text: ' t\'invite à '),
             TextSpan(
-              text: content.eventName,
+              text: content.isTurn
+                  ? content.eventName.toUpperCase()
+                  : content.eventName,
               style: CustomTextStyle.body1Bold,
             ),
           ],
@@ -96,7 +98,7 @@ class NotificationCard extends StatelessWidget {
             ),
             const TextSpan(text: ' participera à '),
             TextSpan(
-              text: content.turnName,
+              text: content.turnName.toUpperCase(),
               style: CustomTextStyle.body1Bold,
             ),
           ],

@@ -10,6 +10,7 @@ import '../widgets/organisms/conversation_card.dart';
 import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import 'conversation_screen.dart';
+import '../utils/loading_overlay.dart';
 
 class ConversationsScreen extends StatelessWidget {
   final model.User currentUser;
@@ -21,42 +22,53 @@ class ConversationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ConversationsViewModel>(
       builder: (context, viewModel, child) {
-        return Scaffold(
-          backgroundColor: CustomColor.customBlack,
-          appBar: AppBar(
-            toolbarHeight: 40,
+        return LoadingOverlay(
+          isLoading: viewModel.isLoading,
+          child: Scaffold(
             backgroundColor: CustomColor.customBlack,
-            leading: IconButton(
-              icon: CustomIcon.arrowBack,
-              onPressed: () => Navigator.of(context).pop(),
+            appBar: AppBar(
+              toolbarHeight: 40,
+              backgroundColor: CustomColor.customBlack,
+              surfaceTintColor: CustomColor.customBlack,
+              leading: IconButton(
+                icon: CustomIcon.arrowBack,
+                onPressed: () async {
+                  final viewModel = Provider.of<ConversationsViewModel>(context,
+                      listen: false);
+                  await viewModel.setLoadingState(true);
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                  await viewModel.setLoadingState(false);
+                },
+              ),
             ),
-          ),
-          body: Column(
-            children: [
-              const SizedBox(height: 15),
-              Center(
-                child: Text(
-                  CustomString.messagerieCapital,
-                  style: CustomTextStyle.body1.copyWith(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+            body: Column(
+              children: [
+                Center(
+                  child: Text(
+                    CustomString.messagerieCapital,
+                    style: CustomTextStyle.body1.copyWith(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CustomSearchBar(
-                  controller: viewModel.searchController,
-                  onChanged: (value) => viewModel.searchConversations(value),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: CustomSearchBar(
+                    controller: viewModel.searchController,
+                    onChanged: (value) => viewModel.searchConversations(value),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child:
-                    _buildConversationsList(viewModel.conversations, viewModel),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Expanded(
+                  child: _buildConversationsList(
+                      viewModel.conversations, viewModel),
+                ),
+              ],
+            ),
           ),
         );
       },

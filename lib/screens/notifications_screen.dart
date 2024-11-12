@@ -6,6 +6,7 @@ import '../utils/styles/text_styles.dart';
 import '../utils/styles/icons.dart';
 import '../view_models/notifications_view_model.dart';
 import '../widgets/organisms/notifications_list.dart';
+import '../utils/loading_overlay.dart';
 
 class NotificationsScreen extends StatelessWidget {
   final String currentUserUid;
@@ -26,22 +27,26 @@ class NotificationsScreen extends StatelessWidget {
             appBar: AppBar(
               toolbarHeight: 40,
               backgroundColor: CustomColor.customBlack,
+              surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
                 icon: CustomIcon.arrowBack,
-                onPressed: () {
+                onPressed: () async {
+                  final viewModel = Provider.of<NotificationsViewModel>(context,
+                      listen: false);
+                  await viewModel.setLoadingState(true);
                   // First reset the unread count
-                  viewModel.resetUnreadCount().then((_) {
-                    // Then navigate back
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  });
+                  await viewModel.resetUnreadCount();
+
+                  await viewModel.setLoadingState(false);
+                  // Then navigate back
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ),
             body: Column(
               children: [
-                const SizedBox(height: 15),
                 Center(
                   child: Text(
                     CustomString.notificationsCapital,
@@ -53,12 +58,15 @@ class NotificationsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: NotificationsList(
-                    notifications: viewModel.notifications,
+                  child: LoadingOverlay(
                     isLoading: viewModel.isLoading,
-                    unreadCountStream: viewModel.unreadCountStream,
-                    currentUserId: viewModel.currentUserUid,
-                    viewModel: viewModel,
+                    child: NotificationsList(
+                      notifications: viewModel.notifications,
+                      isLoading: viewModel.isLoading,
+                      unreadCountStream: viewModel.unreadCountStream,
+                      currentUserId: viewModel.currentUserUid,
+                      viewModel: viewModel,
+                    ),
                   ),
                 ),
               ],

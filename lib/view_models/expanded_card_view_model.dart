@@ -4,12 +4,21 @@ import '../utils/logger.dart';
 import '../providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as model;
+import 'package:flutter/foundation.dart';
+import 'dart:async';
 
 class ExpandedCardViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String eventId;
   final String currentUserId;
   final bool isTurn;
+
+  // Add stream controllers
+  StreamController<DocumentSnapshot>? _cfqStreamController;
+  StreamController<int>? _attendingCountStreamController;
+  StreamController<String>? _attendingStatusStreamController;
+  StreamController<bool>? _isFollowingUpStreamController;
+  StreamController<int>? _followersCountStreamController;
 
   bool _isFavorite = false;
   bool _isFollowingUp = false;
@@ -21,6 +30,27 @@ class ExpandedCardViewModel extends ChangeNotifier {
     required this.isTurn,
   }) {
     _initializeData();
+    _initializeStreams();
+  }
+
+  // Initialize all streams
+  void _initializeStreams() {
+    _cfqStreamController = StreamController<DocumentSnapshot>();
+    _attendingCountStreamController = StreamController<int>();
+    _attendingStatusStreamController = StreamController<String>();
+    _isFollowingUpStreamController = StreamController<bool>();
+    _followersCountStreamController = StreamController<int>();
+  }
+
+  @override
+  void dispose() {
+    // Cancel all stream subscriptions
+    _cfqStreamController?.close();
+    _attendingCountStreamController?.close();
+    _attendingStatusStreamController?.close();
+    _isFollowingUpStreamController?.close();
+    _followersCountStreamController?.close();
+    super.dispose();
   }
 
   bool get isFavorite => _isFavorite;
@@ -52,28 +82,32 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> _fetchFollowUpStatus() async {
-    try {
-      DocumentSnapshot cfqDoc =
-          await _firestore.collection('cfqs').doc(eventId).get();
-      List<dynamic> followingUp =
-          (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
-      _isFollowingUp = followingUp.contains(currentUserId);
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching follow-up status: $e');
+    if (!isTurn) {
+      try {
+        DocumentSnapshot cfqDoc =
+            await _firestore.collection('cfqs').doc(eventId).get();
+        List<dynamic> followingUp =
+            (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
+        _isFollowingUp = followingUp.contains(currentUserId);
+        notifyListeners();
+      } catch (e) {
+        AppLogger.error('Error fetching follow-up status: $e');
+      }
     }
   }
 
   Future<void> _fetchFollowersCount() async {
-    try {
-      DocumentSnapshot cfqDoc =
-          await _firestore.collection('cfqs').doc(eventId).get();
-      List<dynamic> followingUp =
-          (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
-      _followersCount = followingUp.length;
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error fetching followers count: $e');
+    if (!isTurn) {
+      try {
+        DocumentSnapshot cfqDoc =
+            await _firestore.collection('cfqs').doc(eventId).get();
+        List<dynamic> followingUp =
+            (cfqDoc.data() as Map<String, dynamic>)['followingUp'] ?? [];
+        _followersCount = followingUp.length;
+        notifyListeners();
+      } catch (e) {
+        AppLogger.error('Error fetching followers count: $e');
+      }
     }
   }
 
@@ -214,8 +248,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
         List<dynamic> followingUp = snapshot.data()?['followingUp'] ?? [];
         return followingUp.contains(currentUserId);
       });
+    } else {
+      return Stream.value(false);
     }
-    return Stream.value(false);
   }
 
   Future<void> _createFollowUpNotification(String cfqId) async {
