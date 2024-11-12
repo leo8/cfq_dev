@@ -9,6 +9,7 @@ import '../utils/styles/neon_background.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 import '../../utils/utils.dart';
+import '../utils/loading_overlay.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
@@ -44,47 +45,48 @@ class CreateCfqScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               }
             });
-            return NeonBackground(
-              child: Scaffold(
-                backgroundColor:
-                    CustomColor.transparent, // Sets the background color
-                appBar: AppBar(
-                  toolbarHeight: 40,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: CustomColor.customBlack,
-                  surfaceTintColor: CustomColor.customBlack,
-                  actions: [
-                    IconButton(
-                      icon: CustomIcon.close,
-                      onPressed: () => Navigator.of(context).pop(),
+            return LoadingOverlay(
+              isLoading: viewModel.isLoading,
+              child: NeonBackground(
+                child: Scaffold(
+                  backgroundColor: CustomColor.transparent,
+                  appBar: AppBar(
+                    toolbarHeight: 40,
+                    automaticallyImplyLeading: false,
+                    backgroundColor: CustomColor.customBlack,
+                    surfaceTintColor: CustomColor.customBlack,
+                    actions: [
+                      IconButton(
+                        icon: CustomIcon.close,
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CfqForm(
+                      currentUser: viewModel.currentUser!,
+                      image: viewModel.cfqImage,
+                      onSelectImage: () => viewModel.pickCfqImage(context),
+                      descriptionController: viewModel.descriptionController,
+                      locationController: viewModel.locationController,
+                      whenController: viewModel.whenController,
+                      onSelectMoods: () => viewModel.selectMoods(context),
+                      onSelectDateTime: () => viewModel.selectDateTime(context),
+                      moodsDisplay: viewModel.selectedMoods != null &&
+                              viewModel.selectedMoods!.isNotEmpty
+                          ? viewModel.selectedMoods!.join(', ')
+                          : CustomString.whatMood,
+                      dateTimeDisplay: _formatDateTimeDisplay(
+                        viewModel.selectedDateTime,
+                        viewModel.selectedEndDateTime,
+                      ),
+                      isLoading: viewModel.isLoading,
+                      onSubmit: viewModel.createCfq,
+                      inviteesController: viewModel.inviteesController,
+                      openInviteesSelectorScreen: () =>
+                          viewModel.openInviteesSelectorScreen(context),
                     ),
-                  ],
-                ),
-                body: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20), // Adds padding to the sides of the form
-                  child: CfqForm(
-                    currentUser: viewModel.currentUser!,
-                    image: viewModel.cfqImage,
-                    onSelectImage: () => viewModel.pickCfqImage(context),
-                    descriptionController: viewModel.descriptionController,
-                    locationController: viewModel.locationController,
-                    whenController: viewModel.whenController,
-                    onSelectMoods: () => viewModel.selectMoods(context),
-                    onSelectDateTime: () => viewModel.selectDateTime(context),
-                    moodsDisplay: viewModel.selectedMoods != null &&
-                            viewModel.selectedMoods!.isNotEmpty
-                        ? viewModel.selectedMoods!.join(', ')
-                        : CustomString.whatMood,
-                    dateTimeDisplay: _formatDateTimeDisplay(
-                      viewModel.selectedDateTime,
-                      viewModel.selectedEndDateTime,
-                    ),
-                    isLoading: viewModel.isLoading,
-                    onSubmit: viewModel.createCfq,
-                    inviteesController: viewModel.inviteesController,
-                    openInviteesSelectorScreen: () =>
-                        viewModel.openInviteesSelectorScreen(context),
                   ),
                 ),
               ),

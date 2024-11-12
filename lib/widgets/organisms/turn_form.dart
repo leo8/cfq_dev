@@ -121,7 +121,6 @@ class TurnForm extends StatelessWidget {
           CustomButton(
             label: CustomString.create,
             onTap: isLoading ? () {} : onSubmit,
-            isLoading: isLoading,
           ),
         ],
       ),
