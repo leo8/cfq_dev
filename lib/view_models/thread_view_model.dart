@@ -103,31 +103,53 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   void _setupActiveFriendsStream() {
-    if (_currentUser == null || _currentUser!.friends.isEmpty) {
+    if (_currentUser == null) {
       _activeFriendsStream = Stream.value([]);
       return;
     }
 
-    _activeFriendsStream = FirebaseFirestore.instance
+    // Create a stream of the current user's friends list
+    Stream<List<String>> friendsStream = _firestore
         .collection('users')
-        .where('uid', whereIn: _currentUser!.friends)
-        .where('isActive', isEqualTo: true)
+        .doc(currentUserUid)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+      final userData = snapshot.data() as Map<String, dynamic>;
+      return List<String>.from(userData['friends'] ?? []);
     });
+
+    // Create a stream of all active users
+    Stream<QuerySnapshot> activeUsersStream = _firestore
+        .collection('users')
+        .where('isActive', isEqualTo: true)
+        .snapshots();
+
+    // Combine both streams
+    _activeFriendsStream = Rx.combineLatest2(
+      friendsStream,
+      activeUsersStream,
+      (List<String> friends, QuerySnapshot activeUsers) {
+        return activeUsers.docs
+            .map((doc) => model.User.fromSnap(doc))
+            .where((user) => friends.contains(user.uid))
+            .toList();
+      },
+    );
+
+    notifyListeners();
   }
 
   Future<void> updateIsActiveStatus(bool newValue) async {
     if (_currentUser == null) return;
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .update({'isActive': newValue});
+      // Update Firestore
+      await _firestore.collection('users').doc(_currentUser!.uid).update({
+        'isActive': newValue,
+        'lastActiveTimestamp': FieldValue.serverTimestamp(),
+      });
 
-      _currentUser!.isActive = newValue;
-      notifyListeners();
+      // No need to update local state or notify listeners
+      // as the stream will handle the updates automatically
     } catch (e) {
       AppLogger.error('Error updating active status: $e');
     }

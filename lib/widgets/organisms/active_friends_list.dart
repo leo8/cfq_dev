@@ -22,13 +22,24 @@ class ActiveFriendsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 140,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          _buildUserAvatar(currentUser),
-          ...activeFriends.map((friend) => _buildFriendAvatar(friend)),
-        ],
-      ),
+      child: activeFriends.isEmpty
+          ? _buildEmptyState()
+          : ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _buildUserAvatar(currentUser),
+                ...activeFriends.map((friend) => _buildFriendAvatar(friend)),
+              ],
+            ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        _buildUserAvatar(currentUser),
+      ],
     );
   }
 
