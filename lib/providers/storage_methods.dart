@@ -32,14 +32,10 @@ class StorageMethods {
       // Monitor upload progress and implement retry logic
       int retryCount = 0;
       const maxRetries = 3;
-      const chunkSize = 1024 * 1024; // 1MB chunks
 
       uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
         switch (snapshot.state) {
           case TaskState.running:
-            // Calculate progress
-            double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-            // You can expose this progress to the UI if needed
             break;
           case TaskState.error:
             if (retryCount < maxRetries) {
