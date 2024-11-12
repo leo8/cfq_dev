@@ -186,7 +186,10 @@ class ThreadScreen extends StatelessWidget {
       stream: viewModel.currentUserStream,
       builder: (context, userSnapshot) {
         if (!userSnapshot.hasData) {
-          return const CircularProgressIndicator();
+          return const SizedBox(
+            height: 140,
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
 
         final currentUser = model.User.fromSnap(userSnapshot.data!);
@@ -195,7 +198,21 @@ class ThreadScreen extends StatelessWidget {
           stream: viewModel.activeFriendsStream,
           builder: (context, friendsSnapshot) {
             if (!friendsSnapshot.hasData) {
-              return const CircularProgressIndicator();
+              return ActiveFriendsList(
+                currentUser: currentUser,
+                activeFriends: const [],
+                onActiveChanged: (bool newValue) {
+                  viewModel.updateIsActiveStatus(newValue);
+                },
+                onFriendTap: (String friendId) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(userId: friendId),
+                    ),
+                  );
+                },
+              );
             }
 
             return ActiveFriendsList(
