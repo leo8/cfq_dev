@@ -236,36 +236,68 @@ class ThreadViewModel extends ChangeNotifier {
         AppLogger.debug(
             "Invited CFQs: ${invitedCfqs.length}, Invited Turns: ${invitedTurns.length}");
 
-        // Handle empty lists
-        Stream<List<DocumentSnapshot>> cfqsStream = invitedCfqs.isEmpty
+        // Stream for invited CFQs
+        Stream<List<DocumentSnapshot>> invitedCfqsStream = invitedCfqs.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('cfqs')
                 .where(FieldPath.documentId, whereIn: invitedCfqs)
                 .snapshots()
-                .map((snapshot) {
-                AppLogger.debug("Fetched ${snapshot.docs.length} CFQs");
-                return snapshot.docs;
-              });
+                .map((snapshot) => snapshot.docs);
 
-        Stream<List<DocumentSnapshot>> turnsStream = invitedTurns.isEmpty
+        // Stream for invited Turns
+        Stream<List<DocumentSnapshot>> invitedTurnsStream = invitedTurns.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('turns')
                 .where(FieldPath.documentId, whereIn: invitedTurns)
                 .snapshots()
-                .map((snapshot) {
-                AppLogger.debug("Fetched ${snapshot.docs.length} Turns");
-                return snapshot.docs;
-              });
+                .map((snapshot) => snapshot.docs);
 
-        return Rx.combineLatest2(
-          cfqsStream,
-          turnsStream,
-          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
-            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
+        // Stream for CFQs where user is organizer
+        Stream<List<DocumentSnapshot>> organizedCfqsStream = FirebaseFirestore
+            .instance
+            .collection('cfqs')
+            .where('uid', isEqualTo: currentUserUid)
+            .snapshots()
+            .map((snapshot) => snapshot.docs);
+
+        // Stream for Turns where user is organizer
+        Stream<List<DocumentSnapshot>> organizedTurnsStream = FirebaseFirestore
+            .instance
+            .collection('turns')
+            .where('uid', isEqualTo: currentUserUid)
+            .snapshots()
+            .map((snapshot) => snapshot.docs);
+
+        // Combine all streams
+        return Rx.combineLatest4(
+          invitedCfqsStream,
+          invitedTurnsStream,
+          organizedCfqsStream,
+          organizedTurnsStream,
+          (List<DocumentSnapshot> invitedCfqs,
+              List<DocumentSnapshot> invitedTurns,
+              List<DocumentSnapshot> organizedCfqs,
+              List<DocumentSnapshot> organizedTurns) {
+            List<DocumentSnapshot> allEvents = [
+              ...invitedCfqs,
+              ...invitedTurns,
+              ...organizedCfqs,
+              ...organizedTurns
+            ];
+
+            // Remove duplicates based on document ID
+            allEvents = allEvents.fold<List<DocumentSnapshot>>([],
+                (List<DocumentSnapshot> unique, DocumentSnapshot doc) {
+              if (!unique.any((uniqueDoc) => uniqueDoc.id == doc.id)) {
+                unique.add(doc);
+              }
+              return unique;
+            });
+
             AppLogger.debug(
-                "Combined events: ${allEvents.length} (${cfqs.length} CFQs + ${turns.length} Turns)");
+                "Combined events: ${allEvents.length} (${invitedCfqs.length} invited CFQs + ${invitedTurns.length} invited Turns + ${organizedCfqs.length} organized CFQs + ${organizedTurns.length} organized Turns)");
 
             allEvents.sort((a, b) {
               DateTime dateA = getPublishedDateTime(a);
