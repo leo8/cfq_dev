@@ -11,6 +11,7 @@ class ConversationsViewModel extends ChangeNotifier {
   final ConversationService _conversationService = ConversationService();
   List<Conversation> _allConversations = [];
   List<Conversation> _filteredConversations = [];
+  bool _isLoading = false;
   final TextEditingController searchController = TextEditingController();
   StreamSubscription<List<Conversation>>? _conversationsSubscription;
   StreamSubscription<DocumentSnapshot>? _userSubscription;
@@ -22,6 +23,8 @@ class ConversationsViewModel extends ChangeNotifier {
   }
 
   List<Conversation> get conversations => _filteredConversations;
+
+  bool get isLoading => _isLoading;
 
   void initConversations() {
     _conversationsSubscription?.cancel();
@@ -126,5 +129,10 @@ class ConversationsViewModel extends ChangeNotifier {
           conversationId: conversationId, unreadMessagesCount: 0),
     );
     return conversationInfo.unreadMessagesCount;
+  }
+
+  Future<void> setLoadingState(bool loading) async {
+    _isLoading = loading;
+    notifyListeners();
   }
 }

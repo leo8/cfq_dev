@@ -508,4 +508,9 @@ class NotificationsViewModel extends ChangeNotifier {
       return (data['followingUp'] as List?)?.length ?? 0;
     });
   }
+
+  Future<void> setLoadingState(bool loading) async {
+    _isLoading = loading;
+    notifyListeners();
+  }
 }
