@@ -9,6 +9,8 @@ enum NotificationType {
   friendRequest,
   eventInvitation,
   attending,
+  acceptedTeamRequest,
+  acceptedFriendRequest,
 }
 
 // Base class for notification content
@@ -237,6 +239,76 @@ class FriendRequestNotificationContent extends NotificationContent {
   }
 }
 
+// Accepted team request specific notification content
+class AcceptedTeamRequestNotificationContent extends NotificationContent {
+  final String teamId;
+  final String teamName;
+  final String teamImageUrl;
+  final String accepterId;
+  final String accepterUsername;
+  final String accepterProfilePictureUrl;
+
+  AcceptedTeamRequestNotificationContent({
+    required this.teamId,
+    required this.teamName,
+    required this.teamImageUrl,
+    required this.accepterId,
+    required this.accepterUsername,
+    required this.accepterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'teamId': teamId,
+        'teamName': teamName,
+        'teamImageUrl': teamImageUrl,
+        'accepterId': accepterId,
+        'accepterUsername': accepterUsername,
+        'accepterProfilePictureUrl': accepterProfilePictureUrl,
+      };
+
+  factory AcceptedTeamRequestNotificationContent.fromJson(
+      Map<String, dynamic> json) {
+    return AcceptedTeamRequestNotificationContent(
+      teamId: json['teamId'] as String,
+      teamName: json['teamName'] as String,
+      teamImageUrl: json['teamImageUrl'] as String,
+      accepterId: json['accepterId'] as String,
+      accepterUsername: json['accepterUsername'] as String,
+      accepterProfilePictureUrl: json['accepterProfilePictureUrl'] as String,
+    );
+  }
+}
+
+// Accepted friend request specific notification content
+class AcceptedFriendRequestNotificationContent extends NotificationContent {
+  final String accepterId;
+  final String accepterUsername;
+  final String accepterProfilePictureUrl;
+
+  AcceptedFriendRequestNotificationContent({
+    required this.accepterId,
+    required this.accepterUsername,
+    required this.accepterProfilePictureUrl,
+  });
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'accepterId': accepterId,
+        'accepterUsername': accepterUsername,
+        'accepterProfilePictureUrl': accepterProfilePictureUrl,
+      };
+
+  factory AcceptedFriendRequestNotificationContent.fromJson(
+      Map<String, dynamic> json) {
+    return AcceptedFriendRequestNotificationContent(
+      accepterId: json['accepterId'] as String,
+      accepterUsername: json['accepterUsername'] as String,
+      accepterProfilePictureUrl: json['accepterProfilePictureUrl'] as String,
+    );
+  }
+}
+
 // Main notification class
 class Notification {
   final String id;
@@ -275,6 +347,13 @@ class Notification {
         break;
       case 'friendRequest':
         content = FriendRequestNotificationContent.fromJson(contentData);
+        break;
+      case 'acceptedTeamRequest':
+        content = AcceptedTeamRequestNotificationContent.fromJson(contentData);
+        break;
+      case 'acceptedFriendRequest':
+        content =
+            AcceptedFriendRequestNotificationContent.fromJson(contentData);
         break;
       default:
         throw Exception('Unknown notification type: $typeStr');

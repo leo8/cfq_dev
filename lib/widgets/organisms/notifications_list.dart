@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../screens/requests_screen.dart';
 import 'package:cfq_dev/view_models/notifications_view_model.dart';
 import '../../screens/conversation_screen.dart';
+import '../../screens/profile_screen.dart';
 
 class NotificationsList extends StatelessWidget {
   final List<notificationModel.Notification> notifications;
@@ -417,6 +418,27 @@ class NotificationsList extends StatelessWidget {
           );
           return const SizedBox.shrink();
 
+        case notificationModel.NotificationType.acceptedTeamRequest:
+        case notificationModel.NotificationType.acceptedFriendRequest:
+          final accepterId = notification.type ==
+                  notificationModel.NotificationType.acceptedTeamRequest
+              ? (notification.content as notificationModel
+                      .AcceptedTeamRequestNotificationContent)
+                  .accepterId
+              : (notification.content as notificationModel
+                      .AcceptedFriendRequestNotificationContent)
+                  .accepterId;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                userId: accepterId,
+              ),
+            ),
+          );
+          return const SizedBox.shrink();
+
         default:
           throw Exception('Unsupported notification type');
       }
@@ -489,6 +511,32 @@ class NotificationsList extends StatelessWidget {
                               ),
                             ),
                           );
+                        } else if (notification.type ==
+                                notificationModel
+                                    .NotificationType.acceptedTeamRequest ||
+                            notification.type ==
+                                notificationModel
+                                    .NotificationType.acceptedFriendRequest) {
+                          final accepterId = notification.type ==
+                                  notificationModel
+                                      .NotificationType.acceptedTeamRequest
+                              ? (notification.content as notificationModel
+                                      .AcceptedTeamRequestNotificationContent)
+                                  .accepterId
+                              : (notification.content as notificationModel
+                                      .AcceptedFriendRequestNotificationContent)
+                                  .accepterId;
+
+                          if (context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfileScreen(
+                                  userId: accepterId,
+                                ),
+                              ),
+                            );
+                          }
                         } else {
                           final cardContent =
                               await _buildCardContent(context, notification);

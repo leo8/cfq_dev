@@ -120,6 +120,40 @@ class NotificationCard extends StatelessWidget {
           timestamp: notification.timestamp,
         );
 
+      case model.NotificationType.acceptedTeamRequest:
+        final content = notification.content
+            as model.AcceptedTeamRequestNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.accepterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.accepterUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' a accepté ton invitation à rejoindre '),
+            TextSpan(
+              text: content.teamName,
+              style: CustomTextStyle.body1Bold,
+            ),
+          ],
+          timestamp: notification.timestamp,
+        );
+
+      case model.NotificationType.acceptedFriendRequest:
+        final content = notification.content
+            as model.AcceptedFriendRequestNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.accepterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.accepterUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' a accepté ta demande d\'ami'),
+          ],
+          timestamp: notification.timestamp,
+        );
+
       default:
         return const SizedBox.shrink();
     }

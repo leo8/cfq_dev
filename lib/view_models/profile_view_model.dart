@@ -1092,6 +1092,12 @@ class ProfileViewModel extends ChangeNotifier {
       _incomingRequestId = null;
 
       AppLogger.debug('Local state updated: isFriend=$_isFriend');
+
+      // Create notification for requester
+      await createAcceptedFriendRequestNotification(
+        requesterId: _user!.uid,
+      );
+
       notifyListeners(); // Trigger UI update immediately
 
       // Fetch latest data to ensure consistency
@@ -1125,6 +1131,49 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error denying friend request: $e');
       AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> createAcceptedFriendRequestNotification({
+    required String requesterId,
+  }) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the requester's notification channel ID
+      DocumentSnapshot requesterDoc =
+          await _firestore.collection('users').doc(requesterId).get();
+      String requesterNotificationChannelId = (requesterDoc.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.acceptedFriendRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'accepterId': _currentUser!.uid,
+          'accepterUsername': _currentUser!.username,
+          'accepterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification
+      await _firestore
+          .collection('notifications')
+          .doc(requesterNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(requesterId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error(
+          'Error creating accepted friend request notification: $e');
     }
   }
 }
