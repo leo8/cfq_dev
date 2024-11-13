@@ -11,6 +11,7 @@ class CustomString {
   static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const update = "Modifier";
   static const add = "Ajouter";
   static const create = "Créer";
   static const check = "Vérifier";

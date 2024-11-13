@@ -5,6 +5,7 @@ import '../widgets/organisms/turn_form.dart';
 import '../utils/styles/string.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
+import '../models/turn_event_model.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/neon_background.dart';
@@ -15,8 +16,16 @@ import '../utils/loading_overlay.dart';
 class CreateTurnScreen extends StatelessWidget {
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
+  final bool isEditing;
+  final Turn? turnToEdit;
 
-  const CreateTurnScreen({super.key, this.prefillTeam, this.prefillMembers});
+  const CreateTurnScreen({
+    super.key,
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.turnToEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +33,8 @@ class CreateTurnScreen extends StatelessWidget {
       create: (_) => CreateTurnViewModel(
         prefillTeam: prefillTeam,
         prefillMembers: prefillMembers,
+        isEditing: isEditing,
+        turnToEdit: turnToEdit,
       ),
       child: Consumer<CreateTurnViewModel>(
         builder: (context, viewModel, child) {
@@ -116,10 +127,14 @@ class CreateTurnScreen extends StatelessWidget {
                           ? viewModel.selectedMoods!.join(', ')
                           : CustomString.whatMood,
                       isLoading: viewModel.isLoading,
-                      onSubmit: viewModel.createTurn,
+                      onSubmit: viewModel.isEditing
+                          ? viewModel.updateTurn
+                          : viewModel.createTurn,
                       inviteesController: viewModel.inviteesController,
                       openInviteesSelectorScreen: () =>
                           viewModel.openInviteesSelectorScreen(context),
+                      submitButtonLabel:
+                          isEditing ? CustomString.update : CustomString.create,
                     ),
                   ),
                 ),
