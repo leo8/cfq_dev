@@ -280,4 +280,9 @@ class CustomString {
       'Tu crées des événements dans le passé toi ?';
   static const String invalidEndDate =
       'Il va vraiment durer moins de 5 minutes, ton événement ?';
+
+  static const String sureToLeave = 'Êtes-vous sûr de vouloir quitter ?';
+  static const String yourModificationsWillBeLost =
+      'Vos modifications seront perdues.';
+  static const String stay = 'Rester';
 }
