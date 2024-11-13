@@ -51,9 +51,7 @@ class CreateTurnScreen extends StatelessWidget {
               } else if (viewModel.successMessage != null) {
                 showSnackBar(viewModel.successMessage!, context);
                 viewModel.resetStatus();
-
-                // Optionally navigate back to previous screen
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               }
             });
 

@@ -254,8 +254,8 @@ class TurnCardContent extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: CustomButton(
                               label: 'Modifier',
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                final wasUpdated = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => CreateTurnScreen(
@@ -282,6 +282,11 @@ class TurnCardContent extends StatelessWidget {
                                     ),
                                   ),
                                 );
+
+                                // If the turn was updated successfully, close the expanded view to refresh
+                                if (wasUpdated == true && isExpanded) {
+                                  Navigator.of(context).pop();
+                                }
                               },
                             ),
                           ),
