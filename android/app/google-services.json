@@ -1,26 +1,51 @@
 {
   "project_info": {
-    "project_number": "160341522687",
-    "project_id": "cfq-dev-11498",
-    "storage_bucket": "cfq-dev-11498.appspot.com"
+    "project_number": "984456387698",
+    "project_id": "cfq-stage-94223",
+    "storage_bucket": "cfq-stage-94223.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:160341522687:android:d4cc8d8996ece343e574ca",
+        "mobilesdk_app_id": "1:984456387698:android:5fb94783133263c09776eb",
         "android_client_info": {
-          "package_name": "com.example.cfq_dev"
+          "package_name": "com.cfq.cfqStage"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "984456387698-sc5rfkflth8u3d4v4883h32dlmdjvu31.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cfq.cfqStage",
+            "certificate_hash": "1fbf016c3777dce2cbeb16dad17639aaf64a92f5"
+          }
+        },
+        {
+          "client_id": "984456387698-gka35mi3p6ve4gv67fl7r9rh0p9hg0no.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyChO-OUGWZ1bzlEYCYcKMHcl-XyiSoWHpQ"
+          "current_key": "AIzaSyBPDTUMST29z5h6LmCNL6qbNskSLHOI62c"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984456387698-gka35mi3p6ve4gv67fl7r9rh0p9hg0no.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "984456387698-paslf02d134sdm71h6e2d3o5onnbhb92.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cfq.cfqStage"
+              }
+            }
+          ]
         }
       }
     }
