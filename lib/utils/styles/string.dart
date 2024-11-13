@@ -11,6 +11,7 @@ class CustomString {
   static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const update = "Modifier";
   static const add = "Ajouter";
   static const create = "Créer";
   static const check = "Vérifier";
@@ -136,6 +137,7 @@ class CustomString {
   static const publicationReussie = "Publication réussie !";
 
   static const inviteesCapital = "INVITÉS";
+  static const notInvited = "Vous n'êtes pas invité à cet événement";
 
   // Turns
   static const turnCapital = "TURN";

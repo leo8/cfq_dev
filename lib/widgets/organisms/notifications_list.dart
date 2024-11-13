@@ -13,6 +13,8 @@ import '../../screens/requests_screen.dart';
 import 'package:cfq_dev/view_models/notifications_view_model.dart';
 import '../../screens/conversation_screen.dart';
 import '../../screens/profile_screen.dart';
+import '../../utils/utils.dart';
+import '../../utils/styles/string.dart';
 
 class NotificationsList extends StatelessWidget {
   final List<notificationModel.Notification> notifications;
@@ -111,6 +113,27 @@ class NotificationsList extends StatelessWidget {
     } catch (e) {
       AppLogger.error('Error fetching user data: $e');
       throw Exception('Failed to fetch user data');
+    }
+  }
+
+  Future<bool> _isUserStillInvited(String eventId, bool isTurn) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+
+      if (!userDoc.exists) return false;
+
+      final userData = userDoc.data()!;
+      final List<String> invitedEvents = List<String>.from(isTurn
+          ? (userData['invitedTurns'] ?? [])
+          : (userData['invitedCfqs'] ?? []));
+
+      return invitedEvents.contains(eventId);
+    } catch (e) {
+      AppLogger.error('Error checking if user is still invited: $e');
+      return false;
     }
   }
 
@@ -538,6 +561,31 @@ class NotificationsList extends StatelessWidget {
                             );
                           }
                         } else {
+                          final bool isTurn = notification.type ==
+                                  notificationModel
+                                      .NotificationType.eventInvitation &&
+                              (notification.content as notificationModel
+                                      .EventInvitationNotificationContent)
+                                  .isTurn;
+                          final String eventId = notification.type ==
+                                  notificationModel.NotificationType.followUp
+                              ? (notification.content as notificationModel
+                                      .FollowUpNotificationContent)
+                                  .cfqId
+                              : (notification.content as notificationModel
+                                      .EventInvitationNotificationContent)
+                                  .eventId;
+
+                          final isStillInvited =
+                              await _isUserStillInvited(eventId, isTurn);
+
+                          if (!isStillInvited) {
+                            if (context.mounted) {
+                              showSnackBar(CustomString.notInvited, context);
+                            }
+                            return;
+                          }
+
                           final cardContent =
                               await _buildCardContent(context, notification);
                           if (context.mounted) {

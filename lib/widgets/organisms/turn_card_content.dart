@@ -10,6 +10,9 @@ import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
 import '../../screens/expanded_card_screen.dart';
 import '../../utils/logger.dart';
+import '../../screens/create_turn_screen.dart';
+import '../../models/turn_event_model.dart';
+import '../atoms/buttons/custom_button.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -39,6 +42,8 @@ class TurnCardContent extends StatelessWidget {
   final Stream<int> attendingCountStream;
   final bool isExpanded;
   final VoidCallback? onClose;
+  final VoidCallback? onEditPressed;
+  final bool showEditButton;
 
   const TurnCardContent({
     required this.attendingStatus,
@@ -68,6 +73,8 @@ class TurnCardContent extends StatelessWidget {
     required this.attendingCountStream,
     this.isExpanded = false,
     this.onClose,
+    this.onEditPressed,
+    this.showEditButton = false,
     super.key,
   });
 
@@ -226,6 +233,63 @@ class TurnCardContent extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 25),
+                        if (showEditButton && onEditPressed != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: ElevatedButton(
+                              onPressed: onEditPressed,
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.edit),
+                                  SizedBox(width: 8),
+                                  Text('Edit Turn'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (currentUserId == organizerId && isExpanded)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: CustomButton(
+                              label: 'Modifier',
+                              onTap: () async {
+                                final wasUpdated = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateTurnScreen(
+                                      isEditing: true,
+                                      turnToEdit: Turn(
+                                        name: turnName,
+                                        description: description,
+                                        moods: moods,
+                                        uid: organizerId,
+                                        username: username,
+                                        eventId: turnId,
+                                        datePublished: datePublished,
+                                        eventDateTime: eventDateTime,
+                                        imageUrl: turnImageUrl,
+                                        profilePictureUrl: profilePictureUrl,
+                                        where: where,
+                                        address: address,
+                                        organizers: organizers,
+                                        invitees: [], // We'll fetch this in the view model
+                                        teamInvitees: [], // We'll fetch this in the view model
+                                        channelId:
+                                            '', // We'll fetch this in the view model
+                                      ),
+                                    ),
+                                  ),
+                                );
+
+                                // If the turn was updated successfully, close the expanded view to refresh
+                                if (wasUpdated == true && isExpanded) {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                            ),
+                          ),
                       ],
                     ),
                   ),
