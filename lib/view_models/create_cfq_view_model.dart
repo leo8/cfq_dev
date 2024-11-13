@@ -97,8 +97,126 @@ class CreateCfqViewModel extends ChangeNotifier
 
   final ConversationService _conversationService = ConversationService();
 
-  CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
+  final bool isEditing;
+  final Cfq? cfqToEdit;
+
+  CreateCfqViewModel({
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.cfqToEdit,
+  }) {
+    if (isEditing && cfqToEdit != null) {
+      _initializeEditMode();
+    }
     _initializeViewModel();
+  }
+
+  void _initializeEditMode() {
+    whenController.text = cfqToEdit!.when;
+    descriptionController.text = cfqToEdit!.description;
+    locationController.text = cfqToEdit!.where;
+    _selectedDateTime = cfqToEdit!.eventDateTime;
+    _selectedEndDateTime = cfqToEdit!.endDateTime;
+    _selectedMoods = cfqToEdit!.moods;
+
+    // Fetch CFQ data including invitees
+    _fetchCfqData();
+  }
+
+  Future<void> _fetchCfqData() async {
+    try {
+      DocumentSnapshot cfqDoc = await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .get();
+
+      Map<String, dynamic> data = cfqDoc.data() as Map<String, dynamic>;
+
+      // Fetch invitees
+      List<String> inviteeIds = List<String>.from(data['invitees'] ?? []);
+      List<String> teamIds = List<String>.from(data['teamInvitees'] ?? []);
+
+      // Fetch invitee user objects
+      _selectedInvitees = await Future.wait(inviteeIds.map((id) async {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(id).get();
+        return model.User.fromSnap(userDoc);
+      }));
+
+      // Fetch team objects
+      _selectedTeamInvitees = await Future.wait(teamIds.map((id) async {
+        DocumentSnapshot teamDoc =
+            await FirebaseFirestore.instance.collection('teams').doc(id).get();
+        return Team.fromSnap(teamDoc);
+      }));
+
+      _updateInviteesControllerText();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching CFQ data: $e');
+    }
+  }
+
+  Future<void> updateCfq() async {
+    if (whenController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhen;
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      String? cfqImageUrl = cfqToEdit!.imageUrl;
+
+      if (_cfqImage != null) {
+        cfqImageUrl = await StorageMethods()
+            .uploadImageToStorage('cfqs', _cfqImage!, true);
+      }
+
+      Cfq updatedCfq = Cfq(
+        when: whenController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: cfqToEdit!.uid,
+        username: cfqToEdit!.username,
+        eventId: cfqToEdit!.eventId,
+        datePublished: cfqToEdit!.datePublished,
+        eventDateTime: _selectedDateTime,
+        endDateTime: _selectedEndDateTime,
+        imageUrl: cfqImageUrl,
+        profilePictureUrl: cfqToEdit!.profilePictureUrl,
+        where: locationController.text.trim(),
+        organizers: cfqToEdit!.organizers,
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: cfqToEdit!.channelId,
+        followingUp: cfqToEdit!.followingUp,
+      );
+
+      await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .update(updatedCfq.toJson());
+
+      await _updateInviteesCfqs(
+          _selectedInvitees.map((user) => user.uid).toList(),
+          cfqToEdit!.eventId);
+      await _updateTeamInviteesCfqs(
+          _selectedTeamInvitees.map((team) => team.uid).toList(),
+          cfqToEdit!.eventId);
+
+      _successMessage = 'CFQ mis à jour avec succès';
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating CFQ: $e');
+      _errorMessage = 'Erreur lors de la mise à jour du CFQ';
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _initializeViewModel() async {

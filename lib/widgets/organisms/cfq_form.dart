@@ -26,6 +26,7 @@ class CfqForm extends StatelessWidget {
   final model.User currentUser;
   final TextEditingController inviteesController;
   final VoidCallback openInviteesSelectorScreen;
+  final String submitButtonLabel;
 
   const CfqForm({
     super.key,
@@ -43,6 +44,7 @@ class CfqForm extends StatelessWidget {
     required this.currentUser,
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
+    this.submitButtonLabel = CustomString.create,
   });
 
   String _formatDateTimeDisplay(DateTime? startDate, DateTime? endDate) {
@@ -141,7 +143,7 @@ class CfqForm extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           CustomButton(
-            label: CustomString.create,
+            label: submitButtonLabel,
             onTap: isLoading ? () {} : onSubmit,
           ),
         ],

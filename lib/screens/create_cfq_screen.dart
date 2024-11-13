@@ -10,13 +10,22 @@ import '../models/team.dart';
 import '../models/user.dart' as model;
 import '../../utils/utils.dart';
 import '../utils/loading_overlay.dart';
+import '../models/cfq_event_model.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
+  final bool isEditing;
+  final Cfq? cfqToEdit;
 
-  const CreateCfqScreen({super.key, this.prefillTeam, this.prefillMembers});
+  const CreateCfqScreen({
+    super.key,
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.cfqToEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +33,8 @@ class CreateCfqScreen extends StatelessWidget {
       create: (_) => CreateCfqViewModel(
         prefillTeam: prefillTeam,
         prefillMembers: prefillMembers,
+        isEditing: isEditing,
+        cfqToEdit: cfqToEdit,
       ),
       child: Consumer<CreateCfqViewModel>(
         builder: (context, viewModel, child) {
@@ -111,10 +122,14 @@ class CreateCfqScreen extends StatelessWidget {
                         viewModel.selectedEndDateTime,
                       ),
                       isLoading: viewModel.isLoading,
-                      onSubmit: viewModel.createCfq,
+                      onSubmit: viewModel.isEditing
+                          ? viewModel.updateCfq
+                          : viewModel.createCfq,
                       inviteesController: viewModel.inviteesController,
                       openInviteesSelectorScreen: () =>
                           viewModel.openInviteesSelectorScreen(context),
+                      submitButtonLabel:
+                          isEditing ? CustomString.update : CustomString.create,
                     ),
                   ),
                 ),
