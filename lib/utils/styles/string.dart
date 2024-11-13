@@ -137,6 +137,7 @@ class CustomString {
   static const publicationReussie = "Publication réussie !";
 
   static const inviteesCapital = "INVITÉS";
+  static const notInvited = "Vous n'êtes pas invité à cet événement";
 
   // Turns
   static const turnCapital = "TURN";
