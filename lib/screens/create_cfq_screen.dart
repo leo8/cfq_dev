@@ -58,7 +58,36 @@ class CreateCfqScreen extends StatelessWidget {
                     actions: [
                       IconButton(
                         icon: CustomIcon.close,
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () async {
+                          bool confirmed = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Center(
+                                  child: Text(CustomString.sureToLeave),
+                                ),
+                                content: const Text(
+                                    CustomString.yourModificationsWillBeLost),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text(CustomString.stay),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                  ),
+                                  TextButton(
+                                    child: const Text(CustomString.leave),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmed) {
+                            Navigator.of(context).pop();
+                          }
+                        },
                       ),
                     ],
                   ),
