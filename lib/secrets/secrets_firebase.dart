@@ -1,5 +1,5 @@
-var apiKey = "AIzaSyBcr5WVuZxga_98ZFohPuJ4assvOdDXjC4"; // Your API key
-var appId = "1:160341522687:web:10b0092c6c1c7ba9e574ca"; // Your app ID
-var messagingSenderId = "160341522687"; // Sender ID
-var projectId = "cfq-dev-11498"; // Project ID
-var storageBucket = "cfq-dev-11498.appspot.com";
+var apiKey = "AIzaSyBPDTUMST29z5h6LmCNL6qbNskSLHOI62c"; // Your API key
+var appId = "1:984456387698:web:f00bb4c029418a319776eb"; // Your app ID
+var messagingSenderId = "984456387698"; // Sender ID
+var projectId = "cfq-stage-94223"; // Project ID
+var storageBucket = "cfq-stage-94223.firebasestorage.app";
