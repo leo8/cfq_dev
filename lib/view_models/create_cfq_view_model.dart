@@ -176,6 +176,14 @@ class CreateCfqViewModel extends ChangeNotifier
             .uploadImageToStorage('cfqs', _cfqImage!, true);
       }
 
+      // Get previous invitees from Firestore
+      DocumentSnapshot cfqDoc = await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .get();
+      Map<String, dynamic> data = cfqDoc.data() as Map<String, dynamic>;
+      List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
+
       Cfq updatedCfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
@@ -200,6 +208,15 @@ class CreateCfqViewModel extends ChangeNotifier
           .collection('cfqs')
           .doc(cfqToEdit!.eventId)
           .update(updatedCfq.toJson());
+
+      // Notify new invitees
+      await _notifyNewInvitees(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        cfqToEdit!.eventId,
+        whenController.text.trim(),
+        cfqImageUrl,
+      );
 
       await _updateInviteesCfqs(
           _selectedInvitees.map((user) => user.uid).toList(),
@@ -917,6 +934,28 @@ class CreateCfqViewModel extends ChangeNotifier
     } catch (e) {
       AppLogger.error('Error creating event invitation notifications: $e');
       rethrow;
+    }
+  }
+
+  Future<void> _notifyNewInvitees(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String cfqId,
+    String cfqName,
+    String cfqImageUrl,
+  ) async {
+    // Get only new invitees
+    List<String> newInvitees = currentInvitees
+        .where((invitee) => !previousInvitees.contains(invitee))
+        .toList();
+
+    if (newInvitees.isNotEmpty) {
+      await _createEventInvitationNotifications(
+        newInvitees,
+        cfqId,
+        cfqName,
+        cfqImageUrl,
+      );
     }
   }
 }

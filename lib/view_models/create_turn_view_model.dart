@@ -179,6 +179,23 @@ class CreateTurnViewModel extends ChangeNotifier
             .uploadImageToStorage('turns', _turnImage!, true);
       }
 
+      // Get previous invitees from Firestore
+      DocumentSnapshot turnDoc = await FirebaseFirestore.instance
+          .collection('turns')
+          .doc(turnToEdit!.eventId)
+          .get();
+      Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
+      List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
+
+      // Notify new invitees
+      await _notifyNewInvitees(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        turnToEdit!.eventId,
+        turnNameController.text.trim(),
+        turnImageUrl,
+      );
+
       // Update turn object
       Turn updatedTurn = Turn(
         name: turnNameController.text.trim(),
@@ -944,6 +961,28 @@ class CreateTurnViewModel extends ChangeNotifier
     } catch (e) {
       AppLogger.error('Error creating event invitation notifications: $e');
       rethrow;
+    }
+  }
+
+  Future<void> _notifyNewInvitees(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String turnId,
+    String turnName,
+    String turnImageUrl,
+  ) async {
+    // Get only new invitees
+    List<String> newInvitees = currentInvitees
+        .where((invitee) => !previousInvitees.contains(invitee))
+        .toList();
+
+    if (newInvitees.isNotEmpty) {
+      await _createEventInvitationNotifications(
+        newInvitees,
+        turnId,
+        turnName,
+        turnImageUrl,
+      );
     }
   }
 }
