@@ -9,6 +9,7 @@ import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 import '../utils/logger.dart';
 import '../utils/loading_overlay.dart';
+import '../utils/date_time_utils.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String channelId;
@@ -217,22 +218,79 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildMessageList() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _conversationService.getMessages(widget.channelId),
+      stream: FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(widget.channelId)
+          .collection('messages')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
-        return ListView(
+        }
+
+        final messages = snapshot.data!.docs;
+
+        return ListView.builder(
           reverse: true,
-          children: snapshot.data!.docs.map((doc) {
-            final isCurrentUser = doc['senderId'] == widget.currentUser.uid;
-            return _buildMessageBubble(doc, isCurrentUser);
-          }).toList(),
+          itemCount: messages.length,
+          itemBuilder: (context, index) {
+            final doc = messages[index];
+            final data = doc.data() as Map<String, dynamic>;
+            final currentMessageTime =
+                (data['timestamp'] as Timestamp).toDate();
+
+            // Get previous message timestamp
+            DateTime? previousMessageTime;
+            if (index < messages.length - 1) {
+              final previousData =
+                  messages[index + 1].data() as Map<String, dynamic>;
+              previousMessageTime =
+                  (previousData['timestamp'] as Timestamp).toDate();
+            }
+
+            // Check if we should show timestamp
+            final showTimestamp = DateTimeUtils.shouldShowTimestamp(
+                previousMessageTime, currentMessageTime);
+
+            return Column(
+              children: [
+                if (showTimestamp)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Center(
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: CustomColor.customDarkGrey.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          DateTimeUtils.formatMessageDateTime(
+                              currentMessageTime),
+                          style: CustomTextStyle.body2.copyWith(
+                            color: CustomColor.customWhite.withOpacity(0.6),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                _buildMessageItem(doc, data),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildMessageBubble(DocumentSnapshot doc, bool isCurrentUser) {
+  Widget _buildMessageItem(DocumentSnapshot doc, Map<String, dynamic> data) {
+    final isCurrentUser = data['senderId'] == widget.currentUser.uid;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
       child: Row(
@@ -241,7 +299,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         children: [
           if (!isCurrentUser) ...[
             CircleAvatar(
-              backgroundImage: NetworkImage(doc['senderProfilePicture']),
+              backgroundImage: NetworkImage(data['senderProfilePicture']),
               radius: 16,
             ),
             SizedBox(width: 8),
@@ -259,9 +317,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (!isCurrentUser)
-                    Text(doc['senderUsername'],
+                    Text(data['senderUsername'],
                         style: CustomTextStyle.miniButton),
-                  Text(doc['message'], style: CustomTextStyle.body1),
+                  Text(data['message'], style: CustomTextStyle.body1),
                 ],
               ),
             ),
