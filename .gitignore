@@ -49,3 +49,4 @@ app.*.map.json
 *.plist
 google-services.json
 build.gradle
+android/app/build.gradle
