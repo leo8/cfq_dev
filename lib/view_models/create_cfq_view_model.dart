@@ -184,6 +184,13 @@ class CreateCfqViewModel extends ChangeNotifier
       Map<String, dynamic> data = cfqDoc.data() as Map<String, dynamic>;
       List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
 
+      // Remove uninvited users
+      await _removeEventFromUninvitedUsers(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        cfqToEdit!.eventId,
+      );
+
       Cfq updatedCfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
@@ -956,6 +963,36 @@ class CreateCfqViewModel extends ChangeNotifier
         cfqName,
         cfqImageUrl,
       );
+    }
+  }
+
+  Future<void> _removeEventFromUninvitedUsers(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String cfqId,
+  ) async {
+    try {
+      // Get users who were uninvited
+      List<String> uninvitedUsers = previousInvitees
+          .where((invitee) => !currentInvitees.contains(invitee))
+          .toList();
+
+      if (uninvitedUsers.isNotEmpty) {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        for (String uid in uninvitedUsers) {
+          DocumentReference userRef =
+              FirebaseFirestore.instance.collection('users').doc(uid);
+          batch.update(userRef, {
+            'invitedCfqs': FieldValue.arrayRemove([cfqId])
+          });
+        }
+
+        await batch.commit();
+      }
+    } catch (e) {
+      AppLogger.error('Error removing cfq from uninvited users: $e');
+      rethrow;
     }
   }
 }

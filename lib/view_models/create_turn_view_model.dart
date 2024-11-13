@@ -187,6 +187,12 @@ class CreateTurnViewModel extends ChangeNotifier
       Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
       List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
 
+      await _removeEventFromUninvitedUsers(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        turnToEdit!.eventId,
+      );
+
       // Notify new invitees
       await _notifyNewInvitees(
         _selectedInvitees.map((user) => user.uid).toList(),
@@ -983,6 +989,36 @@ class CreateTurnViewModel extends ChangeNotifier
         turnName,
         turnImageUrl,
       );
+    }
+  }
+
+  Future<void> _removeEventFromUninvitedUsers(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String turnId,
+  ) async {
+    try {
+      // Get users who were uninvited
+      List<String> uninvitedUsers = previousInvitees
+          .where((invitee) => !currentInvitees.contains(invitee))
+          .toList();
+
+      if (uninvitedUsers.isNotEmpty) {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        for (String uid in uninvitedUsers) {
+          DocumentReference userRef =
+              FirebaseFirestore.instance.collection('users').doc(uid);
+          batch.update(userRef, {
+            'invitedTurns': FieldValue.arrayRemove([turnId])
+          });
+        }
+
+        await batch.commit();
+      }
+    } catch (e) {
+      AppLogger.error('Error removing turn from uninvited users: $e');
+      rethrow;
     }
   }
 }
