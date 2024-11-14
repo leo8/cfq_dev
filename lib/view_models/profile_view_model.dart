@@ -634,6 +634,24 @@ class ProfileViewModel extends ChangeNotifier {
       notAttending.remove(_currentUser!.uid);
       notSureAttending.remove(_currentUser!.uid);
 
+      String channelId = turnData['channelId'] as String;
+
+      // If user is attending and conversation not in list, add it
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
+
       // Add user to appropriate list
       switch (status) {
         case 'attending':
@@ -786,12 +804,25 @@ class ProfileViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
 
       bool isNowFollowing = !followingUp.contains(userId);
 
       if (isNowFollowing) {
         await addFollowUp(cfqId, userId);
         await _createFollowUpNotification(cfqId);
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       } else {
         await removeFollowUp(cfqId, userId);
       }
