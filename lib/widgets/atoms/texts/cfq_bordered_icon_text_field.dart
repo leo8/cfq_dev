@@ -120,7 +120,7 @@ class _CfqBorderedIconTextFieldState extends State<CfqBorderedIconTextField> {
                   maxLength: widget.maxLength,
                 ),
                 Positioned(
-                  left: (_textSize?.width ?? _hintTextSize?.width ?? 0) + 8,
+                  left: (_textSize?.width ?? _hintTextSize?.width ?? 0) + 15,
                   top: 8,
                   child: SizedBox(
                     height: 22,
