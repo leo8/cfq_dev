@@ -212,7 +212,7 @@ class CustomString {
   static const dinerMood = "Dîner";
   static const beforeMood = "Before";
   static const afterMood = "After";
-
+  static const concertMood = "Concert";
   // Success Messages
   static const successCreatingTeam = "Team créée avec succès !";
   static const successCreatingTurn = "Turn créé avec succès !";

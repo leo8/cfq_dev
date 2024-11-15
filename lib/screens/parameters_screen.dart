@@ -64,7 +64,7 @@ class ParametersScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: CustomIcon.saved,
+            leading: CustomIcon.saveEmpty,
             title: Text(
               CustomString.favorites,
               style: CustomTextStyle.body1,

@@ -55,29 +55,25 @@ class TurnButtons extends StatelessWidget {
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.saved.copyWith(color: CustomColor.yellow, size: 24)
-          : CustomIcon.saved.copyWith(size: 24),
+          ? CustomIcon.saveFull.copyWith(color: CustomColor.yellow, size: 24)
+          : CustomIcon.saveEmpty.copyWith(size: 24),
       onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(2),
     );
   }
 
   Widget _buildAttendingButton(BuildContext context, String attendingStatus) {
-    IconData iconData;
-    Color iconColor;
+    CustomIcon icon;
 
     switch (attendingStatus) {
       case 'attending':
-        iconData = Icons.check;
-        iconColor = CustomColor.green;
+        icon = CustomIcon.attendingStatusYes;
         break;
       case 'notSureAttending':
-        iconData = Icons.help_outline;
-        iconColor = CustomColor.yellow;
+        icon = CustomIcon.attendingStatusMaybe;
         break;
       case 'notAttending':
-        iconData = Icons.close;
-        iconColor = CustomColor.red;
+        icon = CustomIcon.attendingStatusNo;
         break;
       default:
         return _buildDefaultAttendingButton(context);
@@ -87,10 +83,9 @@ class TurnButtons extends StatelessWidget {
       onTap: () => _showAttendingOptions(context),
       child: Container(
         child: Center(
-          child: Icon(
-            iconData,
+          child: icon.copyWith(
             size: 30,
-            color: iconColor,
+            color: CustomColor.customWhite,
           ),
         ),
       ),
