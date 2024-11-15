@@ -75,7 +75,7 @@ class CustomIcon extends StatelessWidget {
 
   //Events Forms
   static const eventTitle = CustomIcon('event_title.svg');
-  static const eventOrganizer = CustomIcon('event_organizer.svg');
+  static const eventOrganizer = CustomIcon('bolt.svg');
   static const eventMood = CustomIcon('event_mood.svg');
   static const eventLocation = CustomIcon('location_empty.svg');
   static const eventAddress = CustomIcon('address.svg');

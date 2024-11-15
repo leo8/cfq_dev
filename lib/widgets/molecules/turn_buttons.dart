@@ -87,7 +87,7 @@ class TurnButtons extends StatelessWidget {
       onTap: () => _showAttendingOptions(context),
       child: Container(
         child: Center(
-          child: icon.copyWith(size: 30, color: color),
+          child: icon.copyWith(size: 45, color: color),
         ),
       ),
     );
