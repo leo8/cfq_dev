@@ -93,7 +93,7 @@ class TurnHeader extends StatelessWidget {
                   child: Text(
                     CustomString.turnCapital,
                     style: CustomTextStyle.hugeTitle.copyWith(
-                      fontSize: 32,
+                      fontSize: 20,
                     ),
                   ),
                 ),
@@ -104,7 +104,7 @@ class TurnHeader extends StatelessWidget {
                 child: Text(
                   CustomString.turnCapital,
                   style: CustomTextStyle.hugeTitle.copyWith(
-                    fontSize: 32,
+                    fontSize: 20,
                   ),
                 ),
               ),

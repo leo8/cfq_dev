@@ -40,7 +40,7 @@ class ParametersScreen extends StatelessWidget {
             child: Text(
               CustomString.parametersCapital,
               style: CustomTextStyle.body1
-                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+                  .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(
