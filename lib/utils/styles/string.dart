@@ -48,6 +48,8 @@ class CustomString {
 
   static const noUsernameProvided = "Comment on t'appelle ?";
   static const usernameAlreadyTaken = "Ce nom d'utilisateur est déjà pris";
+  static const invalidUsernameLength =
+      "Le nom d'utilisateur doit contenir 3 à 10 caractères";
 
   static const yourUsernameCapital = "TON NOM D'UTILISATEUR";
   static const verificationCodeCapital = "CODE DE VÉRIFICATION";
