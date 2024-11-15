@@ -103,6 +103,7 @@ class CfqForm extends StatelessWidget {
           CfqBorderedIconTextField(
             controller: whenController,
             hintText: CustomString.cfqName,
+            maxLength: 24,
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(

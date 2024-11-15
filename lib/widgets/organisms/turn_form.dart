@@ -75,6 +75,7 @@ class TurnForm extends StatelessWidget {
             icon: CustomIcon.eventTitle,
             controller: nameController,
             hintText: CustomString.eventTitle,
+            maxLength: 30,
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(
