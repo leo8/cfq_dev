@@ -46,7 +46,7 @@ class TurnDetails extends StatelessWidget {
         if (!isExpanded)
           Text(turnName,
               style: CustomTextStyle.hugeTitle.copyWith(
-                fontSize: 28,
+                fontSize: 26,
                 letterSpacing: 1.4,
               )),
         isExpanded
@@ -69,12 +69,15 @@ class TurnDetails extends StatelessWidget {
         if (!moods.isEmpty)
           isExpanded
               ? const SizedBox(
-                  height: 12,
+                  height: 20,
                 )
-              : const SizedBox(height: 8),
-        Text(DateTimeUtils.formatEventDateTime(eventDateTime),
-            style: CustomTextStyle.title3.copyWith(
-                color: CustomColor.customPurple, fontWeight: FontWeight.bold)),
+              : const SizedBox(height: 15),
+        Text(
+          DateTimeUtils.formatEventDateTime(eventDateTime),
+          style: CustomTextStyle.body1Bold.copyWith(
+            color: CustomColor.customPurple,
+          ),
+        ),
         isExpanded
             ? const SizedBox(
                 height: 30,
@@ -127,7 +130,7 @@ class TurnDetails extends StatelessWidget {
                       const SizedBox(width: 12),
                       Text(
                         where,
-                        style: CustomTextStyle.body1,
+                        style: CustomTextStyle.body1.copyWith(fontSize: 12),
                         maxLines: 3,
                       ),
                     ],
@@ -137,7 +140,7 @@ class TurnDetails extends StatelessWidget {
                   ),
                   Text(
                     address,
-                    style: CustomTextStyle.body1,
+                    style: CustomTextStyle.body1.copyWith(fontSize: 12),
                     maxLines: 30,
                   ),
                 ],
