@@ -220,7 +220,11 @@ class CreateTurnViewModel extends ChangeNotifier
         organizers: turnToEdit!.organizers,
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: turnToEdit!.channelId,
+        channelId: data['channelId'] ?? turnToEdit!.channelId,
+        attending: List<String>.from(data['attending']),
+        notSureAttending: List<String>.from(data['notSureAttending']),
+        notAnswered: List<String>.from(data['notAnswered']),
+        notAttending: List<String>.from(data['notAttending']),
       );
 
       // Update in Firestore

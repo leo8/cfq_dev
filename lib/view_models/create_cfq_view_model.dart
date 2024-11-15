@@ -207,8 +207,8 @@ class CreateCfqViewModel extends ChangeNotifier
         organizers: cfqToEdit!.organizers,
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: cfqToEdit!.channelId,
-        followingUp: cfqToEdit!.followingUp,
+        channelId: data['channelId'] ?? cfqToEdit!.channelId,
+        followingUp: List<String>.from(data['followingUp'] ?? []),
       );
 
       await FirebaseFirestore.instance
