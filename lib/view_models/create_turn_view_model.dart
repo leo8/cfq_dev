@@ -202,6 +202,18 @@ class CreateTurnViewModel extends ChangeNotifier
         turnImageUrl,
       );
 
+      // Update conversation if channelId exists
+      String? channelId = data['channelId'] ?? turnToEdit!.channelId;
+      if (channelId != null) {
+        await FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(channelId)
+            .update({
+          'name': turnNameController.text.trim(),
+          'imageUrl': turnImageUrl,
+        });
+      }
+
       // Update turn object
       Turn updatedTurn = Turn(
         name: turnNameController.text.trim(),
@@ -220,7 +232,11 @@ class CreateTurnViewModel extends ChangeNotifier
         organizers: turnToEdit!.organizers,
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
-        channelId: turnToEdit!.channelId,
+        channelId: data['channelId'] ?? turnToEdit!.channelId,
+        attending: List<String>.from(data['attending']),
+        notSureAttending: List<String>.from(data['notSureAttending']),
+        notAnswered: List<String>.from(data['notAnswered']),
+        notAttending: List<String>.from(data['notAttending']),
       );
 
       // Update in Firestore

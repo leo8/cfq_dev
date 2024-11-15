@@ -479,6 +479,8 @@ class ThreadViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
+      AppLogger.debug('channelId: $channelId');
 
       // Get organizer's notification channel ID
       DocumentSnapshot organizerSnapshot =
@@ -496,6 +498,18 @@ class ThreadViewModel extends ChangeNotifier {
           data['cfqName'] as String,
           organizerNotificationChannelId,
         );
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       }
       notifyListeners();
     } catch (e) {
@@ -569,6 +583,24 @@ class ThreadViewModel extends ChangeNotifier {
 
       final turnData = turnDoc.data()!;
       final userData = userDoc.data()!;
+
+      String channelId = turnData['channelId'] as String;
+
+      // If user is attending and conversation not in list, add it
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
 
       // Remove user from all lists first
       final List<String> attending =

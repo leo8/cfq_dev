@@ -258,6 +258,7 @@ class FavoritesViewModel extends ChangeNotifier {
       }
 
       final data = cfqDoc.data()!;
+      String channelId = data['channelId'] as String;
       List<dynamic> followingUp = List<dynamic>.from(data['followingUp'] ?? []);
 
       bool isNowFollowing = !followingUp.contains(userId);
@@ -267,6 +268,18 @@ class FavoritesViewModel extends ChangeNotifier {
         batch.update(cfqRef, {'followingUp': followingUp});
         await batch.commit();
         await _createFollowUpNotification(cfqId);
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       } else {
         followingUp.remove(userId);
         batch.update(cfqRef, {'followingUp': followingUp});
@@ -359,6 +372,24 @@ class FavoritesViewModel extends ChangeNotifier {
 
       final turnData = turnDoc.data()!;
       final userData = userDoc.data()!;
+
+      String channelId = turnData['channelId'] as String;
+
+      // If user is attending and conversation not in list, add it
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
 
       // Remove user from all lists first
       final List<String> attending =

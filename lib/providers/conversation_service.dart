@@ -3,7 +3,6 @@ import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import 'package:rxdart/rxdart.dart';
 import '../utils/logger.dart';
-import 'package:uuid/uuid.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -117,31 +116,8 @@ class ConversationService {
         AppLogger.info(
             'Conversation $channelId updated with new message details');
 
-        // Create notifications for each member
         for (String memberId in userSnapshots.keys) {
           DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
-          String notificationsChannelId =
-              userSnapshot.get('notificationsChannelId');
-          String notificationId = const Uuid().v1();
-
-          DocumentReference notificationRef = _firestore
-              .collection('notifications')
-              .doc(notificationsChannelId)
-              .collection('userNotifications')
-              .doc(notificationId);
-
-          transaction.set(notificationRef, {
-            'id': notificationId,
-            'timestamp': FieldValue.serverTimestamp(),
-            'type': 'message',
-            'content': {
-              'senderProfilePictureUrl': senderProfilePicture,
-              'messageContent': message,
-              'timestampSent': FieldValue.serverTimestamp(),
-              'senderUsername': senderUsername,
-              'conversationId': channelId,
-            }
-          });
 
           // Update unreadMessagesCount
           List<Map<String, dynamic>> conversations =
