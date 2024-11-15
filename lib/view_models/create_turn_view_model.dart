@@ -659,7 +659,7 @@ class CreateTurnViewModel extends ChangeNotifier
     }
 
     if (turnNameController.text.length > 30) {
-      _errorMessage = "Le nom du TURN ne peut pas dépasser 30 caractères";
+      _errorMessage = CustomString.maxLengthTurn;
       notifyListeners();
       return;
     }

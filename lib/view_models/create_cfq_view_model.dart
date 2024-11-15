@@ -166,7 +166,7 @@ class CreateCfqViewModel extends ChangeNotifier
     }
 
     if (whenController.text.length > 24) {
-      _errorMessage = "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+      _errorMessage = CustomString.maxLengthCFQ;
       notifyListeners();
       return;
     }

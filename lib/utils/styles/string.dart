@@ -141,6 +141,11 @@ class CustomString {
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
 
+  static const maxLengthCFQ =
+      "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+  static const maxLengthTurn =
+      "Le nom du TURN ne peut pas dépasser 30 caractères";
+
   static const inviteesCapital = "INVITÉS";
   static const notInvited = "Vous n'êtes pas invité à cet événement";
 
