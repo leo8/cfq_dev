@@ -46,6 +46,7 @@ class CustomString {
   static const yourLocation = "T'y es vers où le sang ?";
   static const yourBirthdate = "Ta date de naissance";
 
+  static const noUsernameProvided = "Comment on t'appelle ?";
   static const usernameAlreadyTaken = "Ce nom d'utilisateur est déjà pris";
 
   static const yourUsernameCapital = "TON NOM D'UTILISATEUR";

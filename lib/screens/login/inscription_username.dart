@@ -75,7 +75,7 @@ class _InscriptionState extends State<Inscription> {
                     onPressed: () {
                       if (widget.nameTextController.text.isEmpty) {
                         Fluttertoast.showToast(
-                            msg: "Comment on t'appelle ?",
+                            msg: CustomString.noUsernameProvided,
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.TOP,
                             timeInSecForIosWeb: 1,
