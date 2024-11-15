@@ -46,6 +46,11 @@ class CustomString {
   static const yourLocation = "T'y es vers où le sang ?";
   static const yourBirthdate = "Ta date de naissance";
 
+  static const noUsernameProvided = "Comment on t'appelle ?";
+  static const usernameAlreadyTaken = "Ce nom d'utilisateur est déjà pris";
+  static const invalidUsernameLength =
+      "Le nom d'utilisateur doit contenir 3 à 10 caractères";
+
   static const yourUsernameCapital = "TON NOM D'UTILISATEUR";
   static const verificationCodeCapital = "CODE DE VÉRIFICATION";
   static const yourBirthdateCapital = "TA DATE DE NAISSANCE";
@@ -135,6 +140,11 @@ class CustomString {
 
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
+
+  static const maxLengthCFQ =
+      "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+  static const maxLengthTurn =
+      "Le nom du TURN ne peut pas dépasser 30 caractères";
 
   static const inviteesCapital = "INVITÉS";
   static const notInvited = "Vous n'êtes pas invité à cet événement";

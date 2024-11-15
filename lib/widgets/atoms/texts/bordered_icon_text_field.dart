@@ -14,6 +14,7 @@ class BorderedIconTextField extends StatelessWidget {
   final BorderRadius? borderRadius;
   final TextStyle? hintTextStyle;
   final Function(String)? onChanged;
+  final int? maxLength;
 
   const BorderedIconTextField(
       {super.key,
@@ -26,7 +27,8 @@ class BorderedIconTextField extends StatelessWidget {
       this.onTap,
       this.borderRadius,
       this.hintTextStyle,
-      this.onChanged});
+      this.onChanged,
+      this.maxLength});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,9 @@ class BorderedIconTextField extends StatelessWidget {
                 hintStyle: hintTextStyle ??
                     CustomTextStyle.body2.copyWith(color: CustomColor.grey),
                 border: InputBorder.none,
+                counterText: '',
               ),
+              maxLength: maxLength,
               style: CustomTextStyle.body1,
               maxLines: maxLines,
               readOnly: readOnly,

@@ -165,6 +165,12 @@ class CreateCfqViewModel extends ChangeNotifier
       return;
     }
 
+    if (whenController.text.length > 24) {
+      _errorMessage = CustomString.maxLengthCFQ;
+      notifyListeners();
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -601,6 +607,12 @@ class CreateCfqViewModel extends ChangeNotifier
     // Validate required fields
     if (whenController.text.isEmpty) {
       _errorMessage = CustomString.pleaseEnterWhen;
+      notifyListeners();
+      return;
+    }
+
+    if (whenController.text.length > 24) {
+      _errorMessage = "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
       notifyListeners();
       return;
     }

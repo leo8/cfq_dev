@@ -165,6 +165,13 @@ class CreateTurnViewModel extends ChangeNotifier
       notifyListeners();
       return;
     }
+
+    if (turnNameController.text.length > 30) {
+      _errorMessage = "Le nom du TURN ne peut pas dépasser 30 caractères";
+      notifyListeners();
+      return;
+    }
+
     // ... other validations ...
 
     _isLoading = true;
@@ -647,6 +654,12 @@ class CreateTurnViewModel extends ChangeNotifier
     // Validate required fields
     if (turnNameController.text.isEmpty) {
       _errorMessage = CustomString.pleaseEnterTurnName;
+      notifyListeners();
+      return;
+    }
+
+    if (turnNameController.text.length > 30) {
+      _errorMessage = CustomString.maxLengthTurn;
       notifyListeners();
       return;
     }
