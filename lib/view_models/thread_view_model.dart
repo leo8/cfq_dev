@@ -480,6 +480,7 @@ class ThreadViewModel extends ChangeNotifier {
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
       String channelId = data['channelId'] as String;
+      AppLogger.debug('channelId: $channelId');
 
       // Get organizer's notification channel ID
       DocumentSnapshot organizerSnapshot =
