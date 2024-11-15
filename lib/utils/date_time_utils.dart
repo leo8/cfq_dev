@@ -173,4 +173,37 @@ class DateTimeUtils {
       microseconds: -date.microsecond,
     ));
   }
+
+  static String formatMessageDateTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final sixDaysAgo = DateTime(now.year, now.month, now.day - 6);
+
+    String timeStr = '${_padZero(dateTime.hour)}:${_padZero(dateTime.minute)}';
+
+    if (dateTime.year == now.year &&
+        dateTime.month == now.month &&
+        dateTime.day == now.day) {
+      return "Aujourd'hui à $timeStr";
+    } else if (dateTime.year == yesterday.year &&
+        dateTime.month == yesterday.month &&
+        dateTime.day == yesterday.day) {
+      return "Hier à $timeStr";
+    } else if (dateTime.isAfter(sixDaysAgo)) {
+      final dayName = _getDayName(dateTime.weekday);
+      return "$dayName à $timeStr";
+    } else if (dateTime.year == now.year) {
+      return "${_padZero(dateTime.day)}/${_padZero(dateTime.month)} à $timeStr";
+    } else {
+      return "${_padZero(dateTime.day)}/${_padZero(dateTime.month)}/${dateTime.year} à $timeStr";
+    }
+  }
+
+  static bool shouldShowTimestamp(
+      DateTime? previousMessageTime, DateTime currentMessageTime) {
+    if (previousMessageTime == null) return true;
+
+    final difference = currentMessageTime.difference(previousMessageTime);
+    return difference.inMinutes >= 10;
+  }
 }

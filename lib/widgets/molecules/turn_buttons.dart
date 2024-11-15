@@ -55,29 +55,29 @@ class TurnButtons extends StatelessWidget {
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.saved.copyWith(color: CustomColor.yellow, size: 24)
-          : CustomIcon.saved.copyWith(size: 24),
+          ? CustomIcon.saveFull.copyWith(color: CustomColor.yellow, size: 24)
+          : CustomIcon.saveEmpty.copyWith(size: 24),
       onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(2),
     );
   }
 
   Widget _buildAttendingButton(BuildContext context, String attendingStatus) {
-    IconData iconData;
-    Color iconColor;
+    CustomIcon icon;
+    Color color;
 
     switch (attendingStatus) {
       case 'attending':
-        iconData = Icons.check;
-        iconColor = CustomColor.green;
+        icon = CustomIcon.attendingStatusYes;
+        color = CustomColor.green;
         break;
       case 'notSureAttending':
-        iconData = Icons.help_outline;
-        iconColor = CustomColor.yellow;
+        icon = CustomIcon.attendingStatusMaybe;
+        color = CustomColor.yellow;
         break;
       case 'notAttending':
-        iconData = Icons.close;
-        iconColor = CustomColor.red;
+        icon = CustomIcon.attendingStatusNo;
+        color = CustomColor.red;
         break;
       default:
         return _buildDefaultAttendingButton(context);
@@ -87,11 +87,7 @@ class TurnButtons extends StatelessWidget {
       onTap: () => _showAttendingOptions(context),
       child: Container(
         child: Center(
-          child: Icon(
-            iconData,
-            size: 30,
-            color: iconColor,
-          ),
+          child: icon.copyWith(size: 45, color: color),
         ),
       ),
     );
@@ -138,7 +134,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading: const Icon(Icons.check, color: CustomColor.green),
+                leading: CustomIcon.attendingStatusYes.copyWith(
+                  size: 30,
+                  color: CustomColor.green,
+                ),
                 title: const Text('Je suis là'),
                 onTap: () {
                   onAttendingPressed('attending');
@@ -148,8 +147,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading:
-                    const Icon(Icons.help_outline, color: CustomColor.yellow),
+                leading: CustomIcon.attendingStatusMaybe.copyWith(
+                  size: 30,
+                  color: CustomColor.yellow,
+                ),
                 title: const Text('Je sais pas'),
                 onTap: () {
                   onAttendingPressed('notSureAttending');
@@ -159,7 +160,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading: const Icon(Icons.close, color: CustomColor.red),
+                leading: CustomIcon.attendingStatusNo.copyWith(
+                  size: 30,
+                  color: CustomColor.red,
+                ),
                 title: const Text('Je peux pas'),
                 onTap: () {
                   onAttendingPressed('notAttending');

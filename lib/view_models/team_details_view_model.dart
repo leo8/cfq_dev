@@ -356,6 +356,24 @@ class TeamDetailsViewModel extends ChangeNotifier {
       final turnData = turnDoc.data()!;
       final userData = userDoc.data()!;
 
+      String channelId = turnData['channelId'] as String;
+
+      // If user is attending and conversation not in list, add it
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
+
       // Remove user from all lists first
       final List<String> attending =
           List<String>.from(turnData['attending'] ?? []);
@@ -434,10 +452,23 @@ class TeamDetailsViewModel extends ChangeNotifier {
       List<dynamic> followingUp = data['followingUp'] ?? [];
 
       bool isNowFollowing = !followingUp.contains(userId);
+      String channelId = data['channelId'] as String;
 
       if (isNowFollowing) {
         await addFollowUp(cfqId, userId);
         await _createFollowUpNotification(cfqId);
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       } else {
         await removeFollowUp(cfqId, userId);
       }

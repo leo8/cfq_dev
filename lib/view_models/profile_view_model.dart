@@ -634,6 +634,24 @@ class ProfileViewModel extends ChangeNotifier {
       notAttending.remove(_currentUser!.uid);
       notSureAttending.remove(_currentUser!.uid);
 
+      String channelId = turnData['channelId'] as String;
+
+      // If user is attending and conversation not in list, add it
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
+
       // Add user to appropriate list
       switch (status) {
         case 'attending':
@@ -786,12 +804,25 @@ class ProfileViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
 
       bool isNowFollowing = !followingUp.contains(userId);
 
       if (isNowFollowing) {
         await addFollowUp(cfqId, userId);
         await _createFollowUpNotification(cfqId);
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       } else {
         await removeFollowUp(cfqId, userId);
       }
@@ -1092,6 +1123,12 @@ class ProfileViewModel extends ChangeNotifier {
       _incomingRequestId = null;
 
       AppLogger.debug('Local state updated: isFriend=$_isFriend');
+
+      // Create notification for requester
+      await createAcceptedFriendRequestNotification(
+        requesterId: _user!.uid,
+      );
+
       notifyListeners(); // Trigger UI update immediately
 
       // Fetch latest data to ensure consistency
@@ -1125,6 +1162,49 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error denying friend request: $e');
       AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> createAcceptedFriendRequestNotification({
+    required String requesterId,
+  }) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the requester's notification channel ID
+      DocumentSnapshot requesterDoc =
+          await _firestore.collection('users').doc(requesterId).get();
+      String requesterNotificationChannelId = (requesterDoc.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.acceptedFriendRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'accepterId': _currentUser!.uid,
+          'accepterUsername': _currentUser!.username,
+          'accepterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification
+      await _firestore
+          .collection('notifications')
+          .doc(requesterNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(requesterId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error(
+          'Error creating accepted friend request notification: $e');
     }
   }
 }

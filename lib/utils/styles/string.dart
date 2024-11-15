@@ -11,6 +11,7 @@ class CustomString {
   static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const update = "Modifier";
   static const add = "Ajouter";
   static const create = "Créer";
   static const check = "Vérifier";
@@ -44,6 +45,11 @@ class CustomString {
   static const yourUsername = "Ton petit nom ?";
   static const yourLocation = "T'y es vers où le sang ?";
   static const yourBirthdate = "Ta date de naissance";
+
+  static const noUsernameProvided = "Comment on t'appelle ?";
+  static const usernameAlreadyTaken = "Ce nom d'utilisateur est déjà pris";
+  static const invalidUsernameLength =
+      "Le nom d'utilisateur doit contenir 3 à 10 caractères";
 
   static const yourUsernameCapital = "TON NOM D'UTILISATEUR";
   static const verificationCodeCapital = "CODE DE VÉRIFICATION";
@@ -135,7 +141,13 @@ class CustomString {
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
 
+  static const maxLengthCFQ =
+      "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+  static const maxLengthTurn =
+      "Le nom du TURN ne peut pas dépasser 30 caractères";
+
   static const inviteesCapital = "INVITÉS";
+  static const notInvited = "Vous n'êtes pas invité à cet événement";
 
   // Turns
   static const turnCapital = "TURN";
@@ -200,7 +212,7 @@ class CustomString {
   static const dinerMood = "Dîner";
   static const beforeMood = "Before";
   static const afterMood = "After";
-
+  static const concertMood = "Concert";
   // Success Messages
   static const successCreatingTeam = "Team créée avec succès !";
   static const successCreatingTurn = "Turn créé avec succès !";
@@ -280,4 +292,9 @@ class CustomString {
       'Tu crées des événements dans le passé toi ?';
   static const String invalidEndDate =
       'Il va vraiment durer moins de 5 minutes, ton événement ?';
+
+  static const String sureToLeave = 'Êtes-vous sûr de vouloir quitter ?';
+  static const String yourModificationsWillBeLost =
+      'Vos modifications seront perdues.';
+  static const String stay = 'Rester';
 }

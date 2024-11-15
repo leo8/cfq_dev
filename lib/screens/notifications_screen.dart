@@ -36,11 +36,11 @@ class NotificationsScreen extends StatelessWidget {
                   await viewModel.setLoadingState(true);
                   // First reset the unread count
                   await viewModel.resetUnreadCount();
-
-                  await viewModel.setLoadingState(false);
                   // Then navigate back
                   if (context.mounted) {
                     Navigator.of(context).pop();
+
+                    await viewModel.setLoadingState(false);
                   }
                 },
               ),
@@ -51,7 +51,7 @@ class NotificationsScreen extends StatelessWidget {
                   child: Text(
                     CustomString.notificationsCapital,
                     style: CustomTextStyle.body1.copyWith(
-                      fontSize: 32,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

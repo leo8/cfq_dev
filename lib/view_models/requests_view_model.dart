@@ -2,12 +2,33 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart';
 import '../utils/logger.dart';
+import '../models/notification.dart' as notificationModel;
+import '../models/user.dart' as model;
+import 'package:uuid/uuid.dart';
 
 class RequestsViewModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String currentUserId;
 
-  RequestsViewModel({required this.currentUserId});
+  model.User? _currentUser;
+  model.User? get currentUser => _currentUser;
+
+  RequestsViewModel({required this.currentUserId}) {
+    _initializeCurrentUser();
+  }
+
+  Future<void> _initializeCurrentUser() async {
+    try {
+      final userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (userDoc.exists) {
+        _currentUser = model.User.fromSnap(userDoc);
+        notifyListeners();
+      }
+    } catch (e) {
+      AppLogger.error('Error initializing current user: $e');
+    }
+  }
 
   Stream<List<Request>> get requestsStream {
     return _firestore
@@ -65,6 +86,14 @@ class RequestsViewModel extends ChangeNotifier {
         batch.update(_firestore.collection('users').doc(currentUserId), {
           'teams': FieldValue.arrayUnion([request.teamId])
         });
+
+        // Create notification for requester
+        await createAcceptedTeamRequestNotification(
+          requesterId: request.requesterId,
+          teamId: request.teamId ?? '',
+          teamName: request.teamName ?? '',
+          teamImageUrl: request.teamImageUrl ?? '',
+        );
       } else if (request.type == RequestType.friend) {
         // Add requester to current user's friends list
         batch.update(_firestore.collection('users').doc(currentUserId), {
@@ -75,6 +104,11 @@ class RequestsViewModel extends ChangeNotifier {
         batch.update(_firestore.collection('users').doc(request.requesterId), {
           'friends': FieldValue.arrayUnion([currentUserId])
         });
+
+        // Create notification for requester
+        await createAcceptedFriendRequestNotification(
+          requesterId: request.requesterId,
+        );
 
         // Update request status for requester
         final requesterDoc =
@@ -157,6 +191,97 @@ class RequestsViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error denying request: $e');
       rethrow;
+    }
+  }
+
+  Future<void> createAcceptedTeamRequestNotification({
+    required String requesterId,
+    required String teamId,
+    required String teamName,
+    required String teamImageUrl,
+  }) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the requester's notification channel ID
+      DocumentSnapshot requesterDoc =
+          await _firestore.collection('users').doc(requesterId).get();
+      String requesterNotificationChannelId = (requesterDoc.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.acceptedTeamRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'teamId': teamId,
+          'teamName': teamName,
+          'teamImageUrl': teamImageUrl,
+          'accepterId': _currentUser!.uid,
+          'accepterUsername': _currentUser!.username,
+          'accepterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification
+      await _firestore
+          .collection('notifications')
+          .doc(requesterNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(requesterId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error('Error creating accepted team request notification: $e');
+    }
+  }
+
+  Future<void> createAcceptedFriendRequestNotification({
+    required String requesterId,
+  }) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the requester's notification channel ID
+      DocumentSnapshot requesterDoc =
+          await _firestore.collection('users').doc(requesterId).get();
+      String requesterNotificationChannelId = (requesterDoc.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.acceptedFriendRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'accepterId': _currentUser!.uid,
+          'accepterUsername': _currentUser!.username,
+          'accepterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification
+      await _firestore
+          .collection('notifications')
+          .doc(requesterNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(requesterId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error(
+          'Error creating accepted friend request notification: $e');
     }
   }
 }

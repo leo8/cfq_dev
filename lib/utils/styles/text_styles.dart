@@ -41,13 +41,13 @@ class CustomTextStyle {
   );
 
   static TextStyle bigBody1 = GoogleFonts.inter(
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: FontWeight.bold,
     color: CustomColor.customWhite,
   );
 
   static TextStyle body1 = GoogleFonts.inter(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.normal,
     color: CustomColor.customWhite,
   );

@@ -11,6 +11,7 @@ import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/logger.dart';
 import '../../utils/utils.dart';
+import 'dart:async';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -54,31 +55,55 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     _loadInitialImage();
   }
 
+  Future<Uint8List?> _getImageFromUrl(String url) async {
+    if (url.isEmpty) return null;
+
+    int retryCount = 0;
+    const maxRetries = 3;
+
+    while (retryCount < maxRetries) {
+      try {
+        final response = await http.get(Uri.parse(url)).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw TimeoutException('Request timed out');
+          },
+        );
+
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        }
+        throw Exception('Failed to load image');
+      } catch (e) {
+        retryCount++;
+        if (retryCount == maxRetries) {
+          AppLogger.error('Error loading image after $maxRetries attempts: $e');
+          return null;
+        }
+        // Wait before retrying
+        await Future.delayed(Duration(seconds: retryCount));
+      }
+    }
+    return null;
+  }
+
   Future<void> _loadInitialImage() async {
+    if (!mounted) return;
+
     try {
+      setState(() => _isImageLoading = true);
       final image = await _getImageFromUrl(widget.initialProfilePictureUrl);
+      if (!mounted) return;
+
       setState(() {
         _selectedImage = image;
         _isImageLoading = false;
       });
     } catch (e) {
       AppLogger.error('Error loading initial image: $e');
-      setState(() {
-        _isImageLoading = false;
-      });
+      if (!mounted) return;
+      setState(() => _isImageLoading = false);
     }
-  }
-
-  Future<Uint8List?> _getImageFromUrl(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      }
-    } catch (e) {
-      AppLogger.error('Error fetching image: $e');
-    }
-    return null;
   }
 
   @override
@@ -140,8 +165,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
           Center(
             child: Text(
               CustomString.myProfileCapital,
-              style: CustomTextStyle.body1
-                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+              style: CustomTextStyle.body1.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           const SizedBox(height: 25),

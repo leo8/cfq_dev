@@ -46,7 +46,7 @@ class CFQDetails extends StatelessWidget {
           RichText(
             text: TextSpan(
               style: CustomTextStyle.hugeTitle.copyWith(
-                fontSize: 28,
+                fontSize: 26,
                 letterSpacing: 1.4,
               ),
               children: [
@@ -120,7 +120,10 @@ class CFQDetails extends StatelessWidget {
           ),
         ),
         isExpanded ? const SizedBox(height: 30) : const SizedBox(height: 25),
-        Text(location, style: CustomTextStyle.body1),
+        Text(
+          location,
+          style: CustomTextStyle.body1.copyWith(fontSize: 12),
+        ),
         isExpanded ? const SizedBox(height: 25) : const SizedBox(height: 20),
         if (description.isNotEmpty)
           Text(

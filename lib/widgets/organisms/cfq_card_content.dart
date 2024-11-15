@@ -10,6 +10,9 @@ import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
 import '../../screens/expanded_card_screen.dart';
 import '../../utils/logger.dart';
+import '../../screens/create_cfq_screen.dart';
+import '../../models/cfq_event_model.dart';
+import '../../widgets/atoms/buttons/custom_button.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -37,6 +40,8 @@ class CFQCardContent extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback? onClose;
   final Stream<int>? followersCountStream;
+  final bool showEditButton;
+  final VoidCallback? onEditPressed;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -64,6 +69,8 @@ class CFQCardContent extends StatelessWidget {
     this.isExpanded = false,
     this.onClose,
     this.followersCountStream,
+    this.showEditButton = false,
+    this.onEditPressed,
     super.key,
   });
 
@@ -142,7 +149,7 @@ class CFQCardContent extends StatelessWidget {
                                       Text(
                                         '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
                                         style: CustomTextStyle.body1
-                                            .copyWith(fontSize: 18),
+                                            .copyWith(fontSize: 16),
                                       ),
                                     ],
                                   ),
@@ -178,6 +185,47 @@ class CFQCardContent extends StatelessWidget {
                           followersCountStream: followersCountStream,
                         ),
                       ),
+                      if (currentUserId == organizerId && isExpanded)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: CustomButton(
+                            label: 'Modifier',
+                            onTap: () async {
+                              final wasUpdated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CreateCfqScreen(
+                                    isEditing: true,
+                                    cfqToEdit: Cfq(
+                                      when: when,
+                                      description: description,
+                                      moods: moods,
+                                      uid: organizerId,
+                                      username: username,
+                                      eventId: cfqId,
+                                      datePublished: datePublished,
+                                      imageUrl: cfqImageUrl,
+                                      profilePictureUrl: profilePictureUrl,
+                                      where: location,
+                                      organizers: organizers,
+                                      invitees: [], // We'll fetch this in the view model
+                                      teamInvitees: [], // We'll fetch this in the view model
+                                      channelId:
+                                          '', // We'll fetch this in the view model
+                                      followingUp: followingUp,
+                                      eventDateTime:
+                                          null, // We'll fetch this in the view model
+                                    ),
+                                  ),
+                                ),
+                              );
+
+                              if (wasUpdated == true && isExpanded) {
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          ),
+                        ),
                     ],
                   ),
                 ),

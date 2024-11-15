@@ -26,6 +26,7 @@ class TurnForm extends StatelessWidget {
   final model.User currentUser;
   final TextEditingController inviteesController;
   final VoidCallback openInviteesSelectorScreen;
+  final String submitButtonLabel;
 
   const TurnForm({
     super.key,
@@ -44,6 +45,7 @@ class TurnForm extends StatelessWidget {
     required this.currentUser,
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
+    this.submitButtonLabel = CustomString.create,
   });
 
   @override
@@ -55,7 +57,7 @@ class TurnForm extends StatelessWidget {
           Center(
             child: Text(
               CustomString.turnCapital,
-              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
+              style: CustomTextStyle.title1,
             ),
           ),
           const SizedBox(height: 15),
@@ -73,6 +75,7 @@ class TurnForm extends StatelessWidget {
             icon: CustomIcon.eventTitle,
             controller: nameController,
             hintText: CustomString.eventTitle,
+            maxLength: 30,
           ),
           const SizedBox(height: 15),
           BorderedIconTextField(
@@ -119,7 +122,7 @@ class TurnForm extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           CustomButton(
-            label: CustomString.create,
+            label: submitButtonLabel,
             onTap: isLoading ? () {} : onSubmit,
           ),
         ],

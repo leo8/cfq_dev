@@ -8,12 +8,14 @@ class CfqBorderedIconTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final Function(String)? onChanged;
+  final int? maxLength;
 
   const CfqBorderedIconTextField({
     super.key,
     required this.controller,
     required this.hintText,
     this.onChanged,
+    this.maxLength,
   });
 
   @override
@@ -108,15 +110,17 @@ class _CfqBorderedIconTextFieldState extends State<CfqBorderedIconTextField> {
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                    counterText: '',
                   ),
                   style: CustomTextStyle.body1,
                   onChanged: (value) {
                     widget.onChanged?.call(value);
                     _updateTextSize();
                   },
+                  maxLength: widget.maxLength,
                 ),
                 Positioned(
-                  left: (_textSize?.width ?? _hintTextSize?.width ?? 0) + 8,
+                  left: (_textSize?.width ?? _hintTextSize?.width ?? 0) + 15,
                   top: 8,
                   child: SizedBox(
                     height: 22,

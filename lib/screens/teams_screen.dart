@@ -40,8 +40,7 @@ class TeamsScreen extends StatelessWidget {
                           Center(
                             child: Text(
                               CustomString.myTeamsCapital,
-                              style: CustomTextStyle.hugeTitle
-                                  .copyWith(fontSize: 32),
+                              style: CustomTextStyle.title1,
                             ),
                           ),
                           const SizedBox(height: 15),
