@@ -191,6 +191,18 @@ class CreateCfqViewModel extends ChangeNotifier
         cfqToEdit!.eventId,
       );
 
+      // Update conversation if channelId exists
+      String? channelId = data['channelId'] ?? cfqToEdit!.channelId;
+      if (channelId != null) {
+        await FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(channelId)
+            .update({
+          'name': 'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
+          'imageUrl': cfqImageUrl,
+        });
+      }
+
       Cfq updatedCfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),

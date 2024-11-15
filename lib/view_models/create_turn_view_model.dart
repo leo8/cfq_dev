@@ -202,6 +202,18 @@ class CreateTurnViewModel extends ChangeNotifier
         turnImageUrl,
       );
 
+      // Update conversation if channelId exists
+      String? channelId = data['channelId'] ?? turnToEdit!.channelId;
+      if (channelId != null) {
+        await FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(channelId)
+            .update({
+          'name': turnNameController.text.trim(),
+          'imageUrl': turnImageUrl,
+        });
+      }
+
       // Update turn object
       Turn updatedTurn = Turn(
         name: turnNameController.text.trim(),
