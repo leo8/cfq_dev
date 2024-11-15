@@ -64,16 +64,20 @@ class TurnButtons extends StatelessWidget {
 
   Widget _buildAttendingButton(BuildContext context, String attendingStatus) {
     CustomIcon icon;
+    Color color;
 
     switch (attendingStatus) {
       case 'attending':
         icon = CustomIcon.attendingStatusYes;
+        color = CustomColor.green;
         break;
       case 'notSureAttending':
         icon = CustomIcon.attendingStatusMaybe;
+        color = CustomColor.yellow;
         break;
       case 'notAttending':
         icon = CustomIcon.attendingStatusNo;
+        color = CustomColor.red;
         break;
       default:
         return _buildDefaultAttendingButton(context);
@@ -83,10 +87,7 @@ class TurnButtons extends StatelessWidget {
       onTap: () => _showAttendingOptions(context),
       child: Container(
         child: Center(
-          child: icon.copyWith(
-            size: 30,
-            color: CustomColor.customWhite,
-          ),
+          child: icon.copyWith(size: 30, color: color),
         ),
       ),
     );
@@ -133,7 +134,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading: const Icon(Icons.check, color: CustomColor.green),
+                leading: CustomIcon.attendingStatusYes.copyWith(
+                  size: 30,
+                  color: CustomColor.green,
+                ),
                 title: const Text('Je suis là'),
                 onTap: () {
                   onAttendingPressed('attending');
@@ -143,8 +147,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading:
-                    const Icon(Icons.help_outline, color: CustomColor.yellow),
+                leading: CustomIcon.attendingStatusMaybe.copyWith(
+                  size: 30,
+                  color: CustomColor.yellow,
+                ),
                 title: const Text('Je sais pas'),
                 onTap: () {
                   onAttendingPressed('notSureAttending');
@@ -154,7 +160,10 @@ class TurnButtons extends StatelessWidget {
               const Divider(),
               ListTile(
                 minTileHeight: 45,
-                leading: const Icon(Icons.close, color: CustomColor.red),
+                leading: CustomIcon.attendingStatusNo.copyWith(
+                  size: 30,
+                  color: CustomColor.red,
+                ),
                 title: const Text('Je peux pas'),
                 onTap: () {
                   onAttendingPressed('notAttending');
