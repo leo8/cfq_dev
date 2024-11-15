@@ -36,7 +36,7 @@ class RequestsScreen extends StatelessWidget {
             child: Text(
               CustomString.requestsCapital,
               style: CustomTextStyle.body1.copyWith(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),

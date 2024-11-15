@@ -165,8 +165,10 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
           Center(
             child: Text(
               CustomString.myProfileCapital,
-              style: CustomTextStyle.body1
-                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+              style: CustomTextStyle.body1.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           const SizedBox(height: 25),

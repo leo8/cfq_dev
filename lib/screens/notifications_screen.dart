@@ -51,7 +51,7 @@ class NotificationsScreen extends StatelessWidget {
                   child: Text(
                     CustomString.notificationsCapital,
                     style: CustomTextStyle.body1.copyWith(
-                      fontSize: 32,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

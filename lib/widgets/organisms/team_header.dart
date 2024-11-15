@@ -15,7 +15,7 @@ class TeamHeader extends StatelessWidget {
       children: [
         CustomText(
           text: team.name,
-          textStyle: CustomTextStyle.title1.copyWith(fontSize: 32),
+          textStyle: CustomTextStyle.title1,
         ),
         const SizedBox(
           height: 20,

@@ -86,7 +86,7 @@ class CfqForm extends StatelessWidget {
           Center(
             child: Text(
               CustomString.cfqCapital,
-              style: CustomTextStyle.hugeTitle.copyWith(fontSize: 32),
+              style: CustomTextStyle.title1,
             ),
           ),
           const SizedBox(height: 15),
