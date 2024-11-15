@@ -86,7 +86,7 @@ class _InscriptionState extends State<Inscription> {
                         if (userNameIsAlreadyTaken(
                             widget.nameTextController.text)) {
                           Fluttertoast.showToast(
-                              msg: "Cet username est déjà pris",
+                              msg: CustomString.usernameAlreadyTaken,
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.TOP,
                               timeInSecForIosWeb: 1,
