@@ -23,6 +23,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
   bool _isFavorite = false;
   bool _isFollowingUp = false;
   int _followersCount = 0;
+  bool _disposed = false;
 
   ExpandedCardViewModel({
     required this.eventId,
@@ -44,13 +45,20 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    // Cancel all stream subscriptions
+    _disposed = true;
     _cfqStreamController?.close();
     _attendingCountStreamController?.close();
     _attendingStatusStreamController?.close();
     _isFollowingUpStreamController?.close();
     _followersCountStreamController?.close();
     super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 
   bool get isFavorite => _isFavorite;
@@ -172,6 +180,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> updateAttendingStatus(String status) async {
+    if (_disposed) return;
+
     try {
       final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(eventId);
@@ -199,17 +209,19 @@ class ExpandedCardViewModel extends ChangeNotifier {
       notAttending.remove(currentUserId);
       notSureAttending.remove(currentUserId);
 
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(currentUserId);
-          break;
-        case 'notAttending':
-          notAttending.add(currentUserId);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(currentUserId);
-          break;
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(currentUserId);
+            break;
+          case 'notAttending':
+            notAttending.add(currentUserId);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(currentUserId);
+            break;
+        }
       }
 
       // Update turn document
@@ -222,10 +234,16 @@ class ExpandedCardViewModel extends ChangeNotifier {
       // Update user's attending status
       Map<String, dynamic> attendingStatus =
           Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[eventId] = status;
+      if (status == 'notAnswered') {
+        attendingStatus.remove(eventId);
+      } else {
+        attendingStatus[eventId] = status;
+      }
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
+
+      if (_disposed) return;
 
       // Create notification if attending
       if (status == 'attending') {
@@ -234,7 +252,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('Error updating attending status: $e');
+      if (!_disposed) {
+        AppLogger.error('Error updating attending status: $e');
+      }
     }
   }
 
@@ -255,18 +275,17 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
   Future<void> _createFollowUpNotification(String cfqId) async {
     try {
-      // Get the CFQ document to get the organizer's ID and name
+      // Get the CFQ document to get the organizer's ID and following users
       DocumentSnapshot cfqSnapshot =
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
-      String organizerId = cfqData['uid'] as String;
-      String cfqName = cfqData['cfqName'] as String;
+      List<String> followingUsers =
+          List<String>.from(cfqData['followingUp'] ?? []);
 
-      // Get the organizer's notification channel ID
-      DocumentSnapshot organizerSnapshot =
-          await _firestore.collection('users').doc(organizerId).get();
-      String organizerNotificationChannelId = (organizerSnapshot.data()
-          as Map<String, dynamic>)['notificationsChannelId'];
+      // Remove current user from notification recipients
+      followingUsers.remove(currentUserId);
+
+      if (followingUsers.isEmpty) return;
 
       // Get current user data
       DocumentSnapshot currentUserSnapshot =
@@ -274,30 +293,52 @@ class ExpandedCardViewModel extends ChangeNotifier {
       Map<String, dynamic> currentUserData =
           currentUserSnapshot.data() as Map<String, dynamic>;
 
+      // Create the base notification object
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
         'type': model.NotificationType.followUp.toString().split('.').last,
         'content': {
           'cfqId': cfqId,
-          'cfqName': cfqName,
+          'cfqName': cfqData['cfqName'] as String,
           'followerId': currentUserId,
           'followerUsername': currentUserData['username'],
           'followerProfilePictureUrl': currentUserData['profilePictureUrl'],
         },
       };
 
-      // Add notification to organizer's notification channel
-      await _firestore
-          .collection('notifications')
-          .doc(organizerNotificationChannelId)
-          .collection('userNotifications')
-          .add(notification);
+      // Create a batch for all operations
+      WriteBatch batch = _firestore.batch();
 
-      // Increment unread notifications count for the organizer
-      await _firestore.collection('users').doc(organizerId).update({
-        'unreadNotificationsCount': FieldValue.increment(1),
-      });
+      // Get all following users' notification channels and create notifications
+      QuerySnapshot userDocs = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: followingUsers)
+          .get();
+
+      for (DocumentSnapshot userDoc in userDocs.docs) {
+        String notificationChannelId =
+            (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
+
+        // Add notification to user's notification channel
+        DocumentReference notificationRef = _firestore
+            .collection('notifications')
+            .doc(notificationChannelId)
+            .collection('userNotifications')
+            .doc();
+
+        batch.set(notificationRef, notification);
+
+        // Increment unread notifications count
+        DocumentReference userRef =
+            _firestore.collection('users').doc(userDoc.id);
+        batch.update(userRef, {
+          'unreadNotificationsCount': FieldValue.increment(1),
+        });
+      }
+
+      // Commit all operations
+      await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
     }

@@ -344,7 +344,7 @@ class TeamDetailsViewModel extends ChangeNotifier {
     try {
       final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(turnId);
-      final userRef = _firestore.collection('users').doc(currentUser!.uid);
+      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
 
       final turnDoc = await turnRef.get();
       final userDoc = await userRef.get();
@@ -356,24 +356,6 @@ class TeamDetailsViewModel extends ChangeNotifier {
       final turnData = turnDoc.data()!;
       final userData = userDoc.data()!;
 
-      String channelId = turnData['channelId'] as String;
-
-      // If user is attending and conversation not in list, add it
-      if (status == 'attending') {
-        bool hasConversation =
-            await _conversationService.isConversationInUserList(
-          _currentUser!.uid,
-          channelId,
-        );
-
-        if (!hasConversation) {
-          await _conversationService.addConversationToUser(
-            _currentUser!.uid,
-            channelId,
-          );
-        }
-      }
-
       // Remove user from all lists first
       final List<String> attending =
           List<String>.from(turnData['attending'] ?? []);
@@ -382,21 +364,23 @@ class TeamDetailsViewModel extends ChangeNotifier {
       final List<String> notSureAttending =
           List<String>.from(turnData['notSureAttending'] ?? []);
 
-      attending.remove(currentUser!.uid);
-      notAttending.remove(currentUser!.uid);
-      notSureAttending.remove(currentUser!.uid);
+      attending.remove(_currentUser!.uid);
+      notAttending.remove(_currentUser!.uid);
+      notSureAttending.remove(_currentUser!.uid);
 
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(currentUser!.uid);
-          break;
-        case 'notAttending':
-          notAttending.add(currentUser!.uid);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(currentUser!.uid);
-          break;
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(_currentUser!.uid);
+            break;
+          case 'notAttending':
+            notAttending.add(_currentUser!.uid);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(_currentUser!.uid);
+            break;
+        }
       }
 
       // Update turn document
@@ -409,7 +393,11 @@ class TeamDetailsViewModel extends ChangeNotifier {
       // Update user's attending status
       Map<String, dynamic> attendingStatus =
           Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[turnId] = status;
+      if (status == 'notAnswered') {
+        attendingStatus.remove(turnId);
+      } else {
+        attendingStatus[turnId] = status;
+      }
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
@@ -548,43 +536,64 @@ class TeamDetailsViewModel extends ChangeNotifier {
     try {
       if (_currentUser == null) return;
 
-      // Get the CFQ document to get the organizer's ID and name
+      // Get the CFQ document to get the organizer's ID and following users
       DocumentSnapshot cfqSnapshot =
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
-      String organizerId = cfqData['uid'] as String;
-      String cfqName = cfqData['cfqName'] as String;
+      List<String> followingUsers =
+          List<String>.from(cfqData['followingUp'] ?? []);
 
-      // Get the organizer's notification channel ID
-      DocumentSnapshot organizerSnapshot =
-          await _firestore.collection('users').doc(organizerId).get();
-      String organizerNotificationChannelId = (organizerSnapshot.data()
-          as Map<String, dynamic>)['notificationsChannelId'];
+      // Remove current user from notification recipients
+      followingUsers.remove(_currentUser!.uid);
 
+      if (followingUsers.isEmpty) return;
+
+      // Create the base notification object
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
         'type': model.NotificationType.followUp.toString().split('.').last,
         'content': {
           'cfqId': cfqId,
-          'cfqName': cfqName,
+          'cfqName': cfqData['cfqName'] as String,
           'followerId': _currentUser!.uid,
           'followerUsername': _currentUser!.username,
           'followerProfilePictureUrl': _currentUser!.profilePictureUrl,
         },
       };
 
-      // Add notification to organizer's notification channel
-      await _firestore
-          .collection('notifications')
-          .doc(organizerNotificationChannelId)
-          .collection('userNotifications')
-          .add(notification);
+      // Create a batch for all operations
+      WriteBatch batch = _firestore.batch();
 
-      // Increment unread notifications count for the organizer
-      await _firestore.collection('users').doc(organizerId).update({
-        'unreadNotificationsCount': FieldValue.increment(1),
-      });
+      // Get all following users' notification channels and create notifications
+      QuerySnapshot userDocs = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: followingUsers)
+          .get();
+
+      for (DocumentSnapshot userDoc in userDocs.docs) {
+        String notificationChannelId =
+            (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
+
+        // Add notification to user's notification channel
+        DocumentReference notificationRef = _firestore
+            .collection('notifications')
+            .doc(notificationChannelId)
+            .collection('userNotifications')
+            .doc();
+
+        batch.set(notificationRef, notification);
+
+        // Increment unread notifications count
+        DocumentReference userRef =
+            _firestore.collection('users').doc(userDoc.id);
+        batch.update(userRef, {
+          'unreadNotificationsCount': FieldValue.increment(1),
+        });
+      }
+
+      // Commit all operations
+      await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
     }

@@ -50,11 +50,11 @@ class CustomColor {
   static const white = Colors.white;
   static const black = Colors.black;
   static const grey = Colors.grey;
-  static const green = Colors.green;
-  static const red = Colors.red;
+  static const green = Color.fromARGB(255, 78, 134, 14);
+  static const red = Color.fromARGB(255, 189, 28, 16);
   static const blue = Colors.blue;
   static const purple = Colors.purple;
-  static const yellow = Colors.yellow;
+  static const yellow = Color.fromARGB(255, 178, 163, 28);
 
   //Variants
 
