@@ -660,6 +660,14 @@ class CreateCfqViewModel extends ChangeNotifier
         followingUp: [currentUserId], // Initialize with the organizer
       );
 
+      // Notify invitees
+      await _createEventInvitationNotifications(
+        inviteeUids,
+        cfqId,
+        'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
+        cfqImageUrl ?? '',
+      );
+
       // Create conversation first
       await _conversationService.createConversation(
         channelId,
