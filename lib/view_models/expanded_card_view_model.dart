@@ -244,9 +244,10 @@ class ExpandedCardViewModel extends ChangeNotifier {
       await batch.commit();
 
       if (_disposed) return;
+      final organizerId = turnData['uid'] as String;
 
       // Create notification if attending
-      if (status == 'attending') {
+      if (status == 'attending' && organizerId != currentUserId) {
         await _createAttendingNotification(eventId);
       }
 

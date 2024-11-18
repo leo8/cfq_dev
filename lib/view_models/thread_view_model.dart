@@ -644,9 +644,10 @@ class ThreadViewModel extends ChangeNotifier {
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
+      final organizerId = turnData['uid'] as String;
 
       // Create notification if attending
-      if (status == 'attending') {
+      if (status == 'attending' && organizerId != _currentUser!.uid) {
         await _createAttendingNotification(turnId);
       }
 
