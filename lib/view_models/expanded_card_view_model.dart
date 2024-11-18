@@ -444,4 +444,68 @@ class ExpandedCardViewModel extends ChangeNotifier {
       return (data['followingUp'] as List?)?.length ?? 0;
     });
   }
+
+  Future<void> deleteTurn() async {
+    if (!isTurn) return;
+
+    try {
+      // Get turn data before deletion
+      final turnDoc = await _firestore.collection('turns').doc(eventId).get();
+      if (!turnDoc.exists) {
+        throw Exception('Turn document does not exist');
+      }
+
+      final turnData = turnDoc.data()!;
+      final String? channelId = turnData['channelId'];
+      final List<String> invitees =
+          List<String>.from(turnData['invitees'] ?? []);
+      final List<String> teamInvitees =
+          List<String>.from(turnData['teamInvitees'] ?? []);
+
+      // Start a batch write
+      WriteBatch batch = _firestore.batch();
+
+      // 1. Delete the turn document
+      batch.delete(_firestore.collection('turns').doc(eventId));
+
+      // 2. Delete the associated conversation if it exists
+      if (channelId != null) {
+        batch.delete(_firestore.collection('conversations').doc(channelId));
+      }
+
+      // 3. Remove turnId from organizer's postedTurns
+      batch.update(
+        _firestore.collection('users').doc(currentUserId),
+        {
+          'postedTurns': FieldValue.arrayRemove([eventId])
+        },
+      );
+
+      // 4. Remove turnId from all invited users' invitedTurns and attendingStatus
+      for (String userId in invitees) {
+        DocumentReference userRef = _firestore.collection('users').doc(userId);
+        batch.update(userRef, {
+          'invitedTurns': FieldValue.arrayRemove([eventId]),
+          'attendingStatus.$eventId': FieldValue.delete(),
+        });
+      }
+
+      // 5. Remove turnId from all invited teams' invitedTurns
+      for (String teamId in teamInvitees) {
+        DocumentReference teamRef = _firestore.collection('teams').doc(teamId);
+        batch.update(teamRef, {
+          'invitedTurns': FieldValue.arrayRemove([eventId]),
+        });
+      }
+
+      // Commit all the batch operations
+      await batch.commit();
+
+      // Update UserProvider to refresh the UI
+      UserProvider().refreshUser();
+    } catch (e) {
+      AppLogger.error('Error deleting turn: $e');
+      rethrow;
+    }
+  }
 }
