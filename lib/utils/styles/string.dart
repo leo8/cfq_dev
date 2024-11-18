@@ -99,6 +99,9 @@ class CustomString {
   static const addFriend = "Ajouter";
   static const removeFriend = "Retirer";
 
+  // Map
+  static const upcomingFeatureCapital = "UPCOMING FEATURE";
+
   // Teams
   static const team = "Team";
   static const myTeams = "Mes teams";
