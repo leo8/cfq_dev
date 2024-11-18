@@ -23,6 +23,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
   bool _isFavorite = false;
   bool _isFollowingUp = false;
   int _followersCount = 0;
+  bool _disposed = false;
 
   ExpandedCardViewModel({
     required this.eventId,
@@ -44,13 +45,20 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    // Cancel all stream subscriptions
+    _disposed = true;
     _cfqStreamController?.close();
     _attendingCountStreamController?.close();
     _attendingStatusStreamController?.close();
     _isFollowingUpStreamController?.close();
     _followersCountStreamController?.close();
     super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 
   bool get isFavorite => _isFavorite;
@@ -172,6 +180,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
   }
 
   Future<void> updateAttendingStatus(String status) async {
+    if (_disposed) return;
+
     try {
       final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(eventId);
@@ -233,72 +243,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
       await batch.commit();
 
-      // Create notification if attending
-      if (status == 'attending') {
-        await _createAttendingNotification(eventId);
-      }
-
-      notifyListeners();
-    } catch (e) {
-      AppLogger.error('Error updating attending status: $e');
-    }
-  }
-/*
-  Future<void> updateAttendingStatus(String status) async {
-    try {
-      final batch = _firestore.batch();
-      final turnRef = _firestore.collection('turns').doc(eventId);
-      final userRef = _firestore.collection('users').doc(currentUserId);
-
-      final turnDoc = await turnRef.get();
-      final userDoc = await userRef.get();
-
-      if (!turnDoc.exists || !userDoc.exists) {
-        throw Exception('Turn or User document does not exist');
-      }
-
-      final turnData = turnDoc.data()!;
-      final userData = userDoc.data()!;
-
-      // Remove user from all lists first
-      final List<String> attending =
-          List<String>.from(turnData['attending'] ?? []);
-      final List<String> notAttending =
-          List<String>.from(turnData['notAttending'] ?? []);
-      final List<String> notSureAttending =
-          List<String>.from(turnData['notSureAttending'] ?? []);
-
-      attending.remove(currentUserId);
-      notAttending.remove(currentUserId);
-      notSureAttending.remove(currentUserId);
-
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(currentUserId);
-          break;
-        case 'notAttending':
-          notAttending.add(currentUserId);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(currentUserId);
-          break;
-      }
-
-      // Update turn document
-      batch.update(turnRef, {
-        'attending': attending,
-        'notAttending': notAttending,
-        'notSureAttending': notSureAttending,
-      });
-
-      // Update user's attending status
-      Map<String, dynamic> attendingStatus =
-          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[eventId] = status;
-      batch.update(userRef, {'attendingStatus': attendingStatus});
-
-      await batch.commit();
+      if (_disposed) return;
 
       // Create notification if attending
       if (status == 'attending') {
@@ -307,10 +252,11 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('Error updating attending status: $e');
+      if (!_disposed) {
+        AppLogger.error('Error updating attending status: $e');
+      }
     }
   }
-  */
 
   Stream<bool> get isFollowingUpStream {
     if (!isTurn) {
