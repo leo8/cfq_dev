@@ -86,6 +86,21 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
+        width: 70,
+        height: 70,
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: CustomColor.customBlack,
+          boxShadow: [
+            BoxShadow(
+              color: CustomColor.customBlack.withOpacity(0.5),
+              spreadRadius: 4,
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Center(
           child: icon.copyWith(size: 45, color: color),
         ),
@@ -133,10 +148,27 @@ class TurnButtons extends StatelessWidget {
               const Divider(height: 20, color: CustomColor.transparent),
               const Divider(),
               ListTile(
-                minTileHeight: 45,
-                leading: CustomIcon.attendingStatusYes.copyWith(
-                  size: 30,
-                  color: CustomColor.green,
+                minTileHeight: 60,
+                leading: Container(
+                  width: 70,
+                  height: 70,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColor.customBlack,
+                    boxShadow: [
+                      BoxShadow(
+                        color: CustomColor.customBlack.withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: CustomIcon.attendingStatusYes.copyWith(
+                    size: 30,
+                    color: CustomColor.green,
+                  ),
                 ),
                 title: const Text('Je suis là'),
                 onTap: () {
@@ -146,10 +178,27 @@ class TurnButtons extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                minTileHeight: 45,
-                leading: CustomIcon.attendingStatusMaybe.copyWith(
-                  size: 30,
-                  color: CustomColor.yellow,
+                minTileHeight: 60,
+                leading: Container(
+                  width: 70,
+                  height: 70,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColor.customBlack,
+                    boxShadow: [
+                      BoxShadow(
+                        color: CustomColor.customBlack.withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: CustomIcon.attendingStatusMaybe.copyWith(
+                    size: 30,
+                    color: CustomColor.yellow,
+                  ),
                 ),
                 title: const Text('Je sais pas'),
                 onTap: () {
@@ -159,10 +208,27 @@ class TurnButtons extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                minTileHeight: 45,
-                leading: CustomIcon.attendingStatusNo.copyWith(
-                  size: 30,
-                  color: CustomColor.red,
+                minTileHeight: 60,
+                leading: Container(
+                  width: 70,
+                  height: 70,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColor.customBlack,
+                    boxShadow: [
+                      BoxShadow(
+                        color: CustomColor.customBlack.withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: CustomIcon.attendingStatusNo.copyWith(
+                    size: 30,
+                    color: CustomColor.red,
+                  ),
                 ),
                 title: const Text('Je peux pas'),
                 onTap: () {
