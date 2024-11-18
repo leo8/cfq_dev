@@ -402,11 +402,20 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   Future<void> loadConversations() async {
-    _conversations =
-        await _conversationService.getUserConversations(currentUserUid);
-    _sortConversations();
-    _filteredConversations = _conversations;
-    notifyListeners();
+    try {
+      // Use the stream-based method instead of the direct fetch
+      _conversations = await _conversationService
+          .getUserConversationsStream(currentUserUid)
+          .first;
+      _sortConversations();
+      _filteredConversations = _conversations;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error loading conversations: $e');
+      _conversations = [];
+      _filteredConversations = [];
+      notifyListeners();
+    }
   }
 
   void _sortConversations() {
