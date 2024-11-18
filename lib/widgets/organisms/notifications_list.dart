@@ -477,6 +477,107 @@ class NotificationsList extends StatelessWidget {
     }
   }
 
+  Future<void> _handleNotificationTap(
+      BuildContext context, notificationModel.Notification notification) async {
+    try {
+      if (notification.type == notificationModel.NotificationType.teamRequest ||
+          notification.type ==
+              notificationModel.NotificationType.friendRequest) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RequestsScreen(
+              viewModel: RequestsViewModel(currentUserId: currentUserId),
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (notification.type ==
+              notificationModel.NotificationType.acceptedTeamRequest ||
+          notification.type ==
+              notificationModel.NotificationType.acceptedFriendRequest) {
+        final accepterId = notification.type ==
+                notificationModel.NotificationType.acceptedTeamRequest
+            ? (notification.content
+                    as notificationModel.AcceptedTeamRequestNotificationContent)
+                .accepterId
+            : (notification.content as notificationModel
+                    .AcceptedFriendRequestNotificationContent)
+                .accepterId;
+
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(userId: accepterId),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Handle event-related notifications
+      String? eventId;
+      bool? isTurn;
+
+      switch (notification.type) {
+        case notificationModel.NotificationType.followUp:
+          final content = notification.content
+              as notificationModel.FollowUpNotificationContent;
+          eventId = content.cfqId;
+          isTurn = false;
+          break;
+        case notificationModel.NotificationType.eventInvitation:
+          final content = notification.content
+              as notificationModel.EventInvitationNotificationContent;
+          eventId = content.eventId;
+          isTurn = content.isTurn;
+          break;
+        case notificationModel.NotificationType.attending:
+          final content = notification.content
+              as notificationModel.AttendingNotificationContent;
+          eventId = content.turnId;
+          isTurn = true;
+          break;
+        default:
+          throw Exception('Unsupported notification type');
+      }
+
+      if (eventId != null) {
+        final isStillInvited = await _isUserStillInvited(eventId!, isTurn!);
+        if (!isStillInvited) {
+          if (context.mounted) {
+            showSnackBar(CustomString.notInvited, context);
+          }
+          return;
+        }
+
+        final cardContent = await _buildCardContent(context, notification);
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExpandedCardScreen(
+                cardContent: cardContent,
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      AppLogger.error('Error handling notification tap: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error loading content'),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -521,98 +622,7 @@ class NotificationsList extends StatelessWidget {
                   child: NotificationCard(
                     notification: notification,
                     onTap: () async {
-                      try {
-                        if (notification.type ==
-                                notificationModel
-                                    .NotificationType.teamRequest ||
-                            notification.type ==
-                                notificationModel
-                                    .NotificationType.friendRequest) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RequestsScreen(
-                                viewModel: RequestsViewModel(
-                                  currentUserId: currentUserId,
-                                ),
-                              ),
-                            ),
-                          );
-                        } else if (notification.type ==
-                                notificationModel
-                                    .NotificationType.acceptedTeamRequest ||
-                            notification.type ==
-                                notificationModel
-                                    .NotificationType.acceptedFriendRequest) {
-                          final accepterId = notification.type ==
-                                  notificationModel
-                                      .NotificationType.acceptedTeamRequest
-                              ? (notification.content as notificationModel
-                                      .AcceptedTeamRequestNotificationContent)
-                                  .accepterId
-                              : (notification.content as notificationModel
-                                      .AcceptedFriendRequestNotificationContent)
-                                  .accepterId;
-
-                          if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
-                                  userId: accepterId,
-                                ),
-                              ),
-                            );
-                          }
-                        } else {
-                          final bool isTurn = notification.type ==
-                                  notificationModel
-                                      .NotificationType.eventInvitation &&
-                              (notification.content as notificationModel
-                                      .EventInvitationNotificationContent)
-                                  .isTurn;
-                          final String eventId = notification.type ==
-                                  notificationModel.NotificationType.followUp
-                              ? (notification.content as notificationModel
-                                      .FollowUpNotificationContent)
-                                  .cfqId
-                              : (notification.content as notificationModel
-                                      .EventInvitationNotificationContent)
-                                  .eventId;
-
-                          final isStillInvited =
-                              await _isUserStillInvited(eventId, isTurn);
-
-                          if (!isStillInvited) {
-                            if (context.mounted) {
-                              showSnackBar(CustomString.notInvited, context);
-                            }
-                            return;
-                          }
-
-                          final cardContent =
-                              await _buildCardContent(context, notification);
-                          if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ExpandedCardScreen(
-                                  cardContent: cardContent,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      } catch (e) {
-                        AppLogger.error('Error handling notification tap: $e');
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Error loading content'),
-                            ),
-                          );
-                        }
-                      }
+                      await _handleNotificationTap(context, notification);
                     },
                   ),
                 ),
