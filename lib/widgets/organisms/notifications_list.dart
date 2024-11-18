@@ -545,26 +545,24 @@ class NotificationsList extends StatelessWidget {
           throw Exception('Unsupported notification type');
       }
 
-      if (eventId != null) {
-        final isStillInvited = await _isUserStillInvited(eventId!, isTurn!);
-        if (!isStillInvited) {
-          if (context.mounted) {
-            showSnackBar(CustomString.notInvited, context);
-          }
-          return;
-        }
-
-        final cardContent = await _buildCardContent(context, notification);
+      final isStillInvited = await _isUserStillInvited(eventId, isTurn);
+      if (!isStillInvited) {
         if (context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExpandedCardScreen(
-                cardContent: cardContent,
-              ),
-            ),
-          );
+          showSnackBar(CustomString.notInvited, context);
         }
+        return;
+      }
+
+      final cardContent = await _buildCardContent(context, notification);
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExpandedCardScreen(
+              cardContent: cardContent,
+            ),
+          ),
+        );
       }
     } catch (e) {
       AppLogger.error('Error handling notification tap: $e');
