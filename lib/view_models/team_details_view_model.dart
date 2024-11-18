@@ -206,7 +206,9 @@ class TeamDetailsViewModel extends ChangeNotifier {
                 .snapshots()
                 .map((snapshot) {
                 AppLogger.debug("Fetched ${snapshot.docs.length} Team CFQs");
-                return snapshot.docs;
+                return snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList();
               });
 
         Stream<List<DocumentSnapshot>> turnsStream = teamInvitedTurns.isEmpty
@@ -217,7 +219,9 @@ class TeamDetailsViewModel extends ChangeNotifier {
                 .snapshots()
                 .map((snapshot) {
                 AppLogger.debug("Fetched ${snapshot.docs.length} Team Turns");
-                return snapshot.docs;
+                return snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList();
               });
 
         return Rx.combineLatest2(
@@ -401,9 +405,10 @@ class TeamDetailsViewModel extends ChangeNotifier {
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
+      final organizerId = turnData['uid'] as String;
 
       // Create notification if attending
-      if (status == 'attending') {
+      if (status == 'attending' && organizerId != _currentUser!.uid) {
         await _createAttendingNotification(turnId);
       }
 
@@ -643,6 +648,41 @@ class TeamDetailsViewModel extends ChangeNotifier {
       });
     } catch (e) {
       AppLogger.error('Error creating attending notification: $e');
+    }
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
     }
   }
 }
