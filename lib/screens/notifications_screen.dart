@@ -31,16 +31,12 @@ class NotificationsScreen extends StatelessWidget {
               leading: IconButton(
                 icon: CustomIcon.arrowBack,
                 onPressed: () async {
-                  final viewModel = Provider.of<NotificationsViewModel>(context,
-                      listen: false);
-                  await viewModel.setLoadingState(true);
-                  // First reset the unread count
+                  // First reset the unread count without showing loading state
                   await viewModel.resetUnreadCount();
-                  // Then navigate back
+
+                  // Only pop if the context is still mounted
                   if (context.mounted) {
                     Navigator.of(context).pop();
-
-                    await viewModel.setLoadingState(false);
                   }
                 },
               ),

@@ -130,7 +130,11 @@ class NotificationsList extends StatelessWidget {
           ? (userData['invitedTurns'] ?? [])
           : (userData['invitedCfqs'] ?? []));
 
-      return invitedEvents.contains(eventId);
+      final List<String> postedEvents = List<String>.from(isTurn
+          ? (userData['postedTurns'] ?? [])
+          : (userData['postedCfqs'] ?? []));
+
+      return invitedEvents.contains(eventId) || postedEvents.contains(eventId);
     } catch (e) {
       AppLogger.error('Error checking if user is still invited: $e');
       return false;
