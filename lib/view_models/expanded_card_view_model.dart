@@ -508,4 +508,67 @@ class ExpandedCardViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> deleteCfq() async {
+    if (isTurn) return;
+
+    try {
+      // Get CFQ data before deletion
+      final cfqDoc = await _firestore.collection('cfqs').doc(eventId).get();
+      if (!cfqDoc.exists) {
+        throw Exception('CFQ document does not exist');
+      }
+
+      final cfqData = cfqDoc.data()!;
+      final String? channelId = cfqData['channelId'];
+      final List<String> invitees =
+          List<String>.from(cfqData['invitees'] ?? []);
+      final List<String> teamInvitees =
+          List<String>.from(cfqData['teamInvitees'] ?? []);
+
+      // Start a batch write
+      WriteBatch batch = _firestore.batch();
+
+      // 1. Delete the CFQ document
+      batch.delete(_firestore.collection('cfqs').doc(eventId));
+
+      // 2. Delete the associated conversation if it exists
+      if (channelId != null) {
+        batch.delete(_firestore.collection('conversations').doc(channelId));
+      }
+
+      // 3. Remove cfqId from organizer's postedCfqs
+      batch.update(
+        _firestore.collection('users').doc(currentUserId),
+        {
+          'postedCfqs': FieldValue.arrayRemove([eventId])
+        },
+      );
+
+      // 4. Remove cfqId from all invited users' invitedCfqs
+      for (String userId in invitees) {
+        DocumentReference userRef = _firestore.collection('users').doc(userId);
+        batch.update(userRef, {
+          'invitedCfqs': FieldValue.arrayRemove([eventId]),
+        });
+      }
+
+      // 5. Remove cfqId from all invited teams' invitedCfqs
+      for (String teamId in teamInvitees) {
+        DocumentReference teamRef = _firestore.collection('teams').doc(teamId);
+        batch.update(teamRef, {
+          'invitedCfqs': FieldValue.arrayRemove([eventId]),
+        });
+      }
+
+      // Commit all the batch operations
+      await batch.commit();
+
+      // Update UserProvider to refresh the UI
+      UserProvider().refreshUser();
+    } catch (e) {
+      AppLogger.error('Error deleting CFQ: $e');
+      rethrow;
+    }
+  }
 }
