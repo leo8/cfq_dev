@@ -612,7 +612,7 @@ class CreateCfqViewModel extends ChangeNotifier
     }
 
     if (whenController.text.length > 24) {
-      _errorMessage = "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+      _errorMessage = CustomString.maxLengthCFQ;
       notifyListeners();
       return;
     }
@@ -639,14 +639,13 @@ class CreateCfqViewModel extends ChangeNotifier
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Create cfq object with the channelId
+      // Create CFQ object with the channelId and followingUp list initialized with the organizer
       Cfq cfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
         moods: _selectedMoods,
         uid: currentUserId,
         username: _currentUser!.username,
-        followingUp: [],
         eventId: cfqId,
         datePublished: DateTime.now(),
         eventDateTime: _selectedDateTime,
@@ -655,16 +654,10 @@ class CreateCfqViewModel extends ChangeNotifier
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
         organizers: [currentUserId],
-        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        invitees: inviteeUids,
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId,
-      );
-
-      await _createEventInvitationNotifications(
-        _selectedInvitees.map((user) => user.uid).toList(),
-        cfqId,
-        'ÇFQ ${whenController.text.toUpperCase()} ?',
-        cfqImageUrl ?? '',
+        followingUp: [currentUserId], // Initialize with the organizer
       );
 
       // Create conversation first
@@ -672,7 +665,7 @@ class CreateCfqViewModel extends ChangeNotifier
         channelId,
         'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
         cfqImageUrl ?? '',
-        [...inviteeUids, currentUserId], // Include all members
+        [...inviteeUids, currentUserId],
         currentUserId,
         _currentUser!.username,
         _currentUser!.profilePictureUrl,
