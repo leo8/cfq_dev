@@ -199,6 +199,79 @@ class ExpandedCardViewModel extends ChangeNotifier {
       notAttending.remove(currentUserId);
       notSureAttending.remove(currentUserId);
 
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(currentUserId);
+            break;
+          case 'notAttending':
+            notAttending.add(currentUserId);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(currentUserId);
+            break;
+        }
+      }
+
+      // Update turn document
+      batch.update(turnRef, {
+        'attending': attending,
+        'notAttending': notAttending,
+        'notSureAttending': notSureAttending,
+      });
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+      if (status == 'notAnswered') {
+        attendingStatus.remove(eventId);
+      } else {
+        attendingStatus[eventId] = status;
+      }
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
+
+      // Create notification if attending
+      if (status == 'attending') {
+        await _createAttendingNotification(eventId);
+      }
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating attending status: $e');
+    }
+  }
+/*
+  Future<void> updateAttendingStatus(String status) async {
+    try {
+      final batch = _firestore.batch();
+      final turnRef = _firestore.collection('turns').doc(eventId);
+      final userRef = _firestore.collection('users').doc(currentUserId);
+
+      final turnDoc = await turnRef.get();
+      final userDoc = await userRef.get();
+
+      if (!turnDoc.exists || !userDoc.exists) {
+        throw Exception('Turn or User document does not exist');
+      }
+
+      final turnData = turnDoc.data()!;
+      final userData = userDoc.data()!;
+
+      // Remove user from all lists first
+      final List<String> attending =
+          List<String>.from(turnData['attending'] ?? []);
+      final List<String> notAttending =
+          List<String>.from(turnData['notAttending'] ?? []);
+      final List<String> notSureAttending =
+          List<String>.from(turnData['notSureAttending'] ?? []);
+
+      attending.remove(currentUserId);
+      notAttending.remove(currentUserId);
+      notSureAttending.remove(currentUserId);
+
       // Add user to appropriate list
       switch (status) {
         case 'attending':
@@ -237,6 +310,7 @@ class ExpandedCardViewModel extends ChangeNotifier {
       AppLogger.error('Error updating attending status: $e');
     }
   }
+  */
 
   Stream<bool> get isFollowingUpStream {
     if (!isTurn) {

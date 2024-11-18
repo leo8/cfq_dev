@@ -634,35 +634,19 @@ class ProfileViewModel extends ChangeNotifier {
       notAttending.remove(_currentUser!.uid);
       notSureAttending.remove(_currentUser!.uid);
 
-      String channelId = turnData['channelId'] as String;
-
-      // If user is attending and conversation not in list, add it
-      if (status == 'attending') {
-        bool hasConversation =
-            await _conversationService.isConversationInUserList(
-          _currentUser!.uid,
-          channelId,
-        );
-
-        if (!hasConversation) {
-          await _conversationService.addConversationToUser(
-            _currentUser!.uid,
-            channelId,
-          );
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(_currentUser!.uid);
+            break;
+          case 'notAttending':
+            notAttending.add(_currentUser!.uid);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(_currentUser!.uid);
+            break;
         }
-      }
-
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(_currentUser!.uid);
-          break;
-        case 'notAttending':
-          notAttending.add(_currentUser!.uid);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(_currentUser!.uid);
-          break;
       }
 
       // Update turn document
@@ -675,7 +659,11 @@ class ProfileViewModel extends ChangeNotifier {
       // Update user's attending status
       Map<String, dynamic> attendingStatus =
           Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[turnId] = status;
+      if (status == 'notAnswered') {
+        attendingStatus.remove(turnId);
+      } else {
+        attendingStatus[turnId] = status;
+      }
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
