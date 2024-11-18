@@ -593,4 +593,65 @@ class FavoritesViewModel extends ChangeNotifier {
     _favoritesSubscription?.cancel();
     super.dispose();
   }
+
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  Stream<List<DocumentSnapshot>> fetchFavoriteEvents() {
+    try {
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .snapshots()
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final favorites = List<String>.from(userData['favorites'] ?? []);
+
+        if (favorites.isEmpty) {
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        // Split favorites into chunks of 30
+        final cfqChunks = _chunkList(favorites, 30);
+
+        // Create streams for each chunk
+        final eventStreams = cfqChunks.map((chunk) => chunk.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('cfqs')
+                .where(FieldPath.documentId, whereIn: chunk)
+                .snapshots()
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList()));
+
+        // Combine all streams
+        return Rx.combineLatest(eventStreams,
+            (List<List<DocumentSnapshot>> results) {
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+            return dateA.compareTo(dateB);
+          });
+          return allEvents;
+        });
+      });
+    } catch (error) {
+      AppLogger.error("Error in fetchFavoriteEvents: $error");
+      return Stream.value([]);
+    }
+  }
 }
