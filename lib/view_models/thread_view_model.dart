@@ -233,30 +233,31 @@ class ThreadViewModel extends ChangeNotifier {
         final invitedCfqs = List<String>.from(userData['invitedCfqs'] ?? []);
         final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-        AppLogger.debug(
-            "Invited CFQs: ${invitedCfqs.length}, Invited Turns: ${invitedTurns.length}");
+        // Split lists into chunks of 30 or less
+        final cfqChunks = _chunkList(invitedCfqs, 30);
+        final turnChunks = _chunkList(invitedTurns, 30);
 
-        // Stream for invited CFQs
-        Stream<List<DocumentSnapshot>> invitedCfqsStream = invitedCfqs.isEmpty
+        // Create streams for each chunk of CFQs
+        final cfqStreams = cfqChunks.map((chunk) => chunk.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('cfqs')
-                .where(FieldPath.documentId, whereIn: invitedCfqs)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
                 .map((snapshot) => snapshot.docs
                     .where((doc) => !isEventExpired(doc))
-                    .toList());
+                    .toList()));
 
-        // Stream for invited Turns
-        Stream<List<DocumentSnapshot>> invitedTurnsStream = invitedTurns.isEmpty
+        // Create streams for each chunk of Turns
+        final turnStreams = turnChunks.map((chunk) => chunk.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('turns')
-                .where(FieldPath.documentId, whereIn: invitedTurns)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
                 .map((snapshot) => snapshot.docs
                     .where((doc) => !isEventExpired(doc))
-                    .toList());
+                    .toList()));
 
         // Stream for CFQs where user is organizer
         Stream<List<DocumentSnapshot>> organizedCfqsStream = FirebaseFirestore
@@ -277,45 +278,25 @@ class ThreadViewModel extends ChangeNotifier {
                 snapshot.docs.where((doc) => !isEventExpired(doc)).toList());
 
         // Combine all streams
-        return Rx.combineLatest4(
-          invitedCfqsStream,
-          invitedTurnsStream,
+        return Rx.combineLatest([
+          ...cfqStreams,
+          ...turnStreams,
           organizedCfqsStream,
           organizedTurnsStream,
-          (List<DocumentSnapshot> invitedCfqs,
-              List<DocumentSnapshot> invitedTurns,
-              List<DocumentSnapshot> organizedCfqs,
-              List<DocumentSnapshot> organizedTurns) {
-            List<DocumentSnapshot> allEvents = [
-              ...invitedCfqs,
-              ...invitedTurns,
-              ...organizedCfqs,
-              ...organizedTurns
-            ];
+        ], (List<List<DocumentSnapshot>> results) {
+          // Flatten and deduplicate results
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+          allEvents = _deduplicateEvents(allEvents);
 
-            // Remove duplicates based on document ID
-            allEvents = allEvents.fold<List<DocumentSnapshot>>([],
-                (List<DocumentSnapshot> unique, DocumentSnapshot doc) {
-              if (!unique.any((uniqueDoc) => uniqueDoc.id == doc.id)) {
-                unique.add(doc);
-              }
-              return unique;
-            });
+          // Sort by published date
+          allEvents.sort((a, b) {
+            DateTime dateA = getPublishedDateTime(a);
+            DateTime dateB = getPublishedDateTime(b);
+            return dateB.compareTo(dateA);
+          });
 
-            AppLogger.debug(
-                "Combined events: ${allEvents.length} (${invitedCfqs.length} invited CFQs + ${invitedTurns.length} invited Turns + ${organizedCfqs.length} organized CFQs + ${organizedTurns.length} organized Turns)");
-
-            allEvents.sort((a, b) {
-              DateTime dateA = getPublishedDateTime(a);
-              DateTime dateB = getPublishedDateTime(b);
-              return dateB.compareTo(dateA);
-            });
-
-            AppLogger.debug(
-                "Events sorted. First event date: ${getEventDateTime(allEvents.first)}, Last event date: ${getEventDateTime(allEvents.last)}");
-            return allEvents;
-          },
-        );
+          return allEvents;
+        });
       });
     } catch (error) {
       AppLogger.error("Error in fetchCombinedEvents: $error");
@@ -803,5 +784,21 @@ class ThreadViewModel extends ChangeNotifier {
         return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
       }
     }
+  }
+
+  // Helper method to chunk a list into smaller lists
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  // Helper method to deduplicate events based on document ID
+  List<DocumentSnapshot> _deduplicateEvents(List<DocumentSnapshot> events) {
+    final seen = <String>{};
+    return events.where((doc) => seen.add(doc.id)).toList();
   }
 }
