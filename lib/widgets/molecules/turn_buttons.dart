@@ -145,6 +145,7 @@ class TurnButtons extends StatelessWidget {
       builder: (BuildContext context) {
         return StreamBuilder<String>(
           stream: attendingStatusStream,
+          initialData: attendingStatus,
           builder: (context, snapshot) {
             final currentStatus = snapshot.data ?? 'notAnswered';
             return StatefulBuilder(
