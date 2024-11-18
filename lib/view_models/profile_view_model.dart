@@ -412,6 +412,16 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
+  // Add this helper method at the class level
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
   /// Fetches both "turn" and "cfq" collections from Firestore for the user's posts,
   /// combines them into a single stream, and sorts them by date.
   Stream<List<DocumentSnapshot>> fetchUserPosts() {
@@ -440,41 +450,51 @@ class ProfileViewModel extends ChangeNotifier {
         final postedTurns = List<String>.from(userData['postedTurns'] ?? []);
 
         // Handle empty lists
-        Stream<List<DocumentSnapshot>> cfqsStream = postedCfqs.isEmpty
-            ? Stream.value(<DocumentSnapshot>[])
-            : FirebaseFirestore.instance
-                .collection('cfqs')
-                .where('uid', isEqualTo: userId)
-                .snapshots()
-                .map((snapshot) => snapshot.docs
-                    .where((doc) => !isEventExpired(doc))
-                    .toList());
+        if (postedCfqs.isEmpty && postedTurns.isEmpty) {
+          return Stream.value([]);
+        }
 
-        Stream<List<DocumentSnapshot>> turnsStream = postedTurns.isEmpty
+        // Create streams for CFQs in batches
+        final cfqStreams = _chunkList(postedCfqs, 30).map((chunk) =>
+            chunk.isEmpty
+                ? Stream.value(<DocumentSnapshot>[])
+                : FirebaseFirestore.instance
+                    .collection('cfqs')
+                    .where(FieldPath.documentId, whereIn: chunk)
+                    .snapshots()
+                    .map((snapshot) => snapshot.docs
+                        .where((doc) => !isEventExpired(doc))
+                        .toList()));
+
+        // Create streams for Turns in batches
+        final turnStreams = _chunkList(postedTurns, 30).map((chunk) => chunk
+                .isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('turns')
-                .where('uid', isEqualTo: userId)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
                 .map((snapshot) => snapshot.docs
                     .where((doc) => !isEventExpired(doc))
-                    .toList());
+                    .toList()));
 
-        return Rx.combineLatest2(
-          cfqsStream,
-          turnsStream,
-          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
-            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
-            allEvents.sort((a, b) {
-              DateTime dateA = parseDate(
-                  (a.data() as Map<String, dynamic>)['datePublished']);
-              DateTime dateB = parseDate(
-                  (b.data() as Map<String, dynamic>)['datePublished']);
-              return dateB.compareTo(dateA);
-            });
-            return allEvents;
-          },
-        );
+        // Combine all streams
+        return Rx.combineLatest([...cfqStreams, ...turnStreams],
+            (List<List<DocumentSnapshot>> results) {
+          // Flatten results
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+
+          // Sort by date
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['datePublished']);
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['datePublished']);
+            return dateB.compareTo(dateA);
+          });
+
+          return allEvents;
+        });
       });
     } catch (error) {
       AppLogger.error("Error in fetchUserPosts: $error");
@@ -484,57 +504,80 @@ class ProfileViewModel extends ChangeNotifier {
 
   Stream<List<DocumentSnapshot>> fetchAttendingEvents(String userId) {
     try {
-      final today = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      );
-
-      Stream<List<DocumentSnapshot>> turnsStream = FirebaseFirestore.instance
-          .collection('turns')
-          .where('attending', arrayContains: userId)
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
           .snapshots()
-          .map((snapshot) {
-        return snapshot.docs.where((doc) {
-          DateTime eventDate =
-              parseDate((doc.data() as Map<String, dynamic>)['eventDateTime']);
-          return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
-        }).toList();
-      });
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          AppLogger.warning("User document does not exist for uid: $userId");
+          return Stream.value(<DocumentSnapshot>[]);
+        }
 
-      Stream<List<DocumentSnapshot>> birthdaysStream =
-          userId == currentUser?.uid
-              ? fetchBirthdayEvents(userId)
-              : Stream.value([]);
-      AppLogger.debug(birthdaysStream.toString());
-      birthdaysStream = birthdaysStream.map((birthdays) {
-        return birthdays;
-      });
-      return Rx.combineLatest2(
-        turnsStream,
-        birthdaysStream,
-        (List<DocumentSnapshot> turns, List<DocumentSnapshot> birthdays) {
-          List<DocumentSnapshot> allEvents = [...turns, ...birthdays];
-          allEvents.sort((a, b) {
-            DateTime dateA =
-                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final invitedCfqs = List<String>.from(userData['invitedCfqs'] ?? []);
+        final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-            DateTime dateB =
-                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+        // Handle empty lists
+        if (invitedCfqs.isEmpty && invitedTurns.isEmpty) {
+          return Stream.value([]);
+        }
 
-            return dateA.compareTo(dateB);
-          });
+        // Create streams for CFQs in batches
+        final cfqStreams = _chunkList(invitedCfqs, 30).map((chunk) =>
+            chunk.isEmpty
+                ? Stream.value(<DocumentSnapshot>[])
+                : FirebaseFirestore.instance
+                    .collection('cfqs')
+                    .where(FieldPath.documentId, whereIn: chunk)
+                    .snapshots()
+                    .map((snapshot) => snapshot.docs
+                        .where((doc) => !isEventExpired(doc))
+                        .toList()));
 
-          for (var e in allEvents) {
-            final data = e.data() as Map<String, dynamic>;
-            final date = e.reference.parent.id == 'turns'
-                ? data['eventDateTime']
-                : data['birthDate'];
-            AppLogger.debug('Event date: $date');
-          }
+        // Create streams for Turns in batches
+        final turnStreams = _chunkList(invitedTurns, 30).map((chunk) =>
+            chunk.isEmpty
+                ? Stream.value(<DocumentSnapshot>[])
+                : FirebaseFirestore.instance
+                    .collection('turns')
+                    .where(FieldPath.documentId, whereIn: chunk)
+                    .snapshots()
+                    .map((snapshot) => snapshot.docs
+                        .where((doc) => !isEventExpired(doc))
+                        .toList()));
+
+        // Combine all event streams
+        Stream<List<DocumentSnapshot>> eventsStream =
+            Rx.combineLatest([...cfqStreams, ...turnStreams],
+                (List<List<DocumentSnapshot>> results) {
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
           return allEvents;
-        },
-      );
+        });
+
+        // Handle birthdays stream
+        Stream<List<DocumentSnapshot>> birthdaysStream =
+            userId == currentUser?.uid
+                ? fetchBirthdayEvents(userId)
+                : Stream.value([]);
+
+        // Combine events and birthdays streams
+        return Rx.combineLatest2(
+          eventsStream,
+          birthdaysStream,
+          (List<DocumentSnapshot> events, List<DocumentSnapshot> birthdays) {
+            List<DocumentSnapshot> allEvents = [...events, ...birthdays];
+            allEvents.sort((a, b) {
+              DateTime dateA = parseDate(
+                  (a.data() as Map<String, dynamic>)['eventDateTime']);
+              DateTime dateB = parseDate(
+                  (b.data() as Map<String, dynamic>)['eventDateTime']);
+              return dateA.compareTo(dateB);
+            });
+            return allEvents;
+          },
+        );
+      });
     } catch (error) {
       AppLogger.error("Error in fetchAttendingEvents: $error");
       return Stream.value([]);

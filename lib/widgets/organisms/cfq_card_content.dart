@@ -13,6 +13,8 @@ import '../../utils/logger.dart';
 import '../../screens/create_cfq_screen.dart';
 import '../../models/cfq_event_model.dart';
 import '../../widgets/atoms/buttons/custom_button.dart';
+import '../../view_models/expanded_card_view_model.dart';
+import 'package:provider/provider.dart';
 
 class CFQCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -186,45 +188,110 @@ class CFQCardContent extends StatelessWidget {
                         ),
                       ),
                       if (currentUserId == organizerId && isExpanded)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: CustomButton(
-                            label: 'Modifier',
-                            onTap: () async {
-                              final wasUpdated = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CreateCfqScreen(
-                                    isEditing: true,
-                                    cfqToEdit: Cfq(
-                                      when: when,
-                                      description: description,
-                                      moods: moods,
-                                      uid: organizerId,
-                                      username: username,
-                                      eventId: cfqId,
-                                      datePublished: datePublished,
-                                      imageUrl: cfqImageUrl,
-                                      profilePictureUrl: profilePictureUrl,
-                                      where: location,
-                                      organizers: organizers,
-                                      invitees: [], // We'll fetch this in the view model
-                                      teamInvitees: [], // We'll fetch this in the view model
-                                      channelId:
-                                          '', // We'll fetch this in the view model
-                                      followingUp: followingUp,
-                                      eventDateTime:
-                                          null, // We'll fetch this in the view model
+                        Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: CustomButton(
+                                label: 'Modifier',
+                                onTap: () async {
+                                  final wasUpdated = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CreateCfqScreen(
+                                        isEditing: true,
+                                        cfqToEdit: Cfq(
+                                          when: when,
+                                          description: description,
+                                          moods: moods,
+                                          uid: organizerId,
+                                          username: username,
+                                          eventId: cfqId,
+                                          datePublished: datePublished,
+                                          imageUrl: cfqImageUrl,
+                                          profilePictureUrl: profilePictureUrl,
+                                          where: location,
+                                          organizers: organizers,
+                                          invitees: [], // We'll fetch this in the view model
+                                          teamInvitees: [], // We'll fetch this in the view model
+                                          channelId:
+                                              '', // We'll fetch this in the view model
+                                          followingUp: followingUp,
+                                          eventDateTime:
+                                              null, // We'll fetch this in the view model
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              );
+                                  );
+                                  if (wasUpdated == true) {
+                                    onClose?.call();
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: CustomButton(
+                                label: 'Supprimer',
+                                color: CustomColor.customBlack,
+                                textStyle: CustomTextStyle.subButton
+                                    .copyWith(color: CustomColor.customWhite),
+                                borderWidth: 0.5,
+                                borderColor: CustomColor.customWhite,
+                                onTap: () async {
+                                  bool? confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor:
+                                            CustomColor.customBlack,
+                                        title: Text(
+                                          'Es-tu sûr de vouloir supprimer ce cfq ?',
+                                          style: CustomTextStyle.body1,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        content: Text(
+                                          'Cette action est irréversible.',
+                                          style: CustomTextStyle.body2,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('Annuler'),
+                                            onPressed: () =>
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                          ),
+                                          TextButton(
+                                            child: Text(
+                                              'Supprimer',
+                                              style: CustomTextStyle.body2
+                                                  .copyWith(
+                                                color: CustomColor.customWhite,
+                                              ),
+                                            ),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
 
-                              if (wasUpdated == true && isExpanded) {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                          ),
+                                  if (confirmed == true) {
+                                    await Provider.of<ExpandedCardViewModel>(
+                                            context,
+                                            listen: false)
+                                        .deleteCfq();
+                                    onClose?.call();
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),

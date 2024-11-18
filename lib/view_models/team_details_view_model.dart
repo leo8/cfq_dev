@@ -685,4 +685,65 @@ class TeamDetailsViewModel extends ChangeNotifier {
       }
     }
   }
+
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  Stream<List<DocumentSnapshot>> fetchTeamEvents(String teamId) {
+    try {
+      return FirebaseFirestore.instance
+          .collection('teams')
+          .doc(teamId)
+          .snapshots()
+          .switchMap((teamSnapshot) {
+        if (!teamSnapshot.exists) {
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        final teamData = teamSnapshot.data() as Map<String, dynamic>;
+        final eventIds = List<String>.from(teamData['events'] ?? []);
+
+        if (eventIds.isEmpty) {
+          return Stream.value(<DocumentSnapshot>[]);
+        }
+
+        // Split event IDs into chunks of 30
+        final eventChunks = _chunkList(eventIds, 30);
+
+        // Create streams for each chunk
+        final eventStreams = eventChunks.map((chunk) => chunk.isEmpty
+            ? Stream.value(<DocumentSnapshot>[])
+            : FirebaseFirestore.instance
+                .collection('events')
+                .where(FieldPath.documentId, whereIn: chunk)
+                .snapshots()
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList()));
+
+        // Combine all streams
+        return Rx.combineLatest(eventStreams,
+            (List<List<DocumentSnapshot>> results) {
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+            return dateA.compareTo(dateB);
+          });
+          return allEvents;
+        });
+      });
+    } catch (error) {
+      AppLogger.error("Error in fetchTeamEvents: $error");
+      return Stream.value([]);
+    }
+  }
 }
