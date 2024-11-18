@@ -717,6 +717,12 @@ class CreateTurnViewModel extends ChangeNotifier
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId, // Add channelId to the turn object
+        notAnswered: [
+          ...inviteeUids
+        ], // Add all invitees to notAnswered initially
+        attending: [],
+        notSureAttending: [],
+        notAttending: [],
       );
 
       AppLogger.debug(turnNameController.text.trim());
