@@ -1,53 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
+import '../../utils/styles/neon_background.dart';
 
 class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
-
-  static const String _imageUrl =
-      'https://cdn.vectorstock.com/i/1000v/58/83/abstract-city-map-with-blurred-edge-vector-21245883.jpg';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColor.transparent,
-      body: Stack(
-        children: [
-          // Background Image from Network
-          Positioned.fill(
-            child: Image.network(
-              _imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(child: CircularProgressIndicator());
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Text(CustomString.failedToLoadMap,
-                      style: CustomTextStyle.body1),
-                );
-              },
-            ),
-          ),
-          // Overlay Text
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: CustomColor.customBlack
-                    .withOpacity(0.5), // Semi-transparent background
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'Upcoming Feature',
-                style: CustomTextStyle.hugeTitle2,
+      body: NeonBackground(
+        child: Stack(
+          children: [
+            // SVG Map
+            Positioned.fill(
+              child: SvgPicture.asset(
+                'assets/images/map_screen.svg',
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  CustomColor.customWhite.withOpacity(0.25),
+                  BlendMode.dstATop,
+                ),
               ),
             ),
-          ),
-        ],
+            // Overlay Text
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: CustomColor.customBlack.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  CustomString.upcomingFeatureCapital,
+                  style: CustomTextStyle.hugeTitle2,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
