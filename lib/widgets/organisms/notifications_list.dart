@@ -141,6 +141,29 @@ class NotificationsList extends StatelessWidget {
     }
   }
 
+  Future<bool> _isEventStillExisting(String eventId, bool isTurn) async {
+    try {
+      if (isTurn) {
+        final turnDoc = await FirebaseFirestore.instance
+            .collection('turns')
+            .doc(eventId)
+            .get();
+
+        if (!turnDoc.exists) return false;
+      } else {
+        final cfqDoc = await FirebaseFirestore.instance
+            .collection('cfqs')
+            .doc(eventId)
+            .get();
+        if (!cfqDoc.exists) return false;
+      }
+      return true;
+    } catch (e) {
+      AppLogger.error('Error checking if event is strill existing: $e');
+      return false;
+    }
+  }
+
   Future<Widget> _buildCardContent(
       BuildContext context, notificationModel.Notification notification) async {
     try {
@@ -543,6 +566,14 @@ class NotificationsList extends StatelessWidget {
           break;
         default:
           throw Exception('Unsupported notification type');
+      }
+
+      final isEventStillExisting = await _isEventStillExisting(eventId, isTurn);
+      if (!isEventStillExisting) {
+        if (context.mounted) {
+          showSnackBar(CustomString.notExistingEvent, context);
+        }
+        return;
       }
 
       final isStillInvited = await _isUserStillInvited(eventId, isTurn);

@@ -151,6 +151,7 @@ class CustomString {
 
   static const inviteesCapital = "INVITÉS";
   static const notInvited = "Vous n'êtes pas invité à cet événement";
+  static const notExistingEvent = "Cet événement n'existe plus";
 
   // Turns
   static const turnCapital = "TURN";
