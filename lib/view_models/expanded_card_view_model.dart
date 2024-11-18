@@ -498,6 +498,34 @@ class ExpandedCardViewModel extends ChangeNotifier {
         });
       }
 
+      // 6. Remove turnId from invitees' favorites if present
+      for (String userId in invitees) {
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+          List<String> favorites = List<String>.from(
+              (userDoc.data() as Map<String, dynamic>)['favorites'] ?? []);
+          if (favorites.contains(eventId)) {
+            batch.update(userDoc.reference, {
+              'favorites': FieldValue.arrayRemove([eventId])
+            });
+          }
+        }
+      }
+
+      // Check organizer's favorites
+      DocumentSnapshot organizerDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (organizerDoc.exists) {
+        List<String> favorites = List<String>.from(
+            (organizerDoc.data() as Map<String, dynamic>)['favorites'] ?? []);
+        if (favorites.contains(eventId)) {
+          batch.update(organizerDoc.reference, {
+            'favorites': FieldValue.arrayRemove([eventId])
+          });
+        }
+      }
+
       // Commit all the batch operations
       await batch.commit();
 
@@ -559,6 +587,34 @@ class ExpandedCardViewModel extends ChangeNotifier {
         batch.update(teamRef, {
           'invitedCfqs': FieldValue.arrayRemove([eventId]),
         });
+      }
+
+      // 6. Remove cfqId from invitees' favorites if present
+      for (String userId in invitees) {
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+          List<String> favorites = List<String>.from(
+              (userDoc.data() as Map<String, dynamic>)['favorites'] ?? []);
+          if (favorites.contains(eventId)) {
+            batch.update(userDoc.reference, {
+              'favorites': FieldValue.arrayRemove([eventId])
+            });
+          }
+        }
+      }
+
+      // Check organizer's favorites
+      DocumentSnapshot organizerDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (organizerDoc.exists) {
+        List<String> favorites = List<String>.from(
+            (organizerDoc.data() as Map<String, dynamic>)['favorites'] ?? []);
+        if (favorites.contains(eventId)) {
+          batch.update(organizerDoc.reference, {
+            'favorites': FieldValue.arrayRemove([eventId])
+          });
+        }
       }
 
       // Commit all the batch operations
