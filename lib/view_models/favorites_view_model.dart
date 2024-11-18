@@ -63,25 +63,26 @@ class FavoritesViewModel extends ChangeNotifier {
         return;
       }
 
-      // Fetch both turns and cfqs
       Map<String, DocumentSnapshot> eventsMap = {};
 
-      // Store fetched documents in map with their IDs
+      // Fetch and filter turns
       (await FirebaseFirestore.instance
               .collection('turns')
               .where('turnId', whereIn: _currentUser!.favorites)
               .get())
           .docs
+          .where((doc) => !isEventExpired(doc))
           .forEach((doc) => eventsMap[doc['turnId']] = doc);
 
+      // Fetch and filter cfqs
       (await FirebaseFirestore.instance
               .collection('cfqs')
               .where('cfqId', whereIn: _currentUser!.favorites)
               .get())
           .docs
+          .where((doc) => !isEventExpired(doc))
           .forEach((doc) => eventsMap[doc['cfqId']] = doc);
 
-      // Reconstruct list in original order and reverse it
       _favoriteEvents = _currentUser!.favorites
           .map((id) => eventsMap[id])
           .where((doc) => doc != null)
@@ -497,20 +498,21 @@ class FavoritesViewModel extends ChangeNotifier {
         return Stream.value(<DocumentSnapshot>[]);
       }
 
-      // Create a map to store events by their IDs
       Stream<Map<String, DocumentSnapshot>> cfqsStream = _firestore
           .collection('cfqs')
           .where(FieldPath.documentId, whereIn: favorites)
           .snapshots()
-          .map((snapshot) => Map.fromEntries(
-              snapshot.docs.map((doc) => MapEntry(doc.id, doc))));
+          .map((snapshot) => Map.fromEntries(snapshot.docs
+              .where((doc) => !isEventExpired(doc))
+              .map((doc) => MapEntry(doc.id, doc))));
 
       Stream<Map<String, DocumentSnapshot>> turnsStream = _firestore
           .collection('turns')
           .where(FieldPath.documentId, whereIn: favorites)
           .snapshots()
-          .map((snapshot) => Map.fromEntries(
-              snapshot.docs.map((doc) => MapEntry(doc.id, doc))));
+          .map((snapshot) => Map.fromEntries(snapshot.docs
+              .where((doc) => !isEventExpired(doc))
+              .map((doc) => MapEntry(doc.id, doc))));
 
       return Rx.combineLatest2(
         cfqsStream,
@@ -519,7 +521,6 @@ class FavoritesViewModel extends ChangeNotifier {
             Map<String, DocumentSnapshot> turns) {
           Map<String, DocumentSnapshot> eventsMap = {...cfqs, ...turns};
 
-          // Reconstruct list in original order and reverse it
           return favorites
               .map((id) => eventsMap[id])
               .where((doc) => doc != null)
@@ -530,6 +531,59 @@ class FavoritesViewModel extends ChangeNotifier {
         },
       );
     });
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
+    }
+  }
+
+  DateTime parseDate(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      try {
+        return DateTime.parse(date);
+      } catch (e) {
+        AppLogger.warning("Warning: Could not parse date as DateTime: $date");
+        return DateTime.now();
+      }
+    } else if (date is DateTime) {
+      return date;
+    } else {
+      AppLogger.warning("Warning: Unknown type for date: $date");
+      return DateTime.now();
+    }
   }
 
   @override

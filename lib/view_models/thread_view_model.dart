@@ -243,7 +243,9 @@ class ThreadViewModel extends ChangeNotifier {
                 .collection('cfqs')
                 .where(FieldPath.documentId, whereIn: invitedCfqs)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList());
 
         // Stream for invited Turns
         Stream<List<DocumentSnapshot>> invitedTurnsStream = invitedTurns.isEmpty
@@ -252,7 +254,9 @@ class ThreadViewModel extends ChangeNotifier {
                 .collection('turns')
                 .where(FieldPath.documentId, whereIn: invitedTurns)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList());
 
         // Stream for CFQs where user is organizer
         Stream<List<DocumentSnapshot>> organizedCfqsStream = FirebaseFirestore
@@ -260,7 +264,8 @@ class ThreadViewModel extends ChangeNotifier {
             .collection('cfqs')
             .where('uid', isEqualTo: currentUserUid)
             .snapshots()
-            .map((snapshot) => snapshot.docs);
+            .map((snapshot) =>
+                snapshot.docs.where((doc) => !isEventExpired(doc)).toList());
 
         // Stream for Turns where user is organizer
         Stream<List<DocumentSnapshot>> organizedTurnsStream = FirebaseFirestore
@@ -268,7 +273,8 @@ class ThreadViewModel extends ChangeNotifier {
             .collection('turns')
             .where('uid', isEqualTo: currentUserUid)
             .snapshots()
-            .map((snapshot) => snapshot.docs);
+            .map((snapshot) =>
+                snapshot.docs.where((doc) => !isEventExpired(doc)).toList());
 
         // Combine all streams
         return Rx.combineLatest4(
@@ -760,6 +766,41 @@ class ThreadViewModel extends ChangeNotifier {
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
+    }
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
     }
   }
 }

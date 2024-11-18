@@ -444,39 +444,21 @@ class ProfileViewModel extends ChangeNotifier {
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('cfqs')
-                .where(FieldPath.documentId, whereIn: postedCfqs)
+                .where('uid', isEqualTo: userId)
                 .snapshots()
-                .map((snapshot) => snapshot.docs.where((doc) {
-                      // Only include CFQs where current user is invited or is the organizer
-                      if (_isCurrentUser)
-                        return true; // Show all for own profile
-
-                      final data = doc.data() as Map<String, dynamic>;
-                      final invitees =
-                          List<String>.from(data['invitees'] ?? []);
-                      final currentUserId =
-                          FirebaseAuth.instance.currentUser!.uid;
-                      return invitees.contains(currentUserId) ||
-                          data['uid'] == currentUserId;
-                    }).toList());
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList());
 
         Stream<List<DocumentSnapshot>> turnsStream = postedTurns.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('turns')
-                .where(FieldPath.documentId, whereIn: postedTurns)
+                .where('uid', isEqualTo: userId)
                 .snapshots()
-                .map((snapshot) => snapshot.docs.where((doc) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      final invitees =
-                          List<String>.from(data['invitees'] ?? []);
-                      final organizers =
-                          List<String>.from(data['organizers'] ?? []);
-                      final currentUserId =
-                          FirebaseAuth.instance.currentUser!.uid;
-                      return invitees.contains(currentUserId) ||
-                          organizers.contains(currentUserId);
-                    }).toList());
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList());
 
         return Rx.combineLatest2(
           cfqsStream,
@@ -1214,6 +1196,41 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error(
           'Error creating accepted friend request notification: $e');
+    }
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
     }
   }
 }
