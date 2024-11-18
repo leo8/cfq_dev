@@ -206,12 +206,10 @@ class FavoritesViewModel extends ChangeNotifier {
       DocumentSnapshot cfqSnapshot =
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
-      String organizerId = cfqData['uid'] as String;
       List<String> followingUsers =
           List<String>.from(cfqData['followingUp'] ?? []);
 
-      // Remove organizer and current user from notification recipients
-      followingUsers.remove(organizerId);
+      // Remove current user from notification recipients
       followingUsers.remove(_currentUser!.uid);
 
       if (followingUsers.isEmpty) return;
