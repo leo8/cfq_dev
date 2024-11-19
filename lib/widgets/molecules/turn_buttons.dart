@@ -55,7 +55,8 @@ class TurnButtons extends StatelessWidget {
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.saveFull.copyWith(color: CustomColor.yellow, size: 24)
+          ? CustomIcon.saveFull
+              .copyWith(color: CustomColor.customWhite, size: 24)
           : CustomIcon.saveEmpty.copyWith(size: 24),
       onPressed: onFavoritePressed,
       padding: const EdgeInsets.all(2),
@@ -69,15 +70,15 @@ class TurnButtons extends StatelessWidget {
     switch (attendingStatus) {
       case 'attending':
         icon = CustomIcon.attendingStatusYes;
-        color = CustomColor.green;
+        color = CustomColor.customWhite;
         break;
       case 'notSureAttending':
         icon = CustomIcon.attendingStatusMaybe;
-        color = CustomColor.yellow;
+        color = CustomColor.customWhite;
         break;
       case 'notAttending':
         icon = CustomIcon.attendingStatusNo;
-        color = CustomColor.red;
+        color = CustomColor.customWhite;
         break;
       default:
         return _buildDefaultAttendingButton(context);
@@ -160,7 +161,7 @@ class TurnButtons extends StatelessWidget {
                         context,
                         'Je suis là',
                         CustomIcon.attendingStatusYes,
-                        CustomColor.green,
+                        CustomColor.customWhite,
                         'attending',
                         currentStatus,
                         (String status) {
@@ -173,7 +174,7 @@ class TurnButtons extends StatelessWidget {
                         context,
                         'Je sais pas',
                         CustomIcon.attendingStatusMaybe,
-                        CustomColor.yellow,
+                        CustomColor.customWhite,
                         'notSureAttending',
                         currentStatus,
                         (String status) {
@@ -186,7 +187,7 @@ class TurnButtons extends StatelessWidget {
                         context,
                         'Je peux pas',
                         CustomIcon.attendingStatusNo,
-                        CustomColor.red,
+                        CustomColor.customWhite,
                         'notAttending',
                         currentStatus,
                         (String status) {
