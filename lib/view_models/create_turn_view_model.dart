@@ -20,7 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
-import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
