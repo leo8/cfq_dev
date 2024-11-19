@@ -63,6 +63,9 @@ class ProfileViewModel extends ChangeNotifier {
   StreamSubscription<DocumentSnapshot>? _userSubscription;
   bool _disposed = false;
 
+  List<String> _userNames = [];
+  List<String> get userNames => _userNames;
+
   @override
   void dispose() {
     _disposed = true;
@@ -72,6 +75,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
+    fetchUserNames();
   }
 
   Future<void> fetchUserData() async {
@@ -167,6 +171,18 @@ class ProfileViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       AppLogger.error(e.toString());
+    }
+  }
+
+  Future<void> fetchUserNames() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+      _userNames = snapshot.docs.map((doc) {
+        return doc['searchKey'] as String;
+      }).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error("Error fetching usernames: $e");
     }
   }
 
@@ -316,20 +332,17 @@ class ProfileViewModel extends ChangeNotifier {
     await AuthMethods().logOutUser();
   }
 
-  Future<bool> isUsernameAlreadyTaken(String username) async {
-    if (username == _user!.username)
-      return false; // Allow keeping same username
-
-    final QuerySnapshot result = await _firestore
-        .collection('users')
-        .where('username', isEqualTo: username)
-        .get();
-
-    return result.docs.isNotEmpty;
+  bool isUsernameAlreadyTaken(String username) {
+    // Allow keeping the same username
+    if (_user != null &&
+        username.toLowerCase() == _user!.username.toLowerCase()) {
+      return false;
+    }
+    return _userNames.contains(username.toLowerCase());
   }
 
-  Future<void> updateUserProfile(
-      String username, String location, DateTime? birthDate) async {
+  Future<void> updateUserProfile(String username, String location,
+      DateTime? birthDate, Uint8List? image) async {
     try {
       _isLoading = true;
       notifyListeners();
@@ -339,8 +352,8 @@ class ProfileViewModel extends ChangeNotifier {
         throw Exception(CustomString.invalidUsernameLength);
       }
 
-      // Check if username is taken
-      if (await isUsernameAlreadyTaken(username)) {
+      // Check if username is taken (excluding current username)
+      if (isUsernameAlreadyTaken(username)) {
         throw Exception(CustomString.usernameAlreadyTaken);
       }
 
@@ -352,9 +365,12 @@ class ProfileViewModel extends ChangeNotifier {
         'username': username,
         'location': location,
         'birthDate': birthDate?.toIso8601String(),
-        'searchKey':
-            username.toLowerCase(), // Update searchKey with new username
+        'searchKey': username.toLowerCase(),
       });
+
+      // Update local usernames list
+      _userNames.remove(_user!.username.toLowerCase()); // Remove old username
+      _userNames.add(username.toLowerCase()); // Add new username
 
       // Update local user object
       _user = model.User(
@@ -383,8 +399,8 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      AppLogger.error(e.toString());
-      rethrow; // Rethrow to handle in the UI
+      notifyListeners();
+      rethrow;
     }
   }
 

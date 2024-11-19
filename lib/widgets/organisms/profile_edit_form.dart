@@ -20,6 +20,7 @@ class ProfileEditForm extends StatefulWidget {
   final DateTime? initialBirthDate;
   final String initialProfilePictureUrl;
   final Future<void> Function(String, String, DateTime?, Uint8List?) onSave;
+  final List<String> userNames;
 
   const ProfileEditForm({
     super.key,
@@ -28,6 +29,7 @@ class ProfileEditForm extends StatefulWidget {
     this.initialBirthDate,
     required this.initialProfilePictureUrl,
     required this.onSave,
+    required this.userNames,
   });
 
   @override
@@ -135,13 +137,31 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     return username.length >= 3 && username.length <= 10;
   }
 
+  bool userNameIsAlreadyTaken(String username) {
+    if (username.toLowerCase() == widget.initialUsername.toLowerCase()) {
+      return false;
+    }
+    return widget.userNames.contains(username.toLowerCase());
+  }
+
   Future<void> _handleSave() async {
     if (_isLoading) return;
 
-    // Validate username length
     if (!isValidUsernameLength(_usernameController.text)) {
       Fluttertoast.showToast(
           msg: CustomString.invalidUsernameLength,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+
+    if (userNameIsAlreadyTaken(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.usernameAlreadyTaken,
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 1,
