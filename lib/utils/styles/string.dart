@@ -93,7 +93,7 @@ class CustomString {
   // Friends
   static const myFriends = "Mes amis";
   static const myFriendsCapital = "MES AMIS";
-  static const noFriendsYet = "Vous n'avez pas encore d'amis";
+  static const noFriendsYet = "Tu n'as pas encore ajouté d'amis";
   static const friendAdded = "Ami ajouté !";
   static const friendDeleted = "Ami supprimé !";
   static const addFriend = "Ajouter";
@@ -106,7 +106,7 @@ class CustomString {
   static const team = "Team";
   static const myTeams = "Mes teams";
   static const myTeamsCapital = "MES TEAMS";
-  static const noTeamsYet = "Vous n'avez pas encore de teams.";
+  static const noTeamsYet = "Tu n'as pas encore de teams.";
   static const createTeam = "Créer une team";
   static const newTeamCapital = "NOUVELLE TEAM";
   static const teamName = "Donne-lui un nom";
@@ -116,8 +116,7 @@ class CustomString {
   static const teamMembers = "Déjà membres..";
   static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
-  static const sureToLeaveTeam =
-      "Êtes-vous sûr de vouloir quitter cette team ?";
+  static const sureToLeaveTeam = "Es-tu sûr de vouloir quitter cette team ?";
 
   // Team Events
   static const String teamEvents = "Événements de la team";
@@ -150,7 +149,7 @@ class CustomString {
       "Le nom du TURN ne peut pas dépasser 30 caractères";
 
   static const inviteesCapital = "INVITÉS";
-  static const notInvited = "Vous n'êtes pas invité à cet événement";
+  static const notInvited = "Tu n'es plus invité à cet événement";
   static const notExistingEvent = "Cet événement n'existe plus";
 
   // Turns
@@ -297,7 +296,7 @@ class CustomString {
   static const String invalidEndDate =
       'Il va vraiment durer moins de 5 minutes, ton événement ?';
 
-  static const String sureToLeave = 'Êtes-vous sûr de vouloir quitter ?';
+  static const String sureToLeave = 'Es-tu sûr de vouloir quitter ?';
   static const String yourModificationsWillBeLost =
       'Vos modifications seront perdues.';
   static const String stay = 'Rester';
