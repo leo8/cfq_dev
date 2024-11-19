@@ -164,6 +164,16 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       );
     } catch (e) {
       AppLogger.error('Error saving profile: $e');
+      Fluttertoast.showToast(
+          msg: e.toString().contains(CustomString.usernameAlreadyTaken)
+              ? CustomString.usernameAlreadyTaken
+              : e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } finally {
       if (mounted) {
         setState(() {

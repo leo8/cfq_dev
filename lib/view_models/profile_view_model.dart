@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
 import '../view_models/requests_view_model.dart';
 import 'dart:async';
+import '../utils/styles/string.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -315,11 +316,33 @@ class ProfileViewModel extends ChangeNotifier {
     await AuthMethods().logOutUser();
   }
 
+  Future<bool> isUsernameAlreadyTaken(String username) async {
+    if (username == _user!.username)
+      return false; // Allow keeping same username
+
+    final QuerySnapshot result = await _firestore
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
+
+    return result.docs.isNotEmpty;
+  }
+
   Future<void> updateUserProfile(
       String username, String location, DateTime? birthDate) async {
     try {
       _isLoading = true;
       notifyListeners();
+
+      // Validate username length
+      if (username.length < 3 || username.length > 10) {
+        throw Exception(CustomString.invalidUsernameLength);
+      }
+
+      // Check if username is taken
+      if (await isUsernameAlreadyTaken(username)) {
+        throw Exception(CustomString.usernameAlreadyTaken);
+      }
 
       // Update Firestore
       await FirebaseFirestore.instance
@@ -329,6 +352,8 @@ class ProfileViewModel extends ChangeNotifier {
         'username': username,
         'location': location,
         'birthDate': birthDate?.toIso8601String(),
+        'searchKey':
+            username.toLowerCase(), // Update searchKey with new username
       });
 
       // Update local user object
@@ -359,7 +384,7 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       AppLogger.error(e.toString());
-      notifyListeners();
+      rethrow; // Rethrow to handle in the UI
     }
   }
 
