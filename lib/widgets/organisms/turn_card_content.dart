@@ -404,9 +404,10 @@ class TurnCardContent extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                        '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
-                                        style: CustomTextStyle.body1
-                                            .copyWith(fontSize: 18)),
+                                      '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                      style: CustomTextStyle.body1
+                                          .copyWith(fontSize: 15),
+                                    ),
                                   ],
                                 ),
                               ),
