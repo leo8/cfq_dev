@@ -56,22 +56,25 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: CustomColor.customBlack,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Flexible(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       CustomString.eventDateTime,
-                      style: CustomTextStyle.bigBody1,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     OmniDateTimePicker(
                       initialDate: _startDate!,
                       firstDate: _minimumDate,
@@ -91,7 +94,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                         });
                       },
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 5),
                     if (!_showEndDatePicker)
                       TextButton(
                         onPressed: () {
@@ -99,7 +102,11 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                             _showEndDatePicker = true;
                           });
                         },
-                        child: const Text(CustomString.addEndTime),
+                        child: const Center(
+                          child: Center(
+                            child: Text(CustomString.addEndTime),
+                          ),
+                        ),
                       ),
                     if (_showEndDatePicker) ...[
                       const Divider(color: CustomColor.customDarkGrey),
@@ -110,7 +117,10 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                           Center(
                             child: Text(
                               CustomString.endDateTime,
-                              style: CustomTextStyle.bigBody1,
+                              style: CustomTextStyle.body1.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                           // Close icon positioned on the right
