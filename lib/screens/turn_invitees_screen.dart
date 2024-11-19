@@ -66,7 +66,10 @@ class TurnInviteesScreen extends StatelessWidget {
     return TabBar(
       isScrollable: false,
       indicatorColor: CustomColor.customPurple,
-      labelStyle: CustomTextStyle.bigBody1,
+      labelStyle: CustomTextStyle.body1.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
       unselectedLabelStyle: CustomTextStyle.body1,
       tabs: const [
         Tab(text: CustomString.attending),

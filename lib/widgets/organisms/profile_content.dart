@@ -224,30 +224,34 @@ class _ProfileContentState extends State<ProfileContent>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomButton(
-                                label: CustomString.myFriends,
-                                textStyle: CustomTextStyle.subButton.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                onTap: widget.onFriendsTap!,
-                                color: CustomColor.customBlack,
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                width: 110,
-                                height: 50),
-                            const SizedBox(width: 20),
+                              label: CustomString.myFriends,
+                              textStyle: CustomTextStyle.subButton.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              onTap: widget.onFriendsTap!,
+                              color: CustomColor.customBlack,
+                              borderWidth: 0.5,
+                              borderRadius: 5,
+                              width: 100,
+                              height: 35,
+                              padding: 5,
+                            ),
+                            const SizedBox(width: 10),
                             CustomButton(
-                                label: CustomString.parameters,
-                                textStyle: CustomTextStyle.subButton.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                onTap: widget.onParametersTap!,
-                                color: CustomColor.customBlack,
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                width: 110,
-                                height: 50),
+                              label: CustomString.parameters,
+                              textStyle: CustomTextStyle.subButton.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              onTap: widget.onParametersTap!,
+                              color: CustomColor.customBlack,
+                              borderWidth: 0.5,
+                              borderRadius: 5,
+                              width: 100,
+                              height: 35,
+                              padding: 5,
+                            ),
                           ],
                         ),
                       )
@@ -259,36 +263,40 @@ class _ProfileContentState extends State<ProfileContent>
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Expanded(
-                                        child: CustomButton(
-                                          label: CustomString.accept,
-                                          onTap: widget
-                                              .viewModel.acceptFriendRequest,
-                                          color: CustomColor.customPurple,
-                                          textStyle: CustomTextStyle.subButton
-                                              .copyWith(
-                                            color: CustomColor.customWhite,
-                                          ),
-                                          borderRadius: 5,
-                                          borderWidth: 0.5,
-                                          height: 50,
+                                      CustomButton(
+                                        label: CustomString.accept,
+                                        onTap: widget
+                                            .viewModel.acceptFriendRequest,
+                                        color: CustomColor.customPurple,
+                                        textStyle:
+                                            CustomTextStyle.subButton.copyWith(
+                                          color: CustomColor.customWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                         ),
+                                        borderRadius: 5,
+                                        borderWidth: 0.5,
+                                        height: 35,
+                                        width: 100,
+                                        padding: 5,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: CustomButton(
-                                          label: CustomString.deny,
-                                          onTap: widget
-                                              .viewModel.denyFriendRequest,
-                                          color: CustomColor.customDarkGrey,
-                                          textStyle: CustomTextStyle.subButton
-                                              .copyWith(
-                                            color: CustomColor.customWhite,
-                                          ),
-                                          borderRadius: 5,
-                                          borderWidth: 0.5,
-                                          height: 50,
+                                      const SizedBox(width: 10),
+                                      CustomButton(
+                                        label: CustomString.deny,
+                                        onTap:
+                                            widget.viewModel.denyFriendRequest,
+                                        color: CustomColor.customDarkGrey,
+                                        textStyle:
+                                            CustomTextStyle.subButton.copyWith(
+                                          color: CustomColor.customWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                         ),
+                                        borderRadius: 5,
+                                        borderWidth: 0.5,
+                                        height: 35,
+                                        width: 100,
+                                        padding: 5,
                                       ),
                                     ],
                                   )
@@ -317,11 +325,14 @@ class _ProfileContentState extends State<ProfileContent>
                                     textStyle:
                                         CustomTextStyle.subButton.copyWith(
                                       color: CustomColor.customWhite,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
                                     ),
                                     borderRadius: 5,
                                     borderWidth: 0.5,
-                                    width: 220,
-                                    height: 50,
+                                    width: 200,
+                                    height: 35,
+                                    padding: 5,
                                   ),
                           ),
                           const SizedBox(

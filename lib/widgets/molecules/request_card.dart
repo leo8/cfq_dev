@@ -81,16 +81,34 @@ class RequestCard extends StatelessWidget {
                 Expanded(
                   child: CustomButton(
                     label: CustomString.accept,
+                    textStyle: CustomTextStyle.subButton.copyWith(
+                      color: CustomColor.customWhite,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                     onTap: onAccept,
                     color: CustomColor.customPurple,
+                    width: 100,
+                    height: 35,
+                    padding: 5,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: CustomButton(
                     label: CustomString.deny,
                     onTap: onDeny,
-                    color: CustomColor.customDarkGrey,
+                    textStyle: CustomTextStyle.subButton.copyWith(
+                      color: CustomColor.customWhite,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    color: CustomColor.customBlack,
+                    borderWidth: 0.5,
+                    borderColor: CustomColor.customWhite,
+                    width: 100,
+                    height: 35,
+                    padding: 5,
                   ),
                 ),
               ],
