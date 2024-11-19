@@ -266,16 +266,17 @@ class CFQCardContent extends StatelessWidget {
                                                     .pop(false),
                                           ),
                                           TextButton(
-                                            child: Text(
-                                              'Supprimer',
-                                              style: CustomTextStyle.body2
-                                                  .copyWith(
-                                                color: CustomColor.customWhite,
+                                              child: Text(
+                                                'Supprimer',
+                                                style: CustomTextStyle.body2
+                                                    .copyWith(
+                                                  color:
+                                                      CustomColor.customWhite,
+                                                ),
                                               ),
-                                            ),
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(true),
-                                          ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true);
+                                              }),
                                         ],
                                       );
                                     },

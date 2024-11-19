@@ -324,11 +324,11 @@ class TurnCardContent extends StatelessWidget {
                                           ),
                                           actions: [
                                             TextButton(
-                                              child: const Text('Annuler'),
-                                              onPressed: () =>
+                                                child: const Text('Annuler'),
+                                                onPressed: () {
                                                   Navigator.of(context)
-                                                      .pop(false),
-                                            ),
+                                                      .pop(true);
+                                                }),
                                             TextButton(
                                               child: Text(
                                                 'Supprimer',
