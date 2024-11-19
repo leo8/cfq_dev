@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import '../../utils/logger.dart';
 import '../../utils/utils.dart';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -19,6 +20,7 @@ class ProfileEditForm extends StatefulWidget {
   final DateTime? initialBirthDate;
   final String initialProfilePictureUrl;
   final Future<void> Function(String, String, DateTime?, Uint8List?) onSave;
+  final List<String> userNames;
 
   const ProfileEditForm({
     super.key,
@@ -27,6 +29,7 @@ class ProfileEditForm extends StatefulWidget {
     this.initialBirthDate,
     required this.initialProfilePictureUrl,
     required this.onSave,
+    required this.userNames,
   });
 
   @override
@@ -130,8 +133,43 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     }
   }
 
+  bool isValidUsernameLength(String username) {
+    return username.length >= 3 && username.length <= 10;
+  }
+
+  bool userNameIsAlreadyTaken(String username) {
+    if (username.toLowerCase() == widget.initialUsername.toLowerCase()) {
+      return false;
+    }
+    return widget.userNames.contains(username.toLowerCase());
+  }
+
   Future<void> _handleSave() async {
     if (_isLoading) return;
+
+    if (!isValidUsernameLength(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.invalidUsernameLength,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+
+    if (userNameIsAlreadyTaken(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.usernameAlreadyTaken,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -146,7 +184,16 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       );
     } catch (e) {
       AppLogger.error('Error saving profile: $e');
-      // You might want to show an error message to the user here
+      Fluttertoast.showToast(
+          msg: e.toString().contains(CustomString.usernameAlreadyTaken)
+              ? CustomString.usernameAlreadyTaken
+              : e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } finally {
       if (mounted) {
         setState(() {
@@ -177,7 +224,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
           BorderedIconTextField(
               icon: CustomIcon.editProfile,
               controller: _usernameController,
-              hintText: CustomString.yourUsername),
+              hintText: CustomString.yourUsername,
+              maxLength: 10),
           const SizedBox(height: 15),
           BorderedIconTextField(
               icon: CustomIcon.userLocation,

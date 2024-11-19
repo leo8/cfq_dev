@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
 import '../view_models/requests_view_model.dart';
 import 'dart:async';
+import '../utils/styles/string.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -62,6 +63,9 @@ class ProfileViewModel extends ChangeNotifier {
   StreamSubscription<DocumentSnapshot>? _userSubscription;
   bool _disposed = false;
 
+  List<String> _userNames = [];
+  List<String> get userNames => _userNames;
+
   @override
   void dispose() {
     _disposed = true;
@@ -71,6 +75,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
+    fetchUserNames();
   }
 
   Future<void> fetchUserData() async {
@@ -166,6 +171,18 @@ class ProfileViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       AppLogger.error(e.toString());
+    }
+  }
+
+  Future<void> fetchUserNames() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+      _userNames = snapshot.docs.map((doc) {
+        return doc['searchKey'] as String;
+      }).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error("Error fetching usernames: $e");
     }
   }
 
@@ -315,11 +332,30 @@ class ProfileViewModel extends ChangeNotifier {
     await AuthMethods().logOutUser();
   }
 
-  Future<void> updateUserProfile(
-      String username, String location, DateTime? birthDate) async {
+  bool isUsernameAlreadyTaken(String username) {
+    // Allow keeping the same username
+    if (_user != null &&
+        username.toLowerCase() == _user!.username.toLowerCase()) {
+      return false;
+    }
+    return _userNames.contains(username.toLowerCase());
+  }
+
+  Future<void> updateUserProfile(String username, String location,
+      DateTime? birthDate, Uint8List? image) async {
     try {
       _isLoading = true;
       notifyListeners();
+
+      // Validate username length
+      if (username.length < 3 || username.length > 10) {
+        throw Exception(CustomString.invalidUsernameLength);
+      }
+
+      // Check if username is taken (excluding current username)
+      if (isUsernameAlreadyTaken(username)) {
+        throw Exception(CustomString.usernameAlreadyTaken);
+      }
 
       // Update Firestore
       await FirebaseFirestore.instance
@@ -329,7 +365,12 @@ class ProfileViewModel extends ChangeNotifier {
         'username': username,
         'location': location,
         'birthDate': birthDate?.toIso8601String(),
+        'searchKey': username.toLowerCase(),
       });
+
+      // Update local usernames list
+      _userNames.remove(_user!.username.toLowerCase()); // Remove old username
+      _userNames.add(username.toLowerCase()); // Add new username
 
       // Update local user object
       _user = model.User(
@@ -358,8 +399,8 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      AppLogger.error(e.toString());
       notifyListeners();
+      rethrow;
     }
   }
 
