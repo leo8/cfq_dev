@@ -254,11 +254,17 @@ class TurnCardContent extends StatelessWidget {
                         if (currentUserId == organizerId && isExpanded)
                           Column(
                             children: [
+                              const SizedBox(height: 50),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 16),
                                 child: CustomButton(
                                   label: 'Modifier',
+                                  color: CustomColor.customBlack,
+                                  textStyle: CustomTextStyle.subButton
+                                      .copyWith(color: CustomColor.customWhite),
+                                  borderWidth: 0.5,
+                                  borderColor: CustomColor.customWhite,
                                   onTap: () async {
                                     final wasUpdated = await Navigator.push(
                                       context,
@@ -301,10 +307,9 @@ class TurnCardContent extends StatelessWidget {
                                 child: CustomButton(
                                   label: 'Supprimer',
                                   color: CustomColor.customBlack,
-                                  textStyle: CustomTextStyle.subButton
-                                      .copyWith(color: CustomColor.customWhite),
-                                  borderWidth: 0.5,
-                                  borderColor: CustomColor.customWhite,
+                                  textStyle: CustomTextStyle.subButton.copyWith(
+                                      color: CustomColor.customWhite,
+                                      decoration: TextDecoration.underline),
                                   onTap: () async {
                                     bool? confirmed = await showDialog<bool>(
                                       context: context,
