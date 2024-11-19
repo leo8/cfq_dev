@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import '../../utils/logger.dart';
 import '../../utils/utils.dart';
 import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -130,8 +131,25 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     }
   }
 
+  bool isValidUsernameLength(String username) {
+    return username.length >= 3 && username.length <= 10;
+  }
+
   Future<void> _handleSave() async {
     if (_isLoading) return;
+
+    // Validate username length
+    if (!isValidUsernameLength(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.invalidUsernameLength,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -146,7 +164,6 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       );
     } catch (e) {
       AppLogger.error('Error saving profile: $e');
-      // You might want to show an error message to the user here
     } finally {
       if (mounted) {
         setState(() {
@@ -177,7 +194,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
           BorderedIconTextField(
               icon: CustomIcon.editProfile,
               controller: _usernameController,
-              hintText: CustomString.yourUsername),
+              hintText: CustomString.yourUsername,
+              maxLength: 10),
           const SizedBox(height: 15),
           BorderedIconTextField(
               icon: CustomIcon.userLocation,
