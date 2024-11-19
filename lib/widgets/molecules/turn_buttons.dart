@@ -48,7 +48,7 @@ class TurnButtons extends StatelessWidget {
       icon: icon.copyWith(size: 24),
       onPressed: onPressed,
       color: CustomColor.customWhite,
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1),
     );
   }
 
@@ -59,7 +59,7 @@ class TurnButtons extends StatelessWidget {
               .copyWith(color: CustomColor.customWhite, size: 24)
           : CustomIcon.saveEmpty.copyWith(size: 24),
       onPressed: onFavoritePressed,
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1),
     );
   }
 
@@ -87,8 +87,8 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -103,7 +103,7 @@ class TurnButtons extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: icon.copyWith(size: 45, color: color),
+          child: icon.copyWith(size: 40, color: color),
         ),
       ),
     );
@@ -113,8 +113,8 @@ class TurnButtons extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showAttendingOptions(context),
       child: Container(
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -130,7 +130,7 @@ class TurnButtons extends StatelessWidget {
         ),
         child: Center(
           child: CustomIcon.attending.copyWith(
-            size: 30,
+            size: 28,
             color: CustomColor.customWhite,
           ),
         ),
@@ -160,7 +160,7 @@ class TurnButtons extends StatelessWidget {
                       _buildAttendingOptionTile(
                         context,
                         'Je suis là',
-                        CustomIcon.attendingStatusYes,
+                        CustomIcon.attendingStatusYes.copyWith(size: 30),
                         CustomColor.customWhite,
                         'attending',
                         currentStatus,
@@ -173,7 +173,7 @@ class TurnButtons extends StatelessWidget {
                       _buildAttendingOptionTile(
                         context,
                         'Je sais pas',
-                        CustomIcon.attendingStatusMaybe,
+                        CustomIcon.attendingStatusMaybe.copyWith(size: 30),
                         CustomColor.customWhite,
                         'notSureAttending',
                         currentStatus,
@@ -186,7 +186,7 @@ class TurnButtons extends StatelessWidget {
                       _buildAttendingOptionTile(
                         context,
                         'Je peux pas',
-                        CustomIcon.attendingStatusNo,
+                        CustomIcon.attendingStatusNo.copyWith(size: 30),
                         CustomColor.customWhite,
                         'notAttending',
                         currentStatus,
