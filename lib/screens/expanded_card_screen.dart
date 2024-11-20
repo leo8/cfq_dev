@@ -110,7 +110,8 @@ class ExpandedCardScreen extends StatelessWidget {
                 currentUserId: cfqContent.currentUserId,
                 favorites: cfqContent.favorites,
                 isFavorite: viewModel.isFavorite,
-                onFollowUpToggled: (_) => viewModel.toggleFollowUp(),
+                onFollowUpToggled: (_) => viewModel.toggleFollowUp(
+                    cfqContent.cfqId, viewModel.currentUserId),
                 isExpanded: true,
                 onClose: () {
                   AppLogger.debug('onClose called from ExpandedCardScreen');

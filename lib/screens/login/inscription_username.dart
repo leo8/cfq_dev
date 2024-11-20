@@ -37,6 +37,10 @@ class _InscriptionState extends State<Inscription> {
     return widget.userNames.contains(userName);
   }
 
+  bool isValidUsernameLength(String username) {
+    return username.length >= 3 && username.length <= 10;
+  }
+
   @override
   Widget build(BuildContext context) {
     return NeonBackground(
@@ -75,7 +79,27 @@ class _InscriptionState extends State<Inscription> {
                     onPressed: () {
                       if (widget.nameTextController.text.isEmpty) {
                         Fluttertoast.showToast(
-                            msg: "Comment on t'appelle ?",
+                            msg: CustomString.noUsernameProvided,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else if (!isValidUsernameLength(
+                          widget.nameTextController.text)) {
+                        Fluttertoast.showToast(
+                            msg: CustomString.invalidUsernameLength,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.TOP,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                      } else if (userNameIsAlreadyTaken(
+                          widget.nameTextController.text)) {
+                        Fluttertoast.showToast(
+                            msg: CustomString.usernameAlreadyTaken,
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.TOP,
                             timeInSecForIosWeb: 1,
@@ -83,20 +107,8 @@ class _InscriptionState extends State<Inscription> {
                             textColor: Colors.white,
                             fontSize: 16.0);
                       } else {
-                        if (userNameIsAlreadyTaken(
-                            widget.nameTextController.text)) {
-                          Fluttertoast.showToast(
-                              msg: "Cet username est déjà pris",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        } else {
-                          Fluttertoast.cancel();
-                          widget.onNext();
-                        }
+                        Fluttertoast.cancel();
+                        widget.onNext();
                       }
                     },
                     style: ElevatedButton.styleFrom(

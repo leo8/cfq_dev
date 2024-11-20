@@ -9,13 +9,23 @@ import '../utils/styles/neon_background.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
 import '../../utils/utils.dart';
+import '../utils/loading_overlay.dart';
+import '../models/cfq_event_model.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
   final Team? prefillTeam;
   final List<model.User>? prefillMembers;
+  final bool isEditing;
+  final Cfq? cfqToEdit;
 
-  const CreateCfqScreen({super.key, this.prefillTeam, this.prefillMembers});
+  const CreateCfqScreen({
+    super.key,
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.cfqToEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +33,8 @@ class CreateCfqScreen extends StatelessWidget {
       create: (_) => CreateCfqViewModel(
         prefillTeam: prefillTeam,
         prefillMembers: prefillMembers,
+        isEditing: isEditing,
+        cfqToEdit: cfqToEdit,
       ),
       child: Consumer<CreateCfqViewModel>(
         builder: (context, viewModel, child) {
@@ -39,51 +51,84 @@ class CreateCfqScreen extends StatelessWidget {
               } else if (viewModel.successMessage != null) {
                 showSnackBar(viewModel.successMessage!, context);
                 viewModel.resetStatus();
-
-                // Optionally navigate back to previous screen
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               }
             });
-            return NeonBackground(
-              child: Scaffold(
-                backgroundColor:
-                    CustomColor.transparent, // Sets the background color
-                appBar: AppBar(
-                  toolbarHeight: 40,
-                  automaticallyImplyLeading: false,
+            return LoadingOverlay(
+              isLoading: viewModel.isLoading,
+              child: NeonBackground(
+                child: Scaffold(
                   backgroundColor: CustomColor.transparent,
-                  actions: [
-                    IconButton(
-                      icon: CustomIcon.close,
-                      onPressed: () => Navigator.of(context).pop(),
+                  appBar: AppBar(
+                    toolbarHeight: 40,
+                    automaticallyImplyLeading: false,
+                    backgroundColor: CustomColor.customBlack,
+                    surfaceTintColor: CustomColor.customBlack,
+                    actions: [
+                      IconButton(
+                        icon: CustomIcon.close,
+                        onPressed: () async {
+                          bool confirmed = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Center(
+                                  child: Text(CustomString.sureToLeave),
+                                ),
+                                content: const Text(
+                                    CustomString.yourModificationsWillBeLost),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text(CustomString.stay),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                  ),
+                                  TextButton(
+                                    child: const Text(CustomString.leave),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmed) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: CfqForm(
+                      currentUser: viewModel.currentUser!,
+                      image: viewModel.cfqImage,
+                      onSelectImage: () => viewModel.pickCfqImage(context),
+                      descriptionController: viewModel.descriptionController,
+                      locationController: viewModel.locationController,
+                      whenController: viewModel.whenController,
+                      onSelectMoods: () => viewModel.selectMoods(context),
+                      onSelectDateTime: () => viewModel.selectDateTime(context),
+                      moodsDisplay: viewModel.selectedMoods != null &&
+                              viewModel.selectedMoods!.isNotEmpty
+                          ? viewModel.selectedMoods!.join(', ')
+                          : CustomString.whatMood,
+                      dateTimeDisplay: _formatDateTimeDisplay(
+                        viewModel.selectedDateTime,
+                        viewModel.selectedEndDateTime,
+                      ),
+                      isLoading: viewModel.isLoading,
+                      onSubmit: viewModel.isEditing
+                          ? viewModel.updateCfq
+                          : viewModel.createCfq,
+                      inviteesController: viewModel.inviteesController,
+                      openInviteesSelectorScreen: () =>
+                          viewModel.openInviteesSelectorScreen(context),
+                      submitButtonLabel:
+                          isEditing ? CustomString.update : CustomString.create,
                     ),
-                  ],
-                ),
-                body: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20), // Adds padding to the sides of the form
-                  child: CfqForm(
-                    currentUser: viewModel.currentUser!,
-                    image: viewModel.cfqImage,
-                    onSelectImage: () => viewModel.pickCfqImage(context),
-                    descriptionController: viewModel.descriptionController,
-                    locationController: viewModel.locationController,
-                    whenController: viewModel.whenController,
-                    onSelectMoods: () => viewModel.selectMoods(context),
-                    onSelectDateTime: () => viewModel.selectDateTime(context),
-                    moodsDisplay: viewModel.selectedMoods != null &&
-                            viewModel.selectedMoods!.isNotEmpty
-                        ? viewModel.selectedMoods!.join(', ')
-                        : CustomString.whatMood,
-                    dateTimeDisplay: _formatDateTimeDisplay(
-                      viewModel.selectedDateTime,
-                      viewModel.selectedEndDateTime,
-                    ),
-                    isLoading: viewModel.isLoading,
-                    onSubmit: viewModel.createCfq,
-                    inviteesController: viewModel.inviteesController,
-                    openInviteesSelectorScreen: () =>
-                        viewModel.openInviteesSelectorScreen(context),
                   ),
                 ),
               ),

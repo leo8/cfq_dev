@@ -23,19 +23,19 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
 
   bool isloading = false;
   bool isSignIn = true;
-  String titleConnexion = CustomString.logInCapital;
-  String buttonConnectionTitle = CustomString.logIn;
-  String buttonBackTitle = CustomString.noAccountYet;
+  String titleConnexion = CustomString.signUpCapital;
+  String buttonConnectionTitle = CustomString.signUp;
+  String buttonBackTitle = CustomString.alreadySignedUp;
 
   void _toggleConnectionPage() {
     isSignIn = !isSignIn;
     setState(() {
       titleConnexion =
-          isSignIn ? CustomString.logInCapital : CustomString.signUpCapital;
+          isSignIn ? CustomString.signUpCapital : CustomString.logInCapital;
       buttonConnectionTitle =
-          isSignIn ? CustomString.logIn : CustomString.signUp;
+          isSignIn ? CustomString.signUp : CustomString.logIn;
       buttonBackTitle =
-          isSignIn ? CustomString.noAccountYet : CustomString.alreadySignedUp;
+          isSignIn ? CustomString.alreadySignedUp : CustomString.noAccountYet;
     });
   }
 
@@ -78,7 +78,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Container(
-          color: Colors.transparent,
+          color: Colors.white.withAlpha(0),
           child: Padding(
             padding: const EdgeInsets.all(30),
             child: Column(
@@ -93,8 +93,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                 Text(
                   titleConnexion,
                   textAlign: TextAlign.center,
-                  style: CustomTextStyle.body1
-                      .copyWith(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: CustomTextStyle.bigBody1.copyWith(fontSize: 24),
                 ),
                 const SizedBox(height: 30),
                 BorderedTextField(
@@ -102,45 +101,6 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                   hintText: CustomString.yourNumber,
                   keyboardType: TextInputType.number,
                 ),
-                /*
-                  Text("ou",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.grey[300],
-                      )),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 65,
-                          height: 40,
-                          child: ElevatedButton(
-                            onPressed: () => {AppLogger.debug("@@@ click google")},
-                            child: const Image(
-                              image: AssetImage("assets/google_logo.png"),
-                              height: 20,
-                              width: 20,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        SizedBox(
-                          width: 65,
-                          height: 40,
-                          child: ElevatedButton(
-                              onPressed: () => {AppLogger.debug("@@@ click apple")},
-                              child: const Image(
-                                image: AssetImage("assets/apple_logo.png"),
-                                height: 20,
-                                width: 20,
-                              )),
-                        )
-                      ],
-                    ),
-                  ),
-                  */
                 isloading
                     ? const CircularProgressIndicator()
                     : Expanded(
@@ -183,10 +143,7 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
                                 ),
                                 child: Text(
                                   buttonConnectionTitle,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    color: CustomColor.customWhite,
-                                  ),
+                                  style: CustomTextStyle.subButton,
                                 ),
                               ),
                             ),

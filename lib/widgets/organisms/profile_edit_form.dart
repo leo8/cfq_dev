@@ -11,6 +11,8 @@ import '../atoms/buttons/custom_button.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/logger.dart';
 import '../../utils/utils.dart';
+import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final String initialUsername;
@@ -18,6 +20,7 @@ class ProfileEditForm extends StatefulWidget {
   final DateTime? initialBirthDate;
   final String initialProfilePictureUrl;
   final Future<void> Function(String, String, DateTime?, Uint8List?) onSave;
+  final List<String> userNames;
 
   const ProfileEditForm({
     super.key,
@@ -26,6 +29,7 @@ class ProfileEditForm extends StatefulWidget {
     this.initialBirthDate,
     required this.initialProfilePictureUrl,
     required this.onSave,
+    required this.userNames,
   });
 
   @override
@@ -54,31 +58,55 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     _loadInitialImage();
   }
 
+  Future<Uint8List?> _getImageFromUrl(String url) async {
+    if (url.isEmpty) return null;
+
+    int retryCount = 0;
+    const maxRetries = 3;
+
+    while (retryCount < maxRetries) {
+      try {
+        final response = await http.get(Uri.parse(url)).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw TimeoutException('Request timed out');
+          },
+        );
+
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        }
+        throw Exception('Failed to load image');
+      } catch (e) {
+        retryCount++;
+        if (retryCount == maxRetries) {
+          AppLogger.error('Error loading image after $maxRetries attempts: $e');
+          return null;
+        }
+        // Wait before retrying
+        await Future.delayed(Duration(seconds: retryCount));
+      }
+    }
+    return null;
+  }
+
   Future<void> _loadInitialImage() async {
+    if (!mounted) return;
+
     try {
+      setState(() => _isImageLoading = true);
       final image = await _getImageFromUrl(widget.initialProfilePictureUrl);
+      if (!mounted) return;
+
       setState(() {
         _selectedImage = image;
         _isImageLoading = false;
       });
     } catch (e) {
       AppLogger.error('Error loading initial image: $e');
-      setState(() {
-        _isImageLoading = false;
-      });
+      if (!mounted) return;
+      setState(() => _isImageLoading = false);
     }
-  }
-
-  Future<Uint8List?> _getImageFromUrl(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      }
-    } catch (e) {
-      AppLogger.error('Error fetching image: $e');
-    }
-    return null;
   }
 
   @override
@@ -105,8 +133,43 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
     }
   }
 
+  bool isValidUsernameLength(String username) {
+    return username.length >= 3 && username.length <= 10;
+  }
+
+  bool userNameIsAlreadyTaken(String username) {
+    if (username.toLowerCase() == widget.initialUsername.toLowerCase()) {
+      return false;
+    }
+    return widget.userNames.contains(username.toLowerCase());
+  }
+
   Future<void> _handleSave() async {
     if (_isLoading) return;
+
+    if (!isValidUsernameLength(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.invalidUsernameLength,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+
+    if (userNameIsAlreadyTaken(_usernameController.text)) {
+      Fluttertoast.showToast(
+          msg: CustomString.usernameAlreadyTaken,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -121,7 +184,16 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       );
     } catch (e) {
       AppLogger.error('Error saving profile: $e');
-      // You might want to show an error message to the user here
+      Fluttertoast.showToast(
+          msg: e.toString().contains(CustomString.usernameAlreadyTaken)
+              ? CustomString.usernameAlreadyTaken
+              : e.toString(),
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } finally {
       if (mounted) {
         setState(() {
@@ -137,21 +209,23 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const SizedBox(height: 15),
           Center(
             child: Text(
               CustomString.myProfileCapital,
-              style: CustomTextStyle.body1
-                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+              style: CustomTextStyle.body1.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           _buildProfileImage(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 25),
           BorderedIconTextField(
               icon: CustomIcon.editProfile,
               controller: _usernameController,
-              hintText: CustomString.yourUsername),
+              hintText: CustomString.yourUsername,
+              maxLength: 10),
           const SizedBox(height: 15),
           BorderedIconTextField(
               icon: CustomIcon.userLocation,

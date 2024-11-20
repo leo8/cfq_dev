@@ -26,6 +26,7 @@ class FriendsListScreen extends StatelessWidget {
         appBar: AppBar(
           toolbarHeight: 40,
           backgroundColor: CustomColor.customBlack,
+          surfaceTintColor: CustomColor.customBlack,
           leading: IconButton(
             icon: CustomIcon.arrowBack,
             onPressed: () {
@@ -35,9 +36,6 @@ class FriendsListScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            const SizedBox(
-              height: 15,
-            ),
             Center(
               child: Text(
                 CustomString.myFriendsCapital,
@@ -115,16 +113,19 @@ class FriendsListScreen extends StatelessWidget {
                               title: Text(friend.username),
                               trailing: CustomButton(
                                   label: CustomString.removeFriend,
-                                  textStyle: CustomTextStyle.subButton
-                                      .copyWith(fontWeight: FontWeight.bold),
+                                  textStyle: CustomTextStyle.subButton.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                   onTap: () {
                                     viewModel.removeFriend(friend.uid);
                                   },
                                   color: CustomColor.customBlack,
                                   borderWidth: 0.5,
                                   borderRadius: 5,
-                                  width: 110,
-                                  height: 50),
+                                  width: 100,
+                                  height: 35,
+                                  padding: 5),
                             ),
                           ],
                         );

@@ -13,6 +13,7 @@ import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
 import '../view_models/requests_view_model.dart';
 import 'dart:async';
+import '../utils/styles/string.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -32,6 +33,12 @@ class ProfileViewModel extends ChangeNotifier {
   List<Conversation> _conversations = [];
   List<Conversation> _filteredConversations = [];
   List<Conversation> get filteredConversations => _filteredConversations;
+
+  List<String> _filteredCfqs = [];
+  List<String> get filteredCfqs => _filteredCfqs;
+
+  List<String> _filteredTurns = [];
+  List<String> get filteredTurns => _filteredTurns;
 
   // Status variables for UI feedback
   bool _friendAdded = false;
@@ -62,6 +69,9 @@ class ProfileViewModel extends ChangeNotifier {
   StreamSubscription<DocumentSnapshot>? _userSubscription;
   bool _disposed = false;
 
+  List<String> _userNames = [];
+  List<String> get userNames => _userNames;
+
   @override
   void dispose() {
     _disposed = true;
@@ -71,6 +81,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileViewModel({this.userId}) {
     fetchUserData();
+    fetchUserNames();
   }
 
   Future<void> fetchUserData() async {
@@ -166,6 +177,18 @@ class ProfileViewModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       AppLogger.error(e.toString());
+    }
+  }
+
+  Future<void> fetchUserNames() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('users').get();
+      _userNames = snapshot.docs.map((doc) {
+        return doc['searchKey'] as String;
+      }).toList();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error("Error fetching usernames: $e");
     }
   }
 
@@ -315,11 +338,30 @@ class ProfileViewModel extends ChangeNotifier {
     await AuthMethods().logOutUser();
   }
 
-  Future<void> updateUserProfile(
-      String username, String location, DateTime? birthDate) async {
+  bool isUsernameAlreadyTaken(String username) {
+    // Allow keeping the same username
+    if (_user != null &&
+        username.toLowerCase() == _user!.username.toLowerCase()) {
+      return false;
+    }
+    return _userNames.contains(username.toLowerCase());
+  }
+
+  Future<void> updateUserProfile(String username, String location,
+      DateTime? birthDate, Uint8List? image) async {
     try {
       _isLoading = true;
       notifyListeners();
+
+      // Validate username length
+      if (username.length < 3 || username.length > 10) {
+        throw Exception(CustomString.invalidUsernameLength);
+      }
+
+      // Check if username is taken (excluding current username)
+      if (isUsernameAlreadyTaken(username)) {
+        throw Exception(CustomString.usernameAlreadyTaken);
+      }
 
       // Update Firestore
       await FirebaseFirestore.instance
@@ -329,7 +371,12 @@ class ProfileViewModel extends ChangeNotifier {
         'username': username,
         'location': location,
         'birthDate': birthDate?.toIso8601String(),
+        'searchKey': username.toLowerCase(),
       });
+
+      // Update local usernames list
+      _userNames.remove(_user!.username.toLowerCase()); // Remove old username
+      _userNames.add(username.toLowerCase()); // Add new username
 
       // Update local user object
       _user = model.User(
@@ -358,8 +405,8 @@ class ProfileViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _isLoading = false;
-      AppLogger.error(e.toString());
       notifyListeners();
+      rethrow;
     }
   }
 
@@ -412,16 +459,24 @@ class ProfileViewModel extends ChangeNotifier {
     }
   }
 
+  // Add this helper method at the class level
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
   /// Fetches both "turn" and "cfq" collections from Firestore for the user's posts,
   /// combines them into a single stream, and sorts them by date.
   Stream<List<DocumentSnapshot>> fetchUserPosts() {
     try {
-      // Use the userId parameter if provided (friend's profile), otherwise use current user's ID
       String targetUserId = userId ?? FirebaseAuth.instance.currentUser!.uid;
 
-      // Only fetch posts if viewing own profile or if the user is a friend
       if (!_isCurrentUser && !_isFriend) {
-        return Stream.value([]); // Return empty stream for non-friends
+        return Stream.value([]);
       }
 
       return FirebaseFirestore.instance
@@ -439,48 +494,69 @@ class ProfileViewModel extends ChangeNotifier {
         final postedCfqs = List<String>.from(userData['postedCfqs'] ?? []);
         final postedTurns = List<String>.from(userData['postedTurns'] ?? []);
 
+        if (!_isCurrentUser) {
+          // Get current user's invited events
+          final currentUserInvitedCfqs =
+              List<String>.from(_currentUser?.invitedCfqs ?? []);
+          final currentUserInvitedTurns =
+              List<String>.from(_currentUser?.invitedTurns ?? []);
+
+          // Filter posted events to only include those where current user is invited
+          _filteredCfqs = postedCfqs
+              .where((cfqId) => currentUserInvitedCfqs.contains(cfqId))
+              .toList();
+          _filteredTurns = postedTurns
+              .where((turnId) => currentUserInvitedTurns.contains(turnId))
+              .toList();
+        } else {
+          _filteredCfqs = postedCfqs;
+          _filteredTurns = postedTurns;
+        }
+
         // Handle empty lists
-        Stream<List<DocumentSnapshot>> cfqsStream = postedCfqs.isEmpty
+        if (filteredCfqs.isEmpty && filteredTurns.isEmpty) {
+          return Stream.value([]);
+        }
+
+        // Create streams for CFQs in batches
+        final cfqStreams = _chunkList(filteredCfqs, 30).map((chunk) => chunk
+                .isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('cfqs')
-                .where(FieldPath.documentId, whereIn: postedCfqs)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
-                .map((snapshot) => snapshot.docs);
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList()));
 
-        Stream<List<DocumentSnapshot>> turnsStream = postedTurns.isEmpty
-            ? Stream.value(<DocumentSnapshot>[])
-            : FirebaseFirestore.instance
-                .collection('turns')
-                .where(FieldPath.documentId, whereIn: postedTurns)
-                .snapshots()
-                .map((snapshot) => snapshot.docs.where((doc) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      final invitees =
-                          List<String>.from(data['invitees'] ?? []);
-                      final organizers =
-                          List<String>.from(data['organizers'] ?? []);
-                      final currentUserId =
-                          FirebaseAuth.instance.currentUser!.uid;
-                      return invitees.contains(currentUserId) ||
-                          organizers.contains(currentUserId);
-                    }).toList());
+        // Create streams for Turns in batches
+        final turnStreams = _chunkList(filteredTurns, 30).map((chunk) =>
+            chunk.isEmpty
+                ? Stream.value(<DocumentSnapshot>[])
+                : FirebaseFirestore.instance
+                    .collection('turns')
+                    .where(FieldPath.documentId, whereIn: chunk)
+                    .snapshots()
+                    .map((snapshot) => snapshot.docs
+                        .where((doc) => !isEventExpired(doc))
+                        .toList()));
 
-        return Rx.combineLatest2(
-          cfqsStream,
-          turnsStream,
-          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
-            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
-            allEvents.sort((a, b) {
-              DateTime dateA = parseDate(
-                  (a.data() as Map<String, dynamic>)['datePublished']);
-              DateTime dateB = parseDate(
-                  (b.data() as Map<String, dynamic>)['datePublished']);
-              return dateB.compareTo(dateA);
-            });
-            return allEvents;
-          },
-        );
+        // Combine all streams
+        return Rx.combineLatest([...cfqStreams, ...turnStreams],
+            (List<List<DocumentSnapshot>> results) {
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+
+          allEvents.sort((a, b) {
+            DateTime dateA =
+                parseDate((a.data() as Map<String, dynamic>)['datePublished']);
+            DateTime dateB =
+                parseDate((b.data() as Map<String, dynamic>)['datePublished']);
+            return dateB.compareTo(dateA);
+          });
+
+          return allEvents;
+        });
       });
     } catch (error) {
       AppLogger.error("Error in fetchUserPosts: $error");
@@ -490,57 +566,75 @@ class ProfileViewModel extends ChangeNotifier {
 
   Stream<List<DocumentSnapshot>> fetchAttendingEvents(String userId) {
     try {
-      final today = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      );
-
-      Stream<List<DocumentSnapshot>> turnsStream = FirebaseFirestore.instance
-          .collection('turns')
-          .where('attending', arrayContains: userId)
+      return FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
           .snapshots()
-          .map((snapshot) {
-        return snapshot.docs.where((doc) {
-          DateTime eventDate =
-              parseDate((doc.data() as Map<String, dynamic>)['eventDateTime']);
-          return eventDate.isAfter(today) || eventDate.isAtSameMomentAs(today);
-        }).toList();
-      });
+          .switchMap((userSnapshot) {
+        if (!userSnapshot.exists) {
+          AppLogger.warning("User document does not exist for uid: $userId");
+          return Stream.value(<DocumentSnapshot>[]);
+        }
 
-      Stream<List<DocumentSnapshot>> birthdaysStream =
-          userId == currentUser?.uid
-              ? fetchBirthdayEvents(userId)
-              : Stream.value([]);
-      AppLogger.debug(birthdaysStream.toString());
-      birthdaysStream = birthdaysStream.map((birthdays) {
-        return birthdays;
-      });
-      return Rx.combineLatest2(
-        turnsStream,
-        birthdaysStream,
-        (List<DocumentSnapshot> turns, List<DocumentSnapshot> birthdays) {
-          List<DocumentSnapshot> allEvents = [...turns, ...birthdays];
-          allEvents.sort((a, b) {
-            DateTime dateA =
-                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
+        final userData = userSnapshot.data() as Map<String, dynamic>;
+        final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-            DateTime dateB =
-                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
+        // Create stream for turns
+        Stream<List<DocumentSnapshot>> eventsStream;
+        if (invitedTurns.isEmpty) {
+          eventsStream = Stream.value([]);
+        } else {
+          // Create streams for Turns in batches
+          final turnStreams = _chunkList(invitedTurns, 30).map((chunk) =>
+              chunk.isEmpty
+                  ? Stream.value(<DocumentSnapshot>[])
+                  : FirebaseFirestore.instance
+                      .collection('turns')
+                      .where(FieldPath.documentId, whereIn: chunk)
+                      .snapshots()
+                      .map((snapshot) => snapshot.docs
+                              .where((doc) => !isEventExpired(doc))
+                              .where((doc) {
+                            final data = doc.data() as Map<String, dynamic>;
+                            final attending =
+                                List<String>.from(data['attending'] ?? []);
+                            return attending.contains(userId);
+                          }).toList()));
 
-            return dateA.compareTo(dateB);
+          eventsStream = Rx.combineLatest([...turnStreams],
+              (List<List<DocumentSnapshot>> results) {
+            return results.expand((x) => x).toList();
           });
+        }
 
-          for (var e in allEvents) {
-            final data = e.data() as Map<String, dynamic>;
-            final date = e.reference.parent.id == 'turns'
-                ? data['eventDateTime']
-                : data['birthDate'];
-            AppLogger.debug('Event date: $date');
-          }
-          return allEvents;
-        },
-      );
+        // Always fetch birthdays stream for current user
+        Stream<List<DocumentSnapshot>> birthdaysStream =
+            userId == currentUser?.uid
+                ? fetchBirthdayEvents(userId)
+                : Stream.value([]);
+
+        // Combine events and birthdays streams
+        return Rx.combineLatest2(
+          eventsStream,
+          birthdaysStream,
+          (List<DocumentSnapshot> events, List<DocumentSnapshot> birthdays) {
+            List<DocumentSnapshot> allEvents = [...events, ...birthdays];
+
+            // Only sort if there are events to sort
+            if (allEvents.isNotEmpty) {
+              allEvents.sort((a, b) {
+                DateTime dateA = parseDate(
+                    (a.data() as Map<String, dynamic>)['eventDateTime']);
+                DateTime dateB = parseDate(
+                    (b.data() as Map<String, dynamic>)['eventDateTime']);
+                return dateA.compareTo(dateB);
+              });
+            }
+
+            return allEvents;
+          },
+        );
+      });
     } catch (error) {
       AppLogger.error("Error in fetchAttendingEvents: $error");
       return Stream.value([]);
@@ -622,17 +716,19 @@ class ProfileViewModel extends ChangeNotifier {
       notAttending.remove(_currentUser!.uid);
       notSureAttending.remove(_currentUser!.uid);
 
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(_currentUser!.uid);
-          break;
-        case 'notAttending':
-          notAttending.add(_currentUser!.uid);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(_currentUser!.uid);
-          break;
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(_currentUser!.uid);
+            break;
+          case 'notAttending':
+            notAttending.add(_currentUser!.uid);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(_currentUser!.uid);
+            break;
+        }
       }
 
       // Update turn document
@@ -645,14 +741,36 @@ class ProfileViewModel extends ChangeNotifier {
       // Update user's attending status
       Map<String, dynamic> attendingStatus =
           Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[turnId] = status;
+      if (status == 'notAnswered') {
+        attendingStatus.remove(turnId);
+      } else {
+        attendingStatus[turnId] = status;
+      }
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
+      final organizerId = turnData['uid'] as String;
 
       // Create notification if attending
-      if (status == 'attending') {
+      if (status == 'attending' && organizerId != _currentUser!.uid) {
         await _createAttendingNotification(turnId);
+      }
+
+      String channelId = turnData['channelId'] as String;
+
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
       }
 
       notifyListeners();
@@ -774,12 +892,25 @@ class ProfileViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
 
       bool isNowFollowing = !followingUp.contains(userId);
 
       if (isNowFollowing) {
         await addFollowUp(cfqId, userId);
         await _createFollowUpNotification(cfqId);
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       } else {
         await removeFollowUp(cfqId, userId);
       }
@@ -874,19 +1005,19 @@ class ProfileViewModel extends ChangeNotifier {
     try {
       if (_currentUser == null) return;
 
-      // Get the CFQ document to get the organizer's ID and name
+      // Get the CFQ document to get the organizer's ID and following users
       DocumentSnapshot cfqSnapshot =
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
-      String organizerId = cfqData['uid'] as String;
-      String cfqName = cfqData['cfqName'] as String;
+      List<String> followingUsers =
+          List<String>.from(cfqData['followingUp'] ?? []);
 
-      // Get the organizer's notification channel ID
-      DocumentSnapshot organizerSnapshot =
-          await _firestore.collection('users').doc(organizerId).get();
-      String organizerNotificationChannelId = (organizerSnapshot.data()
-          as Map<String, dynamic>)['notificationsChannelId'];
+      // Remove current user from notification recipients
+      followingUsers.remove(_currentUser!.uid);
 
+      if (followingUsers.isEmpty) return;
+
+      // Create the base notification object
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
@@ -896,24 +1027,45 @@ class ProfileViewModel extends ChangeNotifier {
             .last,
         'content': {
           'cfqId': cfqId,
-          'cfqName': cfqName,
+          'cfqName': cfqData['cfqName'] as String,
           'followerId': _currentUser!.uid,
           'followerUsername': _currentUser!.username,
           'followerProfilePictureUrl': _currentUser!.profilePictureUrl,
         },
       };
 
-      // Add notification to organizer's notification channel
-      await _firestore
-          .collection('notifications')
-          .doc(organizerNotificationChannelId)
-          .collection('userNotifications')
-          .add(notification);
+      // Create a batch for all operations
+      WriteBatch batch = _firestore.batch();
 
-      // Increment unread notifications count for the organizer
-      await _firestore.collection('users').doc(organizerId).update({
-        'unreadNotificationsCount': FieldValue.increment(1),
-      });
+      // Get all following users' notification channels and create notifications
+      QuerySnapshot userDocs = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: followingUsers)
+          .get();
+
+      for (DocumentSnapshot userDoc in userDocs.docs) {
+        String notificationChannelId =
+            (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
+
+        // Add notification to user's notification channel
+        DocumentReference notificationRef = _firestore
+            .collection('notifications')
+            .doc(notificationChannelId)
+            .collection('userNotifications')
+            .doc();
+
+        batch.set(notificationRef, notification);
+
+        // Increment unread notifications count
+        DocumentReference userRef =
+            _firestore.collection('users').doc(userDoc.id);
+        batch.update(userRef, {
+          'unreadNotificationsCount': FieldValue.increment(1),
+        });
+      }
+
+      // Commit all operations
+      await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
     }
@@ -1080,6 +1232,12 @@ class ProfileViewModel extends ChangeNotifier {
       _incomingRequestId = null;
 
       AppLogger.debug('Local state updated: isFriend=$_isFriend');
+
+      // Create notification for requester
+      await createAcceptedFriendRequestNotification(
+        requesterId: _user!.uid,
+      );
+
       notifyListeners(); // Trigger UI update immediately
 
       // Fetch latest data to ensure consistency
@@ -1113,6 +1271,84 @@ class ProfileViewModel extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('Error denying friend request: $e');
       AppLogger.error('Stack trace: ${StackTrace.current}');
+    }
+  }
+
+  Future<void> createAcceptedFriendRequestNotification({
+    required String requesterId,
+  }) async {
+    try {
+      if (_currentUser == null) return;
+
+      // Get the requester's notification channel ID
+      DocumentSnapshot requesterDoc =
+          await _firestore.collection('users').doc(requesterId).get();
+      String requesterNotificationChannelId = (requesterDoc.data()
+          as Map<String, dynamic>)['notificationsChannelId'];
+
+      final notification = {
+        'id': const Uuid().v4(),
+        'timestamp': DateTime.now().toIso8601String(),
+        'type': notificationModel.NotificationType.acceptedFriendRequest
+            .toString()
+            .split('.')
+            .last,
+        'content': {
+          'accepterId': _currentUser!.uid,
+          'accepterUsername': _currentUser!.username,
+          'accepterProfilePictureUrl': _currentUser!.profilePictureUrl,
+        },
+      };
+
+      // Add notification
+      await _firestore
+          .collection('notifications')
+          .doc(requesterNotificationChannelId)
+          .collection('userNotifications')
+          .add(notification);
+
+      // Increment unread notifications count
+      await _firestore.collection('users').doc(requesterId).update({
+        'unreadNotificationsCount': FieldValue.increment(1),
+      });
+    } catch (e) {
+      AppLogger.error(
+          'Error creating accepted friend request notification: $e');
+    }
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
     }
   }
 }

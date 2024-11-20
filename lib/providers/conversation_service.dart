@@ -3,7 +3,6 @@ import '../models/user.dart' as model;
 import '../models/conversation.dart';
 import 'package:rxdart/rxdart.dart';
 import '../utils/logger.dart';
-import 'package:uuid/uuid.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -117,31 +116,8 @@ class ConversationService {
         AppLogger.info(
             'Conversation $channelId updated with new message details');
 
-        // Create notifications for each member
         for (String memberId in userSnapshots.keys) {
           DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
-          String notificationsChannelId =
-              userSnapshot.get('notificationsChannelId');
-          String notificationId = const Uuid().v1();
-
-          DocumentReference notificationRef = _firestore
-              .collection('notifications')
-              .doc(notificationsChannelId)
-              .collection('userNotifications')
-              .doc(notificationId);
-
-          transaction.set(notificationRef, {
-            'id': notificationId,
-            'timestamp': FieldValue.serverTimestamp(),
-            'type': 'message',
-            'content': {
-              'senderProfilePictureUrl': senderProfilePicture,
-              'messageContent': message,
-              'timestampSent': FieldValue.serverTimestamp(),
-              'senderUsername': senderUsername,
-              'conversationId': channelId,
-            }
-          });
 
           // Update unreadMessagesCount
           List<Map<String, dynamic>> conversations =
@@ -325,17 +301,36 @@ class ConversationService {
         return Stream.value([]);
       }
 
-      return _firestore
-          .collection('conversations')
-          .where(FieldPath.documentId, whereIn: conversationIds)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.docs.map((doc) {
-          Conversation conversation = Conversation.fromFirestore(doc);
-          return conversation;
-        }).toList()
+      // Split conversationIds into chunks of 30 or less
+      List<List<String>> chunks = [];
+      for (var i = 0; i < conversationIds.length; i += 30) {
+        chunks.add(
+          conversationIds.sublist(
+            i,
+            i + 30 > conversationIds.length ? conversationIds.length : i + 30,
+          ),
+        );
+      }
+
+      // Create a stream for each chunk
+      List<Stream<List<Conversation>>> chunkStreams = chunks.map((chunk) {
+        return _firestore
+            .collection('conversations')
+            .where(FieldPath.documentId, whereIn: chunk)
+            .snapshots()
+            .map((snapshot) => snapshot.docs
+                .map((doc) => Conversation.fromFirestore(doc))
+                .toList());
+      }).toList();
+
+      // Combine all chunk streams
+      return Rx.combineLatestList(chunkStreams).map((chunkedResults) {
+        List<Conversation> allConversations = chunkedResults
+            .expand((e) => e)
+            .toList()
           ..sort((a, b) =>
               b.lastMessageTimestamp.compareTo(a.lastMessageTimestamp));
+        return allConversations;
       });
     });
   }

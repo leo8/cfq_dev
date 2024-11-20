@@ -10,6 +10,7 @@ import 'friends_list_screen.dart';
 import '../../utils/styles/icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../utils/loading_overlay.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String? userId;
@@ -24,7 +25,9 @@ class ProfileScreen extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: CustomColor.customBlack,
+            surfaceTintColor: CustomColor.customBlack,
             elevation: 0,
+            toolbarHeight: 40,
             automaticallyImplyLeading: false,
             leading: Consumer<ProfileViewModel>(
               builder: (context, viewModel, child) {
@@ -55,60 +58,63 @@ class ProfileScreen extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Center(
-                        child: ProfileContent(
-                          user: model.User.fromSnap(snapshot.data!),
-                          currentUser: viewModel.currentUser,
-                          viewModel: viewModel,
-                          isFriend: viewModel.isFriend,
-                          isCurrentUser: viewModel.isCurrentUser,
-                          commonFriendsCount: viewModel.commonFriendsCount,
-                          commonTeamsCount: viewModel.commonTeamsCount,
-                          onActiveChanged: viewModel.isCurrentUser
-                              ? (bool newValue) {
-                                  viewModel.updateIsActiveStatus(newValue);
-                                }
-                              : null,
-                          onFriendsTap: viewModel.isCurrentUser
-                              ? () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => FriendsListScreen(
-                                        currentUserId: viewModel.user!.uid,
+                        child: LoadingOverlay(
+                          isLoading: viewModel.isLoading,
+                          child: ProfileContent(
+                            user: model.User.fromSnap(snapshot.data!),
+                            currentUser: viewModel.currentUser,
+                            viewModel: viewModel,
+                            isFriend: viewModel.isFriend,
+                            isCurrentUser: viewModel.isCurrentUser,
+                            commonFriendsCount: viewModel.commonFriendsCount,
+                            commonTeamsCount: viewModel.commonTeamsCount,
+                            onActiveChanged: viewModel.isCurrentUser
+                                ? (bool newValue) {
+                                    viewModel.updateIsActiveStatus(newValue);
+                                  }
+                                : null,
+                            onFriendsTap: viewModel.isCurrentUser
+                                ? () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FriendsListScreen(
+                                          currentUserId: viewModel.user!.uid,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                  viewModel.fetchUserData();
-                                }
-                              : null,
-                          onParametersTap: viewModel.isCurrentUser
-                              ? () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ParametersScreen(
-                                          viewModel: viewModel,
-                                          onLogoutTap: () =>
-                                              viewModel.logOut()),
-                                    ),
-                                  );
-                                }
-                              : null,
-                          onLogoutTap: viewModel.isCurrentUser
-                              ? () => viewModel.logOut()
-                              : null,
-                          onAddFriendTap:
-                              !viewModel.isCurrentUser && !viewModel.isFriend
-                                  ? () {
-                                      viewModel.addFriend(onSuccess: () {});
-                                    }
-                                  : null,
-                          onRemoveFriendTap:
-                              !viewModel.isCurrentUser && viewModel.isFriend
-                                  ? () {
-                                      viewModel.removeFriend(onSuccess: () {});
-                                    }
-                                  : null,
+                                    );
+                                    viewModel.fetchUserData();
+                                  }
+                                : null,
+                            onParametersTap: viewModel.isCurrentUser
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ParametersScreen(
+                                            viewModel: viewModel,
+                                            onLogoutTap: () =>
+                                                viewModel.logOut()),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            onLogoutTap: viewModel.isCurrentUser
+                                ? () => viewModel.logOut()
+                                : null,
+                            onAddFriendTap:
+                                !viewModel.isCurrentUser && !viewModel.isFriend
+                                    ? () {
+                                        viewModel.addFriend(onSuccess: () {});
+                                      }
+                                    : null,
+                            onRemoveFriendTap: !viewModel.isCurrentUser &&
+                                    viewModel.isFriend
+                                ? () {
+                                    viewModel.removeFriend(onSuccess: () {});
+                                  }
+                                : null,
+                          ),
                         ),
                       );
                     } else {

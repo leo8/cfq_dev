@@ -103,31 +103,53 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   void _setupActiveFriendsStream() {
-    if (_currentUser == null || _currentUser!.friends.isEmpty) {
+    if (_currentUser == null) {
       _activeFriendsStream = Stream.value([]);
       return;
     }
 
-    _activeFriendsStream = FirebaseFirestore.instance
+    // Create a stream of the current user's friends list
+    Stream<List<String>> friendsStream = _firestore
         .collection('users')
-        .where('uid', whereIn: _currentUser!.friends)
-        .where('isActive', isEqualTo: true)
+        .doc(currentUserUid)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+      final userData = snapshot.data() as Map<String, dynamic>;
+      return List<String>.from(userData['friends'] ?? []);
     });
+
+    // Create a stream of all active users
+    Stream<QuerySnapshot> activeUsersStream = _firestore
+        .collection('users')
+        .where('isActive', isEqualTo: true)
+        .snapshots();
+
+    // Combine both streams
+    _activeFriendsStream = Rx.combineLatest2(
+      friendsStream,
+      activeUsersStream,
+      (List<String> friends, QuerySnapshot activeUsers) {
+        return activeUsers.docs
+            .map((doc) => model.User.fromSnap(doc))
+            .where((user) => friends.contains(user.uid))
+            .toList();
+      },
+    );
+
+    notifyListeners();
   }
 
   Future<void> updateIsActiveStatus(bool newValue) async {
     if (_currentUser == null) return;
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(_currentUser!.uid)
-          .update({'isActive': newValue});
+      // Update Firestore
+      await _firestore.collection('users').doc(_currentUser!.uid).update({
+        'isActive': newValue,
+        'lastActiveTimestamp': FieldValue.serverTimestamp(),
+      });
 
-      _currentUser!.isActive = newValue;
-      notifyListeners();
+      // No need to update local state or notify listeners
+      // as the stream will handle the updates automatically
     } catch (e) {
       AppLogger.error('Error updating active status: $e');
     }
@@ -211,51 +233,70 @@ class ThreadViewModel extends ChangeNotifier {
         final invitedCfqs = List<String>.from(userData['invitedCfqs'] ?? []);
         final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-        AppLogger.debug(
-            "Invited CFQs: ${invitedCfqs.length}, Invited Turns: ${invitedTurns.length}");
+        // Split lists into chunks of 30 or less
+        final cfqChunks = _chunkList(invitedCfqs, 30);
+        final turnChunks = _chunkList(invitedTurns, 30);
 
-        // Handle empty lists
-        Stream<List<DocumentSnapshot>> cfqsStream = invitedCfqs.isEmpty
+        // Create streams for each chunk of CFQs
+        final cfqStreams = cfqChunks.map((chunk) => chunk.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('cfqs')
-                .where(FieldPath.documentId, whereIn: invitedCfqs)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
-                .map((snapshot) {
-                AppLogger.debug("Fetched ${snapshot.docs.length} CFQs");
-                return snapshot.docs;
-              });
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList()));
 
-        Stream<List<DocumentSnapshot>> turnsStream = invitedTurns.isEmpty
+        // Create streams for each chunk of Turns
+        final turnStreams = turnChunks.map((chunk) => chunk.isEmpty
             ? Stream.value(<DocumentSnapshot>[])
             : FirebaseFirestore.instance
                 .collection('turns')
-                .where(FieldPath.documentId, whereIn: invitedTurns)
+                .where(FieldPath.documentId, whereIn: chunk)
                 .snapshots()
-                .map((snapshot) {
-                AppLogger.debug("Fetched ${snapshot.docs.length} Turns");
-                return snapshot.docs;
-              });
+                .map((snapshot) => snapshot.docs
+                    .where((doc) => !isEventExpired(doc))
+                    .toList()));
 
-        return Rx.combineLatest2(
-          cfqsStream,
-          turnsStream,
-          (List<DocumentSnapshot> cfqs, List<DocumentSnapshot> turns) {
-            List<DocumentSnapshot> allEvents = [...cfqs, ...turns];
-            AppLogger.debug(
-                "Combined events: ${allEvents.length} (${cfqs.length} CFQs + ${turns.length} Turns)");
+        // Stream for CFQs where user is organizer
+        Stream<List<DocumentSnapshot>> organizedCfqsStream = FirebaseFirestore
+            .instance
+            .collection('cfqs')
+            .where('uid', isEqualTo: currentUserUid)
+            .snapshots()
+            .map((snapshot) =>
+                snapshot.docs.where((doc) => !isEventExpired(doc)).toList());
 
-            allEvents.sort((a, b) {
-              DateTime dateA = getPublishedDateTime(a);
-              DateTime dateB = getPublishedDateTime(b);
-              return dateB.compareTo(dateA);
-            });
+        // Stream for Turns where user is organizer
+        Stream<List<DocumentSnapshot>> organizedTurnsStream = FirebaseFirestore
+            .instance
+            .collection('turns')
+            .where('uid', isEqualTo: currentUserUid)
+            .snapshots()
+            .map((snapshot) =>
+                snapshot.docs.where((doc) => !isEventExpired(doc)).toList());
 
-            AppLogger.debug(
-                "Events sorted. First event date: ${getEventDateTime(allEvents.first)}, Last event date: ${getEventDateTime(allEvents.last)}");
-            return allEvents;
-          },
-        );
+        // Combine all streams
+        return Rx.combineLatest([
+          ...cfqStreams,
+          ...turnStreams,
+          organizedCfqsStream,
+          organizedTurnsStream,
+        ], (List<List<DocumentSnapshot>> results) {
+          // Flatten and deduplicate results
+          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
+          allEvents = _deduplicateEvents(allEvents);
+
+          // Sort by published date
+          allEvents.sort((a, b) {
+            DateTime dateA = getPublishedDateTime(a);
+            DateTime dateB = getPublishedDateTime(b);
+            return dateB.compareTo(dateA);
+          });
+
+          return allEvents;
+        });
       });
     } catch (error) {
       AppLogger.error("Error in fetchCombinedEvents: $error");
@@ -348,11 +389,20 @@ class ThreadViewModel extends ChangeNotifier {
   }
 
   Future<void> loadConversations() async {
-    _conversations =
-        await _conversationService.getUserConversations(currentUserUid);
-    _sortConversations();
-    _filteredConversations = _conversations;
-    notifyListeners();
+    try {
+      // Use the stream-based method instead of the direct fetch
+      _conversations = await _conversationService
+          .getUserConversationsStream(currentUserUid)
+          .first;
+      _sortConversations();
+      _filteredConversations = _conversations;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error loading conversations: $e');
+      _conversations = [];
+      _filteredConversations = [];
+      notifyListeners();
+    }
   }
 
   void _sortConversations() {
@@ -425,6 +475,8 @@ class ThreadViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
+      AppLogger.debug('channelId: $channelId');
 
       // Get organizer's notification channel ID
       DocumentSnapshot organizerSnapshot =
@@ -442,6 +494,18 @@ class ThreadViewModel extends ChangeNotifier {
           data['cfqName'] as String,
           organizerNotificationChannelId,
         );
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       }
       notifyListeners();
     } catch (e) {
@@ -504,7 +568,7 @@ class ThreadViewModel extends ChangeNotifier {
     try {
       final batch = _firestore.batch();
       final turnRef = _firestore.collection('turns').doc(turnId);
-      final userRef = _firestore.collection('users').doc(currentUser!.uid);
+      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
 
       final turnDoc = await turnRef.get();
       final userDoc = await userRef.get();
@@ -524,21 +588,23 @@ class ThreadViewModel extends ChangeNotifier {
       final List<String> notSureAttending =
           List<String>.from(turnData['notSureAttending'] ?? []);
 
-      attending.remove(currentUser!.uid);
-      notAttending.remove(currentUser!.uid);
-      notSureAttending.remove(currentUser!.uid);
+      attending.remove(_currentUser!.uid);
+      notAttending.remove(_currentUser!.uid);
+      notSureAttending.remove(_currentUser!.uid);
 
-      // Add user to appropriate list
-      switch (status) {
-        case 'attending':
-          attending.add(currentUser!.uid);
-          break;
-        case 'notAttending':
-          notAttending.add(currentUser!.uid);
-          break;
-        case 'notSureAttending':
-          notSureAttending.add(currentUser!.uid);
-          break;
+      // Add user to appropriate list only if not unselecting
+      if (status != 'notAnswered') {
+        switch (status) {
+          case 'attending':
+            attending.add(_currentUser!.uid);
+            break;
+          case 'notAttending':
+            notAttending.add(_currentUser!.uid);
+            break;
+          case 'notSureAttending':
+            notSureAttending.add(_currentUser!.uid);
+            break;
+        }
       }
 
       // Update turn document
@@ -551,14 +617,36 @@ class ThreadViewModel extends ChangeNotifier {
       // Update user's attending status
       Map<String, dynamic> attendingStatus =
           Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
-      attendingStatus[turnId] = status;
+      if (status == 'notAnswered') {
+        attendingStatus.remove(turnId);
+      } else {
+        attendingStatus[turnId] = status;
+      }
       batch.update(userRef, {'attendingStatus': attendingStatus});
 
       await batch.commit();
+      final organizerId = turnData['uid'] as String;
 
       // Create notification if attending
-      if (status == 'attending') {
+      if (status == 'attending' && organizerId != _currentUser!.uid) {
         await _createAttendingNotification(turnId);
+      }
+
+      String channelId = turnData['channelId'] as String;
+
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
       }
 
       notifyListeners();
@@ -615,12 +703,18 @@ class ThreadViewModel extends ChangeNotifier {
     try {
       if (_currentUser == null) return;
 
-      // Get the CFQ document to get the organizer's ID
+      // Get the CFQ document to get the organizer's ID and following users
       DocumentSnapshot cfqSnapshot =
           await _firestore.collection('cfqs').doc(cfqId).get();
-      String organizerId =
-          (cfqSnapshot.data() as Map<String, dynamic>)['uid'] as String;
+      Map<String, dynamic> cfqData = cfqSnapshot.data() as Map<String, dynamic>;
+      List<String> followingUsers =
+          List<String>.from(cfqData['followingUp'] ?? []);
 
+      followingUsers.remove(_currentUser!.uid);
+
+      if (followingUsers.isEmpty) return;
+
+      // Create the base notification object
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
@@ -637,19 +731,91 @@ class ThreadViewModel extends ChangeNotifier {
         },
       };
 
-      // Add notification to organizer's notification channel
-      await _firestore
-          .collection('notifications')
-          .doc(organizerNotificationChannelId)
-          .collection('userNotifications')
-          .add(notification);
+      // Create a batch for all operations
+      WriteBatch batch = _firestore.batch();
 
-      // Increment unread notifications count for the organizer using their user ID
-      await _firestore.collection('users').doc(organizerId).update({
-        'unreadNotificationsCount': FieldValue.increment(1),
-      });
+      // Get all following users' notification channels and create notifications
+      QuerySnapshot userDocs = await _firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: followingUsers)
+          .get();
+
+      for (DocumentSnapshot userDoc in userDocs.docs) {
+        String notificationChannelId =
+            (userDoc.data() as Map<String, dynamic>)['notificationsChannelId'];
+
+        // Add notification to user's notification channel
+        DocumentReference notificationRef = _firestore
+            .collection('notifications')
+            .doc(notificationChannelId)
+            .collection('userNotifications')
+            .doc();
+
+        batch.set(notificationRef, notification);
+
+        // Increment unread notifications count
+        DocumentReference userRef =
+            _firestore.collection('users').doc(userDoc.id);
+        batch.update(userRef, {
+          'unreadNotificationsCount': FieldValue.increment(1),
+        });
+      }
+
+      // Commit all operations
+      await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating follow-up notification: $e');
     }
+  }
+
+  bool isEventExpired(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final bool isTurn = doc.reference.parent.id == 'turns';
+    final DateTime now = DateTime.now();
+
+    if (isTurn) {
+      // Handle Turn expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime eventDateTime = parseDate(data['eventDateTime']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      }
+    } else {
+      // Handle CFQ expiration
+      final DateTime? endDateTime =
+          data['endDateTime'] != null ? parseDate(data['endDateTime']) : null;
+      final DateTime? eventDateTime = data['eventDateTime'] != null
+          ? parseDate(data['eventDateTime'])
+          : null;
+      final DateTime publishedDateTime = parseDate(data['datePublished']);
+
+      if (endDateTime != null) {
+        return now.isAfter(endDateTime.add(const Duration(hours: 12)));
+      } else if (eventDateTime != null) {
+        return now.isAfter(eventDateTime.add(const Duration(hours: 24)));
+      } else {
+        return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
+      }
+    }
+  }
+
+  // Helper method to chunk a list into smaller lists
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
+    }
+    return chunks;
+  }
+
+  // Helper method to deduplicate events based on document ID
+  List<DocumentSnapshot> _deduplicateEvents(List<DocumentSnapshot> events) {
+    final seen = <String>{};
+    return events.where((doc) => seen.add(doc.id)).toList();
   }
 }

@@ -13,6 +13,7 @@ import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding
@@ -64,6 +65,12 @@ class _CFQState extends State<CFQ> {
     FlutterNativeSplash.remove(); // Remove the splash screen
   }
 
+  Future<bool> _doesUserExist(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return doc.exists;
+  }
+
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
@@ -87,11 +94,26 @@ class _CFQState extends State<CFQ> {
               if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.hasData && snapshot.data?.uid != null) {
                   final uid = snapshot.data!.uid;
-                  return RepsonsiveLayout(
-                    mobileScreenLayout: MobileScreenLayout(
-                      uid: uid,
-                    ),
-                    webScreenLayout: WebScreenLayout(),
+                  return FutureBuilder<bool>(
+                    future: _doesUserExist(uid),
+                    builder: (context, userSnapshot) {
+                      if (userSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: CustomColor.customWhite,
+                          ),
+                        );
+                      }
+                      if (userSnapshot.hasData && userSnapshot.data == true) {
+                        return RepsonsiveLayout(
+                          mobileScreenLayout: MobileScreenLayout(uid: uid),
+                          webScreenLayout: WebScreenLayout(),
+                        );
+                      } else {
+                        return const LoginScreenMobile();
+                      }
+                    },
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text('${snapshot.error}'));

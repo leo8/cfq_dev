@@ -6,6 +6,7 @@ import '../utils/styles/text_styles.dart';
 import '../utils/styles/icons.dart';
 import '../view_models/notifications_view_model.dart';
 import '../widgets/organisms/notifications_list.dart';
+import '../utils/loading_overlay.dart';
 
 class NotificationsScreen extends StatelessWidget {
   final String currentUserUid;
@@ -26,39 +27,42 @@ class NotificationsScreen extends StatelessWidget {
             appBar: AppBar(
               toolbarHeight: 40,
               backgroundColor: CustomColor.customBlack,
+              surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
                 icon: CustomIcon.arrowBack,
-                onPressed: () {
-                  // First reset the unread count
-                  viewModel.resetUnreadCount().then((_) {
-                    // Then navigate back
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  });
+                onPressed: () async {
+                  // First reset the unread count without showing loading state
+                  await viewModel.resetUnreadCount();
+
+                  // Only pop if the context is still mounted
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
                 },
               ),
             ),
             body: Column(
               children: [
-                const SizedBox(height: 15),
                 Center(
                   child: Text(
                     CustomString.notificationsCapital,
                     style: CustomTextStyle.body1.copyWith(
-                      fontSize: 32,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: NotificationsList(
-                    notifications: viewModel.notifications,
+                  child: LoadingOverlay(
                     isLoading: viewModel.isLoading,
-                    unreadCountStream: viewModel.unreadCountStream,
-                    currentUserId: viewModel.currentUserUid,
-                    viewModel: viewModel,
+                    child: NotificationsList(
+                      notifications: viewModel.notifications,
+                      isLoading: viewModel.isLoading,
+                      unreadCountStream: viewModel.unreadCountStream,
+                      currentUserId: viewModel.currentUserUid,
+                      viewModel: viewModel,
+                    ),
                   ),
                 ),
               ],

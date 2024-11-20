@@ -22,6 +22,7 @@ class RequestsScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
+        surfaceTintColor: CustomColor.customBlack,
         leading: IconButton(
           icon: CustomIcon.arrowBack,
           onPressed: () {
@@ -31,12 +32,11 @@ class RequestsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 15),
           Center(
             child: Text(
               CustomString.requestsCapital,
               style: CustomTextStyle.body1.copyWith(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),

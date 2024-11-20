@@ -12,6 +12,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../screens/requests_screen.dart';
 import 'package:cfq_dev/view_models/notifications_view_model.dart';
 import '../../screens/conversation_screen.dart';
+import '../../screens/profile_screen.dart';
+import '../../utils/utils.dart';
+import '../../utils/styles/string.dart';
 
 class NotificationsList extends StatelessWidget {
   final List<notificationModel.Notification> notifications;
@@ -110,6 +113,54 @@ class NotificationsList extends StatelessWidget {
     } catch (e) {
       AppLogger.error('Error fetching user data: $e');
       throw Exception('Failed to fetch user data');
+    }
+  }
+
+  Future<bool> _isUserStillInvited(String eventId, bool isTurn) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .get();
+
+      if (!userDoc.exists) return false;
+
+      final userData = userDoc.data()!;
+      final List<String> invitedEvents = List<String>.from(isTurn
+          ? (userData['invitedTurns'] ?? [])
+          : (userData['invitedCfqs'] ?? []));
+
+      final List<String> postedEvents = List<String>.from(isTurn
+          ? (userData['postedTurns'] ?? [])
+          : (userData['postedCfqs'] ?? []));
+
+      return invitedEvents.contains(eventId) || postedEvents.contains(eventId);
+    } catch (e) {
+      AppLogger.error('Error checking if user is still invited: $e');
+      return false;
+    }
+  }
+
+  Future<bool> _isEventStillExisting(String eventId, bool isTurn) async {
+    try {
+      if (isTurn) {
+        final turnDoc = await FirebaseFirestore.instance
+            .collection('turns')
+            .doc(eventId)
+            .get();
+
+        if (!turnDoc.exists) return false;
+      } else {
+        final cfqDoc = await FirebaseFirestore.instance
+            .collection('cfqs')
+            .doc(eventId)
+            .get();
+        if (!cfqDoc.exists) return false;
+      }
+      return true;
+    } catch (e) {
+      AppLogger.error('Error checking if event is strill existing: $e');
+      return false;
     }
   }
 
@@ -417,6 +468,27 @@ class NotificationsList extends StatelessWidget {
           );
           return const SizedBox.shrink();
 
+        case notificationModel.NotificationType.acceptedTeamRequest:
+        case notificationModel.NotificationType.acceptedFriendRequest:
+          final accepterId = notification.type ==
+                  notificationModel.NotificationType.acceptedTeamRequest
+              ? (notification.content as notificationModel
+                      .AcceptedTeamRequestNotificationContent)
+                  .accepterId
+              : (notification.content as notificationModel
+                      .AcceptedFriendRequestNotificationContent)
+                  .accepterId;
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                userId: accepterId,
+              ),
+            ),
+          );
+          return const SizedBox.shrink();
+
         default:
           throw Exception('Unsupported notification type');
       }
@@ -425,6 +497,113 @@ class NotificationsList extends StatelessWidget {
       return const Center(
         child: Text('Error loading content'),
       );
+    }
+  }
+
+  Future<void> _handleNotificationTap(
+      BuildContext context, notificationModel.Notification notification) async {
+    try {
+      if (notification.type == notificationModel.NotificationType.teamRequest ||
+          notification.type ==
+              notificationModel.NotificationType.friendRequest) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RequestsScreen(
+              viewModel: RequestsViewModel(currentUserId: currentUserId),
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (notification.type ==
+              notificationModel.NotificationType.acceptedTeamRequest ||
+          notification.type ==
+              notificationModel.NotificationType.acceptedFriendRequest) {
+        final accepterId = notification.type ==
+                notificationModel.NotificationType.acceptedTeamRequest
+            ? (notification.content
+                    as notificationModel.AcceptedTeamRequestNotificationContent)
+                .accepterId
+            : (notification.content as notificationModel
+                    .AcceptedFriendRequestNotificationContent)
+                .accepterId;
+
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(userId: accepterId),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Handle event-related notifications
+      String? eventId;
+      bool? isTurn;
+
+      switch (notification.type) {
+        case notificationModel.NotificationType.followUp:
+          final content = notification.content
+              as notificationModel.FollowUpNotificationContent;
+          eventId = content.cfqId;
+          isTurn = false;
+          break;
+        case notificationModel.NotificationType.eventInvitation:
+          final content = notification.content
+              as notificationModel.EventInvitationNotificationContent;
+          eventId = content.eventId;
+          isTurn = content.isTurn;
+          break;
+        case notificationModel.NotificationType.attending:
+          final content = notification.content
+              as notificationModel.AttendingNotificationContent;
+          eventId = content.turnId;
+          isTurn = true;
+          break;
+        default:
+          throw Exception('Unsupported notification type');
+      }
+
+      final isEventStillExisting = await _isEventStillExisting(eventId, isTurn);
+      if (!isEventStillExisting) {
+        if (context.mounted) {
+          showSnackBar(CustomString.notExistingEvent, context);
+        }
+        return;
+      }
+
+      final isStillInvited = await _isUserStillInvited(eventId, isTurn);
+      if (!isStillInvited) {
+        if (context.mounted) {
+          showSnackBar(CustomString.notInvited, context);
+        }
+        return;
+      }
+
+      final cardContent = await _buildCardContent(context, notification);
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExpandedCardScreen(
+              cardContent: cardContent,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      AppLogger.error('Error handling notification tap: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error loading content'),
+          ),
+        );
+      }
     }
   }
 
@@ -472,47 +651,7 @@ class NotificationsList extends StatelessWidget {
                   child: NotificationCard(
                     notification: notification,
                     onTap: () async {
-                      try {
-                        if (notification.type ==
-                                notificationModel
-                                    .NotificationType.teamRequest ||
-                            notification.type ==
-                                notificationModel
-                                    .NotificationType.friendRequest) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RequestsScreen(
-                                viewModel: RequestsViewModel(
-                                  currentUserId: currentUserId,
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          final cardContent =
-                              await _buildCardContent(context, notification);
-                          if (context.mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ExpandedCardScreen(
-                                  cardContent: cardContent,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      } catch (e) {
-                        AppLogger.error('Error handling notification tap: $e');
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Error loading content'),
-                            ),
-                          );
-                        }
-                      }
+                      await _handleNotificationTap(context, notification);
                     },
                   ),
                 ),

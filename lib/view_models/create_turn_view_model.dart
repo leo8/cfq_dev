@@ -20,7 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
-import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
@@ -36,6 +36,8 @@ class CreateTurnViewModel extends ChangeNotifier
   List<model.User> _previousSelectedInvitees = [];
   List<Team> _previousSelectedTeamInvitees = [];
   bool _previousIsEverybodySelected = false;
+
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
@@ -97,8 +99,178 @@ class CreateTurnViewModel extends ChangeNotifier
   DateTime? _selectedEndDateTime;
   DateTime? get selectedEndDateTime => _selectedEndDateTime;
 
-  CreateTurnViewModel({this.prefillTeam, this.prefillMembers}) {
+  final bool isEditing;
+  final Turn? turnToEdit;
+
+  CreateTurnViewModel({
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.turnToEdit,
+  }) {
+    if (isEditing && turnToEdit != null) {
+      _initializeEditMode();
+    }
     _initializeViewModel();
+  }
+
+  void _initializeEditMode() {
+    turnNameController.text = turnToEdit!.name;
+    descriptionController.text = turnToEdit!.description;
+    locationController.text = turnToEdit!.where;
+    addressController.text = turnToEdit!.address ?? '';
+    _selectedDateTime = turnToEdit!.eventDateTime;
+    _selectedMoods = turnToEdit!.moods;
+
+    // Fetch turn data including invitees
+    _fetchTurnData();
+  }
+
+  Future<void> _fetchTurnData() async {
+    try {
+      DocumentSnapshot turnDoc = await FirebaseFirestore.instance
+          .collection('turns')
+          .doc(turnToEdit!.eventId)
+          .get();
+
+      Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
+
+      // Fetch invitees
+      List<String> inviteeIds = List<String>.from(data['invitees'] ?? []);
+      List<String> teamIds = List<String>.from(data['teamInvitees'] ?? []);
+
+      // Fetch invitee user objects
+      _selectedInvitees = await Future.wait(inviteeIds.map((id) async {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(id).get();
+        return model.User.fromSnap(userDoc);
+      }));
+
+      // Fetch team objects
+      _selectedTeamInvitees = await Future.wait(teamIds.map((id) async {
+        DocumentSnapshot teamDoc =
+            await FirebaseFirestore.instance.collection('teams').doc(id).get();
+        return Team.fromSnap(teamDoc);
+      }));
+
+      _updateInviteesControllerText();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching turn data: $e');
+    }
+  }
+
+  Future<void> updateTurn() async {
+    // Validate required fields (reuse existing validation logic)
+    if (turnNameController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterTurnName;
+      notifyListeners();
+      return;
+    }
+
+    if (turnNameController.text.length > 30) {
+      _errorMessage = "Le nom du TURN ne peut pas dépasser 30 caractères";
+      notifyListeners();
+      return;
+    }
+
+    // ... other validations ...
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      String? turnImageUrl = turnToEdit!.imageUrl;
+
+      // Only upload new image if it was changed
+      if (_turnImage != null) {
+        turnImageUrl = await StorageMethods()
+            .uploadImageToStorage('turns', _turnImage!, true);
+      }
+
+      // Get previous invitees from Firestore
+      DocumentSnapshot turnDoc = await FirebaseFirestore.instance
+          .collection('turns')
+          .doc(turnToEdit!.eventId)
+          .get();
+      Map<String, dynamic> data = turnDoc.data() as Map<String, dynamic>;
+      List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
+
+      await _removeEventFromUninvitedUsers(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        turnToEdit!.eventId,
+      );
+
+      // Notify new invitees
+      await _notifyNewInvitees(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        turnToEdit!.eventId,
+        turnNameController.text.trim(),
+        turnImageUrl,
+      );
+
+      // Update conversation if channelId exists
+      String? channelId = data['channelId'] ?? turnToEdit!.channelId;
+      if (channelId != null) {
+        await FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(channelId)
+            .update({
+          'name': turnNameController.text.trim(),
+          'imageUrl': turnImageUrl,
+        });
+      }
+
+      // Update turn object
+      Turn updatedTurn = Turn(
+        name: turnNameController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: turnToEdit!.uid,
+        username: turnToEdit!.username,
+        eventId: turnToEdit!.eventId,
+        datePublished: turnToEdit!.datePublished,
+        eventDateTime: _selectedDateTime!,
+        endDateTime: _selectedEndDateTime,
+        imageUrl: turnImageUrl,
+        profilePictureUrl: turnToEdit!.profilePictureUrl,
+        where: locationController.text.trim(),
+        address: addressController.text.trim(),
+        organizers: turnToEdit!.organizers,
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: data['channelId'] ?? turnToEdit!.channelId,
+        attending: List<String>.from(data['attending']),
+        notSureAttending: List<String>.from(data['notSureAttending']),
+        notAnswered: List<String>.from(data['notAnswered']),
+        notAttending: List<String>.from(data['notAttending']),
+      );
+
+      // Update in Firestore
+      await FirebaseFirestore.instance
+          .collection('turns')
+          .doc(turnToEdit!.eventId)
+          .update(updatedTurn.toJson());
+
+      // Update invitees
+      await _updateInviteesTurns(
+          _selectedInvitees.map((user) => user.uid).toList(),
+          turnToEdit!.eventId);
+      await _updateTeamInviteesTurns(
+          _selectedTeamInvitees.map((team) => team.uid).toList(),
+          turnToEdit!.eventId);
+
+      _successMessage = 'TURN mis à jour avec succès';
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating TURN: $e');
+      _errorMessage = 'Erreur lors de la mise à jour du TURN';
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _initializeViewModel() async {
@@ -488,6 +660,12 @@ class CreateTurnViewModel extends ChangeNotifier
       return;
     }
 
+    if (turnNameController.text.length > 30) {
+      _errorMessage = CustomString.maxLengthTurn;
+      notifyListeners();
+      return;
+    }
+
     if (_selectedDateTime == null) {
       _errorMessage = CustomString.pleaseSelectDateAndTime;
       notifyListeners();
@@ -541,6 +719,12 @@ class CreateTurnViewModel extends ChangeNotifier
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId, // Add channelId to the turn object
+        notAnswered: [
+          ...inviteeUids
+        ], // Add all invitees to notAnswered initially
+        attending: [currentUserId],
+        notSureAttending: [],
+        notAttending: [],
       );
 
       AppLogger.debug(turnNameController.text.trim());
@@ -583,6 +767,21 @@ class CreateTurnViewModel extends ChangeNotifier
           .collection('turns')
           .doc(turnId)
           .set(turn.toJson());
+
+      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
+      final userDoc = await userRef.get();
+      final userData = userDoc.data()!;
+
+      final batch = _firestore.batch();
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+
+      attendingStatus[turnId] = 'attending';
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
 
       // Update users' postedTurns
       await _updateUserPosts(currentUserId, turnId);
@@ -801,7 +1000,7 @@ class CreateTurnViewModel extends ChangeNotifier
 
           batch.set(notificationRef, {
             'id': notificationId,
-            'timestamp': FieldValue.serverTimestamp(),
+            'timestamp': DateTime.now().toIso8601String(),
             'type': 'eventInvitation',
             'content': {
               'eventId': eventId,
@@ -819,6 +1018,58 @@ class CreateTurnViewModel extends ChangeNotifier
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating event invitation notifications: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _notifyNewInvitees(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String turnId,
+    String turnName,
+    String turnImageUrl,
+  ) async {
+    // Get only new invitees
+    List<String> newInvitees = currentInvitees
+        .where((invitee) => !previousInvitees.contains(invitee))
+        .toList();
+
+    if (newInvitees.isNotEmpty) {
+      await _createEventInvitationNotifications(
+        newInvitees,
+        turnId,
+        turnName,
+        turnImageUrl,
+      );
+    }
+  }
+
+  Future<void> _removeEventFromUninvitedUsers(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String turnId,
+  ) async {
+    try {
+      // Get users who were uninvited
+      List<String> uninvitedUsers = previousInvitees
+          .where((invitee) => !currentInvitees.contains(invitee))
+          .toList();
+
+      if (uninvitedUsers.isNotEmpty) {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        for (String uid in uninvitedUsers) {
+          DocumentReference userRef =
+              FirebaseFirestore.instance.collection('users').doc(uid);
+          batch.update(userRef, {
+            'invitedTurns': FieldValue.arrayRemove([turnId])
+          });
+        }
+
+        await batch.commit();
+      }
+    } catch (e) {
+      AppLogger.error('Error removing turn from uninvited users: $e');
       rethrow;
     }
   }

@@ -20,7 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
-import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
 
 class CreateCfqViewModel extends ChangeNotifier
@@ -97,8 +97,168 @@ class CreateCfqViewModel extends ChangeNotifier
 
   final ConversationService _conversationService = ConversationService();
 
-  CreateCfqViewModel({this.prefillTeam, this.prefillMembers}) {
+  final bool isEditing;
+  final Cfq? cfqToEdit;
+
+  CreateCfqViewModel({
+    this.prefillTeam,
+    this.prefillMembers,
+    this.isEditing = false,
+    this.cfqToEdit,
+  }) {
+    if (isEditing && cfqToEdit != null) {
+      _initializeEditMode();
+    }
     _initializeViewModel();
+  }
+
+  void _initializeEditMode() {
+    whenController.text = cfqToEdit!.when;
+    descriptionController.text = cfqToEdit!.description;
+    locationController.text = cfqToEdit!.where;
+    _selectedDateTime = cfqToEdit!.eventDateTime;
+    _selectedEndDateTime = cfqToEdit!.endDateTime;
+    _selectedMoods = cfqToEdit!.moods;
+
+    // Fetch CFQ data including invitees
+    _fetchCfqData();
+  }
+
+  Future<void> _fetchCfqData() async {
+    try {
+      DocumentSnapshot cfqDoc = await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .get();
+
+      Map<String, dynamic> data = cfqDoc.data() as Map<String, dynamic>;
+
+      // Fetch invitees
+      List<String> inviteeIds = List<String>.from(data['invitees'] ?? []);
+      List<String> teamIds = List<String>.from(data['teamInvitees'] ?? []);
+
+      // Fetch invitee user objects
+      _selectedInvitees = await Future.wait(inviteeIds.map((id) async {
+        DocumentSnapshot userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(id).get();
+        return model.User.fromSnap(userDoc);
+      }));
+
+      // Fetch team objects
+      _selectedTeamInvitees = await Future.wait(teamIds.map((id) async {
+        DocumentSnapshot teamDoc =
+            await FirebaseFirestore.instance.collection('teams').doc(id).get();
+        return Team.fromSnap(teamDoc);
+      }));
+
+      _updateInviteesControllerText();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error fetching CFQ data: $e');
+    }
+  }
+
+  Future<void> updateCfq() async {
+    if (whenController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhen;
+      notifyListeners();
+      return;
+    }
+
+    if (whenController.text.length > 24) {
+      _errorMessage = CustomString.maxLengthCFQ;
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      String? cfqImageUrl = cfqToEdit!.imageUrl;
+
+      if (_cfqImage != null) {
+        cfqImageUrl = await StorageMethods()
+            .uploadImageToStorage('cfqs', _cfqImage!, true);
+      }
+
+      // Get previous invitees from Firestore
+      DocumentSnapshot cfqDoc = await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .get();
+      Map<String, dynamic> data = cfqDoc.data() as Map<String, dynamic>;
+      List<String> previousInvitees = List<String>.from(data['invitees'] ?? []);
+
+      // Remove uninvited users
+      await _removeEventFromUninvitedUsers(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        cfqToEdit!.eventId,
+      );
+
+      // Update conversation if channelId exists
+      String? channelId = data['channelId'] ?? cfqToEdit!.channelId;
+      if (channelId != null) {
+        await FirebaseFirestore.instance
+            .collection('conversations')
+            .doc(channelId)
+            .update({
+          'name': 'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
+          'imageUrl': cfqImageUrl,
+        });
+      }
+
+      Cfq updatedCfq = Cfq(
+        when: whenController.text.trim(),
+        description: descriptionController.text.trim(),
+        moods: _selectedMoods,
+        uid: cfqToEdit!.uid,
+        username: cfqToEdit!.username,
+        eventId: cfqToEdit!.eventId,
+        datePublished: cfqToEdit!.datePublished,
+        eventDateTime: _selectedDateTime,
+        endDateTime: _selectedEndDateTime,
+        imageUrl: cfqImageUrl,
+        profilePictureUrl: cfqToEdit!.profilePictureUrl,
+        where: locationController.text.trim(),
+        organizers: cfqToEdit!.organizers,
+        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
+        channelId: data['channelId'] ?? cfqToEdit!.channelId,
+        followingUp: List<String>.from(data['followingUp'] ?? []),
+      );
+
+      await FirebaseFirestore.instance
+          .collection('cfqs')
+          .doc(cfqToEdit!.eventId)
+          .update(updatedCfq.toJson());
+
+      // Notify new invitees
+      await _notifyNewInvitees(
+        _selectedInvitees.map((user) => user.uid).toList(),
+        previousInvitees,
+        cfqToEdit!.eventId,
+        whenController.text.trim(),
+        cfqImageUrl,
+      );
+
+      await _updateInviteesCfqs(
+          _selectedInvitees.map((user) => user.uid).toList(),
+          cfqToEdit!.eventId);
+      await _updateTeamInviteesCfqs(
+          _selectedTeamInvitees.map((team) => team.uid).toList(),
+          cfqToEdit!.eventId);
+
+      _successMessage = 'CFQ mis à jour avec succès';
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error updating CFQ: $e');
+      _errorMessage = 'Erreur lors de la mise à jour du CFQ';
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _initializeViewModel() async {
@@ -451,6 +611,12 @@ class CreateCfqViewModel extends ChangeNotifier
       return;
     }
 
+    if (whenController.text.length > 24) {
+      _errorMessage = CustomString.maxLengthCFQ;
+      notifyListeners();
+      return;
+    }
+
     if (_selectedInvitees.isEmpty && _selectedTeamInvitees.isEmpty) {
       _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
       notifyListeners();
@@ -473,14 +639,13 @@ class CreateCfqViewModel extends ChangeNotifier
       List<String> inviteeUids =
           _selectedInvitees.map((user) => user.uid).toList();
 
-      // Create cfq object with the channelId
+      // Create CFQ object with the channelId and followingUp list initialized with the organizer
       Cfq cfq = Cfq(
         when: whenController.text.trim(),
         description: descriptionController.text.trim(),
         moods: _selectedMoods,
         uid: currentUserId,
         username: _currentUser!.username,
-        followingUp: [],
         eventId: cfqId,
         datePublished: DateTime.now(),
         eventDateTime: _selectedDateTime,
@@ -489,15 +654,17 @@ class CreateCfqViewModel extends ChangeNotifier
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
         organizers: [currentUserId],
-        invitees: _selectedInvitees.map((user) => user.uid).toList(),
+        invitees: inviteeUids,
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId,
+        followingUp: [currentUserId], // Initialize with the organizer
       );
 
+      // Notify invitees
       await _createEventInvitationNotifications(
-        _selectedInvitees.map((user) => user.uid).toList(),
+        inviteeUids,
         cfqId,
-        'ÇFQ ${whenController.text.toUpperCase()} ?',
+        'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
         cfqImageUrl ?? '',
       );
 
@@ -506,7 +673,7 @@ class CreateCfqViewModel extends ChangeNotifier
         channelId,
         'ÇFQ ${whenController.text.trim().toUpperCase()} ?',
         cfqImageUrl ?? '',
-        [...inviteeUids, currentUserId], // Include all members
+        [...inviteeUids, currentUserId],
         currentUserId,
         _currentUser!.username,
         _currentUser!.profilePictureUrl,
@@ -780,7 +947,7 @@ class CreateCfqViewModel extends ChangeNotifier
 
           batch.set(notificationRef, {
             'id': notificationId,
-            'timestamp': FieldValue.serverTimestamp(),
+            'timestamp': DateTime.now().toIso8601String(),
             'type': 'eventInvitation',
             'content': {
               'eventId': eventId,
@@ -798,6 +965,58 @@ class CreateCfqViewModel extends ChangeNotifier
       await batch.commit();
     } catch (e) {
       AppLogger.error('Error creating event invitation notifications: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _notifyNewInvitees(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String cfqId,
+    String cfqName,
+    String cfqImageUrl,
+  ) async {
+    // Get only new invitees
+    List<String> newInvitees = currentInvitees
+        .where((invitee) => !previousInvitees.contains(invitee))
+        .toList();
+
+    if (newInvitees.isNotEmpty) {
+      await _createEventInvitationNotifications(
+        newInvitees,
+        cfqId,
+        cfqName,
+        cfqImageUrl,
+      );
+    }
+  }
+
+  Future<void> _removeEventFromUninvitedUsers(
+    List<String> currentInvitees,
+    List<String> previousInvitees,
+    String cfqId,
+  ) async {
+    try {
+      // Get users who were uninvited
+      List<String> uninvitedUsers = previousInvitees
+          .where((invitee) => !currentInvitees.contains(invitee))
+          .toList();
+
+      if (uninvitedUsers.isNotEmpty) {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        for (String uid in uninvitedUsers) {
+          DocumentReference userRef =
+              FirebaseFirestore.instance.collection('users').doc(uid);
+          batch.update(userRef, {
+            'invitedCfqs': FieldValue.arrayRemove([cfqId])
+          });
+        }
+
+        await batch.commit();
+      }
+    } catch (e) {
+      AppLogger.error('Error removing cfq from uninvited users: $e');
       rethrow;
     }
   }

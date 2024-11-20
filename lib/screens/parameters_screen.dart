@@ -26,6 +26,7 @@ class ParametersScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 40,
         backgroundColor: CustomColor.customBlack,
+        surfaceTintColor: CustomColor.customBlack,
         leading: IconButton(
           icon: CustomIcon.arrowBack,
           onPressed: () {
@@ -35,18 +36,15 @@ class ParametersScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(
-            height: 15,
-          ),
           Center(
             child: Text(
               CustomString.parametersCapital,
               style: CustomTextStyle.body1
-                  .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
+                  .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(
-            height: 70,
+            height: 25,
           ),
           const Divider(),
           ListTile(
@@ -66,7 +64,7 @@ class ParametersScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: CustomIcon.favorite,
+            leading: CustomIcon.saveEmpty,
             title: Text(
               CustomString.favorites,
               style: CustomTextStyle.body1,

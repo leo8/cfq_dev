@@ -39,7 +39,9 @@ class NotificationCard extends StatelessWidget {
             ),
             const TextSpan(text: ' t\'invite à '),
             TextSpan(
-              text: content.eventName,
+              text: content.isTurn
+                  ? content.eventName.toUpperCase()
+                  : content.eventName,
               style: CustomTextStyle.body1Bold,
             ),
           ],
@@ -94,9 +96,9 @@ class NotificationCard extends StatelessWidget {
               text: content.attendingUsername,
               style: CustomTextStyle.body1Bold,
             ),
-            const TextSpan(text: ' participera à '),
+            const TextSpan(text: ' participe à '),
             TextSpan(
-              text: content.turnName,
+              text: content.turnName.toUpperCase(),
               style: CustomTextStyle.body1Bold,
             ),
           ],
@@ -114,6 +116,40 @@ class NotificationCard extends StatelessWidget {
               style: CustomTextStyle.body1Bold,
             ),
             const TextSpan(text: ' souhaite t\'ajouter en ami'),
+          ],
+          timestamp: notification.timestamp,
+        );
+
+      case model.NotificationType.acceptedTeamRequest:
+        final content = notification.content
+            as model.AcceptedTeamRequestNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.accepterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.accepterUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' a accepté ton invitation à rejoindre '),
+            TextSpan(
+              text: content.teamName,
+              style: CustomTextStyle.body1Bold,
+            ),
+          ],
+          timestamp: notification.timestamp,
+        );
+
+      case model.NotificationType.acceptedFriendRequest:
+        final content = notification.content
+            as model.AcceptedFriendRequestNotificationContent;
+        return _buildNotificationRow(
+          avatarUrl: content.accepterProfilePictureUrl,
+          content: [
+            TextSpan(
+              text: content.accepterUsername,
+              style: CustomTextStyle.body1Bold,
+            ),
+            const TextSpan(text: ' a accepté ta demande d\'ami'),
           ],
           timestamp: notification.timestamp,
         );

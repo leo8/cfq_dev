@@ -11,6 +11,7 @@ class CustomString {
   static const deny = "Refuser";
   static const ok = "ok";
   static const cancel = "Annuler";
+  static const update = "Modifier";
   static const add = "Ajouter";
   static const create = "Créer";
   static const check = "Vérifier";
@@ -20,7 +21,7 @@ class CustomString {
   static const leave = "Quitter";
   static const orCapital = "OU";
   static const seeMore = "Voir plus";
-  static const you = "Vous";
+  static const you = "Moi";
   static const newSingle = "nouveau";
   static const newPlural = "nouveaux";
   static const message = "message";
@@ -45,18 +46,24 @@ class CustomString {
   static const yourLocation = "T'y es vers où le sang ?";
   static const yourBirthdate = "Ta date de naissance";
 
+  static const noUsernameProvided = "Comment on t'appelle ?";
+  static const usernameAlreadyTaken = "Ce nom d'utilisateur est déjà pris";
+  static const invalidUsernameLength =
+      "Le nom d'utilisateur doit contenir 3 à 10 caractères";
+
   static const yourUsernameCapital = "TON NOM D'UTILISATEUR";
   static const verificationCodeCapital = "CODE DE VÉRIFICATION";
   static const yourBirthdateCapital = "TA DATE DE NAISSANCE";
   static const profilePictureCapital = "UNE PHOTO";
   static const yourLocationCapital = "TA LOCALISATION";
   static const addYourFriendsCapital = "AJOUTE TES AMIS";
+  static const finishedProcessCapital = "C'EST BON, TU PEUX TURN";
 
   static const authProcessStep1 = "Confirmer";
   static const authProcessStep2 = "Ensuite...";
   static const authProcessStep3 = "C'est presque terminé";
   static const authProcessStep4 = "Un dernier effort...";
-  static const authProcessStep5 = "C'est bon, tu peux turn !";
+  static const authProcessStep5 = "C'est parti !";
 
   static const lastStep = "Étape précédente";
   static const backToLogInScreen = "Retour vers l'écran de connexion";
@@ -71,6 +78,7 @@ class CustomString {
   static const removeFromMyMessages = "Retirer de ma messagerie";
   static const seeMembers = "Voir les membres";
   static const noConversationsYet = "Pas encore de conversations";
+  static const noMessagesYet = "Pas encore de messages";
 
   // Search
   static const search = "Chercher..";
@@ -86,28 +94,31 @@ class CustomString {
   // Friends
   static const myFriends = "Mes amis";
   static const myFriendsCapital = "MES AMIS";
-  static const noFriendsYet = "Vous n'avez pas encore d'amis";
+  static const noFriendsYet = "Tu n'as pas encore ajouté d'amis";
   static const friendAdded = "Ami ajouté !";
   static const friendDeleted = "Ami supprimé !";
   static const addFriend = "Ajouter";
   static const removeFriend = "Retirer";
 
+  // Map
+  static const upcomingFeatureCapital = "UPCOMING FEATURE";
+
   // Teams
   static const team = "Team";
   static const myTeams = "Mes teams";
   static const myTeamsCapital = "MES TEAMS";
-  static const noTeamsYet = "Vous n'avez pas encore de teams.";
+  static const noTeamsYet = "Tu n'as pas encore de teams.";
   static const createTeam = "Créer une team";
   static const newTeamCapital = "NOUVELLE TEAM";
   static const teamName = "Donne-lui un nom";
   static const addFriends = "Ajoute tes amis";
-  static const members = "Membres";
+  static const member = "membre";
+  static const members = "membres";
   static const addMembers = "Ajouter des membres";
   static const teamMembers = "Déjà membres..";
   static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
-  static const sureToLeaveTeam =
-      "Êtes-vous sûr de vouloir quitter cette team ?";
+  static const sureToLeaveTeam = "T'es sûr de vouloir quitter cette team ?";
 
   // Team Events
   static const String teamEvents = "Événements de la team";
@@ -134,7 +145,14 @@ class CustomString {
   static const publier = "Publier";
   static const publicationReussie = "Publication réussie !";
 
+  static const maxLengthCFQ =
+      "Le nom du ÇFQ ne peut pas dépasser 24 caractères";
+  static const maxLengthTurn =
+      "Le nom du TURN ne peut pas dépasser 30 caractères";
+
   static const inviteesCapital = "INVITÉS";
+  static const notInvited = "Tu n'es plus invité à cet événement";
+  static const notExistingEvent = "Cet événement n'existe plus";
 
   // Turns
   static const turnCapital = "TURN";
@@ -184,7 +202,7 @@ class CustomString {
   static const noImage = "Aucune image";
   static const pickImageFromGallery = "Choisir une photo de la galerie";
   static const takePictureWithDevice = "Prendre une photo avec l'appareil";
-  static const pleaseSelectAnImage = "Veuillez sélectionner une image";
+  static const pleaseSelectAnImage = "Sélectionne une image";
 
   // Date & Time Related
   static const now = "Maintenant";
@@ -199,7 +217,8 @@ class CustomString {
   static const dinerMood = "Dîner";
   static const beforeMood = "Before";
   static const afterMood = "After";
-
+  static const concertMood = "Concert";
+  static const everythingMood = "Tout";
   // Success Messages
   static const successCreatingTeam = "Team créée avec succès !";
   static const successCreatingTurn = "Turn créé avec succès !";
@@ -209,43 +228,40 @@ class CustomString {
   static const errorFetchingEvents =
       "Erreur lors de la récupération des événements";
   static const failedToUpdateStatusPleaseTryAgain =
-      "Erreur lors de la mise à jour du statut. Veuillez réessayer.";
+      "Erreur lors de la mise à jour du statut. Réessaye plus tard.";
   static const failedToPickImage =
-      "Erreur lors du chargement de l'image. Veuillez réessayer.";
+      "Erreur lors du chargement de l'image. Réessaye plus tard.";
   static const failedToLoadMap = "Erreur lors du chargement de la map..";
   static const failedToUploadProfilePicture =
-      "Erreur lors de l'upload de la photo de profil. Veuillez réessayer.";
+      "Erreur lors de l'upload de la photo de profil. Réessaye plus tard.";
   static const someErrorOccurred = "Une erreur s'est produite";
   static const veuillezRemplirTousLesChamps =
-      "Veuillez remplir tous les champs";
+      "Merci de remplir tous les champs";
   static const pleaseFillAllRequiredFields =
-      "Veuillez remplir tous les champs requis";
+      "Merci de remplir tous les champs requis";
   static const fetchingDataNoEventsYet = "Récupération des données...";
   static const noEventsAvailable = "Aucun événement pour le moment";
   static const errorLeavingTeam = "Erreur lors de la sortie de la team";
   static const errorCreatingTeam = "Erreur lors de la création de la Team..";
   static const errorCreatingTurn = "Erreur lors de la création du Turn..";
   static const errorCreatingCfq = "Erreur lors de la création du CFQ..";
-  static const pleaseSelectAtLeastOneMood =
-      "Veuillez sélectionner au moins un mood";
+  static const pleaseSelectAtLeastOneMood = "Sélectionne au moins un mood";
   static const failedToInitializeUserData =
       "Échec de l'initialisation des données utilisateur";
   static const failedToFetchUserTeams =
       "Échec de la récupération des teams de l'utilisateur";
   static const failedToPerformSearch = "Échec de la recherche";
-  static const pleaseSelectDateAndTime =
-      "Veuillez sélectionner une date et une heure";
-  static const pleaseEnterTeamName = "Veuillez entrer un nom d'équipe";
-  static const pleaseSelectAtLeastOneMember =
-      "Veuillez sélectionner au moins un membre";
+  static const pleaseSelectDateAndTime = "Sélectionne une date et une heure";
+  static const pleaseEnterTeamName = "Entre un nom d'équipe";
+  static const pleaseSelectAtLeastOneMember = "Sélectionne au moins un membre";
   static const failedToFetchFriends =
-      "Échec de la récupération des amis. Veuillez réessayer.";
+      "Échec de la récupération des amis. Réessaye plus tard.";
   static const failedToRemoveFriend =
-      "Échec de la suppression de l'ami. Veuillez réessayer.";
+      "Échec de la suppression de l'ami. Réessaye plus tard.";
   static const pleaseFillInAllRequiredFields =
-      "Veuillez remplir tous les champs";
+      "Merci de remplir tous les champs";
   static const pleaseAddAtLeastOneMember =
-      "Veuillez ajouter au moins un membre à votre équipe";
+      "Ajoute au moins un membre à ta team";
 
   // Utils
   static const thisIsWeb = "C'est web";
@@ -258,25 +274,30 @@ class CustomString {
   static const onePersonAttending = "personne participe";
   static const peopleAttending = "personnes participent";
 
-  static const String attending = 'Oui';
-  static const String notSureAttending = 'Hmm..';
-  static const String notAttending = 'Non';
-  static const String invitees = 'Invités';
-  static const String followingUp = 'Suivi par';
+  static const String attending = "Oui";
+  static const String notSureAttending = "Hmm..";
+  static const String notAttending = "Non";
+  static const String invitees = "Invités";
+  static const String followingUp = "Suivi par";
 
   // New strings for common friends and teams
-  static const String commonFriend = 'ami';
-  static const String commonFriends = 'amis';
-  static const String commonTeam = 'team';
-  static const String commonTeams = 'teams';
-  static const String inCommon = 'en commun';
-  static const String and = '&';
+  static const String commonFriend = "ami";
+  static const String commonFriends = "amis";
+  static const String commonTeam = "team";
+  static const String commonTeams = "teams";
+  static const String inCommon = "en commun";
+  static const String and = "&";
 
-  static const String eventDateTime = 'Date & Heure de début';
-  static const String addEndTime = 'Ajouter date & heure de fin (optionnel)';
-  static const String endDateTime = 'Date & Heure de fin';
+  static const String eventDateTime = "Date & Heure de début";
+  static const String addEndTime = "Ajouter date & heure de fin (optionnel)";
+  static const String endDateTime = "Date & Heure de fin";
   static const String dateTimeInPast =
-      'Tu crées des événements dans le passé toi ?';
+      "Tu crées des événements dans le passé toi ?";
   static const String invalidEndDate =
-      'Il va vraiment durer moins de 5 minutes, ton événement ?';
+      "Il va vraiment durer moins de 5 minutes, ton événement ?";
+
+  static const String sureToLeave = "T'es sûr de vouloir quitter ?";
+  static const String yourModificationsWillBeLost =
+      "Tes modifications seront perdues.";
+  static const String stay = "Rester";
 }

@@ -7,6 +7,7 @@ import '../../../utils/styles/icons.dart';
 import '../../../utils/styles/text_styles.dart';
 import '../../../utils/logger.dart';
 import '../texts/bordered_icon_text_field.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class InviteeSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -60,9 +61,10 @@ class InviteeSearchBar extends StatelessWidget {
                   // "Tout le monde" option
                   if (showEverybodyOption) {
                     return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/turn_button.png'),
+                      leading: SvgPicture.asset(
+                        'assets/images/turn_button.svg',
+                        width: 40,
+                        height: 40,
                       ),
                       title: const Text(CustomString.everybody),
                       trailing: IconButton(

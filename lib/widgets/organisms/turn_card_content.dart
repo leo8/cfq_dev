@@ -10,6 +10,11 @@ import '../../widgets/atoms/avatars/clickable_avatar.dart';
 import '../../screens/profile_screen.dart';
 import '../../screens/expanded_card_screen.dart';
 import '../../utils/logger.dart';
+import '../../screens/create_turn_screen.dart';
+import '../../models/turn_event_model.dart';
+import '../atoms/buttons/custom_button.dart';
+import 'package:provider/provider.dart';
+import '../../view_models/expanded_card_view_model.dart';
 
 class TurnCardContent extends StatelessWidget {
   final String profilePictureUrl;
@@ -39,6 +44,8 @@ class TurnCardContent extends StatelessWidget {
   final Stream<int> attendingCountStream;
   final bool isExpanded;
   final VoidCallback? onClose;
+  final VoidCallback? onEditPressed;
+  final bool showEditButton;
 
   const TurnCardContent({
     required this.attendingStatus,
@@ -68,6 +75,8 @@ class TurnCardContent extends StatelessWidget {
     required this.attendingCountStream,
     this.isExpanded = false,
     this.onClose,
+    this.onEditPressed,
+    this.showEditButton = false,
     super.key,
   });
 
@@ -86,7 +95,7 @@ class TurnCardContent extends StatelessWidget {
                       profilePictureUrl: profilePictureUrl,
                       username: username,
                       datePublished: datePublished,
-                      turnName: turnName,
+                      turnName: turnName.toUpperCase(),
                       moods: moods,
                       eventDateTime: eventDateTime,
                       where: where,
@@ -136,7 +145,7 @@ class TurnCardContent extends StatelessWidget {
               eventDateTime: eventDateTime,
               isExpanded: isExpanded,
               onClose: onClose,
-              turnName: turnName,
+              turnName: turnName.toUpperCase(),
             ),
             if (isExpanded)
               Expanded(
@@ -184,7 +193,7 @@ class TurnCardContent extends StatelessWidget {
                                         Text(
                                             '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
                                             style: CustomTextStyle.body1
-                                                .copyWith(fontSize: 18)),
+                                                .copyWith(fontSize: 16)),
                                       ],
                                     ),
                                   ),
@@ -213,7 +222,7 @@ class TurnCardContent extends StatelessWidget {
                                   profilePictureUrl: profilePictureUrl,
                                   username: username,
                                   datePublished: datePublished,
-                                  turnName: turnName,
+                                  turnName: turnName.toUpperCase(),
                                   moods: moods,
                                   eventDateTime: eventDateTime,
                                   attendeesCount: attendingCount,
@@ -226,6 +235,135 @@ class TurnCardContent extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 25),
+                        if (showEditButton && onEditPressed != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: ElevatedButton(
+                              onPressed: onEditPressed,
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.edit),
+                                  SizedBox(width: 8),
+                                  Text('Edit Turn'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (currentUserId == organizerId && isExpanded)
+                          Column(
+                            children: [
+                              const SizedBox(height: 50),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: CustomButton(
+                                  label: 'Modifier',
+                                  color: CustomColor.customBlack,
+                                  textStyle: CustomTextStyle.subButton
+                                      .copyWith(color: CustomColor.customWhite),
+                                  borderWidth: 0.5,
+                                  borderColor: CustomColor.customWhite,
+                                  onTap: () async {
+                                    final wasUpdated = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CreateTurnScreen(
+                                          isEditing: true,
+                                          turnToEdit: Turn(
+                                            name: turnName,
+                                            description: description,
+                                            moods: moods,
+                                            uid: organizerId,
+                                            username: username,
+                                            eventId: turnId,
+                                            datePublished: datePublished,
+                                            eventDateTime: eventDateTime,
+                                            imageUrl: turnImageUrl,
+                                            profilePictureUrl:
+                                                profilePictureUrl,
+                                            where: where,
+                                            address: address,
+                                            organizers: organizers,
+                                            invitees: [], // We'll fetch this in the view model
+                                            teamInvitees: [], // We'll fetch this in the view model
+                                            channelId:
+                                                '', // We'll fetch this in the view model
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                    if (wasUpdated == true) {
+                                      onClose?.call();
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                child: CustomButton(
+                                  label: 'Supprimer',
+                                  color: CustomColor.customBlack,
+                                  textStyle: CustomTextStyle.subButton.copyWith(
+                                      color: CustomColor.customWhite,
+                                      decoration: TextDecoration.underline),
+                                  onTap: () async {
+                                    bool? confirmed = await showDialog<bool>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          backgroundColor:
+                                              CustomColor.customDarkGrey,
+                                          title: Text(
+                                            'Es-tu sûr de vouloir supprimer ce turn ?',
+                                            style: CustomTextStyle.body1,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          content: Text(
+                                            'Cette action est irréversible.',
+                                            style: CustomTextStyle.body2,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                                child: const Text('Annuler'),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                }),
+                                            TextButton(
+                                              child: Text(
+                                                'Supprimer',
+                                                style: CustomTextStyle.body2
+                                                    .copyWith(
+                                                  color:
+                                                      CustomColor.customWhite,
+                                                ),
+                                              ),
+                                              onPressed: () =>
+                                                  Navigator.of(context)
+                                                      .pop(true),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    if (confirmed == true) {
+                                      await Provider.of<ExpandedCardViewModel>(
+                                              context,
+                                              listen: false)
+                                          .deleteTurn();
+                                      onClose?.call();
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
@@ -264,6 +402,7 @@ class TurnCardContent extends StatelessWidget {
                                       userId: organizerId,
                                       imageUrl: profilePictureUrl,
                                       onTap: () {},
+                                      radius: 28,
                                     ),
                               const SizedBox(width: 8),
                               Expanded(
@@ -271,9 +410,10 @@ class TurnCardContent extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                        '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
-                                        style: CustomTextStyle.body1
-                                            .copyWith(fontSize: 18)),
+                                      '${username} . ${DateTimeUtils.getTimeAgo(datePublished)}',
+                                      style: CustomTextStyle.body1
+                                          .copyWith(fontSize: 15),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -302,7 +442,7 @@ class TurnCardContent extends StatelessWidget {
                             profilePictureUrl: profilePictureUrl,
                             username: username,
                             datePublished: datePublished,
-                            turnName: turnName,
+                            turnName: turnName.toUpperCase(),
                             moods: moods,
                             eventDateTime: eventDateTime,
                             attendeesCount: attendingCount,

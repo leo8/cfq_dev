@@ -1,6 +1,5 @@
 import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/widgets/atoms/progress_bar_login/progress_bar_login.dart';
-import 'package:cfq_dev/widgets/atoms/texts/bordered_text_field.dart';
 import 'package:flutter/material.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
@@ -49,7 +48,7 @@ class _InscriptionFriendsState extends State<InscriptionFriends> {
             ),
             const SizedBox(height: 100),
             Text(
-              CustomString.addYourFriendsCapital,
+              CustomString.finishedProcessCapital,
               textAlign: TextAlign.center,
               style: CustomTextStyle.body1.copyWith(
                 fontSize: 28,
@@ -57,11 +56,13 @@ class _InscriptionFriendsState extends State<InscriptionFriends> {
               ),
             ),
             const SizedBox(height: 40),
+            /*
             BorderedTextField(
               controller: otpController,
               hintText: CustomString.addFriends,
             ),
             const SizedBox(height: 20),
+            */
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,

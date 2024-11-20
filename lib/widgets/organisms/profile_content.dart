@@ -123,7 +123,7 @@ class _ProfileContentState extends State<ProfileContent>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 100,
+          height: 90,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,21 +188,31 @@ class _ProfileContentState extends State<ProfileContent>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(widget.user.username,
-                              style: CustomTextStyle.bigBody1),
+                              style: CustomTextStyle.body1.copyWith(
+                                fontSize: 18,
+                              )),
                           const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text('|', style: CustomTextStyle.bigBody1),
-                          const SizedBox(width: 8),
+                            if (widget.user.location.isNotEmpty)
+                              Text('|',
+                                  style: CustomTextStyle.body1.copyWith(
+                                    fontSize: 18,
+                                  )),
+                          if (widget.user.location.isNotEmpty)
+                            const SizedBox(width: 8),
                           if (widget.isCurrentUser | widget.isFriend)
-                            CustomIcon.userLocation,
-                          const SizedBox(width: 4),
+                            if (widget.user.location.isNotEmpty)
+                              CustomIcon.userLocation,
+                          if (widget.user.location.isNotEmpty)
+                            const SizedBox(width: 4),
                           if (widget.isCurrentUser | widget.isFriend)
-                            Text(
-                                widget.user.location.isNotEmpty
-                                    ? widget.user.location[0].toUpperCase() +
-                                        widget.user.location.substring(1)
-                                    : CustomString.noLocation,
-                                style: CustomTextStyle.bigBody1),
+                            if (widget.user.location.isNotEmpty)
+                              Text(
+                                  widget.user.location[0].toUpperCase() +
+                                      widget.user.location.substring(1),
+                                  style: CustomTextStyle.body1.copyWith(
+                                    fontSize: 18,
+                                  )),
                         ],
                       ),
                     ),
@@ -214,30 +224,34 @@ class _ProfileContentState extends State<ProfileContent>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomButton(
-                                label: CustomString.myFriends,
-                                textStyle: CustomTextStyle.subButton.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                onTap: widget.onFriendsTap!,
-                                color: CustomColor.customBlack,
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                width: 110,
-                                height: 50),
-                            const SizedBox(width: 20),
+                              label: CustomString.myFriends,
+                              textStyle: CustomTextStyle.subButton.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              onTap: widget.onFriendsTap!,
+                              color: CustomColor.customBlack,
+                              borderWidth: 0.5,
+                              borderRadius: 5,
+                              width: 100,
+                              height: 35,
+                              padding: 5,
+                            ),
+                            const SizedBox(width: 10),
                             CustomButton(
-                                label: CustomString.parameters,
-                                textStyle: CustomTextStyle.subButton.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                onTap: widget.onParametersTap!,
-                                color: CustomColor.customBlack,
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                width: 110,
-                                height: 50),
+                              label: CustomString.parameters,
+                              textStyle: CustomTextStyle.subButton.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                              onTap: widget.onParametersTap!,
+                              color: CustomColor.customBlack,
+                              borderWidth: 0.5,
+                              borderRadius: 5,
+                              width: 100,
+                              height: 35,
+                              padding: 5,
+                            ),
                           ],
                         ),
                       )
@@ -249,36 +263,40 @@ class _ProfileContentState extends State<ProfileContent>
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Expanded(
-                                        child: CustomButton(
-                                          label: CustomString.accept,
-                                          onTap: widget
-                                              .viewModel.acceptFriendRequest,
-                                          color: CustomColor.customPurple,
-                                          textStyle: CustomTextStyle.subButton
-                                              .copyWith(
-                                            color: CustomColor.customWhite,
-                                          ),
-                                          borderRadius: 5,
-                                          borderWidth: 0.5,
-                                          height: 50,
+                                      CustomButton(
+                                        label: CustomString.accept,
+                                        onTap: widget
+                                            .viewModel.acceptFriendRequest,
+                                        color: CustomColor.customPurple,
+                                        textStyle:
+                                            CustomTextStyle.subButton.copyWith(
+                                          color: CustomColor.customWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                         ),
+                                        borderRadius: 5,
+                                        borderWidth: 0.5,
+                                        height: 35,
+                                        width: 100,
+                                        padding: 5,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: CustomButton(
-                                          label: CustomString.deny,
-                                          onTap: widget
-                                              .viewModel.denyFriendRequest,
-                                          color: CustomColor.customDarkGrey,
-                                          textStyle: CustomTextStyle.subButton
-                                              .copyWith(
-                                            color: CustomColor.customWhite,
-                                          ),
-                                          borderRadius: 5,
-                                          borderWidth: 0.5,
-                                          height: 50,
+                                      const SizedBox(width: 10),
+                                      CustomButton(
+                                        label: CustomString.deny,
+                                        onTap:
+                                            widget.viewModel.denyFriendRequest,
+                                        color: CustomColor.customDarkGrey,
+                                        textStyle:
+                                            CustomTextStyle.subButton.copyWith(
+                                          color: CustomColor.customWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                         ),
+                                        borderRadius: 5,
+                                        borderWidth: 0.5,
+                                        height: 35,
+                                        width: 100,
+                                        padding: 5,
                                       ),
                                     ],
                                   )
@@ -307,11 +325,14 @@ class _ProfileContentState extends State<ProfileContent>
                                     textStyle:
                                         CustomTextStyle.subButton.copyWith(
                                       color: CustomColor.customWhite,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
                                     ),
                                     borderRadius: 5,
                                     borderWidth: 0.5,
-                                    width: 220,
-                                    height: 50,
+                                    width: 200,
+                                    height: 35,
+                                    padding: 5,
                                   ),
                           ),
                           const SizedBox(
@@ -430,6 +451,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel
                                 .fetchUserPosts(), // This line is correct but needs proper handling in viewModel
@@ -461,6 +483,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel.fetchAttendingEvents(
                                 widget.viewModel.user!.uid),
@@ -537,6 +560,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream:
                                 widget.user.uid == widget.currentUser!.uid
@@ -571,6 +595,7 @@ class _ProfileContentState extends State<ProfileContent>
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                          const SizedBox(height: 30),
                           EventsList(
                             eventsStream: widget.viewModel.fetchAttendingEvents(
                                 widget.viewModel.currentUser!.uid),

@@ -72,7 +72,9 @@ class TeamOptions extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text(CustomString.leaveTeam),
+                          title: const Center(
+                            child: Text(CustomString.sureToLeave),
+                          ),
                           content: const Text(CustomString.sureToLeaveTeam),
                           actions: <Widget>[
                             TextButton(

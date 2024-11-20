@@ -52,15 +52,17 @@ class TeamCard extends StatelessWidget {
                   Row(
                     children: [
                       _buildMemberAvatars(),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 2),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 14),
                         child: CustomText(
                           text: members.length.toString() +
                               CustomString.space +
-                              CustomString.members,
-                          textStyle: CustomTextStyle.body2
-                              .copyWith(color: CustomColor.grey300),
+                              (members.length > 1
+                                  ? CustomString.members
+                                  : CustomString.member),
+                          textStyle: CustomTextStyle.body2.copyWith(
+                              color: CustomColor.grey300, fontSize: 12),
                         ),
                       ),
                     ],

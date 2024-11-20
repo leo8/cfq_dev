@@ -17,6 +17,7 @@ class EditProfileScreen extends StatelessWidget {
         toolbarHeight: 40,
         automaticallyImplyLeading: false,
         backgroundColor: CustomColor.customBlack,
+        surfaceTintColor: CustomColor.customBlack,
         actions: [
           IconButton(
             icon: CustomIcon.close,
@@ -38,13 +39,18 @@ class EditProfileScreen extends StatelessWidget {
                   initialLocation: viewModel.user!.location,
                   initialBirthDate: viewModel.user!.birthDate,
                   initialProfilePictureUrl: viewModel.user!.profilePictureUrl,
+                  userNames: viewModel.userNames,
                   onSave:
                       (username, location, birthDate, newProfilePicture) async {
                     if (newProfilePicture != null) {
                       await viewModel.updateProfilePicture(newProfilePicture);
                     }
-                    await viewModel.updateUserProfile(username, location,
-                        birthDate); // Pop twice to go back to the profile screen
+                    await viewModel.updateUserProfile(
+                      username,
+                      location,
+                      birthDate,
+                      newProfilePicture,
+                    ); // Pop twice to go back to the profile screen
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },

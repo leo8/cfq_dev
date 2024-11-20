@@ -26,6 +26,7 @@ class FavoritesScreen extends StatelessWidget {
           appBar: AppBar(
             toolbarHeight: 40,
             backgroundColor: CustomColor.customBlack,
+            surfaceTintColor: CustomColor.customBlack,
             leading: IconButton(
               icon: CustomIcon.arrowBack,
               onPressed: () => Navigator.of(context).pop(),
@@ -33,44 +34,48 @@ class FavoritesScreen extends StatelessWidget {
           ),
           body: Consumer<FavoritesViewModel>(
             builder: (context, viewModel, child) {
-              return CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 30),
-                        Center(
-                          child: Text(
-                            CustomString.favoritesCapital,
-                            style: CustomTextStyle.body1.copyWith(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 25),
-                      ],
+              return Column(
+                children: [
+                  Center(
+                    child: Text(
+                      CustomString.favoritesCapital,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: EventsList(
-                      eventsStream: viewModel.fetchFavoriteEventsStream(),
-                      currentUser: viewModel.currentUser,
-                      onFavoriteToggle: viewModel.toggleFavorite,
-                      addConversationToUserList:
-                          viewModel.addConversationToUserList,
-                      removeConversationFromUserList:
-                          viewModel.removeConversationFromUserList,
-                      isConversationInUserList:
-                          viewModel.isConversationInUserList,
-                      resetUnreadMessages: viewModel.resetUnreadMessages,
-                      addFollowUp: FavoritesViewModel.addFollowUp,
-                      removeFollowUp: FavoritesViewModel.removeFollowUp,
-                      isFollowingUpStream: viewModel.isFollowingUpStream,
-                      toggleFollowUp: viewModel.toggleFollowUp,
-                      onAttendingStatusChanged: viewModel.updateAttendingStatus,
-                      attendingStatusStream: viewModel.attendingStatusStream,
-                      attendingCountStream: viewModel.attendingCountStream,
+                  Expanded(
+                    child: CustomScrollView(
+                      slivers: [
+                        const SliverToBoxAdapter(
+                          child: SizedBox(height: 125),
+                        ),
+                        SliverToBoxAdapter(
+                          child: EventsList(
+                            eventsStream: viewModel.fetchFavoriteEventsStream(),
+                            currentUser: viewModel.currentUser,
+                            onFavoriteToggle: viewModel.toggleFavorite,
+                            addConversationToUserList:
+                                viewModel.addConversationToUserList,
+                            removeConversationFromUserList:
+                                viewModel.removeConversationFromUserList,
+                            isConversationInUserList:
+                                viewModel.isConversationInUserList,
+                            resetUnreadMessages: viewModel.resetUnreadMessages,
+                            addFollowUp: FavoritesViewModel.addFollowUp,
+                            removeFollowUp: FavoritesViewModel.removeFollowUp,
+                            isFollowingUpStream: viewModel.isFollowingUpStream,
+                            toggleFollowUp: viewModel.toggleFollowUp,
+                            onAttendingStatusChanged:
+                                viewModel.updateAttendingStatus,
+                            attendingStatusStream:
+                                viewModel.attendingStatusStream,
+                            attendingCountStream:
+                                viewModel.attendingCountStream,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
