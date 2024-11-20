@@ -113,16 +113,19 @@ class FriendsListScreen extends StatelessWidget {
                               title: Text(friend.username),
                               trailing: CustomButton(
                                   label: CustomString.removeFriend,
-                                  textStyle: CustomTextStyle.subButton
-                                      .copyWith(fontWeight: FontWeight.bold),
+                                  textStyle: CustomTextStyle.subButton.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                   onTap: () {
                                     viewModel.removeFriend(friend.uid);
                                   },
                                   color: CustomColor.customBlack,
                                   borderWidth: 0.5,
                                   borderRadius: 5,
-                                  width: 110,
-                                  height: 50),
+                                  width: 100,
+                                  height: 35,
+                                  padding: 5),
                             ),
                           ],
                         );

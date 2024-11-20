@@ -8,6 +8,7 @@ import 'package:cfq_dev/screens/login/inscription_birthday_date.dart';
 import 'package:cfq_dev/screens/login/inscription_friends.dart';
 import 'package:cfq_dev/screens/login/inscription_localisation.dart';
 import 'package:cfq_dev/screens/login/inscription_photo.dart';
+import 'package:cfq_dev/utils/styles/neon_background.dart';
 import 'package:cfq_dev/utils/styles/string.dart';
 import 'package:cfq_dev/utils/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -96,9 +97,12 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
       // Navigate to the main layout on successful signup
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => RepsonsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(uid: widget.cred.user!.uid),
-            webScreenLayout: WebScreenLayout(),
+          builder: (context) => NeonBackground(
+            child: RepsonsiveLayout(
+              mobileScreenLayout:
+                  MobileScreenLayout(uid: widget.cred.user!.uid),
+              webScreenLayout: WebScreenLayout(),
+            ),
           ),
         ),
         (route) => false,

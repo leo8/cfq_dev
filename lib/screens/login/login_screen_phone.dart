@@ -23,19 +23,19 @@ class _LoginScreenMobileState extends State<LoginScreenMobile> {
 
   bool isloading = false;
   bool isSignIn = true;
-  String titleConnexion = CustomString.logInCapital;
-  String buttonConnectionTitle = CustomString.logIn;
-  String buttonBackTitle = CustomString.noAccountYet;
+  String titleConnexion = CustomString.signUpCapital;
+  String buttonConnectionTitle = CustomString.signUp;
+  String buttonBackTitle = CustomString.alreadySignedUp;
 
   void _toggleConnectionPage() {
     isSignIn = !isSignIn;
     setState(() {
       titleConnexion =
-          isSignIn ? CustomString.logInCapital : CustomString.signUpCapital;
+          isSignIn ? CustomString.signUpCapital : CustomString.logInCapital;
       buttonConnectionTitle =
-          isSignIn ? CustomString.logIn : CustomString.signUp;
+          isSignIn ? CustomString.signUp : CustomString.logIn;
       buttonBackTitle =
-          isSignIn ? CustomString.noAccountYet : CustomString.alreadySignedUp;
+          isSignIn ? CustomString.alreadySignedUp : CustomString.noAccountYet;
     });
   }
 

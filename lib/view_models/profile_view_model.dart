@@ -34,6 +34,12 @@ class ProfileViewModel extends ChangeNotifier {
   List<Conversation> _filteredConversations = [];
   List<Conversation> get filteredConversations => _filteredConversations;
 
+  List<String> _filteredCfqs = [];
+  List<String> get filteredCfqs => _filteredCfqs;
+
+  List<String> _filteredTurns = [];
+  List<String> get filteredTurns => _filteredTurns;
+
   // Status variables for UI feedback
   bool _friendAdded = false;
   bool get friendAdded => _friendAdded;
@@ -488,19 +494,24 @@ class ProfileViewModel extends ChangeNotifier {
         final postedCfqs = List<String>.from(userData['postedCfqs'] ?? []);
         final postedTurns = List<String>.from(userData['postedTurns'] ?? []);
 
-        // Get current user's invited events
-        final currentUserInvitedCfqs =
-            List<String>.from(_currentUser?.invitedCfqs ?? []);
-        final currentUserInvitedTurns =
-            List<String>.from(_currentUser?.invitedTurns ?? []);
+        if (!_isCurrentUser) {
+          // Get current user's invited events
+          final currentUserInvitedCfqs =
+              List<String>.from(_currentUser?.invitedCfqs ?? []);
+          final currentUserInvitedTurns =
+              List<String>.from(_currentUser?.invitedTurns ?? []);
 
-        // Filter posted events to only include those where current user is invited
-        final filteredCfqs = postedCfqs
-            .where((cfqId) => currentUserInvitedCfqs.contains(cfqId))
-            .toList();
-        final filteredTurns = postedTurns
-            .where((turnId) => currentUserInvitedTurns.contains(turnId))
-            .toList();
+          // Filter posted events to only include those where current user is invited
+          _filteredCfqs = postedCfqs
+              .where((cfqId) => currentUserInvitedCfqs.contains(cfqId))
+              .toList();
+          _filteredTurns = postedTurns
+              .where((turnId) => currentUserInvitedTurns.contains(turnId))
+              .toList();
+        } else {
+          _filteredCfqs = postedCfqs;
+          _filteredTurns = postedTurns;
+        }
 
         // Handle empty lists
         if (filteredCfqs.isEmpty && filteredTurns.isEmpty) {

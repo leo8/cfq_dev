@@ -135,7 +135,7 @@ class CFQCardContent extends StatelessWidget {
                                           );
                                         },
                                         isActive: false,
-                                        radius: 28,
+                                        radius: 24,
                                       )
                                     : ClickableAvatar(
                                         userId: organizerId,

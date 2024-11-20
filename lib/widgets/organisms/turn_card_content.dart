@@ -396,7 +396,7 @@ class TurnCardContent extends StatelessWidget {
                                         );
                                       },
                                       isActive: false, // Add isActive
-                                      radius: 28,
+                                      radius: 24,
                                     )
                                   : ClickableAvatar(
                                       userId: organizerId,

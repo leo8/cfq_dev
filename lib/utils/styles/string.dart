@@ -57,12 +57,13 @@ class CustomString {
   static const profilePictureCapital = "UNE PHOTO";
   static const yourLocationCapital = "TA LOCALISATION";
   static const addYourFriendsCapital = "AJOUTE TES AMIS";
+  static const finishedProcessCapital = "C'EST BON, TU PEUX TURN";
 
   static const authProcessStep1 = "Confirmer";
   static const authProcessStep2 = "Ensuite...";
   static const authProcessStep3 = "C'est presque terminé";
   static const authProcessStep4 = "Un dernier effort...";
-  static const authProcessStep5 = "C'est bon, tu peux turn !";
+  static const authProcessStep5 = "C'est parti !";
 
   static const lastStep = "Étape précédente";
   static const backToLogInScreen = "Retour vers l'écran de connexion";
@@ -111,12 +112,13 @@ class CustomString {
   static const newTeamCapital = "NOUVELLE TEAM";
   static const teamName = "Donne-lui un nom";
   static const addFriends = "Ajoute tes amis";
-  static const members = "Membres";
+  static const member = "membre";
+  static const members = "membres";
   static const addMembers = "Ajouter des membres";
   static const teamMembers = "Déjà membres..";
   static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
-  static const sureToLeaveTeam = "Es-tu sûr de vouloir quitter cette team ?";
+  static const sureToLeaveTeam = "T'es sûr de vouloir quitter cette team ?";
 
   // Team Events
   static const String teamEvents = "Événements de la team";
@@ -271,30 +273,30 @@ class CustomString {
   static const onePersonAttending = "personne participe";
   static const peopleAttending = "personnes participent";
 
-  static const String attending = 'Oui';
-  static const String notSureAttending = 'Hmm..';
-  static const String notAttending = 'Non';
-  static const String invitees = 'Invités';
-  static const String followingUp = 'Suivi par';
+  static const String attending = "Oui";
+  static const String notSureAttending = "Hmm..";
+  static const String notAttending = "Non";
+  static const String invitees = "Invités";
+  static const String followingUp = "Suivi par";
 
   // New strings for common friends and teams
-  static const String commonFriend = 'ami';
-  static const String commonFriends = 'amis';
-  static const String commonTeam = 'team';
-  static const String commonTeams = 'teams';
-  static const String inCommon = 'en commun';
-  static const String and = '&';
+  static const String commonFriend = "ami";
+  static const String commonFriends = "amis";
+  static const String commonTeam = "team";
+  static const String commonTeams = "teams";
+  static const String inCommon = "en commun";
+  static const String and = "&";
 
-  static const String eventDateTime = 'Date & Heure de début';
-  static const String addEndTime = 'Ajouter date & heure de fin (optionnel)';
-  static const String endDateTime = 'Date & Heure de fin';
+  static const String eventDateTime = "Date & Heure de début";
+  static const String addEndTime = "Ajouter date & heure de fin (optionnel)";
+  static const String endDateTime = "Date & Heure de fin";
   static const String dateTimeInPast =
-      'Tu crées des événements dans le passé toi ?';
+      "Tu crées des événements dans le passé toi ?";
   static const String invalidEndDate =
-      'Il va vraiment durer moins de 5 minutes, ton événement ?';
+      "Il va vraiment durer moins de 5 minutes, ton événement ?";
 
-  static const String sureToLeave = 'Es-tu sûr de vouloir quitter ?';
+  static const String sureToLeave = "T'es sûr de vouloir quitter ?";
   static const String yourModificationsWillBeLost =
-      'Vos modifications seront perdues.';
-  static const String stay = 'Rester';
+      "Tes modifications seront perdues.";
+  static const String stay = "Rester";
 }
