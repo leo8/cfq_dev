@@ -579,37 +579,35 @@ class ProfileViewModel extends ChangeNotifier {
         final userData = userSnapshot.data() as Map<String, dynamic>;
         final invitedTurns = List<String>.from(userData['invitedTurns'] ?? []);
 
-        // Handle empty lists
+        // Create stream for turns
+        Stream<List<DocumentSnapshot>> eventsStream;
         if (invitedTurns.isEmpty) {
-          return Stream.value([]);
+          eventsStream = Stream.value([]);
+        } else {
+          // Create streams for Turns in batches
+          final turnStreams = _chunkList(invitedTurns, 30).map((chunk) =>
+              chunk.isEmpty
+                  ? Stream.value(<DocumentSnapshot>[])
+                  : FirebaseFirestore.instance
+                      .collection('turns')
+                      .where(FieldPath.documentId, whereIn: chunk)
+                      .snapshots()
+                      .map((snapshot) => snapshot.docs
+                              .where((doc) => !isEventExpired(doc))
+                              .where((doc) {
+                            final data = doc.data() as Map<String, dynamic>;
+                            final attending =
+                                List<String>.from(data['attending'] ?? []);
+                            return attending.contains(userId);
+                          }).toList()));
+
+          eventsStream = Rx.combineLatest([...turnStreams],
+              (List<List<DocumentSnapshot>> results) {
+            return results.expand((x) => x).toList();
+          });
         }
 
-        // Create streams for Turns in batches
-        final turnStreams = _chunkList(invitedTurns, 30).map((chunk) =>
-            chunk.isEmpty
-                ? Stream.value(<DocumentSnapshot>[])
-                : FirebaseFirestore.instance
-                    .collection('turns')
-                    .where(FieldPath.documentId, whereIn: chunk)
-                    .snapshots()
-                    .map((snapshot) => snapshot.docs
-                            .where((doc) => !isEventExpired(doc))
-                            // Add filter for attending status
-                            .where((doc) {
-                          final data = doc.data() as Map<String, dynamic>;
-                          final attending =
-                              List<String>.from(data['attending'] ?? []);
-                          return attending.contains(userId);
-                        }).toList()));
-
-        // Combine all event streams
-        Stream<List<DocumentSnapshot>> eventsStream = Rx.combineLatest(
-            [...turnStreams], (List<List<DocumentSnapshot>> results) {
-          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
-          return allEvents;
-        });
-
-        // Handle birthdays stream
+        // Always fetch birthdays stream for current user
         Stream<List<DocumentSnapshot>> birthdaysStream =
             userId == currentUser?.uid
                 ? fetchBirthdayEvents(userId)
@@ -621,13 +619,18 @@ class ProfileViewModel extends ChangeNotifier {
           birthdaysStream,
           (List<DocumentSnapshot> events, List<DocumentSnapshot> birthdays) {
             List<DocumentSnapshot> allEvents = [...events, ...birthdays];
-            allEvents.sort((a, b) {
-              DateTime dateA = parseDate(
-                  (a.data() as Map<String, dynamic>)['eventDateTime']);
-              DateTime dateB = parseDate(
-                  (b.data() as Map<String, dynamic>)['eventDateTime']);
-              return dateA.compareTo(dateB);
-            });
+
+            // Only sort if there are events to sort
+            if (allEvents.isNotEmpty) {
+              allEvents.sort((a, b) {
+                DateTime dateA = parseDate(
+                    (a.data() as Map<String, dynamic>)['eventDateTime']);
+                DateTime dateB = parseDate(
+                    (b.data() as Map<String, dynamic>)['eventDateTime']);
+                return dateA.compareTo(dateB);
+              });
+            }
+
             return allEvents;
           },
         );
