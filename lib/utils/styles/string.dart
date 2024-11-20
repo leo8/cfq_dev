@@ -21,7 +21,7 @@ class CustomString {
   static const leave = "Quitter";
   static const orCapital = "OU";
   static const seeMore = "Voir plus";
-  static const you = "Vous";
+  static const you = "Moi";
   static const newSingle = "nouveau";
   static const newPlural = "nouveaux";
   static const message = "message";
@@ -93,17 +93,20 @@ class CustomString {
   // Friends
   static const myFriends = "Mes amis";
   static const myFriendsCapital = "MES AMIS";
-  static const noFriendsYet = "Vous n'avez pas encore d'amis";
+  static const noFriendsYet = "Tu n'as pas encore ajouté d'amis";
   static const friendAdded = "Ami ajouté !";
   static const friendDeleted = "Ami supprimé !";
   static const addFriend = "Ajouter";
   static const removeFriend = "Retirer";
 
+  // Map
+  static const upcomingFeatureCapital = "UPCOMING FEATURE";
+
   // Teams
   static const team = "Team";
   static const myTeams = "Mes teams";
   static const myTeamsCapital = "MES TEAMS";
-  static const noTeamsYet = "Vous n'avez pas encore de teams.";
+  static const noTeamsYet = "Tu n'as pas encore de teams.";
   static const createTeam = "Créer une team";
   static const newTeamCapital = "NOUVELLE TEAM";
   static const teamName = "Donne-lui un nom";
@@ -113,8 +116,7 @@ class CustomString {
   static const teamMembers = "Déjà membres..";
   static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
-  static const sureToLeaveTeam =
-      "Êtes-vous sûr de vouloir quitter cette team ?";
+  static const sureToLeaveTeam = "Es-tu sûr de vouloir quitter cette team ?";
 
   // Team Events
   static const String teamEvents = "Événements de la team";
@@ -147,7 +149,8 @@ class CustomString {
       "Le nom du TURN ne peut pas dépasser 30 caractères";
 
   static const inviteesCapital = "INVITÉS";
-  static const notInvited = "Vous n'êtes pas invité à cet événement";
+  static const notInvited = "Tu n'es plus invité à cet événement";
+  static const notExistingEvent = "Cet événement n'existe plus";
 
   // Turns
   static const turnCapital = "TURN";
@@ -197,7 +200,7 @@ class CustomString {
   static const noImage = "Aucune image";
   static const pickImageFromGallery = "Choisir une photo de la galerie";
   static const takePictureWithDevice = "Prendre une photo avec l'appareil";
-  static const pleaseSelectAnImage = "Veuillez sélectionner une image";
+  static const pleaseSelectAnImage = "Sélectionne une image";
 
   // Date & Time Related
   static const now = "Maintenant";
@@ -222,43 +225,40 @@ class CustomString {
   static const errorFetchingEvents =
       "Erreur lors de la récupération des événements";
   static const failedToUpdateStatusPleaseTryAgain =
-      "Erreur lors de la mise à jour du statut. Veuillez réessayer.";
+      "Erreur lors de la mise à jour du statut. Réessaye plus tard.";
   static const failedToPickImage =
-      "Erreur lors du chargement de l'image. Veuillez réessayer.";
+      "Erreur lors du chargement de l'image. Réessaye plus tard.";
   static const failedToLoadMap = "Erreur lors du chargement de la map..";
   static const failedToUploadProfilePicture =
-      "Erreur lors de l'upload de la photo de profil. Veuillez réessayer.";
+      "Erreur lors de l'upload de la photo de profil. Réessaye plus tard.";
   static const someErrorOccurred = "Une erreur s'est produite";
   static const veuillezRemplirTousLesChamps =
-      "Veuillez remplir tous les champs";
+      "Merci de remplir tous les champs";
   static const pleaseFillAllRequiredFields =
-      "Veuillez remplir tous les champs requis";
+      "Merci de remplir tous les champs requis";
   static const fetchingDataNoEventsYet = "Récupération des données...";
   static const noEventsAvailable = "Aucun événement pour le moment";
   static const errorLeavingTeam = "Erreur lors de la sortie de la team";
   static const errorCreatingTeam = "Erreur lors de la création de la Team..";
   static const errorCreatingTurn = "Erreur lors de la création du Turn..";
   static const errorCreatingCfq = "Erreur lors de la création du CFQ..";
-  static const pleaseSelectAtLeastOneMood =
-      "Veuillez sélectionner au moins un mood";
+  static const pleaseSelectAtLeastOneMood = "Sélectionne au moins un mood";
   static const failedToInitializeUserData =
       "Échec de l'initialisation des données utilisateur";
   static const failedToFetchUserTeams =
       "Échec de la récupération des teams de l'utilisateur";
   static const failedToPerformSearch = "Échec de la recherche";
-  static const pleaseSelectDateAndTime =
-      "Veuillez sélectionner une date et une heure";
-  static const pleaseEnterTeamName = "Veuillez entrer un nom d'équipe";
-  static const pleaseSelectAtLeastOneMember =
-      "Veuillez sélectionner au moins un membre";
+  static const pleaseSelectDateAndTime = "Sélectionne une date et une heure";
+  static const pleaseEnterTeamName = "Entre un nom d'équipe";
+  static const pleaseSelectAtLeastOneMember = "Sélectionne au moins un membre";
   static const failedToFetchFriends =
-      "Échec de la récupération des amis. Veuillez réessayer.";
+      "Échec de la récupération des amis. Réessaye plus tard.";
   static const failedToRemoveFriend =
-      "Échec de la suppression de l'ami. Veuillez réessayer.";
+      "Échec de la suppression de l'ami. Réessaye plus tard.";
   static const pleaseFillInAllRequiredFields =
-      "Veuillez remplir tous les champs";
+      "Merci de remplir tous les champs";
   static const pleaseAddAtLeastOneMember =
-      "Veuillez ajouter au moins un membre à votre équipe";
+      "Ajoute au moins un membre à ta team";
 
   // Utils
   static const thisIsWeb = "C'est web";
@@ -293,7 +293,7 @@ class CustomString {
   static const String invalidEndDate =
       'Il va vraiment durer moins de 5 minutes, ton événement ?';
 
-  static const String sureToLeave = 'Êtes-vous sûr de vouloir quitter ?';
+  static const String sureToLeave = 'Es-tu sûr de vouloir quitter ?';
   static const String yourModificationsWillBeLost =
       'Vos modifications seront perdues.';
   static const String stay = 'Rester';

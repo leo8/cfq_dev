@@ -120,11 +120,19 @@ class CFQDetails extends StatelessWidget {
           ),
         ),
         isExpanded ? const SizedBox(height: 30) : const SizedBox(height: 25),
-        Text(
-          location,
-          style: CustomTextStyle.body1.copyWith(fontSize: 12),
-        ),
-        isExpanded ? const SizedBox(height: 25) : const SizedBox(height: 20),
+        if (location.isNotEmpty)
+          Row(
+            children: [
+              CustomIcon.eventLocation.copyWith(size: 18),
+              const SizedBox(width: 4),
+              Expanded(
+                  child: Text(location,
+                      style: CustomTextStyle.body1.copyWith(fontSize: 12),
+                      overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+        if (description.isNotEmpty)
+          isExpanded ? const SizedBox(height: 25) : const SizedBox(height: 20),
         if (description.isNotEmpty)
           Text(
             description,

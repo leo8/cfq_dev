@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final TextStyle? textStyle;
   final Color borderColor; // Added optional border color
   final double? borderWidth; // Added border width with default value
+  final double? padding;
 
   const CustomButton({
     super.key,
@@ -26,6 +27,7 @@ class CustomButton extends StatelessWidget {
     this.textStyle,
     this.borderColor = CustomColor.customWhite,
     this.borderWidth, // Default border width
+    this.padding = 16,
   });
 
   @override
@@ -43,7 +45,7 @@ class CustomButton extends StatelessWidget {
               width: width ?? double.infinity,
               height: height,
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: EdgeInsets.symmetric(vertical: padding ?? 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(borderRadius ?? 7),
                 color: color ?? CustomColor.customWhite,

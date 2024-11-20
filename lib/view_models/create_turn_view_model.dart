@@ -20,7 +20,7 @@ import '../view_models/invitees_selector_view_model.dart';
 import '../widgets/atoms/chips/mood_chip.dart';
 import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
-import '../widgets/atoms/dates/custom_date_time_picker.dart';
+import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
@@ -36,6 +36,8 @@ class CreateTurnViewModel extends ChangeNotifier
   List<model.User> _previousSelectedInvitees = [];
   List<Team> _previousSelectedTeamInvitees = [];
   bool _previousIsEverybodySelected = false;
+
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool _isEverybodySelected = false;
   bool get isEverybodySelected => _isEverybodySelected;
@@ -717,6 +719,12 @@ class CreateTurnViewModel extends ChangeNotifier
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
         channelId: channelId, // Add channelId to the turn object
+        notAnswered: [
+          ...inviteeUids
+        ], // Add all invitees to notAnswered initially
+        attending: [currentUserId],
+        notSureAttending: [],
+        notAttending: [],
       );
 
       AppLogger.debug(turnNameController.text.trim());
@@ -759,6 +767,21 @@ class CreateTurnViewModel extends ChangeNotifier
           .collection('turns')
           .doc(turnId)
           .set(turn.toJson());
+
+      final userRef = _firestore.collection('users').doc(_currentUser!.uid);
+      final userDoc = await userRef.get();
+      final userData = userDoc.data()!;
+
+      final batch = _firestore.batch();
+
+      // Update user's attending status
+      Map<String, dynamic> attendingStatus =
+          Map<String, dynamic>.from(userData['attendingStatus'] ?? {});
+
+      attendingStatus[turnId] = 'attending';
+      batch.update(userRef, {'attendingStatus': attendingStatus});
+
+      await batch.commit();
 
       // Update users' postedTurns
       await _updateUserPosts(currentUserId, turnId);

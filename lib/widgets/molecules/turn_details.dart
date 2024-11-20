@@ -126,7 +126,7 @@ class TurnDetails extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      CustomIcon.eventLocation.copyWith(size: 18),
+                      CustomIcon.eventLocation.copyWith(size: 12),
                       const SizedBox(width: 12),
                       Text(
                         where,
@@ -148,14 +148,16 @@ class TurnDetails extends StatelessWidget {
             : Row(
                 children: [
                   CustomIcon.eventLocation.copyWith(size: 18),
-                  const SizedBox(width: 12),
-                  Text(where, style: CustomTextStyle.body1),
+                  const SizedBox(width: 4),
+                  Text(where,
+                      style: CustomTextStyle.body1.copyWith(fontSize: 12)),
                   if (address.isNotEmpty)
-                    Text(' | ', style: CustomTextStyle.body1),
+                    Text(' | ',
+                        style: CustomTextStyle.body1.copyWith(fontSize: 12)),
                   if (address.isNotEmpty)
                     Expanded(
                         child: Text(address,
-                            style: CustomTextStyle.body1,
+                            style: CustomTextStyle.body1.copyWith(fontSize: 12),
                             overflow: TextOverflow.ellipsis)),
                 ],
               ),

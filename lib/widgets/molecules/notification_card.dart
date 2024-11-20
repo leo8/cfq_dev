@@ -96,7 +96,7 @@ class NotificationCard extends StatelessWidget {
               text: content.attendingUsername,
               style: CustomTextStyle.body1Bold,
             ),
-            const TextSpan(text: ' participera à '),
+            const TextSpan(text: ' participe à '),
             TextSpan(
               text: content.turnName.toUpperCase(),
               style: CustomTextStyle.body1Bold,

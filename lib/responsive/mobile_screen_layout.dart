@@ -23,21 +23,22 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   bool isOpen = false; // Track if the floating button is expanded
   bool _showButtons = false; // Show additional buttons when expanded
   int currentPageIndex = 0; // Track the current page selected
-  double _yPositionPlusButton = 0.95; // Y position of the plus button
+  double _yPositionPlusButton = 0.995; // Y position of the plus button
   double _width = 45.0; // Initial width of the plus button
   final double _height = 45.0; // Height of the plus button
-  final double _yPositionPlusButtonClose = 0.95; // Y position when closed
-  final double _yPositionPlusButtonOpen = 0.80; // Y position when opened
+  final double _yPositionPlusButtonClose = 0.995; // Y position when closed
+  final double _yPositionPlusButtonOpen = 0.85; // Y position when opened
   final Duration durationAnimation200 =
       const Duration(milliseconds: 200); // Short animation duration
   final Duration durationAnimation300 = const Duration(milliseconds: 300);
   final Duration durationAnimation500 =
       const Duration(milliseconds: 500); // Longer animation duration
   final double paddingTopIcon =
-      10; // Top padding for icons in the bottom navigation bar
+      25; // Top padding for icons in the bottom navigation bar
   final double paddinghorizontal =
       40; // Horizontal padding for icons in the navigation bar
-  final double sizeIcon = 24; // Size of icons
+  final double sizeIcon = 26; // Size of icons
+  final double navigationBarHeight = 60.0;
 
   // Add this new variable
   Timer? _autoCloseTimer;
@@ -179,6 +180,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       ),
       // Bottom navigation bar
       bottomNavigationBar: NavigationBar(
+        height: navigationBarHeight,
         backgroundColor: CustomColor
             .customBlack, // Make the NavigationBar background transparent
         elevation: 0, // Remove any shadow
@@ -206,8 +208,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             ),
           ),
           Padding(
-            padding:
-                EdgeInsets.only(right: paddinghorizontal, top: paddingTopIcon),
+            padding: EdgeInsets.only(
+                right: paddinghorizontal + 20, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: CustomIcon.map.copyWith(
                 size: sizeIcon,
@@ -220,8 +222,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             ),
           ),
           Padding(
-            padding:
-                EdgeInsets.only(left: paddinghorizontal, top: paddingTopIcon),
+            padding: EdgeInsets.only(
+                left: paddinghorizontal + 20, top: paddingTopIcon),
             child: NavigationDestination(
               selectedIcon: CustomIcon.team.copyWith(
                 color: CustomColor.customWhite,

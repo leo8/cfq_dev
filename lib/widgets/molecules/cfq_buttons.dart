@@ -38,17 +38,18 @@ class CFQButtons extends StatelessWidget {
       icon: icon.copyWith(size: 24),
       onPressed: onPressed,
       color: CustomColor.customWhite,
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1),
     );
   }
 
   Widget _buildFavoriteButton() {
     return IconButton(
       icon: isFavorite
-          ? CustomIcon.saveFull.copyWith(color: CustomColor.yellow, size: 24)
+          ? CustomIcon.saveFull
+              .copyWith(color: CustomColor.customWhite, size: 24)
           : CustomIcon.saveEmpty.copyWith(size: 24),
       onPressed: onFavoritePressed,
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1),
     );
   }
 
