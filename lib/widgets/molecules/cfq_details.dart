@@ -63,6 +63,7 @@ class CFQDetails extends StatelessWidget {
         if (moods.isNotEmpty)
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: moods
                 .map((mood) => MoodChip(
                       icon: _getMoodIcon(mood),

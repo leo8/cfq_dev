@@ -3,15 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/logger.dart';
 import '../providers/user_provider.dart';
 import 'package:uuid/uuid.dart';
-import '../models/notification.dart' as model;
+import '../models/notification.dart' as notificationModel;
+import '../models/user.dart' as model;
 import 'package:flutter/foundation.dart';
 import 'dart:async';
+import '../providers/conversation_service.dart';
 
 class ExpandedCardViewModel extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String eventId;
   final String currentUserId;
   final bool isTurn;
+
+  model.User? _currentUser;
+  model.User? get currentUser => _currentUser;
 
   // Add stream controllers
   StreamController<DocumentSnapshot>? _cfqStreamController;
@@ -19,6 +24,8 @@ class ExpandedCardViewModel extends ChangeNotifier {
   StreamController<String>? _attendingStatusStreamController;
   StreamController<bool>? _isFollowingUpStreamController;
   StreamController<int>? _followersCountStreamController;
+
+  final ConversationService _conversationService = ConversationService();
 
   bool _isFavorite = false;
   bool _isFollowingUp = false;
@@ -251,6 +258,23 @@ class ExpandedCardViewModel extends ChangeNotifier {
         await _createAttendingNotification(eventId);
       }
 
+      String channelId = turnData['channelId'] as String;
+
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
+
       notifyListeners();
     } catch (e) {
       if (!_disposed) {
@@ -298,7 +322,10 @@ class ExpandedCardViewModel extends ChangeNotifier {
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
-        'type': model.NotificationType.followUp.toString().split('.').last,
+        'type': notificationModel.NotificationType.followUp
+            .toString()
+            .split('.')
+            .last,
         'content': {
           'cfqId': cfqId,
           'cfqName': cfqData['cfqName'] as String,
@@ -345,36 +372,62 @@ class ExpandedCardViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> toggleFollowUp() async {
-    if (isTurn) return; // Only proceed for CFQ cards
-
+  static Future<void> addFollowUp(String cfqId, String userId) async {
     try {
-      final cfqRef = _firestore.collection('cfqs').doc(eventId);
-
-      await _firestore.runTransaction((transaction) async {
-        DocumentSnapshot cfqSnapshot = await transaction.get(cfqRef);
-
-        if (!cfqSnapshot.exists) {
-          throw Exception('CFQ document does not exist');
-        }
-
-        Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
-        List<String> followingUp = List<String>.from(data['followingUp'] ?? []);
-
-        bool isNowFollowing = !followingUp.contains(currentUserId);
-
-        if (isNowFollowing) {
-          followingUp.add(currentUserId);
-          // Create notification only when following up, not when unfollowing
-          await _createFollowUpNotification(eventId);
-        } else {
-          followingUp.remove(currentUserId);
-        }
-
-        transaction.update(cfqRef, {'followingUp': followingUp});
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayUnion([userId]),
       });
     } catch (e) {
+      AppLogger.error('Error adding follow-up: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> removeFollowUp(String cfqId, String userId) async {
+    try {
+      await _firestore.collection('cfqs').doc(cfqId).update({
+        'followingUp': FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      AppLogger.error('Error removing follow-up: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> toggleFollowUp(String cfqId, String userId) async {
+    try {
+      DocumentSnapshot cfqSnapshot =
+          await _firestore.collection('cfqs').doc(cfqId).get();
+      Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
+      List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
+      AppLogger.debug('channelId: $channelId');
+
+      if (followingUp.contains(userId)) {
+        await removeFollowUp(cfqId, userId);
+      } else {
+        await addFollowUp(cfqId, userId);
+        // Create notification only when following up, not when removing
+        await _createFollowUpNotification(
+          cfqId,
+        );
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
+      }
+      notifyListeners();
+    } catch (e) {
       AppLogger.error('Error toggling follow-up: $e');
+      rethrow;
     }
   }
 
@@ -407,7 +460,10 @@ class ExpandedCardViewModel extends ChangeNotifier {
       final notification = {
         'id': const Uuid().v4(),
         'timestamp': DateTime.now().toIso8601String(),
-        'type': model.NotificationType.attending.toString().split('.').last,
+        'type': notificationModel.NotificationType.attending
+            .toString()
+            .split('.')
+            .last,
         'content': {
           'turnId': turnId,
           'turnName': turnName,

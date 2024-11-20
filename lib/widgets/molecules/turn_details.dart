@@ -57,6 +57,7 @@ class TurnDetails extends StatelessWidget {
         if (!moods.isEmpty)
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: moods
                 .map((mood) => MoodChip(
                       icon: _getMoodIcon(mood),

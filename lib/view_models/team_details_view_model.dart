@@ -412,6 +412,23 @@ class TeamDetailsViewModel extends ChangeNotifier {
         await _createAttendingNotification(turnId);
       }
 
+      String channelId = turnData['channelId'] as String;
+
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          _currentUser!.uid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            _currentUser!.uid,
+            channelId,
+          );
+        }
+      }
+
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error updating attending status: $e');

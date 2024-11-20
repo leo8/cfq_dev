@@ -268,6 +268,8 @@ class NotificationsViewModel extends ChangeNotifier {
           await _firestore.collection('cfqs').doc(cfqId).get();
       Map<String, dynamic> data = cfqSnapshot.data() as Map<String, dynamic>;
       List<dynamic> followingUp = data['followingUp'] ?? [];
+      String channelId = data['channelId'] as String;
+      AppLogger.debug('channelId: $channelId');
 
       // Get organizer's notification channel ID
       DocumentSnapshot organizerSnapshot =
@@ -285,6 +287,18 @@ class NotificationsViewModel extends ChangeNotifier {
           data['cfqName'] as String,
           organizerNotificationChannelId,
         );
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          userId,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            userId,
+            channelId,
+          );
+        }
       }
       notifyListeners();
     } catch (e) {
@@ -383,6 +397,31 @@ class NotificationsViewModel extends ChangeNotifier {
         transaction.update(turnRef, turnData);
         transaction.update(userRef, userData);
       });
+
+      DocumentSnapshot turnSnapshot =
+          await _firestore.collection('turns').doc(turnId).get();
+      Map<String, dynamic> turnData =
+          turnSnapshot.data() as Map<String, dynamic>;
+      String channelId = turnData['channelId'] as String;
+      String organizerId = turnData['uid'] as String;
+
+      if (status == 'attending' && organizerId != currentUserUid) {
+        await _createAttendingNotification(turnId);
+      }
+      if (status == 'attending') {
+        bool hasConversation =
+            await _conversationService.isConversationInUserList(
+          currentUserUid,
+          channelId,
+        );
+
+        if (!hasConversation) {
+          await _conversationService.addConversationToUser(
+            currentUserUid,
+            channelId,
+          );
+        }
+      }
 
       notifyListeners();
     } catch (e) {

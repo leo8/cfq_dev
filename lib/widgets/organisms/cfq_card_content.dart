@@ -135,12 +135,13 @@ class CFQCardContent extends StatelessWidget {
                                           );
                                         },
                                         isActive: false,
-                                        radius: 24,
+                                        radius: 28,
                                       )
                                     : ClickableAvatar(
                                         userId: organizerId,
                                         imageUrl: profilePictureUrl,
                                         onTap: () {},
+                                        radius: 28,
                                       ),
                                 const SizedBox(width: 8),
                                 Expanded(
@@ -151,7 +152,7 @@ class CFQCardContent extends StatelessWidget {
                                       Text(
                                         '$username . ${DateTimeUtils.getTimeAgo(datePublished)}',
                                         style: CustomTextStyle.body1
-                                            .copyWith(fontSize: 16),
+                                            .copyWith(fontSize: 15),
                                       ),
                                     ],
                                   ),

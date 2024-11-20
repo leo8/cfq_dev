@@ -20,5 +20,6 @@ class CustomMood {
     MoodItem(CustomIcon.afterMood, CustomString.afterMood),
     MoodItem(CustomIcon.beforeMood, CustomString.beforeMood),
     MoodItem(CustomIcon.concertMood, CustomString.concertMood),
+    MoodItem(CustomIcon.everythingMood, CustomString.everythingMood),
   ];
 }

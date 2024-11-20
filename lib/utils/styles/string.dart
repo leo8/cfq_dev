@@ -218,6 +218,7 @@ class CustomString {
   static const beforeMood = "Before";
   static const afterMood = "After";
   static const concertMood = "Concert";
+  static const everythingMood = "Tout";
   // Success Messages
   static const successCreatingTeam = "Team créée avec succès !";
   static const successCreatingTurn = "Turn créé avec succès !";

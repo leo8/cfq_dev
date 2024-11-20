@@ -22,7 +22,7 @@ class MoodChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
               ? CustomColor.customWhite.withOpacity(0.2)
@@ -33,11 +33,13 @@ class MoodChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            icon.copyWith(color: CustomColor.customWhite, size: 18),
-            const SizedBox(width: 8),
+            icon.copyWith(color: CustomColor.customWhite, size: 16),
+            const SizedBox(width: 6),
             Text(
               label,
-              style: CustomTextStyle.body2,
+              style: CustomTextStyle.body1.copyWith(
+                fontSize: 10,
+              ),
             ),
           ],
         ),

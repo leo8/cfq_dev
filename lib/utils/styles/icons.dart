@@ -104,7 +104,7 @@ class CustomIcon extends StatelessWidget {
   static const beforeMood = CustomIcon('before.svg');
   static const afterMood = CustomIcon('after.svg');
   static const concertMood = CustomIcon('concert.svg');
-
+  static const everythingMood = CustomIcon('everything_mood.svg');
   //Parameters
   static const settings = Icons.settings;
   static const editProfile = CustomIcon('pencil.svg');

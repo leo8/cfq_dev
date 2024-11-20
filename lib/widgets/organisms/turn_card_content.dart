@@ -396,12 +396,13 @@ class TurnCardContent extends StatelessWidget {
                                         );
                                       },
                                       isActive: false, // Add isActive
-                                      radius: 24,
+                                      radius: 28,
                                     )
                                   : ClickableAvatar(
                                       userId: organizerId,
                                       imageUrl: profilePictureUrl,
                                       onTap: () {},
+                                      radius: 28,
                                     ),
                               const SizedBox(width: 8),
                               Expanded(
