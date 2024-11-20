@@ -1,48 +1,40 @@
 {
   "project_info": {
-    "project_number": "984456387698",
-    "project_id": "cfq-stage-94223",
-    "storage_bucket": "cfq-stage-94223.firebasestorage.app"
+    "project_number": "451535553993",
+    "project_id": "cfq-prod-477ed",
+    "storage_bucket": "cfq-prod-477ed.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:984456387698:android:5fb94783133263c09776eb",
+        "mobilesdk_app_id": "1:451535553993:android:4b1d2133c5a9ac2e095418",
         "android_client_info": {
-          "package_name": "com.cfq.cfqStage"
+          "package_name": "com.calvignnac.cfqprod"
         }
       },
       "oauth_client": [
         {
-          "client_id": "984456387698-sc5rfkflth8u3d4v4883h32dlmdjvu31.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cfq.cfqStage",
-            "certificate_hash": "1fbf016c3777dce2cbeb16dad17639aaf64a92f5"
-          }
-        },
-        {
-          "client_id": "984456387698-gka35mi3p6ve4gv67fl7r9rh0p9hg0no.apps.googleusercontent.com",
+          "client_id": "451535553993-3c327arl7np839thr3qohm7dqojhkkve.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBPDTUMST29z5h6LmCNL6qbNskSLHOI62c"
+          "current_key": "AIzaSyA-8CvTsGTXuzocPMmj7LvUs-6fsQ_NNPU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "984456387698-gka35mi3p6ve4gv67fl7r9rh0p9hg0no.apps.googleusercontent.com",
+              "client_id": "451535553993-3c327arl7np839thr3qohm7dqojhkkve.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "984456387698-paslf02d134sdm71h6e2d3o5onnbhb92.apps.googleusercontent.com",
+              "client_id": "451535553993-ljrv70ifa96j2qo5oeatglfbp1q56jtb.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.cfq.cfqStage"
+                "bundle_id": "com.calvignnac.cfqprod"
               }
             }
           ]
