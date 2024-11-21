@@ -47,6 +47,5 @@ app.*.map.json
 
 # ignore because diffent between env 
 *.plist
-cfq_dev/android/app/google-services.json
-
-cfq_dev/android/app/build.gradle
+android/app/google-services.json
+android/app/build.gradle
