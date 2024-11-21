@@ -8,6 +8,7 @@ import '../models/user.dart' as model;
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../providers/conversation_service.dart';
+import '../models/conversation.dart';
 
 class ExpandedCardViewModel extends ChangeNotifier {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -17,6 +18,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
 
   model.User? _currentUser;
   model.User? get currentUser => _currentUser;
+
+  List<Conversation> _conversations = [];
+  List<Conversation> get conversations => _conversations;
 
   // Add stream controllers
   StreamController<DocumentSnapshot>? _cfqStreamController;
@@ -31,6 +35,9 @@ class ExpandedCardViewModel extends ChangeNotifier {
   bool _isFollowingUp = false;
   int _followersCount = 0;
   bool _disposed = false;
+
+  String? _channelId;
+  String? get channelId => _channelId;
 
   ExpandedCardViewModel({
     required this.eventId,
@@ -73,13 +80,32 @@ class ExpandedCardViewModel extends ChangeNotifier {
   int get followersCount => _followersCount;
 
   Future<void> _initializeData() async {
-    await _fetchFavoriteStatus();
-    if (isTurn) {
-      await _fetchFollowUpStatus();
-      await _fetchFollowersCount();
-    } else {
-      await _fetchFollowUpStatus();
-      await _fetchFollowersCount();
+    try {
+      final eventDoc = await _firestore
+          .collection(isTurn ? 'turns' : 'cfqs')
+          .doc(eventId)
+          .get();
+
+      if (eventDoc.exists) {
+        final data = eventDoc.data()!;
+        _channelId = data['channelId'];
+        await _fetchFavoriteStatus();
+        if (isTurn) {
+          await _fetchAttendingStatus();
+        } else {
+          await _fetchFollowUpStatus();
+        }
+      }
+
+      final userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (userDoc.exists) {
+        _currentUser = model.User.fromSnap(userDoc);
+      }
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Error initializing expanded card data: $e');
     }
   }
 
@@ -680,6 +706,68 @@ class ExpandedCardViewModel extends ChangeNotifier {
       UserProvider().refreshUser();
     } catch (e) {
       AppLogger.error('Error deleting CFQ: $e');
+      rethrow;
+    }
+  }
+
+  Future<bool> isConversationInUserList() async {
+    if (_channelId == null) return false;
+    return await _conversationService.isConversationInUserList(
+        currentUserId, _channelId!);
+  }
+
+  Future<void> _fetchAttendingStatus() async {
+    try {
+      if (!isTurn) return;
+
+      final userDoc =
+          await _firestore.collection('users').doc(currentUserId).get();
+      if (!userDoc.exists) return;
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+      final attendingEvents =
+          List<String>.from(userData['attendingEvents'] ?? []);
+      final notAttendingEvents =
+          List<String>.from(userData['notAttendingEvents'] ?? []);
+
+      String status = 'notAnswered';
+      if (attendingEvents.contains(eventId)) {
+        status = 'attending';
+      } else if (notAttendingEvents.contains(eventId)) {
+        status = 'notAttending';
+      }
+
+      _attendingStatusStreamController?.add(status);
+    } catch (e) {
+      AppLogger.error('Error fetching attending status: $e');
+    }
+  }
+
+  Future<void> loadConversations() async {
+    _conversations =
+        await _conversationService.getUserConversations(currentUserId);
+    notifyListeners();
+  }
+
+  Future<void> addConversationToUserList(String channelId) async {
+    await _conversationService.addConversationToUser(currentUserId, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> removeConversationFromUserList(String channelId) async {
+    await _conversationService.removeConversationFromUser(
+        currentUserId, channelId);
+    await loadConversations();
+    notifyListeners();
+  }
+
+  Future<void> resetUnreadMessages(String conversationId) async {
+    try {
+      await _conversationService.resetUnreadMessages(
+          currentUserId, conversationId);
+    } catch (e) {
+      AppLogger.error('Error resetting unread messages: $e');
       rethrow;
     }
   }

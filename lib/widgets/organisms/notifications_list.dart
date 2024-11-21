@@ -175,6 +175,10 @@ class NotificationsList extends StatelessWidget {
               content as notificationModel.FollowUpNotificationContent;
           final cfqData = await _fetchEventData(followUpContent.cfqId, false);
           final userData = await _fetchUserData(cfqData['uid']);
+          final channelId = cfqData['channelId'];
+          final isInList = channelId != null
+              ? await viewModel.isConversationInUserList(channelId)
+              : false;
 
           return CFQCardContent(
             cfqId: followUpContent.cfqId,
@@ -207,45 +211,29 @@ class NotificationsList extends StatelessWidget {
               );
             },
             onSendPressed: () async {
-              if (context.mounted) {
-                try {
-                  final channelId = followUpContent.cfqId;
-                  final isInList =
-                      await viewModel.isConversationInUserList(channelId);
-                  final currentUser = await viewModel.getCurrentUser();
-
-                  if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                          eventName: cfqData['cfqName'],
-                          channelId: channelId,
-                          organizerId: cfqData['uid'],
-                          members: List<String>.from(cfqData['invitees'] ?? []),
-                          organizerName: userData['username'],
-                          organizerProfilePicture:
-                              userData['profilePictureUrl'],
-                          currentUser: currentUser,
-                          addConversationToUserList:
-                              viewModel.addConversationToUserList,
-                          removeConversationFromUserList:
-                              viewModel.removeConversationFromUserList,
-                          initialIsInUserConversations: isInList,
-                          eventPicture: cfqData['cfqImageUrl'],
-                          resetUnreadMessages: viewModel.resetUnreadMessages,
-                        ),
+              if (channelId != null) {
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConversationScreen(
+                        eventName: cfqData['cfqName'],
+                        channelId: channelId,
+                        organizerId: cfqData['uid'],
+                        members: List<String>.from(cfqData['invitees'] ?? []),
+                        organizerName: userData['username'],
+                        organizerProfilePicture: userData['profilePictureUrl'],
+                        currentUser: viewModel.currentUser!,
+                        addConversationToUserList:
+                            viewModel.addConversationToUserList,
+                        removeConversationFromUserList:
+                            viewModel.removeConversationFromUserList,
+                        initialIsInUserConversations: isInList,
+                        eventPicture: cfqData['cfqImageUrl'],
+                        resetUnreadMessages: viewModel.resetUnreadMessages,
                       ),
-                    );
-                  }
-                } catch (e) {
-                  AppLogger.error('Error navigating to conversation: $e');
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Error opening conversation')),
-                    );
-                  }
+                    ),
+                  );
                 }
               }
             },

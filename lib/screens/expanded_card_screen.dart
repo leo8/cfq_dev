@@ -4,6 +4,7 @@ import '../widgets/organisms/turn_card_content.dart';
 import '../widgets/organisms/cfq_card_content.dart';
 import '../utils/logger.dart';
 import '../view_models/expanded_card_view_model.dart';
+import '../screens/conversation_screen.dart';
 
 class ExpandedCardScreen extends StatelessWidget {
   final Widget cardContent;
@@ -51,7 +52,34 @@ class ExpandedCardScreen extends StatelessWidget {
                 address: turnContent.address,
                 onAttendingPressed: turnContent.onAttendingPressed,
                 onSharePressed: turnContent.onSharePressed,
-                onSendPressed: turnContent.onSendPressed,
+                onSendPressed: () async {
+                  final channelId = viewModel.channelId;
+                  if (channelId != null && context.mounted) {
+                    final isInList = await viewModel.isConversationInUserList();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                          eventName: turnContent.turnName,
+                          channelId: channelId,
+                          organizerId: turnContent.organizerId,
+                          members: turnContent.organizers,
+                          organizerName: turnContent.username,
+                          organizerProfilePicture:
+                              turnContent.profilePictureUrl,
+                          currentUser: viewModel.currentUser!,
+                          addConversationToUserList:
+                              viewModel.addConversationToUserList,
+                          removeConversationFromUserList:
+                              viewModel.removeConversationFromUserList,
+                          initialIsInUserConversations: isInList,
+                          eventPicture: turnContent.turnImageUrl,
+                          resetUnreadMessages: viewModel.resetUnreadMessages,
+                        ),
+                      ),
+                    );
+                  }
+                },
                 onFavoritePressed: viewModel.toggleFavorite,
                 onCommentPressed: turnContent.onCommentPressed,
                 turnImageUrl: turnContent.turnImageUrl,
@@ -102,7 +130,33 @@ class ExpandedCardScreen extends StatelessWidget {
                     : [],
                 onFollowPressed: cfqContent.onFollowPressed,
                 onSharePressed: cfqContent.onSharePressed,
-                onSendPressed: cfqContent.onSendPressed,
+                onSendPressed: () async {
+                  final channelId = viewModel.channelId;
+                  if (channelId != null && context.mounted) {
+                    final isInList = await viewModel.isConversationInUserList();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConversationScreen(
+                          eventName: cfqContent.cfqName,
+                          channelId: channelId,
+                          organizerId: cfqContent.organizerId,
+                          members: cfqContent.organizers,
+                          organizerName: cfqContent.username,
+                          organizerProfilePicture: cfqContent.profilePictureUrl,
+                          currentUser: viewModel.currentUser!,
+                          addConversationToUserList:
+                              viewModel.addConversationToUserList,
+                          removeConversationFromUserList:
+                              viewModel.removeConversationFromUserList,
+                          initialIsInUserConversations: isInList,
+                          eventPicture: cfqContent.cfqImageUrl,
+                          resetUnreadMessages: viewModel.resetUnreadMessages,
+                        ),
+                      ),
+                    );
+                  }
+                },
                 onFavoritePressed: viewModel.toggleFavorite,
                 onBellPressed: cfqContent.onBellPressed,
                 cfqId: cfqContent.cfqId,
