@@ -6,6 +6,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
 import '../../screens/turn_invitees_screen.dart';
+import '../../enums/moods.dart';
 
 class TurnDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -180,28 +181,11 @@ class TurnDetails extends StatelessWidget {
   }
 
   CustomIcon _getMoodIcon(String mood) {
-    switch (mood.toLowerCase()) {
-      case 'street':
-        return CustomIcon.streetMood;
-      case 'home':
-        return CustomIcon.homeMood;
-      case 'chill':
-        return CustomIcon.chillMood;
-      case 'diner':
-        return CustomIcon.dinerMood;
-      case 'bar':
-        return CustomIcon.barMood;
-      case 'turn':
-        return CustomIcon.otherMood;
-      case 'club':
-        return CustomIcon.clubMood;
-      case 'before':
-        return CustomIcon.beforeMood;
-      case 'after':
-        return CustomIcon.afterMood;
-      default:
-        return CustomIcon.otherMood; // Default icon
-    }
+    final moodItem = CustomMood.moods.firstWhere(
+      (item) => item.label.toLowerCase() == mood.toLowerCase(),
+      orElse: () => MoodItem(CustomIcon.otherMood, mood),
+    );
+    return moodItem.icon;
   }
 
   String _getAttendeesCount() {
