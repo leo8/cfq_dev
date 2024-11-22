@@ -24,6 +24,7 @@ class TurnCardContent extends StatelessWidget {
   final String turnName;
   final String description;
   final DateTime eventDateTime;
+  final DateTime? endDateTime;
   final DateTime datePublished;
   final String turnImageUrl;
   final String where;
@@ -56,6 +57,7 @@ class TurnCardContent extends StatelessWidget {
     required this.turnName,
     required this.description,
     required this.eventDateTime,
+    this.endDateTime,
     required this.where,
     required this.address,
     required this.onAttendingPressed,
@@ -98,6 +100,7 @@ class TurnCardContent extends StatelessWidget {
                       turnName: turnName.toUpperCase(),
                       moods: moods,
                       eventDateTime: eventDateTime,
+                      endDateTime: endDateTime,
                       where: where,
                       address: address,
                       description: description,
@@ -225,6 +228,7 @@ class TurnCardContent extends StatelessWidget {
                                   turnName: turnName.toUpperCase(),
                                   moods: moods,
                                   eventDateTime: eventDateTime,
+                                  endDateTime: endDateTime,
                                   attendeesCount: attendingCount,
                                   where: where,
                                   address: address,
@@ -445,6 +449,7 @@ class TurnCardContent extends StatelessWidget {
                             turnName: turnName.toUpperCase(),
                             moods: moods,
                             eventDateTime: eventDateTime,
+                            endDateTime: endDateTime,
                             attendeesCount: attendingCount,
                             where: where,
                             address: address,

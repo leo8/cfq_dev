@@ -6,6 +6,7 @@ import '../../utils/date_time_utils.dart';
 import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
 import '../../screens/turn_invitees_screen.dart';
+import '../../enums/moods.dart';
 
 class TurnDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -14,6 +15,7 @@ class TurnDetails extends StatelessWidget {
   final String turnName;
   final List<String> moods;
   final DateTime eventDateTime;
+  final DateTime? endDateTime;
   final int attendeesCount;
   final String where;
   final String address;
@@ -29,6 +31,7 @@ class TurnDetails extends StatelessWidget {
     required this.turnName,
     required this.moods,
     required this.eventDateTime,
+    this.endDateTime,
     required this.attendeesCount,
     required this.where,
     required this.address,
@@ -74,8 +77,11 @@ class TurnDetails extends StatelessWidget {
                 )
               : const SizedBox(height: 15),
         Text(
-          DateTimeUtils.formatEventDateTime(eventDateTime),
+          endDateTime != null
+              ? DateTimeUtils.formatDateTimeDisplay(eventDateTime, endDateTime)
+              : DateTimeUtils.formatEventDateTime(eventDateTime),
           style: CustomTextStyle.body1Bold.copyWith(
+            fontSize: endDateTime != null ? 12 : 14,
             color: CustomColor.customPurple,
           ),
         ),
@@ -180,28 +186,11 @@ class TurnDetails extends StatelessWidget {
   }
 
   CustomIcon _getMoodIcon(String mood) {
-    switch (mood.toLowerCase()) {
-      case 'street':
-        return CustomIcon.streetMood;
-      case 'home':
-        return CustomIcon.homeMood;
-      case 'chill':
-        return CustomIcon.chillMood;
-      case 'diner':
-        return CustomIcon.dinerMood;
-      case 'bar':
-        return CustomIcon.barMood;
-      case 'turn':
-        return CustomIcon.otherMood;
-      case 'club':
-        return CustomIcon.clubMood;
-      case 'before':
-        return CustomIcon.beforeMood;
-      case 'after':
-        return CustomIcon.afterMood;
-      default:
-        return CustomIcon.otherMood; // Default icon
-    }
+    final moodItem = CustomMood.moods.firstWhere(
+      (item) => item.label.toLowerCase() == mood.toLowerCase(),
+      orElse: () => MoodItem(CustomIcon.otherMood, mood),
+    );
+    return moodItem.icon;
   }
 
   String _getAttendeesCount() {

@@ -56,11 +56,21 @@ class NotificationsList extends StatelessWidget {
         data['datePublished'] = DateTime.now(); // Fallback
       }
 
-      if (isTurn && data['eventDateTime'] != null) {
+      // Handle eventDateTime for both Turn and CFQ
+      if (data['eventDateTime'] != null) {
         if (data['eventDateTime'] is Timestamp) {
           data['eventDateTime'] = (data['eventDateTime'] as Timestamp).toDate();
         } else if (data['eventDateTime'] is String) {
           data['eventDateTime'] = DateTime.parse(data['eventDateTime']);
+        }
+      }
+
+      // Add to the data handling section after eventDateTime
+      if (data['endDateTime'] != null) {
+        if (data['endDateTime'] is Timestamp) {
+          data['endDateTime'] = (data['endDateTime'] as Timestamp).toDate();
+        } else if (data['endDateTime'] is String) {
+          data['endDateTime'] = DateTime.parse(data['endDateTime']);
         }
       }
 
@@ -71,6 +81,8 @@ class NotificationsList extends StatelessWidget {
         'moods': List<String>.from(data['moods'] ?? []),
         'description': data['description'] ?? '',
         'datePublished': data['datePublished'],
+        'eventDateTime': data['eventDateTime'],
+        'endDateTime': data['endDateTime'],
         'favorites': List<String>.from(data['favorites'] ?? []),
         'followingUp': List<String>.from(data['followingUp'] ?? []),
         ...isTurn
@@ -79,7 +91,6 @@ class NotificationsList extends StatelessWidget {
                 'turnImageUrl': data['turnImageUrl'] ?? '',
                 'where': data['where'] ?? '',
                 'address': data['address'] ?? '',
-                'eventDateTime': data['eventDateTime'] ?? DateTime.now(),
               }
             : {
                 'cfqName': data['cfqName'] ?? '',
@@ -175,6 +186,10 @@ class NotificationsList extends StatelessWidget {
               content as notificationModel.FollowUpNotificationContent;
           final cfqData = await _fetchEventData(followUpContent.cfqId, false);
           final userData = await _fetchUserData(cfqData['uid']);
+          final channelId = cfqData['channelId'];
+          final isInList = channelId != null
+              ? await viewModel.isConversationInUserList(channelId)
+              : false;
 
           return CFQCardContent(
             cfqId: followUpContent.cfqId,
@@ -207,50 +222,36 @@ class NotificationsList extends StatelessWidget {
               );
             },
             onSendPressed: () async {
-              if (context.mounted) {
-                try {
-                  final channelId = followUpContent.cfqId;
-                  final isInList =
-                      await viewModel.isConversationInUserList(channelId);
-                  final currentUser = await viewModel.getCurrentUser();
-
-                  if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConversationScreen(
-                          eventName: cfqData['cfqName'],
-                          channelId: channelId,
-                          organizerId: cfqData['uid'],
-                          members: List<String>.from(cfqData['invitees'] ?? []),
-                          organizerName: userData['username'],
-                          organizerProfilePicture:
-                              userData['profilePictureUrl'],
-                          currentUser: currentUser,
-                          addConversationToUserList:
-                              viewModel.addConversationToUserList,
-                          removeConversationFromUserList:
-                              viewModel.removeConversationFromUserList,
-                          initialIsInUserConversations: isInList,
-                          eventPicture: cfqData['cfqImageUrl'],
-                          resetUnreadMessages: viewModel.resetUnreadMessages,
-                        ),
+              if (channelId != null) {
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConversationScreen(
+                        eventName: cfqData['cfqName'],
+                        channelId: channelId,
+                        organizerId: cfqData['uid'],
+                        members: List<String>.from(cfqData['invitees'] ?? []),
+                        organizerName: userData['username'],
+                        organizerProfilePicture: userData['profilePictureUrl'],
+                        currentUser: viewModel.currentUser!,
+                        addConversationToUserList:
+                            viewModel.addConversationToUserList,
+                        removeConversationFromUserList:
+                            viewModel.removeConversationFromUserList,
+                        initialIsInUserConversations: isInList,
+                        eventPicture: cfqData['cfqImageUrl'],
+                        resetUnreadMessages: viewModel.resetUnreadMessages,
                       ),
-                    );
-                  }
-                } catch (e) {
-                  AppLogger.error('Error navigating to conversation: $e');
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Error opening conversation')),
-                    );
-                  }
+                    ),
+                  );
                 }
               }
             },
             followersCountStream:
                 viewModel.followersCountStream(followUpContent.cfqId),
+            eventDateTime: cfqData['eventDateTime'],
+            endDateTime: cfqData['endDateTime'],
           );
 
         case notificationModel.NotificationType.eventInvitation:
@@ -269,6 +270,7 @@ class NotificationsList extends StatelessWidget {
                   turnName: eventData['turnName'],
                   description: eventData['description'],
                   eventDateTime: eventData['eventDateTime'],
+                  endDateTime: eventData['endDateTime'],
                   datePublished: eventData['datePublished'],
                   turnImageUrl: eventData['turnImageUrl'],
                   where: eventData['where'],
@@ -357,6 +359,8 @@ class NotificationsList extends StatelessWidget {
                   location: eventData['location'],
                   when: eventData['when'],
                   followingUp: eventData['followingUp'],
+                  eventDateTime: eventData['eventDateTime'],
+                  endDateTime: eventData['endDateTime'],
                   onFollowPressed: () {},
                   onSharePressed: () {},
                   onSendPressed: () async {

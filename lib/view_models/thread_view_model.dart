@@ -8,6 +8,7 @@ import '../models/conversation.dart';
 import '../providers/conversation_service.dart';
 import 'package:uuid/uuid.dart';
 import '../models/notification.dart' as notificationModel;
+import '../screens/tutorial_screen.dart';
 
 class ThreadViewModel extends ChangeNotifier {
   final String currentUserUid;
@@ -51,6 +52,8 @@ class ThreadViewModel extends ChangeNotifier {
       BehaviorSubject<int>.seeded(0);
   Stream<int> get unreadNotificationsCountStream =>
       _unreadNotificationsCountSubject.stream;
+
+  bool _hasCheckedOnboarding = false;
 
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
@@ -817,5 +820,25 @@ class ThreadViewModel extends ChangeNotifier {
   List<DocumentSnapshot> _deduplicateEvents(List<DocumentSnapshot> events) {
     final seen = <String>{};
     return events.where((doc) => seen.add(doc.id)).toList();
+  }
+
+  Future<void> checkAndShowOnboarding(BuildContext context) async {
+    if (_hasCheckedOnboarding) return;
+    _hasCheckedOnboarding = true;
+
+    if (_currentUser != null && !_currentUser!.isOnboarded) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TutorialScreen(),
+        ),
+      );
+
+      await _firestore.collection('users').doc(currentUserUid).update({
+        'isOnboarded': true,
+      });
+
+      await _fetchCurrentUser();
+    }
   }
 }

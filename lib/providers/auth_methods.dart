@@ -98,6 +98,7 @@ class AuthMethods {
         notificationsChannelId: notificationsChannelId,
         unreadNotificationsCount: 0,
         requests: [],
+        isOnboarded: false,
       );
 
       // Save the user data to Firestore under 'users' collection

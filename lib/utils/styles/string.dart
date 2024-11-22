@@ -185,6 +185,7 @@ class CustomString {
   static const favorites = "Favoris";
   static const requests = "Demandes d'ajout";
   static const privacy = "Confidentialité";
+  static const tutorial = "Guide d'utilisation";
 
   // Favorites
   static const favoritesCapital = "FAVORIS";
@@ -289,7 +290,7 @@ class CustomString {
   static const String and = "&";
 
   static const String eventDateTime = "Date & Heure de début";
-  static const String addEndTime = "Ajouter date & heure de fin (optionnel)";
+  static const String addEndTime = "Ajouter Date & Heure de fin";
   static const String endDateTime = "Date & Heure de fin";
   static const String dateTimeInPast =
       "Tu crées des événements dans le passé toi ?";

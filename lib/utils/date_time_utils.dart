@@ -1,4 +1,5 @@
 import 'logger.dart';
+import 'styles/string.dart';
 
 class DateTimeUtils {
   static const List<String> _monthAbbreviations = [
@@ -61,9 +62,9 @@ class DateTimeUtils {
       return "Demain | ${formatEventTime(dateTime)}";
     } else if (dateTime.isBefore(nextWeek)) {
       final dayName = _getDayName(dateTime.weekday);
-      return "$dayName | ${formatEventTime(dateTime)}";
+      return "${dayName[0].toUpperCase() + dayName.substring(1)} | ${formatEventTime(dateTime)}";
     } else {
-      return '${dateTime.day} ${getMonthNameFrench(dateTime.month)} | ${formatEventTime(dateTime)}';
+      return '${dateTime.day} ${getMonthNameFrench(dateTime.month)[0].toUpperCase() + getMonthNameFrench(dateTime.month).substring(1)} | ${formatEventTime(dateTime)}';
     }
   }
 
@@ -75,11 +76,11 @@ class DateTimeUtils {
     if (dateTime.year == now.year &&
         dateTime.month == now.month &&
         dateTime.day == now.day) {
-      return "aujourd'hui";
+      return "Aujourd'hui";
     } else if (dateTime.year == tomorrow.year &&
         dateTime.month == tomorrow.month &&
         dateTime.day == tomorrow.day) {
-      return "demain";
+      return "Demain";
     } else if (dateTime.isBefore(nextWeek)) {
       final dayName = _getDayName(dateTime.weekday);
       return dayName;
@@ -91,19 +92,19 @@ class DateTimeUtils {
   static String _getDayName(int weekday) {
     switch (weekday) {
       case DateTime.monday:
-        return 'Lundi';
+        return 'lundi';
       case DateTime.tuesday:
-        return 'Mardi';
+        return 'mardi';
       case DateTime.wednesday:
-        return 'Mercredi';
+        return 'mercredi';
       case DateTime.thursday:
-        return 'Jeudi';
+        return 'jeudi';
       case DateTime.friday:
-        return 'Vendredi';
+        return 'vendredi';
       case DateTime.saturday:
-        return 'Samedi';
+        return 'samedi';
       case DateTime.sunday:
-        return 'Dimanche';
+        return 'dimanche';
       default:
         throw ArgumentError('Invalid weekday');
     }
@@ -112,29 +113,29 @@ class DateTimeUtils {
   static String getMonthNameFrench(int month) {
     switch (month) {
       case 1:
-        return 'Janvier';
+        return 'janvier';
       case 2:
-        return 'Février';
+        return 'février';
       case 3:
-        return 'Mars';
+        return 'mars';
       case 4:
-        return 'Avril';
+        return 'avril';
       case 5:
-        return 'Mai';
+        return 'mai';
       case 6:
-        return 'Juin';
+        return 'juin';
       case 7:
-        return 'Juillet';
+        return 'juillet';
       case 8:
-        return 'Août';
+        return 'août';
       case 9:
-        return 'Septembre';
+        return 'septembre';
       case 10:
-        return 'Octobre';
+        return 'octobre';
       case 11:
-        return 'Novembre';
+        return 'novembre';
       case 12:
-        return 'Décembre';
+        return 'décembre';
       default:
         throw ArgumentError('Invalid month');
     }
@@ -191,7 +192,7 @@ class DateTimeUtils {
       return "Hier à $timeStr";
     } else if (dateTime.isAfter(sixDaysAgo)) {
       final dayName = _getDayName(dateTime.weekday);
-      return "$dayName à $timeStr";
+      return "${dayName[0].toUpperCase()}${dayName.substring(1)} à $timeStr";
     } else if (dateTime.year == now.year) {
       return "${_padZero(dateTime.day)}/${_padZero(dateTime.month)} à $timeStr";
     } else {
@@ -205,5 +206,72 @@ class DateTimeUtils {
 
     final difference = currentMessageTime.difference(previousMessageTime);
     return difference.inMinutes >= 10;
+  }
+
+  static String formatDateTimeDisplay(DateTime? startDate, DateTime? endDate) {
+    if (startDate == null) return CustomString.date;
+
+    final now = DateTime.now();
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final nextWeek = now.add(const Duration(days: 7));
+
+    // Format start date string based on when it is
+    String startDateStr;
+    if (startDate.year == now.year &&
+        startDate.month == now.month &&
+        startDate.day == now.day) {
+      startDateStr = "Aujourd'hui";
+    } else if (startDate.year == tomorrow.year &&
+        startDate.month == tomorrow.month &&
+        startDate.day == tomorrow.day) {
+      startDateStr = "Demain";
+    } else if (startDate.isBefore(nextWeek)) {
+      startDateStr = _getDayName(startDate.weekday);
+    } else {
+      startDateStr =
+          'le ${startDate.day} ${getMonthNameFrench(startDate.month)}';
+    }
+
+    final startTimeStr = formatEventTime(startDate);
+
+    // If no end date, return simple format
+    if (endDate == null) {
+      return '$startDateStr | $startTimeStr';
+    }
+
+    // Format end date string
+    String endDateStr;
+    if (endDate.year == now.year &&
+        endDate.month == now.month &&
+        endDate.day == now.day) {
+      endDateStr = "aujourd'hui";
+    } else if (endDate.year == tomorrow.year &&
+        endDate.month == tomorrow.month &&
+        endDate.day == tomorrow.day) {
+      endDateStr = "demain";
+    } else if (endDate.isBefore(nextWeek)) {
+      endDateStr = _getDayName(endDate.weekday).toLowerCase();
+    } else {
+      endDateStr = '${endDate.day} ${getMonthNameFrench(endDate.month)}';
+    }
+
+    final endTimeStr = formatEventTime(endDate);
+
+    // Check if same day or next day
+    final isSameDay = startDate.year == endDate.year &&
+        startDate.month == endDate.month &&
+        startDate.day == endDate.day;
+
+    final isNextDay = endDate.difference(startDate).inMinutes <= 1439;
+    final isNextWeek = endDate.difference(DateTime.now()).inDays <= 6;
+    if ((isSameDay || isNextDay) &&
+        endDate.difference(startDate).inHours < 24) {
+      return '${startDateStr[0].toUpperCase()}${startDateStr.substring(1)} de $startTimeStr à $endTimeStr';
+    } else {
+      // Use "au" instead of "à" for dates
+      final useAu = (isSameDay || isNextDay || isNextWeek) ? true : false;
+      print(useAu);
+      return '${startDateStr[0].toUpperCase()}${startDateStr.substring(1)} à $startTimeStr jusqu\'${useAu ? 'à' : 'au'} $endDateStr à $endTimeStr';
+    }
   }
 }
