@@ -44,6 +44,7 @@ class CFQCardContent extends StatelessWidget {
   final Stream<int>? followersCountStream;
   final bool showEditButton;
   final VoidCallback? onEditPressed;
+  final DateTime? eventDateTime;
 
   const CFQCardContent({
     required this.profilePictureUrl,
@@ -73,6 +74,7 @@ class CFQCardContent extends StatelessWidget {
     this.followersCountStream,
     this.showEditButton = false,
     this.onEditPressed,
+    this.eventDateTime,
     super.key,
   });
 
@@ -186,6 +188,7 @@ class CFQCardContent extends StatelessWidget {
                           cfqId: cfqId,
                           isExpanded: isExpanded,
                           followersCountStream: followersCountStream,
+                          eventDateTime: eventDateTime,
                         ),
                       ),
                       if (currentUserId == organizerId && isExpanded)
@@ -380,6 +383,7 @@ class CFQCardContent extends StatelessWidget {
                       cfqId: cfqId,
                       isExpanded: isExpanded,
                       followersCountStream: followersCountStream,
+                      eventDateTime: eventDateTime,
                     ),
                   ),
                 ],

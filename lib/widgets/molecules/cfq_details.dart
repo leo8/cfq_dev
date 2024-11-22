@@ -6,6 +6,7 @@ import '../../utils/styles/string.dart';
 import '../atoms/chips/mood_chip.dart';
 import '../../screens/cfq_invitees_screen.dart';
 import '../../enums/moods.dart';
+import '../../utils/date_time_utils.dart';
 
 class CFQDetails extends StatelessWidget {
   final String profilePictureUrl;
@@ -20,6 +21,7 @@ class CFQDetails extends StatelessWidget {
   final String cfqId;
   final bool isExpanded;
   final Stream<int>? followersCountStream;
+  final DateTime? eventDateTime;
 
   const CFQDetails({
     Key? key,
@@ -35,6 +37,7 @@ class CFQDetails extends StatelessWidget {
     required this.cfqId,
     required this.isExpanded,
     this.followersCountStream,
+    this.eventDateTime,
   }) : super(key: key);
 
   @override
@@ -76,7 +79,15 @@ class CFQDetails extends StatelessWidget {
           ),
         if (moods.isNotEmpty)
           isExpanded ? const SizedBox(height: 12) : const SizedBox(height: 8),
-        isExpanded ? const SizedBox(height: 10) : const SizedBox(height: 25),
+        if (eventDateTime != null) ...[
+          Text(
+            DateTimeUtils.formatEventDateTime(eventDateTime!),
+            style: CustomTextStyle.body1Bold.copyWith(
+              color: CustomColor.customPurple,
+            ),
+          ),
+          isExpanded ? const SizedBox(height: 10) : const SizedBox(height: 25),
+        ],
         GestureDetector(
           onTap: () {
             Navigator.push(

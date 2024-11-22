@@ -124,6 +124,7 @@ class ExpandedCardScreen extends StatelessWidget {
                 cfqImageUrl: cfqContent.cfqImageUrl,
                 location: cfqContent.location,
                 when: cfqContent.when,
+                eventDateTime: cfqContent.eventDateTime,
                 followersCountStream: viewModel.followersCountStream,
                 followingUp: snapshot.data != null
                     ? (isFollowingUp ? [cfqContent.currentUserId] : [])

@@ -56,7 +56,8 @@ class NotificationsList extends StatelessWidget {
         data['datePublished'] = DateTime.now(); // Fallback
       }
 
-      if (isTurn && data['eventDateTime'] != null) {
+      // Handle eventDateTime for both Turn and CFQ
+      if (data['eventDateTime'] != null) {
         if (data['eventDateTime'] is Timestamp) {
           data['eventDateTime'] = (data['eventDateTime'] as Timestamp).toDate();
         } else if (data['eventDateTime'] is String) {
@@ -71,6 +72,7 @@ class NotificationsList extends StatelessWidget {
         'moods': List<String>.from(data['moods'] ?? []),
         'description': data['description'] ?? '',
         'datePublished': data['datePublished'],
+        'eventDateTime': data['eventDateTime'],
         'favorites': List<String>.from(data['favorites'] ?? []),
         'followingUp': List<String>.from(data['followingUp'] ?? []),
         ...isTurn
@@ -79,7 +81,6 @@ class NotificationsList extends StatelessWidget {
                 'turnImageUrl': data['turnImageUrl'] ?? '',
                 'where': data['where'] ?? '',
                 'address': data['address'] ?? '',
-                'eventDateTime': data['eventDateTime'] ?? DateTime.now(),
               }
             : {
                 'cfqName': data['cfqName'] ?? '',
@@ -239,6 +240,7 @@ class NotificationsList extends StatelessWidget {
             },
             followersCountStream:
                 viewModel.followersCountStream(followUpContent.cfqId),
+            eventDateTime: cfqData['eventDateTime'],
           );
 
         case notificationModel.NotificationType.eventInvitation:
@@ -345,6 +347,7 @@ class NotificationsList extends StatelessWidget {
                   location: eventData['location'],
                   when: eventData['when'],
                   followingUp: eventData['followingUp'],
+                  eventDateTime: eventData['eventDateTime'],
                   onFollowPressed: () {},
                   onSharePressed: () {},
                   onSendPressed: () async {
