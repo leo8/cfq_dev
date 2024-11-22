@@ -88,7 +88,7 @@ class CFQDetails extends StatelessWidget {
                     eventDateTime, endDateTime)
                 : DateTimeUtils.formatEventDateTime(eventDateTime!),
             style: CustomTextStyle.body1Bold.copyWith(
-              fontSize: 12,
+              fontSize: endDateTime != null ? 12 : 14,
               color: CustomColor.customPurple,
             ),
           ),
