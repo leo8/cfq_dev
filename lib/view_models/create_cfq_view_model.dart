@@ -159,12 +159,6 @@ class CreateCfqViewModel extends ChangeNotifier
   }
 
   Future<void> updateCfq() async {
-    if (whenController.text.isEmpty) {
-      _errorMessage = CustomString.pleaseEnterWhen;
-      notifyListeners();
-      return;
-    }
-
     if (whenController.text.length > 24) {
       _errorMessage = CustomString.maxLengthCFQ;
       notifyListeners();
@@ -604,13 +598,7 @@ class CreateCfqViewModel extends ChangeNotifier
 
   // Create cfq
   Future<void> createCfq() async {
-    // Validate required fields
-    if (whenController.text.isEmpty) {
-      _errorMessage = CustomString.pleaseEnterWhen;
-      notifyListeners();
-      return;
-    }
-
+    // Remove the when validation
     if (whenController.text.length > 24) {
       _errorMessage = CustomString.maxLengthCFQ;
       notifyListeners();
