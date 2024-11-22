@@ -22,6 +22,7 @@ class CFQDetails extends StatelessWidget {
   final bool isExpanded;
   final Stream<int>? followersCountStream;
   final DateTime? eventDateTime;
+  final DateTime? endDateTime;
 
   const CFQDetails({
     Key? key,
@@ -38,6 +39,7 @@ class CFQDetails extends StatelessWidget {
     required this.isExpanded,
     this.followersCountStream,
     this.eventDateTime,
+    this.endDateTime,
   }) : super(key: key);
 
   @override
@@ -81,8 +83,12 @@ class CFQDetails extends StatelessWidget {
           isExpanded ? const SizedBox(height: 12) : const SizedBox(height: 8),
         if (eventDateTime != null) ...[
           Text(
-            DateTimeUtils.formatEventDateTime(eventDateTime!),
+            endDateTime != null
+                ? DateTimeUtils.formatDateTimeDisplay(
+                    eventDateTime, endDateTime)
+                : DateTimeUtils.formatEventDateTime(eventDateTime!),
             style: CustomTextStyle.body1Bold.copyWith(
+              fontSize: 12,
               color: CustomColor.customPurple,
             ),
           ),

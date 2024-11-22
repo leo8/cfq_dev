@@ -117,7 +117,7 @@ class CreateTurnScreen extends StatelessWidget {
                       addressController: viewModel.addressController,
                       onSelectDateTime: () => viewModel.selectDateTime(context),
                       onSelectMoods: () => viewModel.selectMoods(context),
-                      dateTimeDisplay: DateTimeUtils().formatDateTimeDisplay(
+                      dateTimeDisplay: DateTimeUtils.formatDateTimeDisplay(
                         viewModel.selectedDateTime,
                         viewModel.selectedEndDateTime,
                       ),

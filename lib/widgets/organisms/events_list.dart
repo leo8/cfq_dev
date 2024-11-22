@@ -195,6 +195,9 @@ class _EventsListState extends State<EventsList> {
                     onSharePressed: () {
                       // Handle share action
                     },
+                    endDateTime: eventData['endDateTime'] != null
+                        ? parseDate(eventData['endDateTime'])
+                        : null,
                     onSendPressed: () async {
                       if (eventData['channelId'] != null) {
                         // Create a new list that includes both invitees and the organizer
@@ -278,6 +281,9 @@ class _EventsListState extends State<EventsList> {
                           isFavorite: isFavorite,
                           eventDateTime: eventData['eventDateTime'] != null
                               ? parseDate(eventData['eventDateTime'])
+                              : null,
+                          endDateTime: eventData['endDateTime'] != null
+                              ? parseDate(eventData['endDateTime'])
                               : null,
                           onFollowUpToggled: (bool newValue) {
                             widget.toggleFollowUp(

@@ -89,6 +89,15 @@ class ExpandedCardViewModel extends ChangeNotifier {
       if (eventDoc.exists) {
         final data = eventDoc.data()!;
         _channelId = data['channelId'];
+
+        if (data['endDateTime'] != null) {
+          if (data['endDateTime'] is Timestamp) {
+            data['endDateTime'] = (data['endDateTime'] as Timestamp).toDate();
+          } else if (data['endDateTime'] is String) {
+            data['endDateTime'] = DateTime.parse(data['endDateTime']);
+          }
+        }
+
         await _fetchFavoriteStatus();
         if (isTurn) {
           await _fetchAttendingStatus();

@@ -116,7 +116,7 @@ class CreateCfqScreen extends StatelessWidget {
                               viewModel.selectedMoods!.isNotEmpty
                           ? viewModel.selectedMoods!.join(', ')
                           : CustomString.whatMood,
-                      dateTimeDisplay: DateTimeUtils().formatDateTimeDisplay(
+                      dateTimeDisplay: DateTimeUtils.formatDateTimeDisplay(
                         viewModel.selectedDateTime,
                         viewModel.selectedEndDateTime,
                       ),
