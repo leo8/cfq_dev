@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "451535553993",
+    "project_id": "cfq-prod-477ed",
+    "storage_bucket": "cfq-prod-477ed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451535553993:android:4b1d2133c5a9ac2e095418",
+        "android_client_info": {
+          "package_name": "com.calvignnac.cfqprod"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "451535553993-3c327arl7np839thr3qohm7dqojhkkve.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-8CvTsGTXuzocPMmj7LvUs-6fsQ_NNPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "451535553993-3c327arl7np839thr3qohm7dqojhkkve.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "451535553993-ljrv70ifa96j2qo5oeatglfbp1q56jtb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.calvignnac.cfqprod"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -46,6 +46,6 @@ app.*.map.json
 /android/app/release
 
 # ignore because diffent between env 
-*.plist
+ios/Runner/*.plist
 android/app/google-services.json
 android/app/build.gradle
