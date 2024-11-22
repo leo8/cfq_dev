@@ -112,6 +112,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 child: _buildMessageList(),
               ),
               _buildMessageInput(),
+              const SizedBox(
+                height: 20,
+              ),
             ],
           ),
         ),
@@ -281,6 +284,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                   ),
                 _buildMessageItem(doc, data),
+                const SizedBox(
+                  height: 6,
+                ),
               ],
             );
           },
@@ -292,39 +298,57 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget _buildMessageItem(DocumentSnapshot doc, Map<String, dynamic> data) {
     final isCurrentUser = data['senderId'] == widget.currentUser.uid;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-      child: Row(
-        mainAxisAlignment:
-            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          if (!isCurrentUser) ...[
-            CircleAvatar(
-              backgroundImage: NetworkImage(data['senderProfilePicture']),
-              radius: 16,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment:
+              isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+          children: [
+            if (!isCurrentUser) ...[
+              CircleAvatar(
+                backgroundImage: NetworkImage(data['senderProfilePicture']),
+                radius: 16,
+              ),
+              SizedBox(width: 8),
+            ],
+            Flexible(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.70,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isCurrentUser
+                      ? CustomColor.customPurple
+                      : CustomColor.customDarkGrey,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!isCurrentUser)
+                      Text(
+                        data['senderUsername'],
+                        style: CustomTextStyle.body1.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    if (!isCurrentUser)
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    Text(
+                      data['message'],
+                      style: CustomTextStyle.body1,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            SizedBox(width: 8),
           ],
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isCurrentUser
-                    ? CustomColor.customPurple
-                    : CustomColor.customDarkGrey,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!isCurrentUser)
-                    Text(data['senderUsername'],
-                        style: CustomTextStyle.miniButton),
-                  Text(data['message'], style: CustomTextStyle.body1),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -333,8 +357,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
     final TextEditingController _controller = TextEditingController();
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 24),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CircleAvatar(
             backgroundImage: NetworkImage(widget.currentUser.profilePictureUrl),
@@ -342,22 +367,36 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
           SizedBox(width: 8),
           Expanded(
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: 'Type a message',
-                hintStyle: CustomTextStyle.body1
-                    .copyWith(color: CustomColor.customWhite.withOpacity(0.5)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: CustomColor.customDarkGrey,
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: 150, // Approximately 10 lines of text
               ),
-              style: CustomTextStyle.body1,
+              child: TextField(
+                controller: _controller,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  hintText: 'Type a message',
+                  hintStyle: CustomTextStyle.body1.copyWith(
+                      color: CustomColor.customWhite.withOpacity(0.5)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  filled: true,
+                  fillColor: CustomColor.customDarkGrey,
+                  isCollapsed: true,
+                ),
+                style: CustomTextStyle.body1,
+              ),
             ),
           ),
+          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.send, color: CustomColor.customPurple),
             onPressed: () {

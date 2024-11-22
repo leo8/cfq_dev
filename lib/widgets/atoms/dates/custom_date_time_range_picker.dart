@@ -63,7 +63,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
           Flexible(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -71,10 +71,10 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                       CustomString.eventDateTime,
                       style: CustomTextStyle.body1.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     OmniDateTimePicker(
                       initialDate: _startDate!,
                       firstDate: _minimumDate,
@@ -94,7 +94,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                         });
                       },
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 4),
                     if (!_showEndDatePicker)
                       TextButton(
                         onPressed: () {
@@ -104,7 +104,11 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                         },
                         child: const Center(
                           child: Center(
-                            child: Text(CustomString.addEndTime),
+                            child: Text(
+                              CustomString.addEndTime,
+                              style: const TextStyle(
+                                  decoration: TextDecoration.underline),
+                            ),
                           ),
                         ),
                       ),
@@ -119,7 +123,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                               CustomString.endDateTime,
                               style: CustomTextStyle.body1.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -138,7 +142,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 6),
                       OmniDateTimePicker(
                         initialDate: _endDate ??
                             _startDate?.add(const Duration(hours: 1)) ??
@@ -170,7 +174,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                 ),
               ),
             ),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -187,7 +191,7 @@ class _CustomDateTimeRangePickerState extends State<CustomDateTimeRangePicker> {
                     style: CustomTextStyle.body1,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _validateDates()
                       ? () {

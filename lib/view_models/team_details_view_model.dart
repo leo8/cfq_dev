@@ -206,9 +206,18 @@ class TeamDetailsViewModel extends ChangeNotifier {
                 .snapshots()
                 .map((snapshot) {
                 AppLogger.debug("Fetched ${snapshot.docs.length} Team CFQs");
-                return snapshot.docs
-                    .where((doc) => !isEventExpired(doc))
-                    .toList();
+                return snapshot.docs.where((doc) {
+                  if (isEventExpired(doc)) return false;
+
+                  final data = doc.data() as Map<String, dynamic>;
+                  final List<String> invitees =
+                      List<String>.from(data['invitees'] ?? []);
+                  final List<String> organizers =
+                      List<String>.from(data['organizers'] ?? []);
+
+                  return organizers.contains(_currentUser?.uid) ||
+                      invitees.contains(_currentUser?.uid);
+                }).toList();
               });
 
         Stream<List<DocumentSnapshot>> turnsStream = teamInvitedTurns.isEmpty
@@ -219,9 +228,18 @@ class TeamDetailsViewModel extends ChangeNotifier {
                 .snapshots()
                 .map((snapshot) {
                 AppLogger.debug("Fetched ${snapshot.docs.length} Team Turns");
-                return snapshot.docs
-                    .where((doc) => !isEventExpired(doc))
-                    .toList();
+                return snapshot.docs.where((doc) {
+                  if (isEventExpired(doc)) return false;
+
+                  final data = doc.data() as Map<String, dynamic>;
+                  final List<String> invitees =
+                      List<String>.from(data['invitees'] ?? []);
+                  final List<String> organizers =
+                      List<String>.from(data['organizers'] ?? []);
+
+                  return organizers.contains(_currentUser?.uid) ||
+                      invitees.contains(_currentUser?.uid);
+                }).toList();
               });
 
         return Rx.combineLatest2(
@@ -710,57 +728,5 @@ class TeamDetailsViewModel extends ChangeNotifier {
           i, i + chunkSize > list.length ? list.length : i + chunkSize));
     }
     return chunks;
-  }
-
-  Stream<List<DocumentSnapshot>> fetchTeamEvents(String teamId) {
-    try {
-      return FirebaseFirestore.instance
-          .collection('teams')
-          .doc(teamId)
-          .snapshots()
-          .switchMap((teamSnapshot) {
-        if (!teamSnapshot.exists) {
-          return Stream.value(<DocumentSnapshot>[]);
-        }
-
-        final teamData = teamSnapshot.data() as Map<String, dynamic>;
-        final eventIds = List<String>.from(teamData['events'] ?? []);
-
-        if (eventIds.isEmpty) {
-          return Stream.value(<DocumentSnapshot>[]);
-        }
-
-        // Split event IDs into chunks of 30
-        final eventChunks = _chunkList(eventIds, 30);
-
-        // Create streams for each chunk
-        final eventStreams = eventChunks.map((chunk) => chunk.isEmpty
-            ? Stream.value(<DocumentSnapshot>[])
-            : FirebaseFirestore.instance
-                .collection('events')
-                .where(FieldPath.documentId, whereIn: chunk)
-                .snapshots()
-                .map((snapshot) => snapshot.docs
-                    .where((doc) => !isEventExpired(doc))
-                    .toList()));
-
-        // Combine all streams
-        return Rx.combineLatest(eventStreams,
-            (List<List<DocumentSnapshot>> results) {
-          List<DocumentSnapshot> allEvents = results.expand((x) => x).toList();
-          allEvents.sort((a, b) {
-            DateTime dateA =
-                parseDate((a.data() as Map<String, dynamic>)['eventDateTime']);
-            DateTime dateB =
-                parseDate((b.data() as Map<String, dynamic>)['eventDateTime']);
-            return dateA.compareTo(dateB);
-          });
-          return allEvents;
-        });
-      });
-    } catch (error) {
-      AppLogger.error("Error in fetchTeamEvents: $error");
-      return Stream.value([]);
-    }
   }
 }
