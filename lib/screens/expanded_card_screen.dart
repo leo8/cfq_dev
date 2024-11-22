@@ -48,6 +48,7 @@ class ExpandedCardScreen extends StatelessWidget {
                 turnName: turnContent.turnName,
                 description: turnContent.description,
                 eventDateTime: turnContent.eventDateTime,
+                endDateTime: turnContent.endDateTime,
                 where: turnContent.where,
                 address: turnContent.address,
                 onAttendingPressed: turnContent.onAttendingPressed,
@@ -124,6 +125,8 @@ class ExpandedCardScreen extends StatelessWidget {
                 cfqImageUrl: cfqContent.cfqImageUrl,
                 location: cfqContent.location,
                 when: cfqContent.when,
+                eventDateTime: cfqContent.eventDateTime,
+                endDateTime: cfqContent.endDateTime,
                 followersCountStream: viewModel.followersCountStream,
                 followingUp: snapshot.data != null
                     ? (isFollowingUp ? [cfqContent.currentUserId] : [])

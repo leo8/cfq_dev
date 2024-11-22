@@ -15,6 +15,7 @@ class TurnDetails extends StatelessWidget {
   final String turnName;
   final List<String> moods;
   final DateTime eventDateTime;
+  final DateTime? endDateTime;
   final int attendeesCount;
   final String where;
   final String address;
@@ -30,6 +31,7 @@ class TurnDetails extends StatelessWidget {
     required this.turnName,
     required this.moods,
     required this.eventDateTime,
+    this.endDateTime,
     required this.attendeesCount,
     required this.where,
     required this.address,
@@ -75,8 +77,11 @@ class TurnDetails extends StatelessWidget {
                 )
               : const SizedBox(height: 15),
         Text(
-          DateTimeUtils.formatEventDateTime(eventDateTime),
+          endDateTime != null
+              ? DateTimeUtils.formatDateTimeDisplay(eventDateTime, endDateTime)
+              : DateTimeUtils.formatEventDateTime(eventDateTime),
           style: CustomTextStyle.body1Bold.copyWith(
+            fontSize: endDateTime != null ? 12 : 14,
             color: CustomColor.customPurple,
           ),
         ),
