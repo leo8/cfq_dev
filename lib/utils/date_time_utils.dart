@@ -1,4 +1,5 @@
 import 'logger.dart';
+import 'styles/string.dart';
 
 class DateTimeUtils {
   static const List<String> _monthAbbreviations = [
@@ -205,5 +206,37 @@ class DateTimeUtils {
 
     final difference = currentMessageTime.difference(previousMessageTime);
     return difference.inMinutes >= 10;
+  }
+
+  String formatDateTimeDisplay(DateTime? startDate, DateTime? endDate) {
+    if (startDate == null) return CustomString.date;
+
+    final startDateStr =
+        '${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}/${startDate.year}';
+    final startTimeStr =
+        '${startDate.hour.toString().padLeft(2, '0')}:${startDate.minute.toString().padLeft(2, '0')}';
+
+    // If no end date, return simple format
+    if (endDate == null) {
+      return 'Le $startDateStr à $startTimeStr';
+    }
+
+    final endDateStr =
+        '${endDate.day.toString().padLeft(2, '0')}/${endDate.month.toString().padLeft(2, '0')}/${endDate.year}';
+    final endTimeStr =
+        '${endDate.hour.toString().padLeft(2, '0')}:${endDate.minute.toString().padLeft(2, '0')}';
+
+    // Check if same day or next day
+    final isSameDay = startDate.year == endDate.year &&
+        startDate.month == endDate.month &&
+        startDate.day == endDate.day;
+
+    final isNextDay = endDate.difference(startDate).inMinutes <= 1439;
+
+    if (isSameDay || isNextDay) {
+      return 'Le $startDateStr de $startTimeStr à $endTimeStr';
+    } else {
+      return 'Du $startDateStr à $startTimeStr au $endDateStr à $endTimeStr';
+    }
   }
 }

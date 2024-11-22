@@ -8,7 +8,8 @@ import '../utils/styles/icons.dart';
 import '../utils/styles/neon_background.dart';
 import '../models/team.dart';
 import '../models/user.dart' as model;
-import '../../utils/utils.dart';
+import '../utils/utils.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/loading_overlay.dart';
 import '../models/cfq_event_model.dart';
 
@@ -115,7 +116,7 @@ class CreateCfqScreen extends StatelessWidget {
                               viewModel.selectedMoods!.isNotEmpty
                           ? viewModel.selectedMoods!.join(', ')
                           : CustomString.whatMood,
-                      dateTimeDisplay: _formatDateTimeDisplay(
+                      dateTimeDisplay: DateTimeUtils().formatDateTimeDisplay(
                         viewModel.selectedDateTime,
                         viewModel.selectedEndDateTime,
                       ),
@@ -137,35 +138,5 @@ class CreateCfqScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  String _formatDateTimeDisplay(DateTime? startDate, DateTime? endDate) {
-    if (startDate == null) return CustomString.date;
-
-    final startDateStr =
-        '${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}/${startDate.year}';
-    final startTimeStr =
-        '${startDate.hour.toString().padLeft(2, '0')}:${startDate.minute.toString().padLeft(2, '0')}';
-
-    if (endDate == null) {
-      return 'Le $startDateStr à $startTimeStr';
-    }
-
-    final endDateStr =
-        '${endDate.day.toString().padLeft(2, '0')}/${endDate.month.toString().padLeft(2, '0')}/${endDate.year}';
-    final endTimeStr =
-        '${endDate.hour.toString().padLeft(2, '0')}:${endDate.minute.toString().padLeft(2, '0')}';
-
-    final isSameDay = startDate.year == endDate.year &&
-        startDate.month == endDate.month &&
-        startDate.day == endDate.day;
-
-    final isNextDay = endDate.difference(startDate).inMinutes <= 1439;
-
-    if (isSameDay || isNextDay) {
-      return 'Le $startDateStr de $startTimeStr à $endTimeStr';
-    } else {
-      return 'Du $startDateStr à $startTimeStr au $endDateStr à $endTimeStr';
-    }
   }
 }
