@@ -203,14 +203,16 @@ class _ProfileContentState extends State<ProfileContent>
                               Row(
                                 children: [
                                   const SizedBox(width: 20),
-                                  CustomIcon.userLocation,
+                                  CustomIcon.userLocation
+                                      .copyWith(color: CustomColor.grey300),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
                                       widget.user.location[0].toUpperCase() +
                                           widget.user.location.substring(1),
                                       style: CustomTextStyle.body1.copyWith(
-                                        fontSize: 16,
+                                        fontSize: 14,
+                                        color: CustomColor.grey300,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
