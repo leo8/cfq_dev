@@ -3,7 +3,7 @@
 echo "=== Saisie ton env de taff ==="
 echo "1) stage"
 echo "2) dev"
-echo "3) prod"
+echo "3) main"
 
 # Demander le choix à l'utilisateur
 read -p "Veuillez sélectionner un env (1, 2 ou 3) : " choix
@@ -23,10 +23,10 @@ case $choix in
         cp file_config_env/dev/build.gradle ../android/app/
         ;;
     3)
-        cp file_config_env/prod/Info.plist ../ios/Runner/
-        cp file_config_env/prod/GoogleService-Info.plist ../ios/Runner/
-        cp file_config_env/prod/google-services.json ../android/app/
-        cp file_config_env/prod/build.gradle ../android/app/
+        cp file_config_env/main/Info.plist ../ios/Runner/
+        cp file_config_env/main/GoogleService-Info.plist ../ios/Runner/
+        cp file_config_env/main/google-services.json ../android/app/
+        cp file_config_env/main/build.gradle ../android/app/
         ;;
     *)
         echo "Choix invalide. Veuillez relancer le script et entrer 1, 2 ou 3."
