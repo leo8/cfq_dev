@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
 import 'package:cfq_dev/widgets/molecules/avatar_neon_switch.dart';
@@ -171,52 +172,57 @@ class _ProfileContentState extends State<ProfileContent>
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(
-                    left: 1, top: 16, bottom: 16, right: 16),
+                    left: 16, top: 16, bottom: 16, right: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    widget.isCurrentUser
-                        ? const SizedBox(
-                            height: 50,
-                          )
-                        : const SizedBox(
-                            height: 25,
-                          ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     // Username, separator, location icon, and location
                     Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.user.username,
-                              style: CustomTextStyle.body1.copyWith(
-                                fontSize: 18,
-                              )),
-                          const SizedBox(width: 8),
-                          if (widget.isCurrentUser | widget.isFriend)
-                            if (widget.user.location.isNotEmpty)
-                              Text('|',
-                                  style: CustomTextStyle.body1.copyWith(
-                                    fontSize: 18,
-                                  )),
-                          if (widget.user.location.isNotEmpty)
-                            const SizedBox(width: 8),
-                          if (widget.isCurrentUser | widget.isFriend)
-                            if (widget.user.location.isNotEmpty)
-                              CustomIcon.userLocation,
-                          if (widget.user.location.isNotEmpty)
-                            const SizedBox(width: 4),
-                          if (widget.isCurrentUser | widget.isFriend)
-                            if (widget.user.location.isNotEmpty)
+                          Row(
+                            children: [
+                              const SizedBox(width: 20),
                               Text(
-                                  widget.user.location[0].toUpperCase() +
-                                      widget.user.location.substring(1),
-                                  style: CustomTextStyle.body1.copyWith(
-                                    fontSize: 18,
-                                  )),
+                                widget.user.username,
+                                style: CustomTextStyle.body1.copyWith(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (widget.isCurrentUser | widget.isFriend)
+                            if (widget.user.location.isNotEmpty)
+                              const SizedBox(height: 4),
+                          if (widget.isCurrentUser | widget.isFriend)
+                            if (widget.user.location.isNotEmpty)
+                              Row(
+                                children: [
+                                  const SizedBox(width: 20),
+                                  CustomIcon.userLocation
+                                      .copyWith(color: CustomColor.grey300),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      widget.user.location[0].toUpperCase() +
+                                          widget.user.location.substring(1),
+                                      style: CustomTextStyle.body1.copyWith(
+                                        fontSize: 14,
+                                        color: CustomColor.grey300,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
                     // Buttons
                     if (widget.isCurrentUser)
                       Center(
@@ -336,7 +342,7 @@ class _ProfileContentState extends State<ProfileContent>
                                   ),
                           ),
                           const SizedBox(
-                            height: 12,
+                            height: 8,
                           ),
                           Center(
                             child: _buildCommonInfoRow(),
