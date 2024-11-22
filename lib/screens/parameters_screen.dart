@@ -8,6 +8,7 @@ import '../../utils/styles/text_styles.dart';
 import '../screens/favorites_screen.dart';
 import '../view_models/requests_view_model.dart';
 import '../screens/requests_screen.dart';
+import '../screens/tutorial_screen.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -99,7 +100,22 @@ class ParametersScreen extends StatelessWidget {
               );
             },
           ),
-          // Add more parameter options as needed
+          const Divider(),
+          ListTile(
+            leading: CustomIcon.tutorial,
+            title: Text(
+              CustomString.tutorial,
+              style: CustomTextStyle.body1,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TutorialScreen(),
+                ),
+              );
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
