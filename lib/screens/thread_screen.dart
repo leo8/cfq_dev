@@ -21,18 +21,27 @@ class ThreadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThreadViewModel>(
-      create: (_) => ThreadViewModel(currentUserUid: userId),
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: CustomColor.customBlack,
-          surfaceTintColor:
-              CustomColor.customBlack, // Prevents color tint when scrolling
-          elevation: 0,
-          title: Consumer<ThreadViewModel>(
-            builder: (context, viewModel, child) {
-              return ThreadHeader(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThreadViewModel>(
+          create: (context) => ThreadViewModel(currentUserUid: userId),
+        ),
+      ],
+      child: Consumer<ThreadViewModel>(
+        builder: (context, viewModel, _) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!viewModel.isInitializing) {
+              viewModel.checkAndShowOnboarding(context);
+            }
+          });
+
+          return Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: CustomColor.customBlack,
+              surfaceTintColor: CustomColor.customBlack,
+              elevation: 0,
+              title: ThreadHeader(
                 onSearchTap: () {
                   Navigator.push(
                     context,
@@ -51,7 +60,6 @@ class ThreadScreen extends StatelessWidget {
                     ),
                   )
                       .then((_) {
-                    // Refresh any necessary data after returning from notifications
                     viewModel.loadConversations();
                   });
                 },
@@ -63,18 +71,13 @@ class ThreadScreen extends StatelessWidget {
                     viewModel.unreadConversationsCountStream,
                 unreadNotificationsCountStream:
                     viewModel.unreadNotificationsCountStream,
-              );
-            },
-          ),
-        ),
-        body: Consumer<ThreadViewModel>(
-          builder: (context, viewModel, child) {
-            if (viewModel.isInitializing) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return _buildRegularContent(context, viewModel);
-          },
-        ),
+              ),
+            ),
+            body: viewModel.isInitializing
+                ? const Center(child: CircularProgressIndicator())
+                : _buildRegularContent(context, viewModel),
+          );
+        },
       ),
     );
   }

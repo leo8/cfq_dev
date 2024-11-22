@@ -185,6 +185,7 @@ class CustomString {
   static const favorites = "Favoris";
   static const requests = "Demandes d'ajout";
   static const privacy = "Confidentialité";
+  static const tutorial = "Guide d'utilisation";
 
   // Favorites
   static const favoritesCapital = "FAVORIS";

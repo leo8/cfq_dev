@@ -399,6 +399,7 @@ class ProfileViewModel extends ChangeNotifier {
         notificationsChannelId: _user!.notificationsChannelId,
         unreadNotificationsCount: _user!.unreadNotificationsCount,
         requests: _user!.requests,
+        isOnboarded: _user!.isOnboarded,
       );
 
       _isLoading = false;
@@ -448,6 +449,7 @@ class ProfileViewModel extends ChangeNotifier {
         notificationsChannelId: _user!.notificationsChannelId,
         unreadNotificationsCount: _user!.unreadNotificationsCount,
         requests: _user!.requests,
+        isOnboarded: _user!.isOnboarded,
       );
 
       _isLoading = false;

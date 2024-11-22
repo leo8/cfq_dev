@@ -21,6 +21,7 @@ class User {
   final String notificationsChannelId;
   final int unreadNotificationsCount;
   final List<Request> requests;
+  final bool isOnboarded; // Whether user has seen the onboarding tutorial
 
   // Constructor for initializing a User object
   User({
@@ -43,6 +44,7 @@ class User {
     required this.notificationsChannelId,
     required this.unreadNotificationsCount,
     required this.requests,
+    required this.isOnboarded,
   });
 
   // Convert User object to a JSON format for storage
@@ -66,6 +68,7 @@ class User {
         "conversations": conversations.map((e) => e.toMap()).toList(),
         "notificationsChannelId": notificationsChannelId,
         "unreadNotificationsCount": unreadNotificationsCount,
+        "isOnboarded": isOnboarded,
       };
 
   // Create a User object from a Firestore snapshot
@@ -100,6 +103,7 @@ class User {
               ?.map((e) => Request.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
+      isOnboarded: snapshot['isOnboarded'] ?? false,
     );
   }
 
@@ -132,6 +136,7 @@ class User {
               ?.map((e) => Request.fromMap(e as Map<String, dynamic>))
               .toList() ??
           [],
+      isOnboarded: map['isOnboarded'] as bool? ?? false,
     );
   }
 
@@ -155,6 +160,7 @@ class User {
       "conversations": conversations.map((e) => e.toMap()).toList(),
       "notificationsChannelId": notificationsChannelId,
       "unreadNotificationsCount": unreadNotificationsCount,
+      "isOnboarded": isOnboarded,
     };
   }
 }

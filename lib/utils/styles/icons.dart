@@ -110,4 +110,9 @@ class CustomIcon extends StatelessWidget {
   static const editProfile = CustomIcon('pencil.svg');
   static const confidentiality = Icons.lock;
   static const logOut = Icons.exit_to_app;
+  static const Icon tutorial = Icon(
+    Icons.info_outline,
+    color: CustomColor.customWhite,
+    size: 24,
+  );
 }
