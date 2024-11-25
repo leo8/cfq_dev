@@ -44,4 +44,22 @@ class Conversation {
       searchKey: data['searchKey'] ?? data['name'].toLowerCase(),
     );
   }
+
+  factory Conversation.fromSnap(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Conversation(
+      id: doc.id,
+      name: data['name'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
+      lastMessageContent: data['lastMessageContent'] ?? '',
+      lastSenderUsername: data['lastSenderUsername'] ?? '',
+      lastMessageTimestamp:
+          (data['lastMessageTimestamp'] as Timestamp).toDate(),
+      members: List<String>.from(data['members'] ?? []),
+      organizerId: data['organizerId'] ?? '',
+      organizerName: data['organizerName'] ?? '',
+      organizerProfilePicture: data['organizerProfilePicture'] ?? '',
+      searchKey: data['searchKey'] ?? data['name'].toLowerCase(),
+    );
+  }
 }
