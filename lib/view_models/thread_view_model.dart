@@ -55,6 +55,8 @@ class ThreadViewModel extends ChangeNotifier {
 
   bool _hasCheckedOnboarding = false;
 
+  bool _disposed = false;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
@@ -64,6 +66,7 @@ class ThreadViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _debounce?.cancel();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
@@ -393,18 +396,13 @@ class ThreadViewModel extends ChangeNotifier {
 
   Future<void> loadConversations() async {
     try {
-      // Use the stream-based method instead of the direct fetch
-      _conversations = await _conversationService
-          .getUserConversationsStream(currentUserUid)
-          .first;
-      _sortConversations();
-      _filteredConversations = _conversations;
-      notifyListeners();
+      _conversations =
+          await _conversationService.getUserConversations(currentUserUid);
+      if (!_disposed) {
+        notifyListeners();
+      }
     } catch (e) {
       AppLogger.error('Error loading conversations: $e');
-      _conversations = [];
-      _filteredConversations = [];
-      notifyListeners();
     }
   }
 

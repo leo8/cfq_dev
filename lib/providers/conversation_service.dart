@@ -170,25 +170,54 @@ class ConversationService {
 
   Future<List<Conversation>> getUserConversations(String userId) async {
     try {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(userId).get();
-      List<dynamic> conversationsData = userDoc['conversations'] ?? [];
-
-      List<String> conversationIds = conversationsData
-          .map((conv) => conv['conversationId'] as String)
-          .toList();
-
-      QuerySnapshot conversationsSnapshot = await _firestore
-          .collection('conversations')
-          .where(FieldPath.documentId, whereIn: conversationIds)
+      // First get the user's conversation IDs
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
           .get();
 
-      return conversationsSnapshot.docs.map((doc) {
-        return Conversation.fromFirestore(doc);
-      }).toList();
+      List<dynamic> conversationInfos =
+          (userDoc.data() as Map<String, dynamic>)['conversations'] ?? [];
+      List<String> conversationIds = conversationInfos
+          .map((info) =>
+              (info as Map<String, dynamic>)['conversationId'] as String)
+          .toList();
+
+      // If no conversations, return empty list
+      if (conversationIds.isEmpty) {
+        return [];
+      }
+
+      // Split conversation IDs into chunks of 30
+      List<List<String>> chunks = [];
+      for (var i = 0; i < conversationIds.length; i += 30) {
+        chunks.add(
+          conversationIds.sublist(
+            i,
+            i + 30 > conversationIds.length ? conversationIds.length : i + 30,
+          ),
+        );
+      }
+
+      // Fetch conversations in chunks
+      List<Conversation> allConversations = [];
+      for (var chunk in chunks) {
+        QuerySnapshot conversationsSnapshot = await FirebaseFirestore.instance
+            .collection('conversations')
+            .where(FieldPath.documentId, whereIn: chunk)
+            .get();
+
+        List<Conversation> chunkConversations = conversationsSnapshot.docs
+            .map((doc) => Conversation.fromSnap(doc))
+            .toList();
+
+        allConversations.addAll(chunkConversations);
+      }
+
+      return allConversations;
     } catch (e) {
       AppLogger.error('Error fetching user conversations: $e');
-      return [];
+      rethrow;
     }
   }
 
