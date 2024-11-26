@@ -12,6 +12,7 @@ class GooglePlacesAddressSelector extends StatefulWidget {
   final String hintText;
   final CustomIcon icon;
   final Function(PlaceData) onPlaceSelected;
+  final bool showPredictions;
 
   const GooglePlacesAddressSelector({
     super.key,
@@ -19,6 +20,7 @@ class GooglePlacesAddressSelector extends StatefulWidget {
     required this.hintText,
     required this.icon,
     required this.onPlaceSelected,
+    this.showPredictions = true,
   });
 
   @override
@@ -108,7 +110,6 @@ class _GooglePlacesAddressSelectorState
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
         children: [
-          // Invisible layer to detect taps outside
           Positioned.fill(
             child: GestureDetector(
               onTap: _removeOverlay,
@@ -118,7 +119,6 @@ class _GooglePlacesAddressSelectorState
               ),
             ),
           ),
-          // Predictions list
           Positioned(
             top: offset.dy + size.height,
             left: offset.dx,
@@ -126,25 +126,61 @@ class _GooglePlacesAddressSelectorState
             child: Material(
               elevation: 4,
               color: CustomColor.customBlack,
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemCount: _predictions?.length ?? 0,
-                itemBuilder: (context, index) {
-                  final prediction = _predictions![index];
-                  return ListTile(
-                    title: Text(
-                      prediction.primaryText,
-                      style: CustomTextStyle.body1,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (widget.controller.text.isNotEmpty)
+                    ListTile(
+                      title: Text(
+                        widget.controller.text,
+                        style: CustomTextStyle.body1,
+                      ),
+                      subtitle: Text(
+                        CustomString.useThisAddress,
+                        style: CustomTextStyle.body2.copyWith(
+                          color: CustomColor.grey,
+                        ),
+                      ),
+                      onTap: () {
+                        _ignoreTextChange = true;
+                        final manualAddress = widget.controller.text;
+                        widget.onPlaceSelected(PlaceData(
+                          address: manualAddress,
+                          latitude: null,
+                          longitude: null,
+                        ));
+                        _ignoreTextChange = false;
+                        _removeOverlay();
+                      },
                     ),
-                    subtitle: Text(
-                      prediction.secondaryText,
-                      style: CustomTextStyle.body2
-                          .copyWith(color: CustomColor.grey),
+                  if (widget.controller.text.isNotEmpty &&
+                      (_predictions?.isNotEmpty ?? false))
+                    const Divider(
+                      height: 1,
+                      color: CustomColor.grey900,
                     ),
-                    onTap: () => _onPredictionSelected(prediction),
-                  );
-                },
+                  ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemCount: _predictions?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final prediction = _predictions![index];
+                      return ListTile(
+                        title: Text(
+                          prediction.primaryText,
+                          style: CustomTextStyle.body1,
+                        ),
+                        subtitle: Text(
+                          prediction.secondaryText,
+                          style: CustomTextStyle.body2.copyWith(
+                            color: CustomColor.grey,
+                          ),
+                        ),
+                        onTap: () => _onPredictionSelected(prediction),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ),

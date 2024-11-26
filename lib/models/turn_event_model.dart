@@ -9,7 +9,7 @@ class Turn extends EventDataModel {
   final List<String> notSureAttending; // List of people unsure about attending
   final List<String> notAttending; // List of people who declined the invitation
   final List<String> notAnswered; // List of people who haven't responded
-  final String? address; // Add this line
+  final Location? location; // New field for coordinates
 
   // Constructor initializing Turn-specific fields and inheriting from EventDataModel
   Turn({
@@ -18,7 +18,7 @@ class Turn extends EventDataModel {
     this.endDateTime, // Add this line
     required String where,
     required List<String> invitees,
-    this.address, // Changed: Now it's an optional field of Turn
+    this.location, // New optional parameter
     String? description,
     List<String>? moods,
     String? uid,
@@ -36,7 +36,7 @@ class Turn extends EventDataModel {
     String? channelId,
   }) : super(
           name: name,
-          where: where,
+          where: where, // where now contains the full address
           description: description ?? '',
           moods: moods ?? [],
           uid: uid ?? '',
@@ -53,28 +53,20 @@ class Turn extends EventDataModel {
 
   // Convert Turn object to JSON format for storage
   Map<String, dynamic> toJson() {
+    final baseJson = super.toJson();
     return {
+      ...baseJson,
       'turnName': name,
-      'description': description,
-      'moods': moods,
-      'uid': uid,
-      'username': username,
       'turnId': eventId,
-      'datePublished': datePublished.toIso8601String(),
       'eventDateTime': eventDateTime.toIso8601String(),
       'endDateTime': endDateTime?.toIso8601String(),
-      'turnImageUrl': imageUrl,
-      'profilePictureUrl': profilePictureUrl,
       'where': where,
-      'address': address,
-      'organizers': organizers,
-      'invitees': invitees,
-      'teamInvitees': teamInvitees,
+      'location': location?.toJson(),
       'attending': attending,
       'notSureAttending': notSureAttending,
       'notAttending': notAttending,
       'notAnswered': notAnswered,
-      'channelId': channelId,
+      'turnImageUrl': imageUrl,
     };
   }
 
@@ -97,7 +89,8 @@ class Turn extends EventDataModel {
       imageUrl: json['turnImageUrl'],
       profilePictureUrl: json['profilePictureUrl'],
       where: json['where'] ?? '',
-      address: json['address'],
+      location:
+          json['location'] != null ? Location.fromJson(json['location']) : null,
       organizers: List<String>.from(json['organizers'] ?? []),
       invitees: List<String>.from(json['invitees'] ?? []),
       teamInvitees: List<String>.from(json['teamInvitees'] ?? []),
@@ -128,7 +121,9 @@ class Turn extends EventDataModel {
       imageUrl: snapshot['imageUrl'],
       profilePictureUrl: snapshot['profilePictureUrl'],
       where: snapshot['where'] ?? '',
-      address: snapshot['address'],
+      location: snapshot['location'] != null
+          ? Location.fromJson(snapshot['location'])
+          : null,
       organizers: List<String>.from(snapshot['organizers'] ?? []),
       invitees: List<String>.from(snapshot['invitees'] ?? []),
       teamInvitees: List<String>.from(snapshot['teamInvitees'] ?? []),
@@ -139,4 +134,21 @@ class Turn extends EventDataModel {
       channelId: snapshot['channelId'],
     );
   }
+}
+
+class Location {
+  final double latitude;
+  final double longitude;
+
+  Location({required this.latitude, required this.longitude});
+
+  Map<String, dynamic> toJson() => {
+        'latitude': latitude,
+        'longitude': longitude,
+      };
+
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+      );
 }

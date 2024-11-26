@@ -22,7 +22,7 @@ class FirestoreMethods {
     Uint8List file,
     String profilePictureUrl,
     String where, // General location for the event (e.g., "at home")
-    String address, // Precise address for the event
+    Location location, // Precise address for the event
     List<String> invitees,
     List<String> teamInvitees,
     String channelId,
@@ -50,7 +50,7 @@ class FirestoreMethods {
           imageUrl: turnImageUrl,
           profilePictureUrl: profilePictureUrl,
           where: where, // General location of the event
-          address: address, // Precise address of the event
+          location: location, // Precise address of the event
           organizers: organizers,
           attending: [], // Initialize attending list as empty
           notSureAttending: [], // Initialize not sure attending list as empty

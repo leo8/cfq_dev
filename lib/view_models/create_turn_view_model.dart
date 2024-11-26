@@ -103,6 +103,13 @@ class CreateTurnViewModel extends ChangeNotifier
   final bool isEditing;
   final Turn? turnToEdit;
 
+  // Add location field
+  Location? _location;
+  Location? get location => _location;
+
+  bool _showPredictions = true;
+  bool get showPredictions => _showPredictions;
+
   CreateTurnViewModel({
     this.prefillTeam,
     this.prefillMembers,
@@ -119,12 +126,40 @@ class CreateTurnViewModel extends ChangeNotifier
     turnNameController.text = turnToEdit!.name;
     descriptionController.text = turnToEdit!.description;
     locationController.text = turnToEdit!.where;
-    addressController.text = turnToEdit!.address ?? '';
     _selectedDateTime = turnToEdit!.eventDateTime;
+    _selectedEndDateTime = turnToEdit!.endDateTime;
     _selectedMoods = turnToEdit!.moods;
+    _location = turnToEdit!.location;
+    _showPredictions = false;
 
-    // Fetch turn data including invitees
+    // Fetch Turn data including invitees
     _fetchTurnData();
+  }
+
+  Future<void> _initializeViewModel() async {
+    await _initializeCurrentUser();
+    await fetchUserTeams();
+    performSearch(CustomString.emptyString);
+    searchController.addListener(() {
+      performSearch(searchController.text);
+    });
+    if (prefillTeam != null) {
+      _initializePrefillData();
+      _removePrefillDataFromSearchResults();
+    }
+  }
+
+  void _initializePrefillData() {
+    if (prefillTeam != null) {
+      _selectedTeamInvitees.add(prefillTeam!);
+      for (var member in prefillMembers ?? []) {
+        if (member.uid != _currentUser?.uid &&
+            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
+      _updateInviteesControllerText();
+    }
   }
 
   Future<void> _fetchTurnData() async {
@@ -154,6 +189,8 @@ class CreateTurnViewModel extends ChangeNotifier
         return Team.fromSnap(teamDoc);
       }));
 
+      _previousSelectedInvitees = List.from(_selectedInvitees);
+      _previousSelectedTeamInvitees = List.from(_selectedTeamInvitees);
       _updateInviteesControllerText();
       notifyListeners();
     } catch (e) {
@@ -162,7 +199,7 @@ class CreateTurnViewModel extends ChangeNotifier
   }
 
   Future<void> updateTurn() async {
-    // Validate required fields (reuse existing validation logic)
+    // Validate required fields
     if (turnNameController.text.isEmpty) {
       _errorMessage = CustomString.pleaseEnterTurnName;
       notifyListeners();
@@ -170,12 +207,28 @@ class CreateTurnViewModel extends ChangeNotifier
     }
 
     if (turnNameController.text.length > 30) {
-      _errorMessage = "Le nom du TURN ne peut pas dépasser 30 caractères";
+      _errorMessage = CustomString.maxLengthTurn;
       notifyListeners();
       return;
     }
 
-    // ... other validations ...
+    if (_selectedDateTime == null) {
+      _errorMessage = CustomString.pleaseSelectDateAndTime;
+      notifyListeners();
+      return;
+    }
+
+    if (locationController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhere;
+      notifyListeners();
+      return;
+    }
+
+    if (_selectedInvitees.isEmpty && _selectedTeamInvitees.isEmpty) {
+      _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
+      notifyListeners();
+      return;
+    }
 
     _isLoading = true;
     notifyListeners();
@@ -238,7 +291,7 @@ class CreateTurnViewModel extends ChangeNotifier
         imageUrl: turnImageUrl,
         profilePictureUrl: turnToEdit!.profilePictureUrl,
         where: locationController.text.trim(),
-        address: addressController.text.trim(),
+        location: _location,
         organizers: turnToEdit!.organizers,
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
@@ -270,43 +323,6 @@ class CreateTurnViewModel extends ChangeNotifier
       AppLogger.error('Error updating TURN: $e');
       _errorMessage = 'Erreur lors de la mise à jour du TURN';
       _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _initializeViewModel() async {
-    await _initializeCurrentUser();
-    await fetchUserTeams();
-    performSearch(CustomString.emptyString);
-    searchController.addListener(() {
-      performSearch(searchController.text);
-    });
-    if (prefillTeam != null) {
-      _initializePrefillData();
-      _removePrefillDataFromSearchResults();
-    }
-  }
-
-  void _initializePrefillData() {
-    if (prefillTeam != null) {
-      _selectedTeamInvitees.add(prefillTeam!);
-      for (var member in prefillMembers ?? []) {
-        if (member.uid != _currentUser?.uid &&
-            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
-          _selectedInvitees.add(member);
-        }
-      }
-      _updateInviteesControllerText();
-    }
-  }
-
-  void _removePrefillDataFromSearchResults() {
-    if (prefillTeam != null) {
-      _searchResults.removeWhere(
-          (result) => result is Team && result.uid == prefillTeam!.uid);
-      _searchResults.removeWhere((result) =>
-          result is model.User &&
-          prefillMembers!.map((member) => member.uid).contains(result.uid));
       notifyListeners();
     }
   }
@@ -344,6 +360,17 @@ class CreateTurnViewModel extends ChangeNotifier
     } catch (e) {
       AppLogger.error('Error initializing current user: $e');
       _errorMessage = CustomString.failedToInitializeUserData;
+      notifyListeners();
+    }
+  }
+
+  void _removePrefillDataFromSearchResults() {
+    if (prefillTeam != null) {
+      _searchResults.removeWhere(
+          (result) => result is Team && result.uid == prefillTeam!.uid);
+      _searchResults.removeWhere((result) =>
+          result is model.User &&
+          prefillMembers!.map((member) => member.uid).contains(result.uid));
       notifyListeners();
     }
   }
@@ -715,7 +742,7 @@ class CreateTurnViewModel extends ChangeNotifier
         imageUrl: turnImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
-        address: addressController.text.trim(),
+        location: _location,
         organizers: [currentUserId],
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
@@ -793,6 +820,8 @@ class CreateTurnViewModel extends ChangeNotifier
       // Update teams' invitedTurns
       await _updateTeamInviteesTurns(
           _selectedTeamInvitees.map((team) => team.uid).toList(), turnId);
+
+      AppLogger.debug('Created turnId : $turnId');
 
       _successMessage = CustomString.successCreatingTurn;
       _isLoading = false;
@@ -1076,8 +1105,39 @@ class CreateTurnViewModel extends ChangeNotifier
   }
 
   void onAddressSelected(PlaceData placeData) {
-    addressController.text = placeData.address;
-    locationController.text = placeData.address.split(',')[0];
+    locationController.text = placeData.address;
+    _location = placeData.latitude != null && placeData.longitude != null
+        ? Location(
+            latitude: placeData.latitude!,
+            longitude: placeData.longitude!,
+          )
+        : null;
     notifyListeners();
+  }
+
+  Future<List<model.User>> _fetchUsers(List<String> userIds) async {
+    try {
+      return await Future.wait(userIds.map((id) async {
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(id).get();
+        return model.User.fromSnap(userDoc);
+      }));
+    } catch (e) {
+      AppLogger.error('Error fetching users: $e');
+      return [];
+    }
+  }
+
+  Future<List<Team>> _fetchTeams(List<String> teamIds) async {
+    try {
+      return await Future.wait(teamIds.map((id) async {
+        DocumentSnapshot teamDoc =
+            await _firestore.collection('teams').doc(id).get();
+        return Team.fromSnap(teamDoc);
+      }));
+    } catch (e) {
+      AppLogger.error('Error fetching teams: $e');
+      return [];
+    }
   }
 }

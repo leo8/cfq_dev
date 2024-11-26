@@ -17,7 +17,6 @@ class TurnForm extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController descriptionController;
   final TextEditingController locationController;
-  final TextEditingController addressController;
   final VoidCallback onSelectDateTime;
   final VoidCallback onSelectMoods;
   final String dateTimeDisplay;
@@ -29,6 +28,7 @@ class TurnForm extends StatelessWidget {
   final VoidCallback openInviteesSelectorScreen;
   final String submitButtonLabel;
   final Function(PlaceData) onAddressSelected;
+  final bool showPredictions;
   const TurnForm({
     super.key,
     required this.image,
@@ -36,7 +36,6 @@ class TurnForm extends StatelessWidget {
     required this.nameController,
     required this.descriptionController,
     required this.locationController,
-    required this.addressController,
     required this.onSelectDateTime,
     required this.onSelectMoods,
     required this.dateTimeDisplay,
@@ -47,6 +46,7 @@ class TurnForm extends StatelessWidget {
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
     required this.onAddressSelected,
+    this.showPredictions = true,
     this.submitButtonLabel = CustomString.create,
   });
 
@@ -96,20 +96,12 @@ class TurnForm extends StatelessWidget {
             onTap: onSelectDateTime,
           ),
           const SizedBox(height: 15),
-          BorderedIconTextField(
+          GooglePlacesAddressSelector(
             icon: CustomIcon.eventLocation,
             controller: locationController,
             hintText: CustomString.where,
-          ),
-          const SizedBox(height: 15),
-          GooglePlacesAddressSelector(
-            icon: CustomIcon.eventAddress,
-            controller: addressController,
-            hintText: CustomString.address,
-            onPlaceSelected: (placeData) {
-              addressController.text = placeData.address;
-              // You can handle latitude/longitude here if needed
-            },
+            onPlaceSelected: onAddressSelected,
+            showPredictions: showPredictions,
           ),
           const SizedBox(height: 15),
           CustomTextField(

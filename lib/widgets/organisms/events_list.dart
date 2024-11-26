@@ -176,7 +176,6 @@ class _EventsListState extends State<EventsList> {
                         eventData['description'] ?? CustomString.emptyString,
                     eventDateTime: parseDate(eventData['eventDateTime']),
                     where: eventData['where'] ?? CustomString.emptyString,
-                    address: eventData['address'] ?? CustomString.emptyString,
                     datePublished: parseDate(eventData['datePublished']),
                     moods: List<String>.from(eventData['moods'] ?? []),
                     turnId: eventData['turnId'] ?? CustomString.emptyString,

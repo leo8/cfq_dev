@@ -18,7 +18,6 @@ class TurnDetails extends StatelessWidget {
   final DateTime? endDateTime;
   final int attendeesCount;
   final String where;
-  final String address;
   final String description;
   final String turnId;
   final bool isExpanded;
@@ -34,7 +33,6 @@ class TurnDetails extends StatelessWidget {
     this.endDateTime,
     required this.attendeesCount,
     required this.where,
-    required this.address,
     required this.description,
     required this.turnId,
     required this.isExpanded,
@@ -133,22 +131,20 @@ class TurnDetails extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      CustomIcon.eventLocation.copyWith(size: 12),
+                      CustomIcon.eventLocation.copyWith(size: 18),
                       const SizedBox(width: 12),
-                      Text(
-                        where,
-                        style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                        maxLines: 3,
+                      Expanded(
+                        child: Text(
+                          where,
+                          style: CustomTextStyle.body1.copyWith(fontSize: 12),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(
                     height: 12,
-                  ),
-                  Text(
-                    address,
-                    style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                    maxLines: 30,
                   ),
                 ],
               )
@@ -156,16 +152,13 @@ class TurnDetails extends StatelessWidget {
                 children: [
                   CustomIcon.eventLocation.copyWith(size: 18),
                   const SizedBox(width: 4),
-                  Text(where,
-                      style: CustomTextStyle.body1.copyWith(fontSize: 12)),
-                  if (address.isNotEmpty)
-                    Text(' | ',
-                        style: CustomTextStyle.body1.copyWith(fontSize: 12)),
-                  if (address.isNotEmpty)
-                    Expanded(
-                        child: Text(address,
-                            style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                            overflow: TextOverflow.ellipsis)),
+                  Expanded(
+                    child: Text(
+                      where,
+                      style: CustomTextStyle.body1.copyWith(fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ],
               ),
         if (description.isNotEmpty)

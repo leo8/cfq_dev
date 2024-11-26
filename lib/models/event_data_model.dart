@@ -29,4 +29,21 @@ class EventDataModel {
       required this.teamInvitees,
       required this.invitees,
       required this.channelId});
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'where': where,
+        'description': description,
+        'moods': moods,
+        'uid': uid,
+        'username': username,
+        'eventId': eventId,
+        'datePublished': datePublished.toIso8601String(),
+        'imageUrl': imageUrl,
+        'profilePictureUrl': profilePictureUrl,
+        'organizers': organizers,
+        'invitees': invitees,
+        'teamInvitees': teamInvitees,
+        'channelId': channelId,
+      };
 }
