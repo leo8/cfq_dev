@@ -9,6 +9,7 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../atoms/buttons/custom_button.dart';
 import '../molecules/event_organizer.dart';
+import '../atoms/address_selectors/google_places_address_selector.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -100,10 +101,14 @@ class TurnForm extends StatelessWidget {
             hintText: CustomString.where,
           ),
           const SizedBox(height: 15),
-          BorderedIconTextField(
+          GooglePlacesAddressSelector(
             icon: CustomIcon.eventAddress,
             controller: addressController,
             hintText: CustomString.address,
+            onPlaceSelected: (placeData) {
+              addressController.text = placeData.address;
+              // You can handle latitude/longitude here if needed
+            },
           ),
           const SizedBox(height: 15),
           CustomTextField(
