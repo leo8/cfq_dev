@@ -22,6 +22,7 @@ import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
 import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
+import '../widgets/atoms/address_selectors/google_places_address_selector.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -1072,5 +1073,11 @@ class CreateTurnViewModel extends ChangeNotifier
       AppLogger.error('Error removing turn from uninvited users: $e');
       rethrow;
     }
+  }
+
+  void onAddressSelected(PlaceData placeData) {
+    addressController.text = placeData.address;
+    locationController.text = placeData.address.split(',')[0];
+    notifyListeners();
   }
 }

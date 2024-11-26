@@ -163,12 +163,9 @@ class _GooglePlacesAddressSelectorState
   Future<void> _onPredictionSelected(AutocompletePrediction prediction) async {
     setState(() {
       _showPredictions = false;
+      _predictions = null;
     });
     _removeOverlay();
-
-    _ignoreTextChange = true;
-    widget.controller.text = prediction.primaryText;
-    _ignoreTextChange = false;
 
     try {
       final placeResult = await _places.fetchPlace(
@@ -176,13 +173,18 @@ class _GooglePlacesAddressSelectorState
         fields: [PlaceField.Location, PlaceField.Address],
       );
 
+      if (!mounted) return;
+
       final place = placeResult.place;
       if (place != null && place.address != null) {
+        _ignoreTextChange = true;
+        widget.controller.text = place.address!;
         widget.onPlaceSelected(PlaceData(
           address: place.address!,
           latitude: place.latLng?.lat,
           longitude: place.latLng?.lng,
         ));
+        _ignoreTextChange = false;
       }
     } catch (e) {
       AppLogger.debug('Error fetching place details: $e');

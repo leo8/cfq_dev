@@ -28,7 +28,7 @@ class TurnForm extends StatelessWidget {
   final TextEditingController inviteesController;
   final VoidCallback openInviteesSelectorScreen;
   final String submitButtonLabel;
-
+  final Function(PlaceData) onAddressSelected;
   const TurnForm({
     super.key,
     required this.image,
@@ -46,6 +46,7 @@ class TurnForm extends StatelessWidget {
     required this.currentUser,
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
+    required this.onAddressSelected,
     this.submitButtonLabel = CustomString.create,
   });
 
