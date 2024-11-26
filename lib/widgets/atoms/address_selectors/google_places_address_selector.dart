@@ -205,6 +205,15 @@ class _GooglePlacesAddressSelectorState
       controller: widget.controller,
       hintText: widget.hintText,
       onTap: null,
+      clearOption: true,
+      onClear: () {
+        setState(() {
+          widget.controller.clear();
+          _predictions = null;
+          _showPredictions = false;
+        });
+        _removeOverlay();
+      },
     );
   }
 }
