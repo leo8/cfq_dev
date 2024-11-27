@@ -6,10 +6,8 @@ import 'package:cfq_dev/screens/login/login_screen_phone.dart';
 import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart'; // Firebase core
-import 'package:flutter/foundation.dart'; // Flutter foundation for platform checks
 import 'package:flutter/material.dart'; // Flutter material components
 import 'package:provider/provider.dart';
-import 'secrets/secrets_firebase.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
 import 'package:flutter/services.dart';
@@ -25,21 +23,8 @@ void main() async {
   FlutterNativeSplash.preserve(
       widgetsBinding: widgetsBinding); // Preserve splash screen until ready
 
-  // Initialize Firebase for web
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: apiKey, // Your API key
-        appId: appId, // Your app ID
-        messagingSenderId: messagingSenderId, // Sender ID
-        projectId: projectId, // Project ID
-        storageBucket: storageBucket, // Storage bucket
-      ),
-    );
-  } else {
-    // Initialize Firebase for mobile platforms
-    await Firebase.initializeApp();
-  }
+  // Initialize Firebase for mobile platforms
+  await Firebase.initializeApp();
 
   runApp(const CFQ()); // Run the application
 }
