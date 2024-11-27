@@ -179,6 +179,7 @@ class CustomString {
 
   // Parameters
   static const myAccount = "Mon compte";
+  static const myAccountCapital = "MON COMPTE";
   static const parameters = "Paramètres";
   static const parametersCapital = "PARAMÈTRES";
   static const editProfile = "Mon profil";
