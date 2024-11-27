@@ -839,4 +839,16 @@ class ThreadViewModel extends ChangeNotifier {
       await _fetchCurrentUser();
     }
   }
+
+  Stream<DocumentSnapshot> getEventStream(String eventId, bool isTurn) {
+    if (eventId.isEmpty) {
+      AppLogger.error('Empty event ID provided to getEventStream');
+      throw ArgumentError('Event ID cannot be empty');
+    }
+
+    return _firestore
+        .collection(isTurn ? 'turns' : 'cfqs')
+        .doc(eventId)
+        .snapshots();
+  }
 }

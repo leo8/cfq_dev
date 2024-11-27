@@ -22,6 +22,8 @@ import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
 import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
+import '../widgets/atoms/address_selectors/google_places_address_selector.dart';
+import 'package:cfq_dev/models/event_data_model.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -102,6 +104,13 @@ class CreateTurnViewModel extends ChangeNotifier
   final bool isEditing;
   final Turn? turnToEdit;
 
+  // Add location field
+  Location? _location;
+  Location? get location => _location;
+
+  bool _showPredictions = true;
+  bool get showPredictions => _showPredictions;
+
   CreateTurnViewModel({
     this.prefillTeam,
     this.prefillMembers,
@@ -118,12 +127,39 @@ class CreateTurnViewModel extends ChangeNotifier
     turnNameController.text = turnToEdit!.name;
     descriptionController.text = turnToEdit!.description;
     locationController.text = turnToEdit!.where;
-    addressController.text = turnToEdit!.address ?? '';
     _selectedDateTime = turnToEdit!.eventDateTime;
+    _selectedEndDateTime = turnToEdit!.endDateTime;
     _selectedMoods = turnToEdit!.moods;
+    _location = turnToEdit!.location;
+    _showPredictions = false;
 
-    // Fetch turn data including invitees
+    // Fetch Turn data including invitees
     _fetchTurnData();
+  }
+
+  Future<void> _initializeViewModel() async {
+    await _initializeCurrentUser();
+    await fetchUserTeams();
+    performSearch(CustomString.emptyString);
+    searchController.addListener(() {
+      performSearch(searchController.text);
+    });
+    if (prefillTeam != null) {
+      _initializePrefillData();
+    }
+  }
+
+  void _initializePrefillData() {
+    if (prefillTeam != null) {
+      _selectedTeamInvitees.add(prefillTeam!);
+      for (var member in prefillMembers ?? []) {
+        if (member.uid != _currentUser?.uid &&
+            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
+          _selectedInvitees.add(member);
+        }
+      }
+      _updateInviteesControllerText();
+    }
   }
 
   Future<void> _fetchTurnData() async {
@@ -153,6 +189,8 @@ class CreateTurnViewModel extends ChangeNotifier
         return Team.fromSnap(teamDoc);
       }));
 
+      _previousSelectedInvitees = List.from(_selectedInvitees);
+      _previousSelectedTeamInvitees = List.from(_selectedTeamInvitees);
       _updateInviteesControllerText();
       notifyListeners();
     } catch (e) {
@@ -161,7 +199,7 @@ class CreateTurnViewModel extends ChangeNotifier
   }
 
   Future<void> updateTurn() async {
-    // Validate required fields (reuse existing validation logic)
+    // Validate required fields
     if (turnNameController.text.isEmpty) {
       _errorMessage = CustomString.pleaseEnterTurnName;
       notifyListeners();
@@ -169,12 +207,28 @@ class CreateTurnViewModel extends ChangeNotifier
     }
 
     if (turnNameController.text.length > 30) {
-      _errorMessage = "Le nom du TURN ne peut pas dépasser 30 caractères";
+      _errorMessage = CustomString.maxLengthTurn;
       notifyListeners();
       return;
     }
 
-    // ... other validations ...
+    if (_selectedDateTime == null) {
+      _errorMessage = CustomString.pleaseSelectDateAndTime;
+      notifyListeners();
+      return;
+    }
+
+    if (locationController.text.isEmpty) {
+      _errorMessage = CustomString.pleaseEnterWhere;
+      notifyListeners();
+      return;
+    }
+
+    if (_selectedInvitees.isEmpty) {
+      _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
+      notifyListeners();
+      return;
+    }
 
     _isLoading = true;
     notifyListeners();
@@ -237,7 +291,7 @@ class CreateTurnViewModel extends ChangeNotifier
         imageUrl: turnImageUrl,
         profilePictureUrl: turnToEdit!.profilePictureUrl,
         where: locationController.text.trim(),
-        address: addressController.text.trim(),
+        location: _location,
         organizers: turnToEdit!.organizers,
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
@@ -269,43 +323,6 @@ class CreateTurnViewModel extends ChangeNotifier
       AppLogger.error('Error updating TURN: $e');
       _errorMessage = 'Erreur lors de la mise à jour du TURN';
       _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _initializeViewModel() async {
-    await _initializeCurrentUser();
-    await fetchUserTeams();
-    performSearch(CustomString.emptyString);
-    searchController.addListener(() {
-      performSearch(searchController.text);
-    });
-    if (prefillTeam != null) {
-      _initializePrefillData();
-      _removePrefillDataFromSearchResults();
-    }
-  }
-
-  void _initializePrefillData() {
-    if (prefillTeam != null) {
-      _selectedTeamInvitees.add(prefillTeam!);
-      for (var member in prefillMembers ?? []) {
-        if (member.uid != _currentUser?.uid &&
-            !_selectedInvitees.any((invitee) => invitee.uid == member.uid)) {
-          _selectedInvitees.add(member);
-        }
-      }
-      _updateInviteesControllerText();
-    }
-  }
-
-  void _removePrefillDataFromSearchResults() {
-    if (prefillTeam != null) {
-      _searchResults.removeWhere(
-          (result) => result is Team && result.uid == prefillTeam!.uid);
-      _searchResults.removeWhere((result) =>
-          result is model.User &&
-          prefillMembers!.map((member) => member.uid).contains(result.uid));
       notifyListeners();
     }
   }
@@ -413,21 +430,25 @@ class CreateTurnViewModel extends ChangeNotifier
         _searchResults = _userTeams
             .where((team) =>
                 team.name.toLowerCase().startsWith(queryLower) &&
-                !_selectedTeamInvitees.contains(team))
+                !_selectedTeamInvitees.any((f) => f.uid == team.uid))
             .toList();
       } else {
         if (query.isEmpty) {
           _searchResults = [
-            ..._userTeams,
+            ..._userTeams.where(
+              (team) => !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+            ),
             ..._friendsList.where((user) =>
                 !_selectedInvitees.any((f) => f.uid == user.uid) &&
                 user.uid != _currentUser?.uid)
           ];
         } else {
           List<Team> filteredTeams = _userTeams
-              .where((team) =>
-                  team.name.toLowerCase().startsWith(queryLower) &&
-                  !_selectedTeamInvitees.contains(team))
+              .where(
+                (team) =>
+                    team.name.toLowerCase().startsWith(queryLower) &&
+                    !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+              )
               .toList();
 
           List<model.User> filteredUsers = _friendsList.where((user) {
@@ -678,7 +699,7 @@ class CreateTurnViewModel extends ChangeNotifier
       return;
     }
 
-    if (_selectedInvitees.isEmpty && _selectedTeamInvitees.isEmpty) {
+    if (_selectedInvitees.isEmpty) {
       _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
       notifyListeners();
       return;
@@ -714,7 +735,7 @@ class CreateTurnViewModel extends ChangeNotifier
         imageUrl: turnImageUrl,
         profilePictureUrl: _currentUser!.profilePictureUrl,
         where: locationController.text.trim(),
-        address: addressController.text.trim(),
+        location: _location,
         organizers: [currentUserId],
         invitees: _selectedInvitees.map((user) => user.uid).toList(),
         teamInvitees: _selectedTeamInvitees.map((team) => team.uid).toList(),
@@ -792,6 +813,8 @@ class CreateTurnViewModel extends ChangeNotifier
       // Update teams' invitedTurns
       await _updateTeamInviteesTurns(
           _selectedTeamInvitees.map((team) => team.uid).toList(), turnId);
+
+      AppLogger.debug('Created turnId : $turnId');
 
       _successMessage = CustomString.successCreatingTurn;
       _isLoading = false;
@@ -1072,5 +1095,16 @@ class CreateTurnViewModel extends ChangeNotifier
       AppLogger.error('Error removing turn from uninvited users: $e');
       rethrow;
     }
+  }
+
+  void onAddressSelected(PlaceData placeData) {
+    locationController.text = placeData.address;
+    _location = placeData.latitude != null && placeData.longitude != null
+        ? Location(
+            latitude: placeData.latitude!,
+            longitude: placeData.longitude!,
+          )
+        : null;
+    notifyListeners();
   }
 }

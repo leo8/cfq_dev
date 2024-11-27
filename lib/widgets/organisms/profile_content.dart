@@ -245,7 +245,7 @@ class _ProfileContentState extends State<ProfileContent>
                             ),
                             const SizedBox(width: 10),
                             CustomButton(
-                              label: CustomString.parameters,
+                              label: CustomString.myAccount,
                               textStyle: CustomTextStyle.subButton.copyWith(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,

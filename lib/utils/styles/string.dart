@@ -133,9 +133,10 @@ class CustomString {
   static const organizers = "Organisateurs";
   static const when = "Quand ?";
   static const date = "Une date ?";
-  static const where = "Où ? (un lieu, un nom, mets ce que tu veux)";
+  static const where = "Où ? (un lieu, une adresse, ce que tu veux)";
   static const who = "À qui ?";
   static const address = "L'adresse exacte";
+  static const useThisAddress = "Utiliser cette adresse";
   static const whatMood = "Quel(s) mood(s) ?";
   static const describeCfq = "Sois pertinent !";
   static const describeTurn = "Décris juste l'évent, raconte pas ta vie...";
@@ -177,6 +178,7 @@ class CustomString {
   static const otherUserCalendar = "Son calendrier";
 
   // Parameters
+  static const myAccount = "Mon compte";
   static const parameters = "Paramètres";
   static const parametersCapital = "PARAMÈTRES";
   static const editProfile = "Mon profil";

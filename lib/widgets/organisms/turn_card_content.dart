@@ -28,7 +28,6 @@ class TurnCardContent extends StatelessWidget {
   final DateTime datePublished;
   final String turnImageUrl;
   final String where;
-  final String address;
   final VoidCallback onAttendingPressed;
   final VoidCallback onSharePressed;
   final VoidCallback onSendPressed;
@@ -59,7 +58,6 @@ class TurnCardContent extends StatelessWidget {
     required this.eventDateTime,
     this.endDateTime,
     required this.where,
-    required this.address,
     required this.onAttendingPressed,
     required this.onSharePressed,
     required this.onSendPressed,
@@ -89,7 +87,7 @@ class TurnCardContent extends StatelessWidget {
           ? null
           : () {
               AppLogger.debug(
-                  'TurnCardContent tapped, navigating to expanded view');
+                  'TurnCardContent tapped, navigating to expanded view for turnId: $turnId');
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => ExpandedCardScreen(
@@ -102,7 +100,6 @@ class TurnCardContent extends StatelessWidget {
                       eventDateTime: eventDateTime,
                       endDateTime: endDateTime,
                       where: where,
-                      address: address,
                       description: description,
                       turnId: turnId,
                       turnImageUrl: turnImageUrl,
@@ -231,7 +228,6 @@ class TurnCardContent extends StatelessWidget {
                                   endDateTime: endDateTime,
                                   attendeesCount: attendingCount,
                                   where: where,
-                                  address: address,
                                   description: description,
                                   turnId: turnId,
                                   isExpanded: isExpanded);
@@ -288,7 +284,6 @@ class TurnCardContent extends StatelessWidget {
                                             profilePictureUrl:
                                                 profilePictureUrl,
                                             where: where,
-                                            address: address,
                                             organizers: organizers,
                                             invitees: [], // We'll fetch this in the view model
                                             teamInvitees: [], // We'll fetch this in the view model
@@ -452,7 +447,6 @@ class TurnCardContent extends StatelessWidget {
                             endDateTime: endDateTime,
                             attendeesCount: attendingCount,
                             where: where,
-                            address: address,
                             description: description,
                             turnId: turnId,
                             isExpanded: isExpanded,

@@ -14,11 +14,22 @@ class ExpandedCardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String eventId = cardContent is TurnCardContent
+        ? (cardContent as TurnCardContent).turnId
+        : (cardContent as CFQCardContent).cfqId;
+
+    if (eventId.isEmpty) {
+      AppLogger.error('Empty event ID in ExpandedCardScreen');
+      return const Scaffold(
+        body: Center(
+          child: Text('Invalid event ID'),
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => ExpandedCardViewModel(
-        eventId: cardContent is TurnCardContent
-            ? (cardContent as TurnCardContent).turnId
-            : (cardContent as CFQCardContent).cfqId,
+        eventId: eventId,
         currentUserId: cardContent is TurnCardContent
             ? (cardContent as TurnCardContent).currentUserId
             : (cardContent as CFQCardContent).currentUserId,
@@ -50,7 +61,6 @@ class ExpandedCardScreen extends StatelessWidget {
                 eventDateTime: turnContent.eventDateTime,
                 endDateTime: turnContent.endDateTime,
                 where: turnContent.where,
-                address: turnContent.address,
                 onAttendingPressed: turnContent.onAttendingPressed,
                 onSharePressed: turnContent.onSharePressed,
                 onSendPressed: () async {

@@ -44,6 +44,11 @@ class ExpandedCardViewModel extends ChangeNotifier {
     required this.currentUserId,
     required this.isTurn,
   }) {
+    if (eventId.isEmpty) {
+      AppLogger.error('Empty event ID provided to ExpandedCardViewModel');
+      throw ArgumentError('Event ID cannot be empty');
+    }
+
     _initializeData();
     _initializeStreams();
   }
@@ -86,35 +91,29 @@ class ExpandedCardViewModel extends ChangeNotifier {
           .doc(eventId)
           .get();
 
-      if (eventDoc.exists) {
-        final data = eventDoc.data()!;
-        _channelId = data['channelId'];
-
-        if (data['endDateTime'] != null) {
-          if (data['endDateTime'] is Timestamp) {
-            data['endDateTime'] = (data['endDateTime'] as Timestamp).toDate();
-          } else if (data['endDateTime'] is String) {
-            data['endDateTime'] = DateTime.parse(data['endDateTime']);
-          }
-        }
-
-        await _fetchFavoriteStatus();
-        if (isTurn) {
-          await _fetchAttendingStatus();
-        } else {
-          await _fetchFollowUpStatus();
-        }
+      if (!eventDoc.exists) {
+        AppLogger.error('Event document not found: $eventId');
+        throw Exception('Event not found');
       }
 
+      // Get channel ID from event document
+      final eventData = eventDoc.data() as Map<String, dynamic>;
+      _channelId = eventData['channelId'];
+
+      // Get current user data
       final userDoc =
           await _firestore.collection('users').doc(currentUserId).get();
-      if (userDoc.exists) {
-        _currentUser = model.User.fromSnap(userDoc);
+      if (!userDoc.exists) {
+        throw Exception('User not found');
       }
+      _currentUser = model.User.fromSnap(userDoc);
 
+      // Initialize other streams
+      _fetchAttendingStatus();
       notifyListeners();
     } catch (e) {
       AppLogger.error('Error initializing expanded card data: $e');
+      rethrow;
     }
   }
 
