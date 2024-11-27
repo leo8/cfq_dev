@@ -22,6 +22,8 @@ import '../widgets/atoms/buttons/custom_button.dart';
 import '../providers/conversation_service.dart';
 import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
+import '../widgets/atoms/address_selectors/google_places_address_selector.dart';
+import 'package:cfq_dev/models/event_data_model.dart';
 
 class CreateCfqViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {
@@ -100,6 +102,12 @@ class CreateCfqViewModel extends ChangeNotifier
   final bool isEditing;
   final Cfq? cfqToEdit;
 
+  Location? _location;
+  Location? get location => _location;
+
+  bool _showPredictions = true;
+  bool get showPredictions => _showPredictions;
+
   CreateCfqViewModel({
     this.prefillTeam,
     this.prefillMembers,
@@ -119,6 +127,8 @@ class CreateCfqViewModel extends ChangeNotifier
     _selectedDateTime = cfqToEdit!.eventDateTime;
     _selectedEndDateTime = cfqToEdit!.endDateTime;
     _selectedMoods = cfqToEdit!.moods;
+    _location = cfqToEdit!.location;
+    _showPredictions = false;
 
     // Store initial state for comparison
     _previousSelectedInvitees = List.from(_selectedInvitees);
@@ -1020,5 +1030,16 @@ class CreateCfqViewModel extends ChangeNotifier
       AppLogger.error('Error removing cfq from uninvited users: $e');
       rethrow;
     }
+  }
+
+  void onAddressSelected(PlaceData placeData) {
+    locationController.text = placeData.address;
+    _location = placeData.latitude != null && placeData.longitude != null
+        ? Location(
+            latitude: placeData.latitude!,
+            longitude: placeData.longitude!,
+          )
+        : null;
+    notifyListeners();
   }
 }

@@ -23,6 +23,7 @@ import '../providers/conversation_service.dart';
 import '../widgets/atoms/dates/custom_date_time_range_picker.dart';
 import '../utils/date_time_utils.dart';
 import '../widgets/atoms/address_selectors/google_places_address_selector.dart';
+import 'package:cfq_dev/models/event_data_model.dart';
 
 class CreateTurnViewModel extends ChangeNotifier
     implements InviteesSelectorViewModel {

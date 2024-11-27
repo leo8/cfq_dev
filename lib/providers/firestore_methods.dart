@@ -5,6 +5,7 @@ import 'package:cfq_dev/providers/storage_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:cfq_dev/utils/logger.dart';
+import 'package:cfq_dev/models/event_data_model.dart';
 
 import '../utils/styles/string.dart';
 
