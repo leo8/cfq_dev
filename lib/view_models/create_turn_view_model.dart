@@ -427,6 +427,7 @@ class CreateTurnViewModel extends ChangeNotifier
     performSearch(searchController.text);
   }
 
+  @override
   Future<void> performSearch(String query) async {
     _isSearching = true;
     notifyListeners();
@@ -441,21 +442,25 @@ class CreateTurnViewModel extends ChangeNotifier
         _searchResults = _userTeams
             .where((team) =>
                 team.name.toLowerCase().startsWith(queryLower) &&
-                !_selectedTeamInvitees.contains(team))
+                !_selectedTeamInvitees.any((f) => f.uid == team.uid))
             .toList();
       } else {
         if (query.isEmpty) {
           _searchResults = [
-            ..._userTeams,
+            ..._userTeams.where(
+              (team) => !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+            ),
             ..._friendsList.where((user) =>
                 !_selectedInvitees.any((f) => f.uid == user.uid) &&
                 user.uid != _currentUser?.uid)
           ];
         } else {
           List<Team> filteredTeams = _userTeams
-              .where((team) =>
-                  team.name.toLowerCase().startsWith(queryLower) &&
-                  !_selectedTeamInvitees.contains(team))
+              .where(
+                (team) =>
+                    team.name.toLowerCase().startsWith(queryLower) &&
+                    !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+              )
               .toList();
 
           List<model.User> filteredUsers = _friendsList.where((user) {
@@ -1113,31 +1118,5 @@ class CreateTurnViewModel extends ChangeNotifier
           )
         : null;
     notifyListeners();
-  }
-
-  Future<List<model.User>> _fetchUsers(List<String> userIds) async {
-    try {
-      return await Future.wait(userIds.map((id) async {
-        DocumentSnapshot userDoc =
-            await _firestore.collection('users').doc(id).get();
-        return model.User.fromSnap(userDoc);
-      }));
-    } catch (e) {
-      AppLogger.error('Error fetching users: $e');
-      return [];
-    }
-  }
-
-  Future<List<Team>> _fetchTeams(List<String> teamIds) async {
-    try {
-      return await Future.wait(teamIds.map((id) async {
-        DocumentSnapshot teamDoc =
-            await _firestore.collection('teams').doc(id).get();
-        return Team.fromSnap(teamDoc);
-      }));
-    } catch (e) {
-      AppLogger.error('Error fetching teams: $e');
-      return [];
-    }
   }
 }
