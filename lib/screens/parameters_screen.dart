@@ -39,7 +39,7 @@ class ParametersScreen extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              CustomString.parametersCapital,
+              CustomString.myAccountCapital,
               style: CustomTextStyle.body1
                   .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
             ),

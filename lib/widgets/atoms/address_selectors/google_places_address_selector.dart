@@ -54,7 +54,7 @@ class _GooglePlacesAddressSelectorState
   Future<void> initPlaces() async {
     try {
       _places = FlutterGooglePlacesSdk(
-        'AIzaSyA65gP0gnZAjqrrSkQTZB60svG86LJqMDE',
+        'googlePlacesApiKey',
       );
       final isInitialized = await _places.isInitialized();
       debugPrint('Places SDK initialized: $isInitialized');

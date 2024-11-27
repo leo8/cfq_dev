@@ -504,6 +504,11 @@ class NotificationsList extends StatelessWidget {
   Future<void> _handleNotificationTap(
       BuildContext context, notificationModel.Notification notification) async {
     try {
+      // Early return for message notifications
+      if (notification.type == notificationModel.NotificationType.message) {
+        return;
+      }
+
       if (notification.type == notificationModel.NotificationType.teamRequest ||
           notification.type ==
               notificationModel.NotificationType.friendRequest) {

@@ -72,7 +72,7 @@ class NotificationsViewModel extends ChangeNotifier {
       AppLogger.debug(
           'Notification types: ${querySnapshot.docs.map((doc) => (doc.data()['type'] as String)).toList()}');
 
-      _notifications = await Future.wait(querySnapshot.docs.map((doc) async {
+      _notifications = (await Future.wait(querySnapshot.docs.map((doc) async {
         final data = doc.data();
 
         // Convert Timestamp to ISO8601 string if needed
@@ -82,6 +82,11 @@ class NotificationsViewModel extends ChangeNotifier {
         }
 
         final notification = notificationModel.Notification.fromSnap(doc);
+
+        // Filter out message notifications
+        if (notification.type == notificationModel.NotificationType.message) {
+          return null;
+        }
 
         // Enrich notification content with additional data if needed
         switch (notification.type) {
@@ -97,7 +102,9 @@ class NotificationsViewModel extends ChangeNotifier {
           default:
             return notification;
         }
-      }).toList());
+      }).toList()))
+          .whereType<notificationModel.Notification>() // Remove null values
+          .toList();
 
       // Sort notifications by timestamp in descending order (newest first)
       _notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
