@@ -165,6 +165,12 @@ class CreateCfqViewModel extends ChangeNotifier
       return;
     }
 
+    if (_selectedInvitees.isEmpty) {
+      _errorMessage = CustomString.pleaseSelectAtLeastOneInvitee;
+      notifyListeners();
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
