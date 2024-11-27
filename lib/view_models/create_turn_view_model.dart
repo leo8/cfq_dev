@@ -145,7 +145,6 @@ class CreateTurnViewModel extends ChangeNotifier
     });
     if (prefillTeam != null) {
       _initializePrefillData();
-      _removePrefillDataFromSearchResults();
     }
   }
 
@@ -364,17 +363,6 @@ class CreateTurnViewModel extends ChangeNotifier
     }
   }
 
-  void _removePrefillDataFromSearchResults() {
-    if (prefillTeam != null) {
-      _searchResults.removeWhere(
-          (result) => result is Team && result.uid == prefillTeam!.uid);
-      _searchResults.removeWhere((result) =>
-          result is model.User &&
-          prefillMembers!.map((member) => member.uid).contains(result.uid));
-      notifyListeners();
-    }
-  }
-
   @override
   void dispose() {
     searchController.removeListener(_onSearchChanged);
@@ -427,7 +415,6 @@ class CreateTurnViewModel extends ChangeNotifier
     performSearch(searchController.text);
   }
 
-  @override
   Future<void> performSearch(String query) async {
     _isSearching = true;
     notifyListeners();

@@ -120,6 +120,11 @@ class CreateCfqViewModel extends ChangeNotifier
     _selectedEndDateTime = cfqToEdit!.endDateTime;
     _selectedMoods = cfqToEdit!.moods;
 
+    // Store initial state for comparison
+    _previousSelectedInvitees = List.from(_selectedInvitees);
+    _previousSelectedTeamInvitees = List.from(_selectedTeamInvitees);
+    _previousIsEverybodySelected = _isEverybodySelected;
+
     // Fetch CFQ data including invitees
     _fetchCfqData();
   }
@@ -362,7 +367,6 @@ class CreateCfqViewModel extends ChangeNotifier
     try {
       final queryLower = query.toLowerCase();
 
-      // Update _showEverybodyOption based on whether the search query is empty
       _showEverybodyOption = query.isEmpty;
 
       if (_isEverybodySelected) {
@@ -370,21 +374,25 @@ class CreateCfqViewModel extends ChangeNotifier
         _searchResults = _userTeams
             .where((team) =>
                 team.name.toLowerCase().startsWith(queryLower) &&
-                !_selectedTeamInvitees.contains(team))
+                !_selectedTeamInvitees.any((f) => f.uid == team.uid))
             .toList();
       } else {
         if (query.isEmpty) {
           _searchResults = [
-            ..._userTeams,
+            ..._userTeams.where(
+              (team) => !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+            ),
             ..._friendsList.where((user) =>
                 !_selectedInvitees.any((f) => f.uid == user.uid) &&
                 user.uid != _currentUser?.uid)
           ];
         } else {
           List<Team> filteredTeams = _userTeams
-              .where((team) =>
-                  team.name.toLowerCase().startsWith(queryLower) &&
-                  !_selectedTeamInvitees.contains(team))
+              .where(
+                (team) =>
+                    team.name.toLowerCase().startsWith(queryLower) &&
+                    !_selectedTeamInvitees.any((f) => f.uid == team.uid),
+              )
               .toList();
 
           List<model.User> filteredUsers = _friendsList.where((user) {
@@ -400,7 +408,6 @@ class CreateCfqViewModel extends ChangeNotifier
     } catch (e) {
       AppLogger.error('Error while searching: $e');
       _errorMessage = CustomString.failedToPerformSearch;
-      notifyListeners();
     }
 
     _isSearching = false;
