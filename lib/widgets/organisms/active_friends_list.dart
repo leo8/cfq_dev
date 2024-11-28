@@ -38,7 +38,7 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildUserAvatar(model.User user) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 14.0),
       child: Column(
         children: [
           AvatarNeonSwitch(
@@ -55,7 +55,7 @@ class ActiveFriendsList extends StatelessWidget {
 
   Widget _buildFriendAvatar(model.User friend, bool isActive) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 14.0),
+      padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 14.0),
       child: Column(
         children: [
           Container(
