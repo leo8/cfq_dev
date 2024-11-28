@@ -6,6 +6,10 @@ import '../../utils/styles/string.dart';
 import '../atoms/avatars/clickable_avatar.dart';
 import '../atoms/buttons/custom_button.dart';
 import '../../screens/profile_screen.dart';
+import '../../screens/team_details_screen.dart';
+import '../atoms/avatars/custom_avatar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../models/team.dart';
 
 class RequestCard extends StatelessWidget {
   final Request request;
@@ -28,21 +32,46 @@ class RequestCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              ClickableAvatar(
-                userId: request.requesterId,
-                imageUrl: request.requesterProfilePictureUrl,
-                radius: 25,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfileScreen(
-                        userId: request.requesterId,
+              request.type == RequestType.team
+                  ? GestureDetector(
+                      onTap: () async {
+                        final teamDoc = await FirebaseFirestore.instance
+                            .collection('teams')
+                            .doc(request.teamId)
+                            .get();
+                        if (teamDoc.exists && context.mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TeamDetailsScreen(
+                                team: Team.fromSnap(teamDoc),
+                                viewMode:
+                                    request.status != RequestStatus.accepted,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: CustomAvatar(
+                        imageUrl: request.teamImageUrl ?? '',
+                        radius: 25,
                       ),
+                    )
+                  : ClickableAvatar(
+                      userId: request.requesterId,
+                      imageUrl: request.requesterProfilePictureUrl,
+                      radius: 25,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
+                              userId: request.requesterId,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

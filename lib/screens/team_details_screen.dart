@@ -10,11 +10,18 @@ import '../widgets/organisms/team_members_list.dart';
 import '../../utils/styles/icons.dart';
 import '../widgets/organisms/events_list.dart';
 import '../utils/loading_overlay.dart';
+import '../utils/styles/string.dart';
+import '../utils/styles/text_styles.dart';
 
 class TeamDetailsScreen extends StatelessWidget {
   final Team team;
+  final bool viewMode;
 
-  const TeamDetailsScreen({super.key, required this.team});
+  const TeamDetailsScreen({
+    super.key,
+    required this.team,
+    this.viewMode = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,53 +52,70 @@ class TeamDetailsScreen extends StatelessWidget {
                       children: [
                         TeamHeader(team: viewModel.team),
                         const SizedBox(height: 20),
-                        TeamOptions(
-                          team: viewModel.team,
-                          onTeamLeft: () {
-                            Navigator.of(context).pop(true);
-                          },
-                          prefillMembers: viewModel.members,
-                          prefillTeam: viewModel.team,
-                        ),
-                        const SizedBox(height: 20),
+                        if (!viewMode)
+                          TeamOptions(
+                            team: viewModel.team,
+                            onTeamLeft: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            prefillMembers: viewModel.members,
+                            prefillTeam: viewModel.team,
+                          ),
+                        if (!viewMode) const SizedBox(height: 20),
                         TeamMembersList(
                           members: viewModel.members,
                           isCurrentUserActive: viewModel.isCurrentUserActive,
                         ),
-                        const SizedBox(height: 125),
-                        LoadingOverlay(
-                          isLoading: viewModel.isLoading,
-                          child: EventsList(
-                            eventsStream: viewModel.fetchTeamCombinedEvents(),
-                            currentUser: viewModel.currentUser,
-                            onFavoriteToggle: viewModel.toggleFavorite,
-                            addConversationToUserList:
-                                (String channelId) async {
-                              // Implement if needed
-                            },
-                            removeConversationFromUserList:
-                                (String channelId) async {
-                              // Implement if needed
-                            },
-                            isConversationInUserList: (String channelId) async {
-                              // Implement if needed
-                              return false;
-                            },
-                            resetUnreadMessages: (String conversationId) async {
-                              // Implement if needed
-                            },
-                            addFollowUp: TeamDetailsViewModel.removeFollowUp,
-                            removeFollowUp: TeamDetailsViewModel.removeFollowUp,
-                            isFollowingUpStream: viewModel.isFollowingUpStream,
-                            toggleFollowUp: viewModel.toggleFollowUp,
-                            onAttendingStatusChanged:
-                                viewModel.updateAttendingStatus,
-                            attendingStatusStream:
-                                viewModel.attendingStatusStream,
-                            attendingCountStream:
-                                viewModel.attendingCountStream,
+                        if (viewMode) ...[
+                          const SizedBox(height: 20),
+                          Column(
+                            children: [
+                              const Icon(
+                                CustomIcon.privateProfile,
+                                size: 120,
+                                color: CustomColor.grey,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                CustomString.privateTeam,
+                                style: CustomTextStyle.body1.copyWith(
+                                  color: CustomColor.grey300,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        ),
+                        ],
+                        const SizedBox(height: 125),
+                        if (!viewMode)
+                          LoadingOverlay(
+                            isLoading: viewModel.isLoading,
+                            child: EventsList(
+                              eventsStream: viewModel.fetchTeamCombinedEvents(),
+                              currentUser: viewModel.currentUser,
+                              onFavoriteToggle: viewModel.toggleFavorite,
+                              addConversationToUserList:
+                                  (String channelId) async {},
+                              removeConversationFromUserList:
+                                  (String channelId) async {},
+                              isConversationInUserList:
+                                  (String channelId) async => false,
+                              resetUnreadMessages:
+                                  (String conversationId) async {},
+                              addFollowUp: TeamDetailsViewModel.removeFollowUp,
+                              removeFollowUp:
+                                  TeamDetailsViewModel.removeFollowUp,
+                              isFollowingUpStream:
+                                  viewModel.isFollowingUpStream,
+                              toggleFollowUp: viewModel.toggleFollowUp,
+                              onAttendingStatusChanged:
+                                  viewModel.updateAttendingStatus,
+                              attendingStatusStream:
+                                  viewModel.attendingStatusStream,
+                              attendingCountStream:
+                                  viewModel.attendingCountStream,
+                            ),
+                          ),
                       ],
                     ),
                   ),
