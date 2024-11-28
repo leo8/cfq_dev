@@ -34,8 +34,10 @@ class TurnButtons extends StatelessWidget {
             const SizedBox(width: 6),
             _buildIconButton(CustomIcon.eventConversation, onSendPressed),
             const SizedBox(width: 2),
+            /*
             _buildFavoriteButton(),
             const SizedBox(width: 4),
+            */
             _buildAttendingButton(context, attendingStatus),
           ],
         );

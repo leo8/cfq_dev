@@ -64,6 +64,7 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          /*
           ListTile(
             leading: CustomIcon.saveEmpty,
             title: Text(
@@ -81,6 +82,7 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          */
           ListTile(
             leading: CustomIcon.addMember,
             title: Text(
