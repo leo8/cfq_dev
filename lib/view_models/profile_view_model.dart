@@ -76,9 +76,11 @@ class ProfileViewModel extends ChangeNotifier {
   Stream<int> get pendingRequestsCountStream =>
       _pendingRequestsCountController.stream;
 
+  final CompositeSubscription _subscriptions = CompositeSubscription();
+
   @override
   void dispose() {
-    _pendingRequestsCountController.close();
+    _subscriptions.dispose();
     _disposed = true;
     _userSubscription?.cancel();
     super.dispose();
@@ -87,20 +89,25 @@ class ProfileViewModel extends ChangeNotifier {
   ProfileViewModel({this.userId}) {
     fetchUserData();
     fetchUserNames();
-    // Add listener to user document
-    FirebaseFirestore.instance
+
+    // Modify the stream subscription
+    final subscription = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .snapshots()
         .listen((snapshot) {
-      if (snapshot.exists) {
+      if (!_disposed && snapshot.exists) {
         final user = model.User.fromSnap(snapshot);
         final pendingCount = user.requests
             .where((request) => request.status == model.RequestStatus.pending)
             .length;
-        _pendingRequestsCountController.add(pendingCount);
+        if (!_pendingRequestsCountController.isClosed) {
+          _pendingRequestsCountController.add(pendingCount);
+        }
       }
     });
+
+    _subscriptions.add(subscription);
   }
 
   Future<void> fetchUserData() async {

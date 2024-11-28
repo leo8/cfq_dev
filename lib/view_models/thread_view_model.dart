@@ -72,14 +72,6 @@ class ThreadViewModel extends ChangeNotifier {
     searchController.dispose();
     _userSubscription?.cancel();
 
-    // Only close subjects if they haven't been closed already
-    if (!_unreadConversationsCountSubject.isClosed) {
-      _unreadConversationsCountSubject.close();
-    }
-    if (!_unreadNotificationsCountSubject.isClosed) {
-      _unreadNotificationsCountSubject.close();
-    }
-
     super.dispose();
   }
 
