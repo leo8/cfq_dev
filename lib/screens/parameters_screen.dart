@@ -5,7 +5,7 @@ import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
-import '../screens/favorites_screen.dart';
+//import '../screens/favorites_screen.dart';
 import '../view_models/requests_view_model.dart';
 import '../screens/requests_screen.dart';
 import '../screens/tutorial_screen.dart';

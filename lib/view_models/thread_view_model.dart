@@ -71,8 +71,7 @@ class ThreadViewModel extends ChangeNotifier {
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     _userSubscription?.cancel();
-    _unreadConversationsCountSubject.close();
-    _unreadNotificationsCountSubject.close();
+
     super.dispose();
   }
 
