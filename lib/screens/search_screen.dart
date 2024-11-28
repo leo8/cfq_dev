@@ -7,6 +7,7 @@ import '../widgets/atoms/search_bars/custom_search_bar.dart';
 import '../models/user.dart' as model;
 import '../view_models/thread_view_model.dart';
 import 'profile_screen.dart';
+import '../widgets/atoms/avatars/custom_avatar.dart';
 
 class SearchScreen extends StatefulWidget {
   final ThreadViewModel viewModel;
@@ -39,6 +40,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSearchChanged() {
     widget.viewModel.performSearch(_searchController.text);
+  }
+
+  bool isFriend(String userId) {
+    // Assuming you have a list of friend IDs in your viewModel
+    return widget.viewModel.currentUser!.friends.contains(userId);
   }
 
   @override
@@ -107,25 +113,30 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: user.isActive
-                                      ? [
-                                          const BoxShadow(
-                                            color: CustomColor.turnColor,
-                                            blurRadius: 5,
-                                            spreadRadius: 1,
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                                child: CircleAvatar(
-                                  radius: 24,
-                                  backgroundImage:
-                                      NetworkImage(user.profilePictureUrl),
-                                ),
-                              ),
+                              isFriend(user.uid)
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: user.isActive
+                                            ? [
+                                                const BoxShadow(
+                                                  color: CustomColor.turnColor,
+                                                  blurRadius: 5,
+                                                  spreadRadius: 1,
+                                                ),
+                                              ]
+                                            : null,
+                                      ),
+                                      child: CircleAvatar(
+                                        radius: 24,
+                                        backgroundImage: NetworkImage(
+                                            user.profilePictureUrl),
+                                      ),
+                                    )
+                                  : CustomAvatar(
+                                      imageUrl: user.profilePictureUrl,
+                                      radius: 24,
+                                    ),
                               const SizedBox(width: 16),
                               CustomText(
                                 text: user.username,
