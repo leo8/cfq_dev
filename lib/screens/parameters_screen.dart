@@ -64,6 +64,7 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          /*
           ListTile(
             leading: CustomIcon.saveEmpty,
             title: Text(
@@ -81,11 +82,34 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          */
           ListTile(
             leading: CustomIcon.addMember,
             title: Text(
               CustomString.requests,
               style: CustomTextStyle.body1,
+            ),
+            trailing: StreamBuilder<int>(
+              stream: viewModel.pendingRequestsCountStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data! > 0) {
+                  return Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: CustomColor.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      snapshot.data!.toString(),
+                      style: CustomTextStyle.body2.copyWith(
+                        color: CustomColor.customWhite,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
             ),
             onTap: () {
               Navigator.push(

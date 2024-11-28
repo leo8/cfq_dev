@@ -119,6 +119,7 @@ class CustomString {
   static const otherFriends = "Ajouter..";
   static const leaveTeam = "Quitter l'équipe";
   static const sureToLeaveTeam = "T'es sûr de vouloir quitter cette team ?";
+  static const String privateTeam = "Tu ne fais pas partie de la team";
 
   // Team Events
   static const String teamEvents = "Événements de la team";

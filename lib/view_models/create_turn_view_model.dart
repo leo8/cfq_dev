@@ -602,7 +602,7 @@ class CreateTurnViewModel extends ChangeNotifier
                   Center(
                     child: Text(
                       CustomString.whatMood,
-                      style: CustomTextStyle.bigBody1,
+                      style: CustomTextStyle.body1,
                     ),
                   ),
                   Positioned(

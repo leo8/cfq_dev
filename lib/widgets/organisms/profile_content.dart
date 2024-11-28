@@ -244,19 +244,61 @@ class _ProfileContentState extends State<ProfileContent>
                               padding: 5,
                             ),
                             const SizedBox(width: 10),
-                            CustomButton(
-                              label: CustomString.myAccount,
-                              textStyle: CustomTextStyle.subButton.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                              onTap: widget.onParametersTap!,
-                              color: CustomColor.customBlack,
-                              borderWidth: 0.5,
-                              borderRadius: 5,
-                              width: 100,
-                              height: 35,
-                              padding: 5,
+                            Stack(
+                              clipBehavior: Clip
+                                  .none, // Allow children to extend beyond Stack bounds
+                              children: [
+                                CustomButton(
+                                  label: CustomString.myAccount,
+                                  textStyle: CustomTextStyle.subButton.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                  onTap: widget.onParametersTap!,
+                                  color: CustomColor.customBlack,
+                                  borderWidth: 0.5,
+                                  borderRadius: 5,
+                                  width: 100,
+                                  height: 35,
+                                  padding: 5,
+                                ),
+                                if (true)
+                                  StreamBuilder<int>(
+                                    stream: widget
+                                        .viewModel.pendingRequestsCountStream,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.data! > 0) {
+                                        return Positioned(
+                                          right: -5,
+                                          top: -8,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: const BoxDecoration(
+                                              color: CustomColor.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            constraints: const BoxConstraints(
+                                              minWidth: 18,
+                                              minHeight: 18,
+                                            ),
+                                            child: Text(
+                                              snapshot.data!.toString(),
+                                              style: CustomTextStyle.body2
+                                                  .copyWith(
+                                                color: CustomColor.customWhite,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox();
+                                    },
+                                  ),
+                              ],
                             ),
                           ],
                         ),

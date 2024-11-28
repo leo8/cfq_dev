@@ -6,6 +6,7 @@ import '../../../utils/styles/text_styles.dart';
 import '../texts/bordered_icon_text_field.dart';
 import '../../../utils/logger.dart';
 import '../../../utils/styles/string.dart';
+import '../../../secrets/secrets_firebase.dart';
 
 class GooglePlacesAddressSelector extends StatefulWidget {
   final TextEditingController controller;
@@ -53,9 +54,7 @@ class _GooglePlacesAddressSelectorState
 
   Future<void> initPlaces() async {
     try {
-      _places = FlutterGooglePlacesSdk(
-        'googlePlacesApiKey',
-      );
+      _places = FlutterGooglePlacesSdk(googlePlacesApiKey);
       final isInitialized = await _places.isInitialized();
       debugPrint('Places SDK initialized: $isInitialized');
 

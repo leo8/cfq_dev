@@ -21,6 +21,8 @@ dependencies:
   firebase_core: ^3.5.0
   firebase_messaging: ^15.1.5
   firebase_storage: ^12.3.1
+  fluttertoast: ^8.2.8
+  firebase_messaging: ^15.1.5
   flutter:
     sdk: flutter
   flutter_google_places_sdk: ^0.3.10
@@ -34,10 +36,12 @@ dependencies:
   provider: ^6.1.2
   rxdart: ^0.28.0
   uuid: ^4.5.0
+  flutter_local_notifications: ^18.0.1
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.14.1"
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   flutter_native_splash: ^2.2.16
   flutter_test:
     sdk: flutter
