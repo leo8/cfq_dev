@@ -24,7 +24,9 @@ dependencies:
   firebase_messaging: ^15.1.5
   flutter:
     sdk: flutter
+  flutter_google_places_sdk: ^0.3.10
   flutter_svg: ^2.0.10+1
+  fluttertoast: ^8.2.8
   google_fonts: ^6.2.1
   http: ^1.2.2
   image_picker: ^1.1.2

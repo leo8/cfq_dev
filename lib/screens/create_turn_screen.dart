@@ -114,7 +114,9 @@ class CreateTurnScreen extends StatelessWidget {
                       nameController: viewModel.turnNameController,
                       descriptionController: viewModel.descriptionController,
                       locationController: viewModel.locationController,
-                      addressController: viewModel.addressController,
+                      onAddressSelected: (placeData) {
+                        viewModel.onAddressSelected(placeData);
+                      },
                       onSelectDateTime: () => viewModel.selectDateTime(context),
                       onSelectMoods: () => viewModel.selectMoods(context),
                       dateTimeDisplay: DateTimeUtils.formatDateTimeDisplay(
@@ -132,6 +134,7 @@ class CreateTurnScreen extends StatelessWidget {
                       inviteesController: viewModel.inviteesController,
                       openInviteesSelectorScreen: () =>
                           viewModel.openInviteesSelectorScreen(context),
+                      showPredictions: viewModel.showPredictions,
                       submitButtonLabel:
                           isEditing ? CustomString.update : CustomString.create,
                     ),

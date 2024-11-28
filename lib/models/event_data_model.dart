@@ -29,4 +29,38 @@ class EventDataModel {
       required this.teamInvitees,
       required this.invitees,
       required this.channelId});
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'where': where,
+        'description': description,
+        'moods': moods,
+        'uid': uid,
+        'username': username,
+        'eventId': eventId,
+        'datePublished': datePublished.toIso8601String(),
+        'imageUrl': imageUrl,
+        'profilePictureUrl': profilePictureUrl,
+        'organizers': organizers,
+        'invitees': invitees,
+        'teamInvitees': teamInvitees,
+        'channelId': channelId,
+      };
+}
+
+class Location {
+  final double latitude;
+  final double longitude;
+
+  Location({required this.latitude, required this.longitude});
+
+  Map<String, dynamic> toJson() => {
+        'latitude': latitude,
+        'longitude': longitude,
+      };
+
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+      );
 }

@@ -127,6 +127,9 @@ class CreateCfqScreen extends StatelessWidget {
                       inviteesController: viewModel.inviteesController,
                       openInviteesSelectorScreen: () =>
                           viewModel.openInviteesSelectorScreen(context),
+                      onAddressSelected: (placeData) {
+                        viewModel.onAddressSelected(placeData);
+                      },
                       submitButtonLabel:
                           isEditing ? CustomString.update : CustomString.create,
                     ),

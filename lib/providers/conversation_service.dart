@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../models/notification.dart' as notificationModel;
 import '../models/conversation.dart';
 import 'package:rxdart/rxdart.dart';
 import '../utils/logger.dart';
+import 'package:uuid/uuid.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -104,8 +106,6 @@ class ConversationService {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-        AppLogger.info('New message added to conversation: $channelId');
-
         // Update conversation details
         transaction.update(conversationRef, {
           'lastMessageContent': message,
@@ -113,29 +113,56 @@ class ConversationService {
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
         });
 
-        AppLogger.info(
-            'Conversation $channelId updated with new message details');
-
+        // Process each member's notifications and unread counts
         for (String memberId in userSnapshots.keys) {
           DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
+          Map<String, dynamic> userData =
+              userSnapshot.data() as Map<String, dynamic>;
 
-          // Update unreadMessagesCount
+          // Check if user has this conversation in their list
           List<Map<String, dynamic>> conversations =
-              List<Map<String, dynamic>>.from(
-                  userSnapshot['conversations'] ?? []);
+              List<Map<String, dynamic>>.from(userData['conversations'] ?? []);
 
           int index = conversations
               .indexWhere((conv) => conv['conversationId'] == channelId);
+
           if (index != -1) {
+            // Update unread messages count
             conversations[index]['unreadMessagesCount'] =
                 (conversations[index]['unreadMessagesCount'] ?? 0) + 1;
             transaction.update(
                 userSnapshot.reference, {'conversations': conversations});
-            AppLogger.info(
-                'Incremented unreadMessagesCount for user $memberId in conversation $channelId');
-          } else {
-            AppLogger.warning(
-                'Conversation $channelId not found in user $memberId\'s list. Skipping unreadMessagesCount update.');
+
+            // Create message notification
+            String notificationChannelId = userData['notificationsChannelId'];
+            DocumentReference notificationRef = _firestore
+                .collection('notifications')
+                .doc(notificationChannelId)
+                .collection('userNotifications')
+                .doc();
+
+            final notification = {
+              'id': const Uuid().v4(),
+              'timestamp': FieldValue.serverTimestamp(),
+              'type': notificationModel.NotificationType.message
+                  .toString()
+                  .split('.')
+                  .last,
+              'content': {
+                'senderProfilePictureUrl': senderProfilePicture,
+                'messageContent': message,
+                'timestampSent': DateTime.now().toIso8601String(),
+                'senderUsername': senderUsername,
+                'conversationId': channelId,
+              },
+            };
+
+            transaction.set(notificationRef, notification);
+
+            // Increment unread notifications count
+            transaction.update(userSnapshot.reference, {
+              'unreadNotificationsCount': FieldValue.increment(1),
+            });
           }
         }
       });

@@ -9,6 +9,7 @@ import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
 import '../atoms/buttons/custom_button.dart';
 import '../molecules/event_organizer.dart';
+import '../atoms/address_selectors/google_places_address_selector.dart';
 
 class TurnForm extends StatelessWidget {
   final Uint8List? image;
@@ -16,7 +17,6 @@ class TurnForm extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController descriptionController;
   final TextEditingController locationController;
-  final TextEditingController addressController;
   final VoidCallback onSelectDateTime;
   final VoidCallback onSelectMoods;
   final String dateTimeDisplay;
@@ -27,7 +27,8 @@ class TurnForm extends StatelessWidget {
   final TextEditingController inviteesController;
   final VoidCallback openInviteesSelectorScreen;
   final String submitButtonLabel;
-
+  final Function(PlaceData) onAddressSelected;
+  final bool showPredictions;
   const TurnForm({
     super.key,
     required this.image,
@@ -35,7 +36,6 @@ class TurnForm extends StatelessWidget {
     required this.nameController,
     required this.descriptionController,
     required this.locationController,
-    required this.addressController,
     required this.onSelectDateTime,
     required this.onSelectMoods,
     required this.dateTimeDisplay,
@@ -45,6 +45,8 @@ class TurnForm extends StatelessWidget {
     required this.currentUser,
     required this.inviteesController,
     required this.openInviteesSelectorScreen,
+    required this.onAddressSelected,
+    this.showPredictions = true,
     this.submitButtonLabel = CustomString.create,
   });
 
@@ -94,16 +96,12 @@ class TurnForm extends StatelessWidget {
             onTap: onSelectDateTime,
           ),
           const SizedBox(height: 15),
-          BorderedIconTextField(
+          GooglePlacesAddressSelector(
             icon: CustomIcon.eventLocation,
             controller: locationController,
             hintText: CustomString.where,
-          ),
-          const SizedBox(height: 15),
-          BorderedIconTextField(
-            icon: CustomIcon.eventAddress,
-            controller: addressController,
-            hintText: CustomString.address,
+            onPlaceSelected: onAddressSelected,
+            showPredictions: showPredictions,
           ),
           const SizedBox(height: 15),
           CustomTextField(

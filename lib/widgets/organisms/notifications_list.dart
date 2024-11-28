@@ -90,7 +90,6 @@ class NotificationsList extends StatelessWidget {
                 'turnName': data['turnName'] ?? '',
                 'turnImageUrl': data['turnImageUrl'] ?? '',
                 'where': data['where'] ?? '',
-                'address': data['address'] ?? '',
               }
             : {
                 'cfqName': data['cfqName'] ?? '',
@@ -274,7 +273,6 @@ class NotificationsList extends StatelessWidget {
                   datePublished: eventData['datePublished'],
                   turnImageUrl: eventData['turnImageUrl'],
                   where: eventData['where'],
-                  address: eventData['address'],
                   moods: eventData['moods'],
                   organizerId: eventData['uid'],
                   currentUserId: currentUserId,
@@ -441,7 +439,6 @@ class NotificationsList extends StatelessWidget {
             datePublished: turnData['datePublished'],
             turnImageUrl: turnData['turnImageUrl'],
             where: turnData['where'],
-            address: turnData['address'],
             moods: turnData['moods'],
             organizerId: turnData['uid'],
             currentUserId: currentUserId,
@@ -507,6 +504,11 @@ class NotificationsList extends StatelessWidget {
   Future<void> _handleNotificationTap(
       BuildContext context, notificationModel.Notification notification) async {
     try {
+      // Early return for message notifications
+      if (notification.type == notificationModel.NotificationType.message) {
+        return;
+      }
+
       if (notification.type == notificationModel.NotificationType.teamRequest ||
           notification.type ==
               notificationModel.NotificationType.friendRequest) {

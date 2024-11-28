@@ -15,20 +15,25 @@ class BorderedIconTextField extends StatelessWidget {
   final TextStyle? hintTextStyle;
   final Function(String)? onChanged;
   final int? maxLength;
+  final bool clearOption;
+  final VoidCallback? onClear;
 
-  const BorderedIconTextField(
-      {super.key,
-      required this.icon,
-      required this.controller,
-      required this.hintText,
-      this.readOnly = false,
-      this.maxLines = 1,
-      this.height = 46.0,
-      this.onTap,
-      this.borderRadius,
-      this.hintTextStyle,
-      this.onChanged,
-      this.maxLength});
+  const BorderedIconTextField({
+    super.key,
+    required this.icon,
+    required this.controller,
+    required this.hintText,
+    this.readOnly = false,
+    this.maxLines = 1,
+    this.height = 46.0,
+    this.onTap,
+    this.borderRadius,
+    this.hintTextStyle,
+    this.onChanged,
+    this.maxLength,
+    this.clearOption = false,
+    this.onClear,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +69,22 @@ class BorderedIconTextField extends StatelessWidget {
               onChanged: onChanged,
             ),
           ),
+          if (clearOption && controller.text.isNotEmpty)
+            GestureDetector(
+              onTap: onClear,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.all(7),
+                decoration: const BoxDecoration(
+                  color: CustomColor.grey800,
+                  shape: BoxShape.circle,
+                ),
+                child: CustomIcon.close.copyWith(
+                  size: 12,
+                  color: CustomColor.customWhite,
+                ),
+              ),
+            ),
         ],
       ),
     );
