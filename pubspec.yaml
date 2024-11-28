@@ -19,6 +19,7 @@ dependencies:
   cloud_firestore: ^5.4.2
   firebase_auth: ^5.3.0
   firebase_core: ^3.5.0
+  firebase_messaging: ^15.1.5
   firebase_storage: ^12.3.1
   flutter:
     sdk: flutter

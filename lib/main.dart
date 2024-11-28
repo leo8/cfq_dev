@@ -12,6 +12,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash scr
 import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:io' show Platform;
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding
@@ -25,6 +27,13 @@ void main() async {
 
   // Initialize Firebase for mobile platforms
   await Firebase.initializeApp();
+
+  // Add FCM permission request
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
 
   runApp(const CFQ()); // Run the application
 }
@@ -56,6 +65,64 @@ class _CFQState extends State<CFQ> {
     return doc.exists;
   }
 
+  // Add this new method to manage FCM token
+  Future<void> _manageFCMToken(String uid) async {
+    try {
+      // For iOS: Wait for APNS token and handle it properly
+      if (Platform.isIOS) {
+        // First request permissions
+        await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional:
+              true, // This allows users to choose notification type later
+        );
+
+        // Get APNS token with retry logic
+        String? apnsToken;
+        int retryCount = 0;
+        while (apnsToken == null && retryCount < 3) {
+          apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+          if (apnsToken == null) {
+            retryCount++;
+            await Future.delayed(const Duration(seconds: 2));
+          }
+        }
+
+        // Only proceed if we have an APNS token
+        if (apnsToken == null) {
+          print('Failed to get APNS token after retries');
+          return;
+        }
+      }
+
+      // Now safe to get FCM token
+      String? token = await FirebaseMessaging.instance.getToken();
+      if (token == null) return;
+
+      // Update token in Firestore
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
+      final userData = await userDoc.get();
+
+      if (userData.exists) {
+        final currentToken = userData.data()?['tokenFCM'];
+        if (currentToken != token) {
+          await userDoc.update({'tokenFCM': token});
+        }
+      } else {
+        await userDoc.set({'tokenFCM': token}, SetOptions(merge: true));
+      }
+
+      // Listen to token refresh
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+        _manageFCMToken(uid);
+      });
+    } catch (e) {
+      print('Error managing FCM token: $e');
+    }
+  }
+
   // Root widget of the application
   @override
   Widget build(BuildContext context) {
@@ -79,6 +146,9 @@ class _CFQState extends State<CFQ> {
               if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.hasData && snapshot.data?.uid != null) {
                   final uid = snapshot.data!.uid;
+                  // Add FCM token management here
+                  _manageFCMToken(uid);
+
                   return FutureBuilder<bool>(
                     future: _doesUserExist(uid),
                     builder: (context, userSnapshot) {
