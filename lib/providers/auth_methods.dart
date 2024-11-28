@@ -77,6 +77,11 @@ class AuthMethods {
       // Generate notificationsChannelId
       notificationsChannelId = const Uuid().v1();
 
+      await _firestore
+          .collection('notifications')
+          .doc(notificationsChannelId)
+          .set({'userId': uid});
+
       // Create User model object with the provided data
       model.User user = model.User(
         username: username,
