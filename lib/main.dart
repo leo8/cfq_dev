@@ -1,32 +1,203 @@
+import 'dart:io';
+
+import 'package:cfq_dev/providers/auth_methods.dart';
+import 'package:cfq_dev/utils/logger.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:cfq_dev/providers/user_provider.dart';
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
 import 'package:cfq_dev/screens/login/login_screen_phone.dart';
-import 'package:cfq_dev/utils/styles/colors.dart'; // Custom color definitions
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart'; // Firebase core
-import 'package:flutter/material.dart'; // Flutter material components
-import 'package:provider/provider.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart'; // Splash screen management
-import 'package:cfq_dev/utils/styles/neon_background.dart'; // Neon background template
-import 'package:flutter/services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cfq_dev/utils/styles/colors.dart';
+import 'package:cfq_dev/utils/styles/neon_background.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Message reçu en arrière-plan : ${message.messageId}");
+}
 
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding
-      .ensureInitialized(); // Ensure bindings are initialized
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  FlutterNativeSplash.preserve(
-      widgetsBinding: widgetsBinding); // Preserve splash screen until ready
+  WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase for mobile platforms
+  // Initialiser Firebase
   await Firebase.initializeApp();
 
-  runApp(const CFQ()); // Run the application
+// Configure Firebase Messaging
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  var test = await messaging.getToken();
+  print("@@@@ test $test");
+
+  await messaging.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  );
+  await messaging.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+
+  // Demander la permission de notifications
+  //await requestNotificationPermission();
+  //await requestNotificationPermission2();
+
+  //subscribeToTopic();
+
+  // Initialiser les notifications locales
+  //await initializeNotifications();
+
+  // const platform = MethodChannel('notifications_channel');
+
+  // platform.setMethodCallHandler((call) async {
+  //   if (call.method == 'validate_action') {
+  //     updateIsActiveStatus(true);
+  //   } else if (call.method == 'cancel_action') {
+  //     updateIsActiveStatus(false);
+  //   }
+  // });
+
+  // initNotification();
+
+  // subscribeToTopic();
+  // listenNotifFromFirebase();
+
+  runApp(const CFQ());
+}
+
+void subscribeToTopic() async {
+  await FirebaseMessaging.instance.subscribeToTopic('all_users');
+  // Abonne l'utilisateur au topic 'all_users'
+}
+
+Future<void> requestNotificationPermission2() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Pour iOS
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+    provisional: false,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print("Notifications autorisées !");
+  } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
+    print("Notifications refusées !");
+  }
+}
+
+void initNotification() async {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  //if (currentUser != null) {
+  if (Platform.isIOS) {
+    String? apnsToken = await _firebaseMessaging.getAPNSToken();
+    print("@@@ apnsToken = $apnsToken");
+    if (apnsToken != null) {
+      await _firebaseMessaging.requestPermission();
+      await _firebaseMessaging.subscribeToTopic("all_users");
+    }
+  } else {
+    await _firebaseMessaging.requestPermission();
+  }
+  //}
+}
+
+listenNotifFromFirebase() {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    if (message.notification != null) {
+      // Affiche une notification locale
+      flutterLocalNotificationsPlugin.show(
+        message.hashCode,
+        message.notification!.title,
+        message.notification!.body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily_reminder_channel',
+            'Rappels quotidiens',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+        ),
+      );
+    }
+  });
+}
+
+Future<void> updateIsActiveStatus(bool isActive) async {
+  try {
+    await AuthMethods().updateIsActiveStatus(isActive);
+  } catch (e) {
+    AppLogger.error(e.toString());
+  }
+}
+
+Future<void> requestNotificationPermission() async {
+  PermissionStatus status = await Permission.notification.status;
+
+  if (status.isDenied || status.isRestricted) {
+    status = await Permission.notification.request();
+  }
+
+  if (status.isGranted) {
+    print("Permission de notifications accordée !");
+  } else if (status.isPermanentlyDenied) {
+    print("Permission de notifications refusée de manière permanente !");
+    // Redirige vers les paramètres de l'application
+    // await openAppSettings();
+  } else {
+    print("Permission de notifications refusée.");
+  }
+}
+
+Future<void> initializeNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: onNotificationResponse,
+  );
+}
+
+void onNotificationResponse(NotificationResponse response) {
+  if (response.actionId == 'validate') {
+    print('@@@ L’utilisateur a validé l’élément.');
+  } else if (response.actionId == 'cancel') {
+    print('@@@ L’utilisateur a annulé l’action.');
+  }
 }
 
 class CFQ extends StatefulWidget {
@@ -37,17 +208,44 @@ class CFQ extends StatefulWidget {
 }
 
 class _CFQState extends State<CFQ> {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  late FlutterLocalNotificationsPlugin fltNotification;
+
   @override
   void initState() {
+    _removeSplashScreen();
+    initMessaging();
     super.initState();
-    _removeSplashScreen(); // Remove splash screen after initialization
   }
 
-  // Remove splash screen when app is ready
+  void initMessaging() {
+    var androiInit =
+        const AndroidInitializationSettings("@mipmap/ic_launcher"); //for logo
+    var iosInit = const DarwinInitializationSettings();
+    var initSetting = InitializationSettings(android: androiInit, iOS: iosInit);
+    fltNotification = FlutterLocalNotificationsPlugin();
+    fltNotification.initialize(initSetting);
+
+    var androidDetails = const AndroidNotificationDetails("1", "casden");
+
+    var iosDetails = const DarwinNotificationDetails();
+
+    var generalNotificationDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      if (notification != null) {
+        AndroidNotification? android = message.notification?.android;
+        if (android != null) {
+          fltNotification.show(notification.hashCode, notification.title,
+              notification.body, generalNotificationDetails);
+        }
+      }
+    });
+  }
+
   Future<void> _removeSplashScreen() async {
-    await Future.delayed(
-        const Duration(seconds: 2)); // Optionally delay for some time
-    FlutterNativeSplash.remove(); // Remove the splash screen
+    await Future.delayed(const Duration(seconds: 2));
   }
 
   Future<bool> _doesUserExist(String uid) async {
@@ -56,14 +254,12 @@ class _CFQState extends State<CFQ> {
     return doc.exists;
   }
 
-  // Root widget of the application
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) =>
-              UserProvider(), // Provide UserProvider to the widget tree
+          create: (_) => UserProvider(),
         ),
       ],
       child: MaterialApp(
@@ -115,10 +311,6 @@ class _CFQState extends State<CFQ> {
             },
           ),
         ),
-        routes: {
-          '/login': (context) =>
-              const NeonBackground(child: LoginScreenMobile()),
-        },
       ),
     );
   }
