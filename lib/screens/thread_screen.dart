@@ -204,6 +204,7 @@ class ThreadScreen extends StatelessWidget {
               return ActiveFriendsList(
                 currentUser: currentUser,
                 activeFriends: const [],
+                inactiveFriends: const [],
                 onActiveChanged: (bool newValue) {
                   viewModel.updateIsActiveStatus(newValue);
                 },
@@ -218,9 +219,15 @@ class ThreadScreen extends StatelessWidget {
               );
             }
 
+            final allFriends = friendsSnapshot.data!;
+            final activeFriends = allFriends.where((f) => f.isActive).toList();
+            final inactiveFriends =
+                allFriends.where((f) => !f.isActive).toList();
+
             return ActiveFriendsList(
               currentUser: currentUser,
-              activeFriends: friendsSnapshot.data!,
+              activeFriends: activeFriends,
+              inactiveFriends: inactiveFriends,
               onActiveChanged: (bool newValue) {
                 viewModel.updateIsActiveStatus(newValue);
               },
