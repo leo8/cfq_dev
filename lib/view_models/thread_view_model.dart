@@ -172,7 +172,7 @@ class ThreadViewModel extends ChangeNotifier {
         snapshot = await FirebaseFirestore.instance
             .collection('users')
             .limit(
-                20) // Limit the number of results to avoid performance issues
+                50) // Limit the number of results to avoid performance issues
             .get();
       } else {
         // Existing search logic for non-empty queries
