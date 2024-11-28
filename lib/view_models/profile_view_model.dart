@@ -72,8 +72,13 @@ class ProfileViewModel extends ChangeNotifier {
   List<String> _userNames = [];
   List<String> get userNames => _userNames;
 
+  final _pendingRequestsCountController = BehaviorSubject<int>.seeded(0);
+  Stream<int> get pendingRequestsCountStream =>
+      _pendingRequestsCountController.stream;
+
   @override
   void dispose() {
+    _pendingRequestsCountController.close();
     _disposed = true;
     _userSubscription?.cancel();
     super.dispose();
@@ -82,6 +87,20 @@ class ProfileViewModel extends ChangeNotifier {
   ProfileViewModel({this.userId}) {
     fetchUserData();
     fetchUserNames();
+    // Add listener to user document
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.exists) {
+        final user = model.User.fromSnap(snapshot);
+        final pendingCount = user.requests
+            .where((request) => request.status == model.RequestStatus.pending)
+            .length;
+        _pendingRequestsCountController.add(pendingCount);
+      }
+    });
   }
 
   Future<void> fetchUserData() async {
@@ -1202,6 +1221,13 @@ class ProfileViewModel extends ChangeNotifier {
         AppLogger.debug('No requests found, cleared status');
       }
 
+      if (_currentUser != null) {
+        final pendingCount = _currentUser!.requests
+            .where((request) => request.status == model.RequestStatus.pending)
+            .length;
+        _pendingRequestsCountController.add(pendingCount);
+      }
+
       if (!_disposed) {
         notifyListeners();
       }
@@ -1352,5 +1378,12 @@ class ProfileViewModel extends ChangeNotifier {
         return now.isAfter(publishedDateTime.add(const Duration(hours: 24)));
       }
     }
+  }
+
+  int getPendingRequestsCount() {
+    if (_currentUser == null) return 0;
+    return _currentUser!.requests
+        .where((request) => request.status == model.RequestStatus.pending)
+        .length;
   }
 }
