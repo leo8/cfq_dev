@@ -3,8 +3,9 @@ import '../../models/user.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/string.dart';
-import '../atoms/avatars/custom_avatar.dart';
+import '../atoms/avatars/clickable_avatar.dart';
 import '../atoms/buttons/custom_button.dart';
+import '../../screens/profile_screen.dart';
 
 class RequestCard extends StatelessWidget {
   final Request request;
@@ -27,9 +28,20 @@ class RequestCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              CustomAvatar(
+              ClickableAvatar(
+                userId: request.requesterId,
                 imageUrl: request.requesterProfilePictureUrl,
                 radius: 25,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfileScreen(
+                        userId: request.requesterId,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(width: 12),
               Expanded(
