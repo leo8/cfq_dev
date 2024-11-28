@@ -15,14 +15,20 @@ class CFQInviteesViewModel extends ChangeNotifier {
   String? _currentUserId;
   List<model.User> _followingUp = [];
   List<model.User> _invitees = [];
+  model.User? _currentUser;
 
   Cfq? get cfq => _cfq;
   String? get currentUserId => _currentUserId;
+  model.User? get currentUser => _currentUser;
   List<model.User> get followingUp => _followingUp;
   List<model.User> get invitees => _invitees;
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
+
+  bool isFriend(String userId) {
+    return _currentUserId != null && _currentUser!.friends.contains(userId);
+  }
 
   CFQInviteesViewModel({required this.cfqId}) {
     _init();
@@ -30,6 +36,7 @@ class CFQInviteesViewModel extends ChangeNotifier {
 
   Future<void> _init() async {
     _currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    _currentUser = await _authMethods.getUserDetailsById(_currentUserId!);
     await _fetchCFQDetails();
     await _fetchInvitees();
     _isLoading = false;
