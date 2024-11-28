@@ -888,12 +888,15 @@ class CreateCfqViewModel extends ChangeNotifier
           _selectedTeamInvitees.map((team) => team.name).toList();
       int inviteesCount = _selectedInvitees.length;
       if (_selectedTeamInvitees.length <= 2) {
-        text = '${teamInviteeNames.join(', ')} et $inviteesCount invités';
+        text =
+            '${teamInviteeNames.join(', ')} ($inviteesCount ${inviteesCount == 1 ? 'invité' : 'invités'} en tout)';
+        ;
       } else {
         List<String> teamInviteeNames =
             _selectedTeamInvitees.map((team) => team.name).toList();
         int inviteesCount = _selectedInvitees.length;
-        text = '${teamInviteeNames.join(', ')}... et $inviteesCount invités';
+        text =
+            '${teamInviteeNames.join(', ')}... ($inviteesCount ${inviteesCount == 1 ? 'invité' : 'invités'} en tout)';
       }
     }
 
