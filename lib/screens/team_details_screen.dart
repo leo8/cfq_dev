@@ -26,7 +26,10 @@ class TeamDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TeamDetailsViewModel(team: team),
+      create: (_) => TeamDetailsViewModel(
+        team: team,
+        viewMode: viewMode,
+      ),
       child: Consumer<TeamDetailsViewModel>(
         builder: (context, viewModel, child) {
           return NeonBackground(
