@@ -9,6 +9,7 @@ import '../../utils/styles/text_styles.dart';
 import '../view_models/requests_view_model.dart';
 import '../screens/requests_screen.dart';
 import '../screens/tutorial_screen.dart';
+import '../screens/login/login_screen_phone.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -149,8 +150,12 @@ class ParametersScreen extends StatelessWidget {
             ),
             onTap: () async {
               await viewModel.logOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreenMobile(),
+                ),
+                (route) => false,
+              );
             },
           ),
           const Divider(),
