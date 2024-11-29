@@ -52,3 +52,9 @@ android/app/google-services.json
 android/app/build.gradle
 android/app/src/main/AndroidManifest.xml
 lib/secrets/
+android/app/src/main/kotlin/com/cfq/cfqDev/MainActivity.kt
+
+# ignore because build infos
+file_config_env/dev/.gradle
+file_config_env/stage/.gradle
+file_config_env/main/.gradle

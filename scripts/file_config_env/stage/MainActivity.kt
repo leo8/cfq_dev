@@ -1,4 +1,4 @@
-package com.calvignnac.cfqprod
+package com.cfq.cfqStage
 
 import io.flutter.embedding.android.FlutterActivity
 
