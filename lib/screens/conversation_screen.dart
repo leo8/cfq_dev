@@ -49,6 +49,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ConversationService _conversationService = ConversationService();
   bool _isDisposed = false;
   bool _isLoading = false;
+  final FocusNode _messageFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -81,6 +82,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   void dispose() {
+    _messageFocusNode.dispose();
     _isDisposed = true;
     super.dispose();
   }
@@ -369,9 +371,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
           Expanded(
             child: Container(
               constraints: BoxConstraints(
-                maxHeight: 150, // Approximately 10 lines of text
+                maxHeight: 150,
               ),
               child: TextField(
+                focusNode: _messageFocusNode,
                 controller: _controller,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
@@ -403,6 +406,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               if (_controller.text.isNotEmpty) {
                 _sendMessage(_controller.text);
                 _controller.clear();
+                _messageFocusNode.unfocus();
               }
             },
           ),
