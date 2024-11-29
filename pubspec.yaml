@@ -19,10 +19,12 @@ dependencies:
   cloud_firestore: ^5.4.2
   firebase_auth: ^5.3.0
   firebase_core: ^3.5.0
+  firebase_messaging: ^15.1.5
   firebase_storage: ^12.3.1
   flutter:
     sdk: flutter
   flutter_google_places_sdk: ^0.3.10
+  flutter_local_notifications: ^18.0.1
   flutter_svg: ^2.0.10+1
   fluttertoast: ^8.2.8
   google_fonts: ^6.2.1
@@ -30,6 +32,7 @@ dependencies:
   image_picker: ^1.1.2
   logger: ^2.4.0
   omni_datetime_picker: ^2.0.5
+  permission_handler: ^11.3.1
   provider: ^6.1.2
   rxdart: ^0.28.0
   uuid: ^4.5.0
