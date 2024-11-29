@@ -223,11 +223,10 @@ class _CFQState extends State<CFQ> {
           alert: true,
           badge: true,
           sound: true,
-          provisional:
-              true, // This allows users to choose notification type later
         );
 
         // Get APNS token with retry logic
+
         String? apnsToken;
         int retryCount = 0;
         while (apnsToken == null && retryCount < 3) {
