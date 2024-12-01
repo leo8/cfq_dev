@@ -1,254 +1,184 @@
 import 'dart:io';
-
-import 'package:cfq_dev/providers/auth_methods.dart';
-import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:cfq_dev/providers/user_provider.dart';
-import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
-import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
-import 'package:cfq_dev/responsive/web_screen_layout.dart';
-import 'package:cfq_dev/screens/login/login_screen_phone.dart';
-import 'package:cfq_dev/utils/styles/colors.dart';
-import 'package:cfq_dev/utils/styles/neon_background.dart';
+import 'providers/auth_methods.dart';
+import 'providers/user_provider.dart';
+import 'responsive/mobile_screen_layout.dart';
+import 'responsive/repsonsive_layout_screen.dart';
+import 'responsive/web_screen_layout.dart';
+import 'screens/login/login_screen_phone.dart';
+import 'utils/logger.dart';
+import 'utils/styles/colors.dart';
+import 'utils/styles/neon_background.dart';
 
+// Initialize notification plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("Message reçu en arrière-plan : ${message.messageId}");
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialiser Firebase
-  await Firebase.initializeApp();
-
-// Configure Firebase Messaging
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  await messaging.requestPermission(
-    alert: true,
-    announcement: true,
-    badge: true,
-    carPlay: true,
-    criticalAlert: true,
-    provisional: true,
-    sound: true,
-  );
-  await messaging.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
-    badge: true,
-    sound: true,
-  );
-
-  runApp(const CFQ());
-}
-
-void subscribeToTopic() async {
-  await FirebaseMessaging.instance.subscribeToTopic('all_users');
-  // Abonne l'utilisateur au topic 'all_users'
-}
-
-Future<void> requestNotificationPermission2() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  // Pour iOS
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-    provisional: false,
-  );
-
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print("Notifications autorisées !");
-  } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
-    print("Notifications refusées !");
-  }
-}
-
-void initNotification() async {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  //if (currentUser != null) {
-  if (Platform.isIOS) {
-    String? apnsToken = await _firebaseMessaging.getAPNSToken();
-    print("@@@ apnsToken = $apnsToken");
-    if (apnsToken != null) {
-      await _firebaseMessaging.requestPermission();
-      await _firebaseMessaging.subscribeToTopic("all_users");
-    }
-  } else {
-    await _firebaseMessaging.requestPermission();
-  }
-  //}
-}
-
-listenNotifFromFirebase() {
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (message.notification != null) {
-      // Affiche une notification locale
-      flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification!.title,
-        message.notification!.body,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily_reminder_channel',
-            'Rappels quotidiens',
-            importance: Importance.max,
-            priority: Priority.high,
-          ),
-        ),
-      );
+Future<void> _setupNotificationListener() async {
+  const MethodChannel _channel = MethodChannel("notifications_channel");
+  final authMethods = AuthMethods();
+  _channel.setMethodCallHandler((call) async {
+    if (call.method == "validate_action") {
+      authMethods.updateIsActiveStatus(true);
+    } else if (call.method == "cancel_action") {
+      authMethods.updateIsActiveStatus(false);
     }
   });
 }
 
-Future<void> updateIsActiveStatus(bool isActive) async {
-  try {
-    await AuthMethods().updateIsActiveStatus(isActive);
-  } catch (e) {
-    AppLogger.error(e.toString());
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Background message received: ${message}");
+  final String? eventType = message.data['event'];
+  if (eventType == "daily_ask_turn") {
+    print("Daily ask turn event reçu");
+    final MethodChannel _channel = const MethodChannel("notifications_channel");
+    await _channel.invokeMethod("scheduleNotification");
+  }
+  if (eventType == "daily_ask_turn_already") {
+    print("Daily ask turn event AGAIN reçu");
+    final MethodChannel _channel = const MethodChannel("notifications_channel");
+    await _channel.invokeMethod("scheduleNotification");
   }
 }
 
-Future<void> requestNotificationPermission() async {
-  PermissionStatus status = await Permission.notification.status;
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
-  if (status.isDenied || status.isRestricted) {
-    status = await Permission.notification.request();
-  }
+  // Request notification permissions and configure Firebase Messaging
+  await _initializeFirebaseMessaging();
 
-  if (status.isGranted) {
-    print("Permission de notifications accordée !");
-  } else if (status.isPermanentlyDenied) {
-    print("Permission de notifications refusée de manière permanente !");
-    // Redirige vers les paramètres de l'application
-    // await openAppSettings();
+  runApp(const CFQ());
+}
+
+Future<void> _initializeFirebaseMessaging() async {
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  await messaging.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  initSubscribeToTopic();
+
+  _setupNotificationListener();
+}
+
+void initSubscribeToTopic() async {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  if (Platform.isIOS) {
+    String? apnsToken = await _firebaseMessaging.getAPNSToken();
+    if (apnsToken != null) {
+      await _firebaseMessaging.requestPermission();
+      await FirebaseMessaging.instance.subscribeToTopic("daily_ask_turn");
+      await FirebaseMessaging.instance
+          .subscribeToTopic("broadcast_notification");
+    }
   } else {
-    print("Permission de notifications refusée.");
-  }
-}
-
-Future<void> initializeNotifications() async {
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings(
-    requestAlertPermission: true,
-    requestBadgePermission: true,
-    requestSoundPermission: true,
-  );
-
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
-  );
-
-  await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-    onDidReceiveNotificationResponse: onNotificationResponse,
-  );
-}
-
-void onNotificationResponse(NotificationResponse response) {
-  if (response.actionId == 'validate') {
-    print('@@@ L’utilisateur a validé l’élément.');
-  } else if (response.actionId == 'cancel') {
-    print('@@@ L’utilisateur a annulé l’action.');
+    await _firebaseMessaging.requestPermission();
   }
 }
 
 class CFQ extends StatefulWidget {
-  const CFQ({super.key});
+  const CFQ({Key? key}) : super(key: key);
 
   @override
   State<CFQ> createState() => _CFQState();
 }
 
 class _CFQState extends State<CFQ> {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
   late FlutterLocalNotificationsPlugin fltNotification;
 
   @override
   void initState() {
-    _removeSplashScreen();
-    initMessaging();
     super.initState();
+    _initializeLocalNotifications();
   }
 
-  void initMessaging() {
-    var androiInit =
-        const AndroidInitializationSettings("@mipmap/ic_launcher"); //for logo
-    var iosInit = const DarwinInitializationSettings();
-    var initSetting = InitializationSettings(android: androiInit, iOS: iosInit);
+  Future<void> _initializeLocalNotifications() async {
+    const AndroidInitializationSettings androidInitSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosInitSettings =
+        DarwinInitializationSettings();
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidInitSettings,
+      iOS: iosInitSettings,
+    );
+
     fltNotification = FlutterLocalNotificationsPlugin();
-    fltNotification.initialize(initSetting);
+    await fltNotification.initialize(initSettings);
 
-    var androidDetails = const AndroidNotificationDetails("1", "casden");
-
-    var iosDetails = const DarwinNotificationDetails();
-
-    var generalNotificationDetails =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      if (notification != null) {
-        AndroidNotification? android = message.notification?.android;
-        if (android != null) {
-          fltNotification.show(notification.hashCode, notification.title,
-              notification.body, generalNotificationDetails);
-        }
-      }
+      _showNotification(message);
     });
+  }
+
+  Future<void> _showNotification(RemoteMessage message) async {
+    final notification = message.notification;
+    if (notification != null) {
+      const androidDetails = AndroidNotificationDetails(
+        '1',
+        'cfq_notifications',
+        importance: Importance.high,
+        priority: Priority.high,
+      );
+      const iosDetails = DarwinNotificationDetails();
+      const generalDetails = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      await fltNotification.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        generalDetails,
+      );
+    }
   }
 
   Future<void> _manageFCMToken(String uid) async {
     try {
-      // For iOS: Wait for APNS token and handle it properly
+      final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+      // For iOS: Ensure APNS token is retrieved
       if (Platform.isIOS) {
-        // First request permissions
-        await FirebaseMessaging.instance.requestPermission(
+        await messaging.requestPermission(
           alert: true,
           badge: true,
           sound: true,
         );
 
-        // Get APNS token with retry logic
-
-        String? apnsToken;
-        int retryCount = 0;
-        while (apnsToken == null && retryCount < 3) {
-          apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-          if (apnsToken == null) {
-            retryCount++;
-            await Future.delayed(const Duration(seconds: 2));
-          }
-        }
-
-        // Only proceed if we have an APNS token
+        String? apnsToken = await messaging.getAPNSToken();
         if (apnsToken == null) {
-          print('Failed to get APNS token after retries');
+          print('Failed to retrieve APNS token.');
           return;
         }
       }
 
-      // Now safe to get FCM token
-      String? token = await FirebaseMessaging.instance.getToken();
+      // Get FCM token and update Firestore
+      String? token = await messaging.getToken();
       if (token == null) return;
 
-      // Update token in Firestore
       final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
       final userData = await userDoc.get();
 
@@ -270,27 +200,15 @@ class _CFQState extends State<CFQ> {
     }
   }
 
-  Future<void> _removeSplashScreen() async {
-    await Future.delayed(const Duration(seconds: 2));
-  }
-
-  Future<bool> _doesUserExist(String uid) async {
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return doc.exists;
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => UserProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'cfq_dev',
+        title: 'CFQ',
         theme: ThemeData.dark().copyWith(
           scaffoldBackgroundColor: CustomColor.transparent,
         ),
@@ -340,5 +258,11 @@ class _CFQState extends State<CFQ> {
         ),
       ),
     );
+  }
+
+  Future<bool> _doesUserExist(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    return doc.exists;
   }
 }
