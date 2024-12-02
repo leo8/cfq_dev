@@ -119,7 +119,7 @@ exports.onNotificationCreated = functions
         const content = newNotification.content;
         switch (newNotification.type) {
           case "message": {
-            title = `Messages sur ${content.conversationName}`;
+            title = `Messages sur ${content.conversationName || "CFQ ?"}`;
             const words = content.messageContent.split(" ");
             const messagePreview = words.length > 3 ?
                 words.slice(0, 3).join(" ") + "..." :
@@ -150,8 +150,7 @@ exports.onNotificationCreated = functions
             break;
           case "followUp":
             title = content.cfqName || "CFQ ?";
-            body = `${content.followerUsername} suit ton 
-                    ${content.cfqName || "CFQ"}`;
+            body = `${content.followerUsername} suit ${content.cfqName || "CFQ"}`;
             break;
           case "acceptedTeamRequest":
             title = content.teamName;

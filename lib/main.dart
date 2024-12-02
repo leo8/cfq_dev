@@ -2,13 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'providers/auth_methods.dart';
 import 'providers/user_provider.dart';
 import 'responsive/mobile_screen_layout.dart';
@@ -36,15 +34,15 @@ Future<void> _setupNotificationListener() async {
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Background message received: ${message}");
+  AppLogger.debug("Background message received: ${message}");
   final String? eventType = message.data['event'];
   if (eventType == "daily_ask_turn") {
-    print("Daily ask turn event reçu");
+    AppLogger.debug("Daily ask turn event reçu");
     final MethodChannel _channel = const MethodChannel("notifications_channel");
     await _channel.invokeMethod("scheduleNotification");
   }
   if (eventType == "daily_ask_turn_already") {
-    print("Daily ask turn event AGAIN reçu");
+    AppLogger.debug("Daily ask turn event AGAIN reçu");
     final MethodChannel _channel = const MethodChannel("notifications_channel");
     await _channel.invokeMethod("scheduleNotification");
   }
@@ -63,6 +61,7 @@ Future<void> main() async {
 Future<void> _initializeFirebaseMessaging() async {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+  // Ensure the background message handler is set only once
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await messaging.requestPermission(
@@ -77,23 +76,27 @@ Future<void> _initializeFirebaseMessaging() async {
     sound: true,
   );
 
-  initSubscribeToTopic();
+  // Ensure topic subscription is done only once
+  initSubscribeToTopic(messaging);
 
-  _setupNotificationListener();
+  // Ensure notification listener is set up only once
+  await _setupNotificationListener();
 }
 
-void initSubscribeToTopic() async {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+void initSubscribeToTopic(FirebaseMessaging messaging) async {
+  final FirebaseMessaging messaging = FirebaseMessaging.instance;
   if (Platform.isIOS) {
-    String? apnsToken = await _firebaseMessaging.getAPNSToken();
+    String? apnsToken = await messaging.getAPNSToken();
     if (apnsToken != null) {
-      await _firebaseMessaging.requestPermission();
-      await FirebaseMessaging.instance.subscribeToTopic("daily_ask_turn");
-      await FirebaseMessaging.instance
-          .subscribeToTopic("broadcast_notification");
+      await messaging.requestPermission();
+      await messaging.subscribeToTopic("daily_ask_turn");
+      await messaging.subscribeToTopic("broadcast_notification");
     }
   } else {
-    await _firebaseMessaging.requestPermission();
+    await messaging.requestPermission();
+    // Subscribe to topics only if not already subscribed
+    await messaging.subscribeToTopic("daily_ask_turn");
+    await messaging.subscribeToTopic("broadcast_notification");
   }
 }
 
@@ -127,8 +130,11 @@ class _CFQState extends State<CFQ> {
     fltNotification = FlutterLocalNotificationsPlugin();
     await fltNotification.initialize(initSettings);
 
+    // Only show notification if the app is in the background or terminated
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _showNotification(message);
+      if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
+        _showNotification(message);
+      }
     });
   }
 
@@ -170,7 +176,7 @@ class _CFQState extends State<CFQ> {
 
         String? apnsToken = await messaging.getAPNSToken();
         if (apnsToken == null) {
-          print('Failed to retrieve APNS token.');
+          AppLogger.debug('Failed to retrieve APNS token.');
           return;
         }
       }
@@ -196,7 +202,7 @@ class _CFQState extends State<CFQ> {
         _manageFCMToken(uid);
       });
     } catch (e) {
-      print('Error managing FCM token: $e');
+      AppLogger.debug('Error managing FCM token: $e');
     }
   }
 
