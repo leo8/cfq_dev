@@ -60,6 +60,7 @@ class CreateTurnScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: NeonBackground(
                 child: Scaffold(
+                  resizeToAvoidBottomInset: true,
                   backgroundColor:
                       CustomColor.transparent, // Sets the background color
                   appBar: AppBar(
@@ -104,9 +105,11 @@ class CreateTurnScreen extends StatelessWidget {
                     ],
                   ),
                   body: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal:
-                            20), // Adds padding to the sides of the form
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                    ),
                     child: TurnForm(
                       currentUser: viewModel.currentUser!,
                       image: viewModel.turnImage,

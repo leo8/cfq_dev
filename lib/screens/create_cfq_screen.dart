@@ -59,6 +59,7 @@ class CreateCfqScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: NeonBackground(
                 child: Scaffold(
+                  resizeToAvoidBottomInset: true,
                   backgroundColor: CustomColor.transparent,
                   appBar: AppBar(
                     toolbarHeight: 40,
@@ -102,7 +103,11 @@ class CreateCfqScreen extends StatelessWidget {
                     ],
                   ),
                   body: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                    ),
                     child: CfqForm(
                       currentUser: viewModel.currentUser!,
                       image: viewModel.cfqImage,
