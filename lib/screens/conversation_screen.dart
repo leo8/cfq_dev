@@ -137,7 +137,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   children: [
                     Text(
                       widget.eventName,
-                      style: CustomTextStyle.title1,
+                      style: CustomTextStyle.title1.copyWith(fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
