@@ -12,6 +12,7 @@ import '../../utils/styles/neon_background.dart';
 import '../../utils/utils.dart';
 import '../utils/loading_overlay.dart';
 import '../../utils/date_time_utils.dart';
+import '../../utils/styles/text_styles.dart';
 
 /// Screen for creating a new TURN event.
 class CreateTurnScreen extends StatelessWidget {
@@ -60,13 +61,18 @@ class CreateTurnScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: NeonBackground(
                 child: Scaffold(
+                  resizeToAvoidBottomInset: true,
                   backgroundColor:
                       CustomColor.transparent, // Sets the background color
                   appBar: AppBar(
-                    toolbarHeight: 40,
+                    toolbarHeight: 60,
                     automaticallyImplyLeading: false,
                     backgroundColor: CustomColor.customBlack,
                     surfaceTintColor: CustomColor.customBlack,
+                    title: Text(
+                      CustomString.turnCapital,
+                      style: CustomTextStyle.title1,
+                    ),
                     actions: [
                       IconButton(
                         icon: CustomIcon.close,
@@ -104,9 +110,11 @@ class CreateTurnScreen extends StatelessWidget {
                     ],
                   ),
                   body: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal:
-                            20), // Adds padding to the sides of the form
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                    ),
                     child: TurnForm(
                       currentUser: viewModel.currentUser!,
                       image: viewModel.turnImage,

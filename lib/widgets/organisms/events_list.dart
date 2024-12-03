@@ -124,7 +124,7 @@ class _EventsListState extends State<EventsList> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: events.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 15),
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final event = events[index];
                 final documentId = event.id;

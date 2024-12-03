@@ -53,7 +53,7 @@ class CFQHeader extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 style: CustomTextStyle.hugeTitle.copyWith(
-                  fontSize: 28,
+                  fontSize: 18,
                   letterSpacing: 1.4,
                 ),
                 children: [

@@ -25,34 +25,35 @@ class NotificationsScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: CustomColor.customBlack,
             appBar: AppBar(
-              toolbarHeight: 40,
+              toolbarHeight: 60,
               backgroundColor: CustomColor.customBlack,
               surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
                 icon: CustomIcon.arrowBack,
-                onPressed: () async {
-                  // First reset the unread count without showing loading state
-                  await viewModel.resetUnreadCount();
+                onPressed: viewModel.isLoading
+                    ? () {}
+                    : () async {
+                        // First show loading state
+                        await viewModel.setLoadingState(true);
 
-                  // Only pop if the context is still mounted
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
+                        // Reset the unread count
+                        await viewModel.resetUnreadCount();
+
+                        // Hide loading state and pop if context is still mounted
+                        if (context.mounted) {
+                          await viewModel.setLoadingState(false);
+                          Navigator.of(context).pop();
+                        }
+                      },
+              ),
+              title: Text(
+                CustomString.notificationsCapital,
+                style: CustomTextStyle.bigBody1,
               ),
             ),
             body: Column(
               children: [
-                Center(
-                  child: Text(
-                    CustomString.notificationsCapital,
-                    style: CustomTextStyle.body1.copyWith(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Expanded(
                   child: LoadingOverlay(
                     isLoading: viewModel.isLoading,

@@ -3,7 +3,6 @@ import 'package:cfq_dev/widgets/atoms/texts/bordered_icon_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../utils/styles/string.dart';
-import '../../utils/styles/text_styles.dart';
 import '../../utils/styles/icons.dart';
 import '../atoms/avatars/profile_image_avatar.dart';
 import '../atoms/dates/custom_date_field.dart';
@@ -209,16 +208,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Center(
-            child: Text(
-              CustomString.myProfileCapital,
-              style: CustomTextStyle.body1.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 10),
           _buildProfileImage(),
           const SizedBox(height: 25),
           BorderedIconTextField(

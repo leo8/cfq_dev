@@ -26,7 +26,7 @@ class ParametersScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: 60,
         backgroundColor: CustomColor.customBlack,
         surfaceTintColor: CustomColor.customBlack,
         leading: IconButton(
@@ -35,24 +35,21 @@ class ParametersScreen extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
+        title: Text(
+          CustomString.myAccountCapital,
+          style: CustomTextStyle.bigBody1,
+        ),
       ),
       body: ListView(
         children: [
-          Center(
-            child: Text(
-              CustomString.myAccountCapital,
-              style: CustomTextStyle.body1
-                  .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
           const SizedBox(
-            height: 25,
+            height: 10,
           ),
           const Divider(),
           ListTile(
             leading: CustomIcon.profile,
             title: Text(
-              CustomString.editProfile,
+              CustomString.myProfile,
               style: CustomTextStyle.body1,
             ),
             onTap: () {

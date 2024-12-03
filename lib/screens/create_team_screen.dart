@@ -24,7 +24,7 @@ class CreateTeamScreen extends StatelessWidget {
           child: Scaffold(
             backgroundColor: CustomColor.customBlack,
             appBar: AppBar(
-              toolbarHeight: 40,
+              toolbarHeight: 60,
               automaticallyImplyLeading: false,
               backgroundColor: CustomColor.customBlack,
               surfaceTintColor: CustomColor.customBlack,
@@ -34,6 +34,10 @@ class CreateTeamScreen extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
+              title: Text(
+                CustomString.newTeamCapital,
+                style: CustomTextStyle.title1,
+              ),
             ),
             body: Consumer<CreateTeamViewModel>(
               builder: (context, viewModel, child) {
@@ -62,17 +66,11 @@ class CreateTeamScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'NOUVELLE TEAM',
-                              style:
-                                  CustomTextStyle.title3.copyWith(fontSize: 28),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Stack(
                               children: [
                                 CircleAvatar(
-                                  radius: 100,
+                                  radius: 75,
                                   backgroundColor: viewModel.teamImage != null
                                       ? null
                                       : CustomColor.customBlack,
