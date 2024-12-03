@@ -177,13 +177,6 @@ class _CFQState extends State<CFQ> {
 
     fltNotification = FlutterLocalNotificationsPlugin();
     await fltNotification.initialize(initSettings);
-
-    // Only show notification if the app is in the background or terminated
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
-        _showNotification(message);
-      }
-    });
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
@@ -256,8 +249,30 @@ class _CFQState extends State<CFQ> {
 
   Future<void> _initializeMessageHandling() async {
     // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _processMessage(message);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      AppLogger.debug("Foreground message received: ${message}");
+
+      // Handle data messages
+      if (message.data.isNotEmpty) {
+        final String? eventType = message.data['event'];
+        if (eventType == "daily_ask_turn") {
+          AppLogger.debug("Daily ask turn event received in foreground");
+          final MethodChannel _channel =
+              const MethodChannel("notifications_channel");
+          await _channel.invokeMethod("scheduleNotification");
+        }
+        if (eventType == "daily_ask_turn_already") {
+          AppLogger.debug("Daily ask turn AGAIN event received in foreground");
+          final MethodChannel _channel =
+              const MethodChannel("notifications_channel");
+          await _channel.invokeMethod("scheduleNotification");
+        }
+      }
+
+      // Handle notification messages
+      if (message.notification != null) {
+        await _showNotification(message);
+      }
     });
 
     // Handle message open events
