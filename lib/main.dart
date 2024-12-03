@@ -34,17 +34,50 @@ Future<void> _setupNotificationListener() async {
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
   AppLogger.debug("Background message received: ${message}");
-  final String? eventType = message.data['event'];
-  if (eventType == "daily_ask_turn") {
-    AppLogger.debug("Daily ask turn event reçu");
-    final MethodChannel _channel = const MethodChannel("notifications_channel");
-    await _channel.invokeMethod("scheduleNotification");
+
+  // Handle both data and notification messages
+  if (message.data.isNotEmpty) {
+    final String? eventType = message.data['event'];
+    if (eventType == "daily_ask_turn") {
+      AppLogger.debug("Daily ask turn event reçu");
+      final MethodChannel _channel =
+          const MethodChannel("notifications_channel");
+      await _channel.invokeMethod("scheduleNotification");
+    }
+    if (eventType == "daily_ask_turn_already") {
+      AppLogger.debug("Daily ask turn event AGAIN reçu");
+      final MethodChannel _channel =
+          const MethodChannel("notifications_channel");
+      await _channel.invokeMethod("scheduleNotification");
+    }
   }
-  if (eventType == "daily_ask_turn_already") {
-    AppLogger.debug("Daily ask turn event AGAIN reçu");
-    final MethodChannel _channel = const MethodChannel("notifications_channel");
-    await _channel.invokeMethod("scheduleNotification");
+
+  // Handle notification payload if present
+  if (message.notification != null) {
+    // You might want to show a local notification here
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    const androidDetails = AndroidNotificationDetails(
+      '1',
+      'cfq_notifications',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const iosDetails = DarwinNotificationDetails();
+    const generalDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      message.notification.hashCode,
+      message.notification?.title,
+      message.notification?.body,
+      generalDetails,
+    );
   }
 }
 
@@ -61,42 +94,56 @@ Future<void> main() async {
 Future<void> _initializeFirebaseMessaging() async {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  // Ensure the background message handler is set only once
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+  // Request permissions first
   await messaging.requestPermission(
     alert: true,
     badge: true,
     sound: true,
   );
 
+  // Set foreground notification options
   await messaging.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  // Ensure topic subscription is done only once
-  initSubscribeToTopic(messaging);
+  // Subscribe to topics with retry logic
+  await _subscribeToTopicsWithRetry(messaging);
 
-  // Ensure notification listener is set up only once
+  // Set up background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await _setupNotificationListener();
 }
 
-void initSubscribeToTopic(FirebaseMessaging messaging) async {
-  final FirebaseMessaging messaging = FirebaseMessaging.instance;
-  if (Platform.isIOS) {
-    String? apnsToken = await messaging.getAPNSToken();
-    if (apnsToken != null) {
-      await messaging.requestPermission();
-      await messaging.subscribeToTopic("daily_ask_turn");
-      await messaging.subscribeToTopic("broadcast_notification");
+Future<void> _subscribeToTopicsWithRetry(FirebaseMessaging messaging,
+    {int maxRetries = 3}) async {
+  int retryCount = 0;
+  bool subscribed = false;
+
+  while (!subscribed && retryCount < maxRetries) {
+    try {
+      if (Platform.isIOS) {
+        String? apnsToken = await messaging.getAPNSToken();
+        if (apnsToken != null) {
+          await messaging.subscribeToTopic("daily_ask_turn");
+          await messaging.subscribeToTopic("broadcast_notification");
+          subscribed = true;
+        }
+      } else {
+        await messaging.subscribeToTopic("daily_ask_turn");
+        await messaging.subscribeToTopic("broadcast_notification");
+        subscribed = true;
+      }
+    } catch (e) {
+      retryCount++;
+      await Future.delayed(Duration(seconds: 2 * retryCount));
     }
-  } else {
-    await messaging.requestPermission();
-    // Subscribe to topics only if not already subscribed
-    await messaging.subscribeToTopic("daily_ask_turn");
-    await messaging.subscribeToTopic("broadcast_notification");
+  }
+
+  if (!subscribed) {
+    AppLogger.debug('Failed to subscribe to topics after $maxRetries attempts');
   }
 }
 
@@ -114,6 +161,7 @@ class _CFQState extends State<CFQ> {
   void initState() {
     super.initState();
     _initializeLocalNotifications();
+    _initializeMessageHandling();
   }
 
   Future<void> _initializeLocalNotifications() async {
@@ -204,6 +252,60 @@ class _CFQState extends State<CFQ> {
     } catch (e) {
       AppLogger.debug('Error managing FCM token: $e');
     }
+  }
+
+  Future<void> _initializeMessageHandling() async {
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _processMessage(message);
+    });
+
+    // Handle message open events
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _processMessage(message);
+    });
+  }
+
+  Future<void> _processMessage(RemoteMessage message) async {
+    // Handle data messages
+    if (message.data.isNotEmpty) {
+      final String? event = message.data['event'];
+      if (event == 'daily_ask_turn') {
+        await _showCustomNotification(
+          title: 'CFQ ?',
+          body: message.data['message'] ?? 'Ca turn ce soir ?',
+        );
+      }
+    }
+
+    // Handle notification messages
+    if (message.notification != null) {
+      await _showNotification(message);
+    }
+  }
+
+  Future<void> _showCustomNotification({
+    required String title,
+    required String body,
+  }) async {
+    const androidDetails = AndroidNotificationDetails(
+      '1',
+      'cfq_notifications',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const iosDetails = DarwinNotificationDetails();
+    const generalDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await fltNotification.show(
+      DateTime.now().millisecondsSinceEpoch.hashCode,
+      title,
+      body,
+      generalDetails,
+    );
   }
 
   @override
