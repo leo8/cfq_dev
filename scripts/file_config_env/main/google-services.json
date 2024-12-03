@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:451535553993:android:4b1d2133c5a9ac2e095418",
         "android_client_info": {
-          "package_name": "com.calvignnac.cfqprod"
+          "package_name": "com.cfq.cfqProd"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "451535553993-ljrv70ifa96j2qo5oeatglfbp1q56jtb.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.calvignnac.cfqprod"
+                "bundle_id": "com.cfq.cfqProd"
               }
             }
           ]
