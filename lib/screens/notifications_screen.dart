@@ -30,15 +30,21 @@ class NotificationsScreen extends StatelessWidget {
               surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
                 icon: CustomIcon.arrowBack,
-                onPressed: () async {
-                  // First reset the unread count without showing loading state
-                  await viewModel.resetUnreadCount();
+                onPressed: viewModel.isLoading
+                    ? () {}
+                    : () async {
+                        // First show loading state
+                        await viewModel.setLoadingState(true);
 
-                  // Only pop if the context is still mounted
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
+                        // Reset the unread count
+                        await viewModel.resetUnreadCount();
+
+                        // Hide loading state and pop if context is still mounted
+                        if (context.mounted) {
+                          await viewModel.setLoadingState(false);
+                          Navigator.of(context).pop();
+                        }
+                      },
               ),
             ),
             body: Column(
