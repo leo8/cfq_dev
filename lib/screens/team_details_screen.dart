@@ -26,20 +26,22 @@ class TeamDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TeamDetailsViewModel(
-        team: team,
-        viewMode: viewMode,
-      ),
+      create: (_) => TeamDetailsViewModel(team: team),
       child: Consumer<TeamDetailsViewModel>(
         builder: (context, viewModel, child) {
           return NeonBackground(
             child: Scaffold(
               backgroundColor: CustomColor.transparent,
               appBar: AppBar(
-                toolbarHeight: 40,
+                toolbarHeight: 60,
                 backgroundColor: CustomColor.customBlack,
                 surfaceTintColor: CustomColor.customBlack,
                 elevation: 0,
+                title: Text(
+                  team.name,
+                  style: CustomTextStyle.title1,
+                ),
+                centerTitle: true,
                 leading: IconButton(
                   icon: CustomIcon.arrowBack,
                   onPressed: () {

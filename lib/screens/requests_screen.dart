@@ -20,9 +20,13 @@ class RequestsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: 60,
         backgroundColor: CustomColor.customBlack,
         surfaceTintColor: CustomColor.customBlack,
+        title: Text(
+          CustomString.requestsCapital,
+          style: CustomTextStyle.bigBody1,
+        ),
         leading: IconButton(
           icon: CustomIcon.arrowBack,
           onPressed: () {
@@ -32,16 +36,7 @@ class RequestsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Center(
-            child: Text(
-              CustomString.requestsCapital,
-              style: CustomTextStyle.body1.copyWith(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 10),
           const Divider(
             color: CustomColor.customDarkGrey,
             height: 1,

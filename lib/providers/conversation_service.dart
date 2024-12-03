@@ -263,7 +263,7 @@ class ConversationService {
     }
 
     await _firestore.collection('conversations').doc(channelId).set({
-      'name': eventName,
+      'name': eventName.toUpperCase(),
       'imageUrl': eventPicture,
       'members': members,
       'organizerName': organizerName,

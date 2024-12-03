@@ -6,7 +6,6 @@ import '../atoms/image_selectors/event_image_selector.dart';
 import '../../models/user.dart' as model;
 import '../atoms/texts/bordered_icon_text_field.dart';
 import '../atoms/texts/cfq_bordered_icon_text_field.dart';
-import '../../utils/styles/text_styles.dart';
 import '../atoms/texts/custom_text_field.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/icons.dart';
@@ -86,13 +85,7 @@ class CfqForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              CustomString.cfqCapital,
-              style: CustomTextStyle.title1,
-            ),
-          ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           Center(
             child:
                 EventImageSelector(image: image, onSelectImage: onSelectImage),

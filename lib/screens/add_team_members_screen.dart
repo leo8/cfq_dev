@@ -25,8 +25,9 @@ class AddTeamMembersScreen extends StatelessWidget {
         child: Consumer<AddTeamMembersViewModel>(
           builder: (context, viewModel, child) {
             return Scaffold(
+              backgroundColor: CustomColor.customBlack,
               appBar: AppBar(
-                toolbarHeight: 40,
+                toolbarHeight: 60,
                 backgroundColor: CustomColor.customBlack,
                 surfaceTintColor: CustomColor.customBlack,
                 elevation: 0,
@@ -34,13 +35,17 @@ class AddTeamMembersScreen extends StatelessWidget {
                   icon: CustomIcon.arrowBack,
                   onPressed: () => Navigator.of(context).pop(true),
                 ),
+                title: Text(
+                  CustomString.teamMembers,
+                  style: CustomTextStyle.bigBody1,
+                ),
               ),
               body: viewModel.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ListView(
                       children: [
                         _buildMembersList(
-                          CustomString.teamMembers,
+                          '',
                           viewModel.teamMembers,
                           viewModel,
                           true,

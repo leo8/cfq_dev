@@ -124,7 +124,7 @@ class _ProfileContentState extends State<ProfileContent>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(
-          height: 90,
+          height: 80,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +397,7 @@ class _ProfileContentState extends State<ProfileContent>
             ),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         if (!widget.isCurrentUser && !widget.isFriend)
           Column(
             children: [
@@ -434,7 +434,7 @@ class _ProfileContentState extends State<ProfileContent>
                   ),
                 ],
               ),
-              const SizedBox(height: 150),
+              const SizedBox(height: 140),
               Center(
                 child: Container(
                   width: 150,

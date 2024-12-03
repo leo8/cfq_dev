@@ -12,6 +12,7 @@ import '../utils/utils.dart';
 import '../utils/date_time_utils.dart';
 import '../utils/loading_overlay.dart';
 import '../models/cfq_event_model.dart';
+import '../utils/styles/text_styles.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
@@ -59,13 +60,16 @@ class CreateCfqScreen extends StatelessWidget {
               isLoading: viewModel.isLoading,
               child: NeonBackground(
                 child: Scaffold(
-                  resizeToAvoidBottomInset: true,
                   backgroundColor: CustomColor.transparent,
                   appBar: AppBar(
                     toolbarHeight: 40,
                     automaticallyImplyLeading: false,
                     backgroundColor: CustomColor.customBlack,
                     surfaceTintColor: CustomColor.customBlack,
+                    title: Text(
+                      CustomString.cfqCapital,
+                      style: CustomTextStyle.title1,
+                    ),
                     actions: [
                       IconButton(
                         icon: CustomIcon.close,
@@ -103,11 +107,7 @@ class CreateCfqScreen extends StatelessWidget {
                     ],
                   ),
                   body: Padding(
-                    padding: EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: CfqForm(
                       currentUser: viewModel.currentUser!,
                       image: viewModel.cfqImage,

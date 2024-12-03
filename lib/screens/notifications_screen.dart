@@ -25,7 +25,7 @@ class NotificationsScreen extends StatelessWidget {
           return Scaffold(
             backgroundColor: CustomColor.customBlack,
             appBar: AppBar(
-              toolbarHeight: 40,
+              toolbarHeight: 60,
               backgroundColor: CustomColor.customBlack,
               surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
@@ -46,19 +46,14 @@ class NotificationsScreen extends StatelessWidget {
                         }
                       },
               ),
+              title: Text(
+                CustomString.notificationsCapital,
+                style: CustomTextStyle.bigBody1,
+              ),
             ),
             body: Column(
               children: [
-                Center(
-                  child: Text(
-                    CustomString.notificationsCapital,
-                    style: CustomTextStyle.body1.copyWith(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Expanded(
                   child: LoadingOverlay(
                     isLoading: viewModel.isLoading,

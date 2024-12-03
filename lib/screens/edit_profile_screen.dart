@@ -3,6 +3,8 @@ import '../view_models/profile_view_model.dart';
 import '../widgets/organisms/profile_edit_form.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/colors.dart';
+import '../../utils/styles/text_styles.dart';
+import '../../utils/styles/string.dart';
 
 class EditProfileScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -14,7 +16,7 @@ class EditProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CustomColor.customBlack, // Sets the background color
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: 60,
         automaticallyImplyLeading: false,
         backgroundColor: CustomColor.customBlack,
         surfaceTintColor: CustomColor.customBlack,
@@ -24,6 +26,10 @@ class EditProfileScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
+        title: Text(
+          CustomString.myProfileCapital,
+          style: CustomTextStyle.bigBody1,
+        ),
       ),
       body: Builder(
         builder: (context) {

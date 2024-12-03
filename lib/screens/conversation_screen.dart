@@ -95,13 +95,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Scaffold(
           backgroundColor: CustomColor.transparent,
           appBar: AppBar(
-            toolbarHeight: 40,
+            toolbarHeight: 35,
             automaticallyImplyLeading: false,
             backgroundColor: CustomColor.customBlack,
             surfaceTintColor: CustomColor.customBlack,
             actions: [
               IconButton(
-                icon: CustomIcon.close,
+                icon: CustomIcon.close.copyWith(size: 25),
                 onPressed: _resetUnreadAndPop,
               ),
             ],
@@ -136,18 +136,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 Row(
                   children: [
                     Text(
-                      widget.eventName,
-                      style: CustomTextStyle.title1.copyWith(fontSize: 16),
+                      widget.eventName.toUpperCase(),
+                      style: CustomTextStyle.title3,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                    ),
-                    const SizedBox(width: 3),
-                    IconButton(
-                      icon: const Icon(Icons.more_horiz,
-                          color: CustomColor.customPurple),
-                      onPressed: () => _showOptions(context),
-                      constraints:
-                          const BoxConstraints.tightFor(width: 40, height: 40),
                     ),
                   ],
                 ),
@@ -160,6 +152,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(widget.organizerName, style: CustomTextStyle.body1),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.more_horiz,
+                          color: CustomColor.customPurple),
+                      onPressed: () => _showOptions(context),
+                      constraints:
+                          const BoxConstraints.tightFor(width: 40, height: 40),
+                    ),
                   ],
                 ),
               ],
@@ -334,6 +334,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         data['senderUsername'],
                         style: CustomTextStyle.body1.copyWith(
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     if (!isCurrentUser)
@@ -342,7 +343,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       ),
                     Text(
                       data['message'],
-                      style: CustomTextStyle.body1,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontSize: 16,
+                      ),
                       textAlign: TextAlign.start,
                     ),
                   ],

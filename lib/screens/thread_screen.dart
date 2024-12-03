@@ -153,7 +153,7 @@ class ThreadScreen extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: 120), // Adjust this value as needed
+          child: SizedBox(height: 115), // Adjust this value as needed
         ),
         SliverToBoxAdapter(
           child: _buildActiveFriendsList(context, viewModel),
