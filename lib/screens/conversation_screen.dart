@@ -126,7 +126,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: Row(
         children: [
           Expanded(
@@ -141,7 +141,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 3),
                     IconButton(
                       icon: const Icon(Icons.more_horiz,
                           color: CustomColor.customPurple),
