@@ -17,9 +17,11 @@ class TurnInviteesViewModel extends ChangeNotifier {
   List<model.User> _notSureAttending = [];
   List<model.User> _notAttending = [];
   List<model.User> _invitees = [];
+  model.User? _currentUser;
 
   Turn? get turn => _turn;
   String? get currentUserId => _currentUserId;
+  model.User? get currentUser => _currentUser;
   List<model.User> get attending => _attending;
   List<model.User> get notSureAttending => _notSureAttending;
   List<model.User> get notAttending => _notAttending;
@@ -34,10 +36,15 @@ class TurnInviteesViewModel extends ChangeNotifier {
 
   Future<void> _init() async {
     _currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    _currentUser = await _authMethods.getUserDetailsById(_currentUserId!);
     await _fetchTurnData();
     await _fetchInvitees();
     _isLoading = false;
     notifyListeners();
+  }
+
+  bool isFriend(String userId) {
+    return _currentUserId != null && _currentUser!.friends.contains(userId);
   }
 
   Future<void> _fetchTurnData() async {

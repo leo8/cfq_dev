@@ -124,7 +124,7 @@ class _EventsListState extends State<EventsList> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemCount: events.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 15),
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final event = events[index];
                 final documentId = event.id;
@@ -176,7 +176,6 @@ class _EventsListState extends State<EventsList> {
                         eventData['description'] ?? CustomString.emptyString,
                     eventDateTime: parseDate(eventData['eventDateTime']),
                     where: eventData['where'] ?? CustomString.emptyString,
-                    address: eventData['address'] ?? CustomString.emptyString,
                     datePublished: parseDate(eventData['datePublished']),
                     moods: List<String>.from(eventData['moods'] ?? []),
                     turnId: eventData['turnId'] ?? CustomString.emptyString,

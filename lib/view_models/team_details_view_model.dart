@@ -16,6 +16,7 @@ class TeamDetailsViewModel extends ChangeNotifier {
   bool _isLoading = true;
   bool _hasChanges = false;
   bool _isCurrentUserActive = false;
+  final bool viewMode;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final ConversationService _conversationService = ConversationService();
@@ -37,10 +38,15 @@ class TeamDetailsViewModel extends ChangeNotifier {
   Stream<int> get unreadConversationsCountStream =>
       _unreadConversationsCountSubject.stream;
 
-  TeamDetailsViewModel({required Team team}) : _team = team {
+  TeamDetailsViewModel({
+    required Team team,
+    this.viewMode = false,
+  }) : _team = team {
     _initializeCurrentUser();
     _fetchTeamMembers();
-    _listenToCurrentUserActiveStatus();
+    if (!viewMode) {
+      _listenToCurrentUserActiveStatus();
+    }
   }
 
   Team get team => _team;

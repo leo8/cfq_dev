@@ -28,29 +28,29 @@ class TeamsScreen extends StatelessWidget {
               child: Scaffold(
                 backgroundColor: CustomColor.transparent,
                 appBar: AppBar(
-                  toolbarHeight: 40,
+                  toolbarHeight: 60,
                   automaticallyImplyLeading: false,
                   backgroundColor: CustomColor.customBlack,
                   surfaceTintColor: CustomColor.customBlack,
+                  title: Text(
+                    CustomString.myTeamsCapital,
+                    style: CustomTextStyle.title1,
+                  ),
                 ),
                 body: viewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : Column(
                         children: [
-                          Center(
-                            child: Text(
-                              CustomString.myTeamsCapital,
-                              style: CustomTextStyle.title1,
-                            ),
-                          ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(12.0),
                             child: Column(
                               children: [
                                 Center(
                                   child: OutlinedIconButton(
-                                    icon: CustomIcon.add,
+                                    icon: CustomIcon.add.copyWith(
+                                      size: 20,
+                                    ),
                                     onPressed: () {
                                       Navigator.push(
                                         context,
@@ -62,7 +62,7 @@ class TeamsScreen extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 25),
+                                const SizedBox(height: 20),
                               ],
                             ),
                           ),

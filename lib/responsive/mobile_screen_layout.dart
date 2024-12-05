@@ -43,6 +43,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   // Add this new variable
   Timer? _autoCloseTimer;
 
+  // Add this at the class level, after other state variables
+  final Map<int, UniqueKey> _pageKeys = {
+    0: UniqueKey(),
+    1: UniqueKey(),
+    2: UniqueKey(),
+    3: UniqueKey(),
+  };
+
   // Handle the tap on the plus button
   void _handleTap() {
     if (isClicked) {
@@ -186,6 +194,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         elevation: 0, // Remove any shadow
         onDestinationSelected: (int index) {
           setState(() {
+            // Force rebuild of the target page by generating a new key
+            _pageKeys[index] = UniqueKey();
             currentPageIndex = index;
             if (isOpen) {
               _handleTap();
@@ -264,10 +274,22 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             child: IndexedStack(
               index: currentPageIndex,
               children: [
-                ThreadScreen(userId: widget.uid),
-                MapScreen(),
-                TeamsScreen(currentUserId: widget.uid),
-                ProfileScreen(userId: widget.uid),
+                KeyedSubtree(
+                  key: _pageKeys[0],
+                  child: ThreadScreen(userId: widget.uid),
+                ),
+                KeyedSubtree(
+                  key: _pageKeys[1],
+                  child: MapScreen(),
+                ),
+                KeyedSubtree(
+                  key: _pageKeys[2],
+                  child: TeamsScreen(currentUserId: widget.uid),
+                ),
+                KeyedSubtree(
+                  key: _pageKeys[3],
+                  child: ProfileScreen(userId: widget.uid),
+                ),
               ],
             ),
           ),

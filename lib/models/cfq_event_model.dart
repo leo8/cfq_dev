@@ -6,6 +6,7 @@ class Cfq extends EventDataModel {
   final List<String> followingUp; // New field
   final DateTime? eventDateTime; // New optional field
   final DateTime? endDateTime; // Add this field
+  final Location? location; // Add location field
 
   // Constructor to initialize CFQ properties
   Cfq({
@@ -13,7 +14,8 @@ class Cfq extends EventDataModel {
     required List<String> invitees,
     this.followingUp = const [],
     this.eventDateTime,
-    this.endDateTime, // Add to constructor
+    this.endDateTime,
+    this.location,
     String? description,
     List<String>? moods,
     String? uid,
@@ -56,14 +58,15 @@ class Cfq extends EventDataModel {
       'cfqImageUrl': imageUrl,
       'profilePictureUrl': profilePictureUrl,
       'where': where,
+      'location': location?.toJson(), // Add location to JSON
       'organizers': organizers,
       'when': when,
       'invitees': invitees,
       'teamInvitees': teamInvitees,
       'channelId': channelId,
       'followingUp': followingUp,
-      'eventDateTime': eventDateTime?.toIso8601String(), // New field
-      'endDateTime': endDateTime?.toIso8601String(), // Add to JSON
+      'eventDateTime': eventDateTime?.toIso8601String(),
+      'endDateTime': endDateTime?.toIso8601String(),
     };
   }
 
@@ -77,7 +80,9 @@ class Cfq extends EventDataModel {
           : null,
       endDateTime: json['endDateTime'] != null
           ? DateTime.parse(json['endDateTime'])
-          : null, // Parse from JSON
+          : null,
+      location:
+          json['location'] != null ? Location.fromJson(json['location']) : null,
       description: json['description'] ?? '',
       moods: List<String>.from(json['moods'] ?? []),
       uid: json['uid'] ?? '',

@@ -115,7 +115,7 @@ class TurnHeader extends StatelessWidget {
             child: Text(
               turnName ?? '',
               style: CustomTextStyle.hugeTitle.copyWith(
-                fontSize: 28,
+                fontSize: 18,
                 letterSpacing: 1.4,
               ),
             ),

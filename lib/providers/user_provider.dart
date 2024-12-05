@@ -1,6 +1,7 @@
 import 'package:cfq_dev/providers/auth_methods.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart';
+import '../utils/logger.dart';
 
 // Provider class that manages the current user's data and state
 class UserProvider with ChangeNotifier {
@@ -31,7 +32,7 @@ class UserProvider with ChangeNotifier {
       _user = user; // Update the _user variable with the fetched data
       notifyListeners(); // Notify listeners (UI components) that the user data has changed
     } catch (e) {
-      debugPrint('Error refreshing user: $e');
+      AppLogger.error('Error refreshing user: $e');
       _user = null;
       notifyListeners();
     }

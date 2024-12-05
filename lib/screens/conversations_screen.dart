@@ -27,7 +27,7 @@ class ConversationsScreen extends StatelessWidget {
           child: Scaffold(
             backgroundColor: CustomColor.customBlack,
             appBar: AppBar(
-              toolbarHeight: 40,
+              toolbarHeight: 60,
               backgroundColor: CustomColor.customBlack,
               surfaceTintColor: CustomColor.customBlack,
               leading: IconButton(
@@ -42,19 +42,14 @@ class ConversationsScreen extends StatelessWidget {
                   await viewModel.setLoadingState(false);
                 },
               ),
+              title: Text(
+                CustomString.messagerieCapital,
+                style: CustomTextStyle.bigBody1,
+              ),
             ),
             body: Column(
               children: [
-                Center(
-                  child: Text(
-                    CustomString.messagerieCapital,
-                    style: CustomTextStyle.body1.copyWith(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: CustomSearchBar(

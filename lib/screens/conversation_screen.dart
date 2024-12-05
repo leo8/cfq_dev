@@ -49,6 +49,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   final ConversationService _conversationService = ConversationService();
   bool _isDisposed = false;
   bool _isLoading = false;
+  final FocusNode _messageFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -81,6 +82,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   void dispose() {
+    _messageFocusNode.dispose();
     _isDisposed = true;
     super.dispose();
   }
@@ -93,13 +95,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
         child: Scaffold(
           backgroundColor: CustomColor.transparent,
           appBar: AppBar(
-            toolbarHeight: 40,
+            toolbarHeight: 35,
             automaticallyImplyLeading: false,
             backgroundColor: CustomColor.customBlack,
             surfaceTintColor: CustomColor.customBlack,
             actions: [
               IconButton(
-                icon: CustomIcon.close,
+                icon: CustomIcon.close.copyWith(size: 25),
                 onPressed: _resetUnreadAndPop,
               ),
             ],
@@ -124,7 +126,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: Row(
         children: [
           Expanded(
@@ -134,18 +136,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 Row(
                   children: [
                     Text(
-                      widget.eventName,
-                      style: CustomTextStyle.title1,
+                      widget.eventName.toUpperCase(),
+                      style: CustomTextStyle.title3,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      icon: const Icon(Icons.more_horiz,
-                          color: CustomColor.customPurple),
-                      onPressed: () => _showOptions(context),
-                      constraints:
-                          const BoxConstraints.tightFor(width: 40, height: 40),
                     ),
                   ],
                 ),
@@ -158,6 +152,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(widget.organizerName, style: CustomTextStyle.body1),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.more_horiz,
+                          color: CustomColor.customPurple),
+                      onPressed: () => _showOptions(context),
+                      constraints:
+                          const BoxConstraints.tightFor(width: 40, height: 40),
+                    ),
                   ],
                 ),
               ],
@@ -332,6 +334,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         data['senderUsername'],
                         style: CustomTextStyle.body1.copyWith(
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     if (!isCurrentUser)
@@ -340,7 +343,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       ),
                     Text(
                       data['message'],
-                      style: CustomTextStyle.body1,
+                      style: CustomTextStyle.body1.copyWith(
+                        fontSize: 16,
+                      ),
                       textAlign: TextAlign.start,
                     ),
                   ],
@@ -369,9 +374,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
           Expanded(
             child: Container(
               constraints: BoxConstraints(
-                maxHeight: 150, // Approximately 10 lines of text
+                maxHeight: 150,
               ),
               child: TextField(
+                focusNode: _messageFocusNode,
                 controller: _controller,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
@@ -403,6 +409,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               if (_controller.text.isNotEmpty) {
                 _sendMessage(_controller.text);
                 _controller.clear();
+                _messageFocusNode.unfocus();
               }
             },
           ),

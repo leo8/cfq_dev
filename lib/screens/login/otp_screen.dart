@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cfq_dev/responsive/mobile_screen_layout.dart';
 import 'package:cfq_dev/responsive/repsonsive_layout_screen.dart';
 import 'package:cfq_dev/responsive/web_screen_layout.dart';
@@ -13,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../utils/styles/string.dart';
 import '../../utils/styles/colors.dart';
 import '../../utils/styles/text_styles.dart';
+import '../../utils/logger.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen(
@@ -41,7 +40,7 @@ class _OTPScreenState extends State<OTPScreen> {
         userUIDs = uids;
       });
     } catch (e) {
-      print("Erreur lors de la récupération des uid : $e");
+      AppLogger.error("Erreur lors de la récupération des uid : $e");
     }
   }
 
@@ -73,6 +72,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void initState() {
+    super.initState();
     fetchUserUID();
   }
 

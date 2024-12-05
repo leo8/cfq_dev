@@ -12,6 +12,7 @@ import '../utils/utils.dart';
 import '../utils/date_time_utils.dart';
 import '../utils/loading_overlay.dart';
 import '../models/cfq_event_model.dart';
+import '../utils/styles/text_styles.dart';
 
 /// Screen for creating a new CFQ event.
 class CreateCfqScreen extends StatelessWidget {
@@ -65,6 +66,10 @@ class CreateCfqScreen extends StatelessWidget {
                     automaticallyImplyLeading: false,
                     backgroundColor: CustomColor.customBlack,
                     surfaceTintColor: CustomColor.customBlack,
+                    title: Text(
+                      CustomString.cfqCapital,
+                      style: CustomTextStyle.title1,
+                    ),
                     actions: [
                       IconButton(
                         icon: CustomIcon.close,
@@ -127,6 +132,9 @@ class CreateCfqScreen extends StatelessWidget {
                       inviteesController: viewModel.inviteesController,
                       openInviteesSelectorScreen: () =>
                           viewModel.openInviteesSelectorScreen(context),
+                      onAddressSelected: (placeData) {
+                        viewModel.onAddressSelected(placeData);
+                      },
                       submitButtonLabel:
                           isEditing ? CustomString.update : CustomString.create,
                     ),
