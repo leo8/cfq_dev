@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/team.dart';
 import '../atoms/avatars/custom_avatar.dart';
-import '../atoms/texts/custom_text.dart';
-import '../../utils/styles/text_styles.dart';
 
 class TeamHeader extends StatelessWidget {
   final Team team;
@@ -13,10 +11,6 @@ class TeamHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomText(
-          text: team.name,
-          textStyle: CustomTextStyle.title1,
-        ),
         const SizedBox(
           height: 20,
         ),

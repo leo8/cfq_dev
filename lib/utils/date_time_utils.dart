@@ -4,13 +4,13 @@ import 'styles/string.dart';
 class DateTimeUtils {
   static const List<String> _monthAbbreviations = [
     'Jan',
-    'Feb',
+    'Fev',
     'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
+    'Avr',
+    'Mai',
+    'Juin',
+    'Juil',
+    'Aou',
     'Sep',
     'Oct',
     'Nov',
@@ -270,7 +270,6 @@ class DateTimeUtils {
     } else {
       // Use "au" instead of "à" for dates
       final useAu = (isSameDay || isNextDay || isNextWeek) ? true : false;
-      print(useAu);
       return '${startDateStr[0].toUpperCase()}${startDateStr.substring(1)} à $startTimeStr jusqu\'${useAu ? 'à' : 'au'} $endDateStr à $endTimeStr';
     }
   }

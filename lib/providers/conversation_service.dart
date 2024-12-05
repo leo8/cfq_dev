@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as model;
+import '../models/notification.dart' as notificationModel;
 import '../models/conversation.dart';
 import 'package:rxdart/rxdart.dart';
 import '../utils/logger.dart';
+import 'package:uuid/uuid.dart';
 
 class ConversationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -104,8 +106,6 @@ class ConversationService {
           'timestamp': FieldValue.serverTimestamp(),
         });
 
-        AppLogger.info('New message added to conversation: $channelId');
-
         // Update conversation details
         transaction.update(conversationRef, {
           'lastMessageContent': message,
@@ -113,29 +113,56 @@ class ConversationService {
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
         });
 
-        AppLogger.info(
-            'Conversation $channelId updated with new message details');
-
+        // Process each member's notifications and unread counts
         for (String memberId in userSnapshots.keys) {
           DocumentSnapshot userSnapshot = userSnapshots[memberId]!;
+          Map<String, dynamic> userData =
+              userSnapshot.data() as Map<String, dynamic>;
 
-          // Update unreadMessagesCount
+          // Check if user has this conversation in their list
           List<Map<String, dynamic>> conversations =
-              List<Map<String, dynamic>>.from(
-                  userSnapshot['conversations'] ?? []);
+              List<Map<String, dynamic>>.from(userData['conversations'] ?? []);
 
           int index = conversations
               .indexWhere((conv) => conv['conversationId'] == channelId);
+
           if (index != -1) {
+            // Update unread messages count
             conversations[index]['unreadMessagesCount'] =
                 (conversations[index]['unreadMessagesCount'] ?? 0) + 1;
             transaction.update(
                 userSnapshot.reference, {'conversations': conversations});
-            AppLogger.info(
-                'Incremented unreadMessagesCount for user $memberId in conversation $channelId');
-          } else {
-            AppLogger.warning(
-                'Conversation $channelId not found in user $memberId\'s list. Skipping unreadMessagesCount update.');
+
+            // Create message notification
+            String notificationChannelId = userData['notificationsChannelId'];
+            DocumentReference notificationRef = _firestore
+                .collection('notifications')
+                .doc(notificationChannelId)
+                .collection('userNotifications')
+                .doc();
+
+            final notification = {
+              'id': const Uuid().v4(),
+              'timestamp': FieldValue.serverTimestamp(),
+              'type': notificationModel.NotificationType.message
+                  .toString()
+                  .split('.')
+                  .last,
+              'content': {
+                'senderProfilePictureUrl': senderProfilePicture,
+                'messageContent': message,
+                'timestampSent': DateTime.now().toIso8601String(),
+                'senderUsername': senderUsername,
+                'conversationId': channelId,
+              },
+            };
+
+            transaction.set(notificationRef, notification);
+
+            // Increment unread notifications count
+            transaction.update(userSnapshot.reference, {
+              'unreadNotificationsCount': FieldValue.increment(1),
+            });
           }
         }
       });
@@ -170,25 +197,54 @@ class ConversationService {
 
   Future<List<Conversation>> getUserConversations(String userId) async {
     try {
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(userId).get();
-      List<dynamic> conversationsData = userDoc['conversations'] ?? [];
-
-      List<String> conversationIds = conversationsData
-          .map((conv) => conv['conversationId'] as String)
-          .toList();
-
-      QuerySnapshot conversationsSnapshot = await _firestore
-          .collection('conversations')
-          .where(FieldPath.documentId, whereIn: conversationIds)
+      // First get the user's conversation IDs
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
           .get();
 
-      return conversationsSnapshot.docs.map((doc) {
-        return Conversation.fromFirestore(doc);
-      }).toList();
+      List<dynamic> conversationInfos =
+          (userDoc.data() as Map<String, dynamic>)['conversations'] ?? [];
+      List<String> conversationIds = conversationInfos
+          .map((info) =>
+              (info as Map<String, dynamic>)['conversationId'] as String)
+          .toList();
+
+      // If no conversations, return empty list
+      if (conversationIds.isEmpty) {
+        return [];
+      }
+
+      // Split conversation IDs into chunks of 30
+      List<List<String>> chunks = [];
+      for (var i = 0; i < conversationIds.length; i += 30) {
+        chunks.add(
+          conversationIds.sublist(
+            i,
+            i + 30 > conversationIds.length ? conversationIds.length : i + 30,
+          ),
+        );
+      }
+
+      // Fetch conversations in chunks
+      List<Conversation> allConversations = [];
+      for (var chunk in chunks) {
+        QuerySnapshot conversationsSnapshot = await FirebaseFirestore.instance
+            .collection('conversations')
+            .where(FieldPath.documentId, whereIn: chunk)
+            .get();
+
+        List<Conversation> chunkConversations = conversationsSnapshot.docs
+            .map((doc) => Conversation.fromSnap(doc))
+            .toList();
+
+        allConversations.addAll(chunkConversations);
+      }
+
+      return allConversations;
     } catch (e) {
       AppLogger.error('Error fetching user conversations: $e');
-      return [];
+      rethrow;
     }
   }
 
@@ -207,7 +263,7 @@ class ConversationService {
     }
 
     await _firestore.collection('conversations').doc(channelId).set({
-      'name': eventName,
+      'name': eventName.toUpperCase(),
       'imageUrl': eventPicture,
       'members': members,
       'organizerName': organizerName,

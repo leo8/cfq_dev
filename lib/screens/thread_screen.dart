@@ -153,7 +153,7 @@ class ThreadScreen extends StatelessWidget {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: 120), // Adjust this value as needed
+          child: SizedBox(height: 115), // Adjust this value as needed
         ),
         SliverToBoxAdapter(
           child: _buildActiveFriendsList(context, viewModel),
@@ -204,6 +204,7 @@ class ThreadScreen extends StatelessWidget {
               return ActiveFriendsList(
                 currentUser: currentUser,
                 activeFriends: const [],
+                inactiveFriends: const [],
                 onActiveChanged: (bool newValue) {
                   viewModel.updateIsActiveStatus(newValue);
                 },
@@ -218,9 +219,15 @@ class ThreadScreen extends StatelessWidget {
               );
             }
 
+            final allFriends = friendsSnapshot.data!;
+            final activeFriends = allFriends.where((f) => f.isActive).toList();
+            final inactiveFriends =
+                allFriends.where((f) => !f.isActive).toList();
+
             return ActiveFriendsList(
               currentUser: currentUser,
-              activeFriends: friendsSnapshot.data!,
+              activeFriends: activeFriends,
+              inactiveFriends: inactiveFriends,
               onActiveChanged: (bool newValue) {
                 viewModel.updateIsActiveStatus(newValue);
               },

@@ -24,7 +24,7 @@ class FriendsListScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: CustomColor.customBlack,
         appBar: AppBar(
-          toolbarHeight: 40,
+          toolbarHeight: 60,
           backgroundColor: CustomColor.customBlack,
           surfaceTintColor: CustomColor.customBlack,
           leading: IconButton(
@@ -33,18 +33,15 @@ class FriendsListScreen extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
+          title: Text(
+            CustomString.myFriendsCapital,
+            style: CustomTextStyle.bigBody1,
+          ),
         ),
         body: Column(
           children: [
-            Center(
-              child: Text(
-                CustomString.myFriendsCapital,
-                style: CustomTextStyle.body1
-                    .copyWith(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-            ),
             const SizedBox(
-              height: 35,
+              height: 10,
             ),
             Consumer<FriendsListViewModel>(
               builder: (context, viewModel, child) {

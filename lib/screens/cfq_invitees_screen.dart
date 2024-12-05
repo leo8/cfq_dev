@@ -143,7 +143,8 @@ class CFQInviteesScreen extends StatelessWidget {
                         );
                       }
                     },
-                    isActive: user.isActive,
+                    isActive:
+                        viewModel.isFriend(user.uid) ? user.isActive : false,
                     radius: 40,
                   ),
                   const SizedBox(height: 4),

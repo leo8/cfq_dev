@@ -55,6 +55,8 @@ class ThreadViewModel extends ChangeNotifier {
 
   bool _hasCheckedOnboarding = false;
 
+  bool _disposed = false;
+
   ThreadViewModel({required this.currentUserUid}) {
     searchController.addListener(_onSearchChanged);
     _initializeData();
@@ -64,12 +66,12 @@ class ThreadViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     _debounce?.cancel();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
     _userSubscription?.cancel();
-    _unreadConversationsCountSubject.close();
-    _unreadNotificationsCountSubject.close();
+
     super.dispose();
   }
 
@@ -121,21 +123,31 @@ class ThreadViewModel extends ChangeNotifier {
       return List<String>.from(userData['friends'] ?? []);
     });
 
-    // Create a stream of all active users
-    Stream<QuerySnapshot> activeUsersStream = _firestore
+    // Create a stream of all users
+    Stream<QuerySnapshot> allUsersStream = _firestore
         .collection('users')
-        .where('isActive', isEqualTo: true)
+        .where(FieldPath.documentId, whereIn: _currentUser!.friends)
         .snapshots();
 
     // Combine both streams
     _activeFriendsStream = Rx.combineLatest2(
       friendsStream,
-      activeUsersStream,
-      (List<String> friends, QuerySnapshot activeUsers) {
-        return activeUsers.docs
+      allUsersStream,
+      (List<String> friends, QuerySnapshot allUsers) {
+        final List<model.User> users = allUsers.docs
             .map((doc) => model.User.fromSnap(doc))
             .where((user) => friends.contains(user.uid))
             .toList();
+
+        // Sort users by active status
+        users.sort((a, b) {
+          if (a.isActive == b.isActive) {
+            return a.username.compareTo(b.username);
+          }
+          return b.isActive ? 1 : -1;
+        });
+
+        return users;
       },
     );
 
@@ -169,7 +181,7 @@ class ThreadViewModel extends ChangeNotifier {
         snapshot = await FirebaseFirestore.instance
             .collection('users')
             .limit(
-                20) // Limit the number of results to avoid performance issues
+                50) // Limit the number of results to avoid performance issues
             .get();
       } else {
         // Existing search logic for non-empty queries
@@ -393,18 +405,13 @@ class ThreadViewModel extends ChangeNotifier {
 
   Future<void> loadConversations() async {
     try {
-      // Use the stream-based method instead of the direct fetch
-      _conversations = await _conversationService
-          .getUserConversationsStream(currentUserUid)
-          .first;
-      _sortConversations();
-      _filteredConversations = _conversations;
-      notifyListeners();
+      _conversations =
+          await _conversationService.getUserConversations(currentUserUid);
+      if (!_disposed) {
+        notifyListeners();
+      }
     } catch (e) {
       AppLogger.error('Error loading conversations: $e');
-      _conversations = [];
-      _filteredConversations = [];
-      notifyListeners();
     }
   }
 
@@ -840,5 +847,17 @@ class ThreadViewModel extends ChangeNotifier {
 
       await _fetchCurrentUser();
     }
+  }
+
+  Stream<DocumentSnapshot> getEventStream(String eventId, bool isTurn) {
+    if (eventId.isEmpty) {
+      AppLogger.error('Empty event ID provided to getEventStream');
+      throw ArgumentError('Event ID cannot be empty');
+    }
+
+    return _firestore
+        .collection(isTurn ? 'turns' : 'cfqs')
+        .doc(eventId)
+        .snapshots();
   }
 }

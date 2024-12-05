@@ -5,10 +5,11 @@ import '../view_models/profile_view_model.dart';
 import '../screens/edit_profile_screen.dart';
 import '../../utils/styles/icons.dart';
 import '../../utils/styles/text_styles.dart';
-import '../screens/favorites_screen.dart';
+//import '../screens/favorites_screen.dart';
 import '../view_models/requests_view_model.dart';
 import '../screens/requests_screen.dart';
 import '../screens/tutorial_screen.dart';
+import '../screens/login/login_screen_phone.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -25,7 +26,7 @@ class ParametersScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CustomColor.customBlack,
       appBar: AppBar(
-        toolbarHeight: 40,
+        toolbarHeight: 60,
         backgroundColor: CustomColor.customBlack,
         surfaceTintColor: CustomColor.customBlack,
         leading: IconButton(
@@ -34,24 +35,21 @@ class ParametersScreen extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
+        title: Text(
+          CustomString.myAccountCapital,
+          style: CustomTextStyle.bigBody1,
+        ),
       ),
       body: ListView(
         children: [
-          Center(
-            child: Text(
-              CustomString.parametersCapital,
-              style: CustomTextStyle.body1
-                  .copyWith(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
           const SizedBox(
-            height: 25,
+            height: 10,
           ),
           const Divider(),
           ListTile(
             leading: CustomIcon.profile,
             title: Text(
-              CustomString.editProfile,
+              CustomString.myProfile,
               style: CustomTextStyle.body1,
             ),
             onTap: () {
@@ -64,6 +62,7 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          /*
           ListTile(
             leading: CustomIcon.saveEmpty,
             title: Text(
@@ -81,11 +80,34 @@ class ParametersScreen extends StatelessWidget {
             },
           ),
           const Divider(),
+          */
           ListTile(
             leading: CustomIcon.addMember,
             title: Text(
               CustomString.requests,
               style: CustomTextStyle.body1,
+            ),
+            trailing: StreamBuilder<int>(
+              stream: viewModel.pendingRequestsCountStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data! > 0) {
+                  return Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      color: CustomColor.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      snapshot.data!.toString(),
+                      style: CustomTextStyle.body2.copyWith(
+                        color: CustomColor.customWhite,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
             ),
             onTap: () {
               Navigator.push(
@@ -125,8 +147,12 @@ class ParametersScreen extends StatelessWidget {
             ),
             onTap: () async {
               await viewModel.logOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (route) => false);
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreenMobile(),
+                ),
+                (route) => false,
+              );
             },
           ),
           const Divider(),

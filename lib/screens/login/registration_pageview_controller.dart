@@ -15,6 +15,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../utils/logger.dart';
 
 class RegistrationFlow extends StatefulWidget {
   final UserCredential cred;
@@ -57,7 +58,8 @@ class _RegistrationFlowState extends State<RegistrationFlow> {
         userNames = names;
       });
     } catch (e) {
-      print("Erreur lors de la récupération des noms d'utilisateur : $e");
+      AppLogger.error(
+          "Erreur lors de la récupération des noms d'utilisateur : $e");
     }
   }
 
