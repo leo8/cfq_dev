@@ -11,6 +11,7 @@ exports.updateUserIsActive2PM = functions
     .region("europe-west2")
     .pubsub
     .schedule("00 14 * * *")
+    .timeZone("Europe/Paris")
     .onRun(async (context) => {
       try {
         const usersRef = admin.firestore().collection("users");
@@ -39,19 +40,36 @@ exports.updateUserIsActive2PM = functions
 exports.sendScheduledDataMessageIsTurnTonight6PM = functions
     .region("europe-west2")
     .pubsub
-    .schedule("00 14 * * *")
+    .schedule("00 18 * * *")
+    .timeZone("Europe/Paris")
     .onRun(async (context) => {
+      /*
       const dataMessage = {
-        data: {
+        notification: {
           event: "daily_ask_turn",
           timestamp: new Date().toISOString(),
           message: "Ca turn ce soir ?",
         },
         topic: "daily_ask_turn",
       };
+      */
+      const message = {
+        notification: {
+          title: "Ça sort ce soir ?",
+          body: "Va activer le switch sur ton profil si tu sors",
+        },
+        topic: "daily_ask_turn",
+      };
+
+      const usersRef = admin.firestore().collection("users");
+      const snapshot = await usersRef.get();
+      const batch = admin.firestore().batch();
+      snapshot.forEach((doc) => {
+        batch.update(doc.ref, {isActive: false});
+      });
 
       try {
-        await admin.messaging().send(dataMessage);
+        await admin.messaging().send(message);
         console.log("Message de données envoyé avec succès.");
       } catch (error) {
         console.error("Erreur lors de l’envoi du message de données :", error);
@@ -60,10 +78,11 @@ exports.sendScheduledDataMessageIsTurnTonight6PM = functions
       return null;
     });
 
-exports.sendScheduledMessage3AMIfTurnAlready = functions
+exports.sendScheduledMessage4AMIfTurnAlready = functions
     .region("europe-west2")
     .pubsub
-    .schedule("00 3 * * *")
+    .schedule("00 4 * * *")
+    .timeZone("Europe/Paris")
     .onRun(async (context) => {
       const activeUsersSnapshot = await admin
           .firestore()
@@ -73,25 +92,33 @@ exports.sendScheduledMessage3AMIfTurnAlready = functions
 
       for (const doc of activeUsersSnapshot.docs) {
         const userData = doc.data();
+        const userRef = doc.ref;
+
         if (userData.tokenFCM) {
-          const personalizedMessage = {
-            data: {
-              event: "daily_ask_turn_already",
-              timestamp: new Date().toISOString(),
+          const message = {
+            notification: {
+              title: "Toujours chaud ou tu rentres ?",
+              body: "Va activer le switch sur ton profil " +
+                    "si tu es toujours en Turn",
             },
             token: userData.tokenFCM,
           };
 
           try {
-            const response = await admin.messaging().send(personalizedMessage);
+            const response = await admin.messaging().send(message);
             console.log(`Message envoyé à ${userData.username} avec succès :`,
                 response);
+
+            // Met à jour isActive à false après l'envoi du message
+            await userRef.update({isActive: false});
+            console.log(`isActive mis à false pour ${userData.username}`);
           } catch (error) {
             console.error(`Erreur pour ${userData.username} :`, error);
           }
         }
       }
     });
+
 
 exports.onNotificationCreated = functions
     .region("europe-west2")
@@ -101,18 +128,20 @@ exports.onNotificationCreated = functions
       try {
         const newNotification = snap.data();
         const docId = context.params.docId;
-        const notificationDoc = await admin
-            .firestore()
-            .collection("notifications")
-            .doc(docId)
-            .get();
-        const userId = notificationDoc.data().userId;
-        const userData = await admin
+
+        const notificationIdUsersSnapshot = await admin
             .firestore()
             .collection("users")
-            .doc(userId)
+            .where("notificationsChannelId", "==", docId)
             .get();
-        const tokenFCM = userData.data().tokenFCM;
+
+        const doc = notificationIdUsersSnapshot.docs[0];
+        console.log(`Utilisateur trouvé : ${doc.id}`);
+        console.log("Données :", doc.data().username);
+        console.log("Données :", doc.data().tokenFCM);
+
+        const tokenFCM = doc.data().tokenFCM;
+
         // Determine notification content based on type
         let title = "";
         let body = "";
@@ -150,7 +179,8 @@ exports.onNotificationCreated = functions
             break;
           case "followUp":
             title = content.cfqName || "CFQ ?";
-            body = `${content.followerUsername} suit ${content.cfqName || "CFQ"}`;
+            body = `${content.followerUsername} ` +
+                  `suit ${content.cfqName || "CFQ"}`;
             break;
           case "acceptedTeamRequest":
             title = content.teamName;

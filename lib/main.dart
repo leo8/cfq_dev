@@ -160,7 +160,8 @@ class _CFQState extends State<CFQ> {
   @override
   void initState() {
     super.initState();
-    //_initializeMessageHandling();
+    _initializeMessageHandling();
+    _initializeLocalNotifications();
   }
 
   Future<void> _initializeLocalNotifications() async {

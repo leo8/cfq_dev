@@ -25,7 +25,7 @@ class ThreadHeader extends StatelessWidget {
     return Row(
       children: [
         CustomIconButton(
-          icon: CustomIcon.search,
+          icon: CustomIcon.addMember,
           color: CustomColor.customWhite,
           onTap: onSearchTap,
         ),

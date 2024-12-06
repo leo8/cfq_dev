@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>451535553993-ljrv70ifa96j2qo5oeatglfbp1q56jtb.apps.googleusercontent.com</string>
+	<string>451535553993-19trouqn6r8g8eg5ahqukb26lg2l406d.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.451535553993-ljrv70ifa96j2qo5oeatglfbp1q56jtb</string>
+	<string>com.googleusercontent.apps.451535553993-19trouqn6r8g8eg5ahqukb26lg2l406d</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>451535553993-savfclg2g8fkth7ciofaaol4md7trfin.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.cfq.cfqProd</string>
+	<string>com.calvignac.cfq</string>
 	<key>PROJECT_ID</key>
 	<string>cfq-prod-477ed</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:451535553993:ios:c5a658646f42726d095418</string>
+	<string>1:451535553993:ios:1d58e33465485dcc095418</string>
 </dict>
 </plist>

@@ -10,7 +10,7 @@ class CustomSearchBar extends StatelessWidget {
 
   const CustomSearchBar({
     required this.controller, // Controller to handle text input
-    this.hintText = CustomString.search, // Default hint text is 'Search'
+    this.hintText = CustomString.searchUsers, // Default hint text is 'Search'
     this.onChanged, // Add this line
     super.key,
   });
