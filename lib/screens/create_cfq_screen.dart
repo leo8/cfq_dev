@@ -56,10 +56,12 @@ class CreateCfqScreen extends StatelessWidget {
                 Navigator.of(context).pop(true);
               }
             });
+
             return LoadingOverlay(
               isLoading: viewModel.isLoading,
               child: NeonBackground(
                 child: Scaffold(
+                  resizeToAvoidBottomInset: true,
                   backgroundColor: CustomColor.transparent,
                   appBar: AppBar(
                     toolbarHeight: 40,
