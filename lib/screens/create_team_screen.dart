@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/create_team_view_model.dart';
@@ -159,8 +160,11 @@ class CreateTeamScreen extends StatelessWidget {
                                                 : null,
                                           ),
                                           child: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                user.profilePictureUrl),
+                                            backgroundImage:
+                                                CustomCachedImageProvider
+                                                    .withCacheManager(
+                                              imageUrl: user.profilePictureUrl,
+                                            ),
                                           ),
                                         ),
                                         title: Text(user.username),
@@ -203,8 +207,11 @@ class CreateTeamScreen extends StatelessWidget {
                                         viewModel.currentUser?.uid;
                                     return Chip(
                                       avatar: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            friend.profilePictureUrl),
+                                        backgroundImage:
+                                            CustomCachedImageProvider
+                                                .withCacheManager(
+                                          imageUrl: friend.profilePictureUrl,
+                                        ),
                                       ),
                                       label: Text(friend.username),
                                       onDeleted: isCurrentUser

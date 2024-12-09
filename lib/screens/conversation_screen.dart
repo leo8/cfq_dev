@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../providers/conversation_service.dart';
@@ -147,7 +148,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   children: [
                     CircleAvatar(
                       backgroundImage:
-                          NetworkImage(widget.organizerProfilePicture),
+                          CustomCachedImageProvider.withCacheManager(
+                        imageUrl: widget.organizerProfilePicture,
+                      ),
                       radius: 12,
                     ),
                     const SizedBox(width: 8),
@@ -309,7 +312,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
           children: [
             if (!isCurrentUser) ...[
               CircleAvatar(
-                backgroundImage: NetworkImage(data['senderProfilePicture']),
+                backgroundImage: CustomCachedImageProvider.withCacheManager(
+                  imageUrl: data['senderProfilePicture'],
+                ),
                 radius: 16,
               ),
               SizedBox(width: 8),
@@ -367,7 +372,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(widget.currentUser.profilePictureUrl),
+            backgroundImage: CustomCachedImageProvider.withCacheManager(
+              imageUrl: widget.currentUser.profilePictureUrl,
+            ),
             radius: 16,
           ),
           SizedBox(width: 8),
@@ -457,7 +464,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   final invitee = inviteeDetails[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(invitee.profilePictureUrl),
+                      backgroundImage:
+                          CustomCachedImageProvider.withCacheManager(
+                        imageUrl: invitee.profilePictureUrl,
+                      ),
                     ),
                     title: Text(invitee.username, style: CustomTextStyle.body1),
                   );

@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 import '../../models/conversation.dart';
 import '../../utils/styles/colors.dart';
@@ -27,7 +28,9 @@ class ConversationCard extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: conversation.imageUrl.isNotEmpty
-              ? NetworkImage(conversation.imageUrl)
+              ? CustomCachedImageProvider.withCacheManager(
+                  imageUrl: conversation.imageUrl,
+                )
               : null,
           radius: 25,
           child: conversation.imageUrl.isEmpty

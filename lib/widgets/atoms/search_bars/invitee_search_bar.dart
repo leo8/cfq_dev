@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:cfq_dev/utils/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../../../models/team.dart';
@@ -83,7 +84,10 @@ class InviteeSearchBar extends StatelessWidget {
                   if (result is Team) {
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(result.imageUrl),
+                        backgroundImage:
+                            CustomCachedImageProvider.withCacheManager(
+                          imageUrl: result.imageUrl,
+                        ),
                       ),
                       title: Text(result.name),
                       subtitle: const Text(CustomString.team),
@@ -98,7 +102,10 @@ class InviteeSearchBar extends StatelessWidget {
                   } else if (result is model.User) {
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(result.profilePictureUrl),
+                        backgroundImage:
+                            CustomCachedImageProvider.withCacheManager(
+                          imageUrl: result.profilePictureUrl,
+                        ),
                       ),
                       title: Text(result.username),
                       trailing: IconButton(

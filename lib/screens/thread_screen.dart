@@ -14,17 +14,70 @@ import 'conversations_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'search_screen.dart';
 import 'notifications_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-class ThreadScreen extends StatelessWidget {
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+class CustomCacheManager {
+  static final CacheManager instance = CacheManager(
+    Config(
+      'customCacheKey',
+      stalePeriod: const Duration(days: 7),
+      maxNrOfCacheObjects: 100,
+    ),
+  );
+}
+
+class CustomCachedImageProvider {
+  static ImageProvider<Object> withCacheManager({required String imageUrl}) {
+    return CachedNetworkImageProvider(
+      imageUrl,
+      cacheManager: CustomCacheManager.instance,
+    );
+  }
+}
+
+class ThreadScreen extends StatefulWidget {
   const ThreadScreen({super.key, required this.userId});
   final String userId;
+
+  @override
+  _ThreadScreenState createState() => _ThreadScreenState();
+}
+
+class _ThreadScreenState extends State<ThreadScreen> {
+  late ThreadViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ThreadViewModel(currentUserUid: widget.userId);
+    // Vous pouvez initialiser d'autres états ou effectuer des actions spécifiques ici.
+  }
+
+  @override
+  void dispose() {
+    // Libérez les ressources si nécessaire
+    _viewModel.dispose();
+    super.dispose();
+  }
+
+  final customCacheManager = CacheManager(
+    Config(
+      'customCacheKey',
+      stalePeriod: const Duration(days: 7), // Durée de vie du cache
+      maxNrOfCacheObjects: 100, // Nombre maximum d'objets en cache
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThreadViewModel>(
-          create: (context) => ThreadViewModel(currentUserUid: userId),
+        ChangeNotifierProvider<ThreadViewModel>.value(
+          value: _viewModel,
         ),
       ],
       child: Consumer<ThreadViewModel>(
@@ -55,7 +108,7 @@ class ThreadScreen extends StatelessWidget {
                       .push(
                     MaterialPageRoute(
                       builder: (context) => NotificationsScreen(
-                        currentUserUid: userId,
+                        currentUserUid: widget.userId,
                       ),
                     ),
                   )
@@ -131,7 +184,10 @@ class ThreadScreen extends StatelessWidget {
                     ),
                     child: CircleAvatar(
                       radius: 24,
-                      backgroundImage: NetworkImage(user.profilePictureUrl),
+                      backgroundImage:
+                          CustomCachedImageProvider.withCacheManager(
+                        imageUrl: user.profilePictureUrl,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),

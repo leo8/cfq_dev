@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart' as model;
@@ -101,7 +102,9 @@ class AddTeamMembersScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(user.profilePictureUrl),
+                  backgroundImage: CustomCachedImageProvider.withCacheManager(
+                    imageUrl: user.profilePictureUrl,
+                  ),
                 ),
                 title: Text(user.username),
                 trailing: isTeamMember
