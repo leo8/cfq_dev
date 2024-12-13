@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
@@ -129,8 +130,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                       ),
                                       child: CircleAvatar(
                                         radius: 24,
-                                        backgroundImage: NetworkImage(
-                                            user.profilePictureUrl),
+                                        backgroundImage:
+                                            CustomCachedImageProvider
+                                                .withCacheManager(
+                                          imageUrl: user.profilePictureUrl,
+                                        ),
                                       ),
                                     )
                                   : CustomAvatar(

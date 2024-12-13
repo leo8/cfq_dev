@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/material.dart';
 
 class CustomAvatar extends StatelessWidget {
@@ -25,7 +26,9 @@ class CustomAvatar extends StatelessWidget {
       ),
       child: CircleAvatar(
         radius: radius,
-        backgroundImage: NetworkImage(imageUrl),
+        backgroundImage: CustomCachedImageProvider.withCacheManager(
+          imageUrl: imageUrl,
+        ),
       ),
     );
   }

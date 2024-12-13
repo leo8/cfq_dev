@@ -1,3 +1,4 @@
+import 'package:cfq_dev/screens/thread_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cfq_dev/models/user.dart' as model;
@@ -166,7 +167,9 @@ class _ProfileContentState extends State<ProfileContent>
                         : CircleAvatar(
                             radius: 70,
                             backgroundImage:
-                                NetworkImage(widget.user.profilePictureUrl),
+                                CustomCachedImageProvider.withCacheManager(
+                              imageUrl: widget.user.profilePictureUrl,
+                            ),
                           )),
             // Right 2/3 column
             Expanded(
