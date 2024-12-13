@@ -119,7 +119,7 @@ class _GooglePlacesAddressSelectorState
             ),
           ),
           Positioned(
-            top: offset.dy + size.height,
+            top: 30,
             left: offset.dx,
             width: size.width,
             child: Material(

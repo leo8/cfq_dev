@@ -110,11 +110,6 @@ class CreateTurnScreen extends StatelessWidget {
                   ),
                   body: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    /*EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                    ),*/
                     child: TurnForm(
                       currentUser: viewModel.currentUser!,
                       image: viewModel.turnImage,

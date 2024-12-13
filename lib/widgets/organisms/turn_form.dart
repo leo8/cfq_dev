@@ -28,6 +28,7 @@ class TurnForm extends StatelessWidget {
   final String submitButtonLabel;
   final Function(PlaceData) onAddressSelected;
   final bool showPredictions;
+
   const TurnForm({
     super.key,
     required this.image,
