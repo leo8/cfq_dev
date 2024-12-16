@@ -1,3 +1,4 @@
+import 'package:cfq_dev/utils/logger.dart';
 import 'package:flutter/material.dart';
 import '../utils/styles/colors.dart';
 import '../utils/styles/string.dart';
@@ -10,6 +11,7 @@ import '../view_models/requests_view_model.dart';
 import '../screens/requests_screen.dart';
 import '../screens/tutorial_screen.dart';
 import '../screens/login/login_screen_phone.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class ParametersScreen extends StatelessWidget {
   final ProfileViewModel viewModel;
@@ -140,6 +142,17 @@ class ParametersScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
+            leading: CustomIcon.tutorial,
+            title: Text(
+              "Un bug, dis nous tout",
+              style: CustomTextStyle.body1,
+            ),
+            onTap: () {
+              sendEmail();
+            },
+          ),
+          const Divider(),
+          ListTile(
             leading: const Icon(CustomIcon.logOut, color: CustomColor.red),
             title: Text(
               CustomString.logOut,
@@ -159,5 +172,20 @@ class ParametersScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void sendEmail() async {
+    final Email email = Email(
+      body: '',
+      subject: 'Bug sur CFQ',
+      recipients: ['calvignaccharles@gmail.com'],
+      isHTML: false,
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (error) {
+      AppLogger.debug("Error send mail $error");
+    }
   }
 }

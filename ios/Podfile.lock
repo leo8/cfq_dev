@@ -1246,6 +1246,8 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GTMSessionFetcher/Core (< 5.0, >= 3.4)
   - Flutter (1.0.0)
+  - flutter_email_sender (0.0.1):
+    - Flutter
   - flutter_google_places_sdk_ios (0.0.3):
     - Flutter
     - GooglePlaces (~> 8.5.0)
@@ -1407,6 +1409,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - flutter_email_sender (from `.symlinks/plugins/flutter_email_sender/ios`)
   - flutter_google_places_sdk_ios (from `.symlinks/plugins/flutter_google_places_sdk_ios/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
@@ -1461,6 +1464,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  flutter_email_sender:
+    :path: ".symlinks/plugins/flutter_email_sender/ios"
   flutter_google_places_sdk_ios:
     :path: ".symlinks/plugins/flutter_google_places_sdk_ios/ios"
   flutter_local_notifications:
@@ -1500,6 +1505,7 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: 302ac5967857ad7e7388b15382d705b8c8d892aa
   FirebaseStorage: 1bf8f80ac3bb02c72844b7350e95e10be7113ef0
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_email_sender: 10a22605f92809a11ef52b2f412db806c6082d40
   flutter_google_places_sdk_ios: 76e1260ead0522ef09c206563a7288aa3c77202e
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778

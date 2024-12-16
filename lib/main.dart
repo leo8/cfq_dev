@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cfq_dev/screens/conversations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -22,6 +23,8 @@ import 'package:crypto/crypto.dart';
 // Initialize notification plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
+User? globalCurrentUser;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -54,7 +57,6 @@ int generateNotificationId(String conversationId) {
   var digest = md5.convert(bytes); // Générer un hash MD5
   var convertInt =
       Uint8List.fromList(digest.bytes).buffer.asByteData().getUint32(0);
-  print("@@@ generateNotificationId = $convertInt");
   return convertInt;
 }
 
@@ -157,21 +159,10 @@ class _CFQState extends State<CFQ> {
       }
     });
 
-// Dans onMessageOpenedApp
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       AppLogger.debug("Message ouvert depuis une notification : ${message}");
 
-      print("@@@ ${message.data.containsKey('conversationId')}");
       if (message.data.containsKey('conversationId')) {
-        final conversationId = message.data['conversationId'];
-        print("@@@ ici");
-        print("@@@ conversationId = ${conversationId}");
-        print(
-            "@@@ generateNotificationId(conversationId) = ${generateNotificationId(conversationId)}");
-        print(
-            "@@@ generateNotificationId(conversationId) = ${generateNotificationId(conversationId)}");
-        //flutterLocalNotificationsPlugin
-        //    .cancel(generateNotificationId(conversationId));
         flutterLocalNotificationsPlugin.cancelAll();
       }
 
