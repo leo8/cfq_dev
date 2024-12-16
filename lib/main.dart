@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,135 +17,93 @@ import 'screens/login/login_screen_phone.dart';
 import 'utils/logger.dart';
 import 'utils/styles/colors.dart';
 import 'utils/styles/neon_background.dart';
+import 'package:crypto/crypto.dart';
 
 // Initialize notification plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-Future<void> _setupNotificationListener() async {
-  const MethodChannel _channel = MethodChannel("notifications_channel");
-  final authMethods = AuthMethods();
-  _channel.setMethodCallHandler((call) async {
-    if (call.method == "validate_action") {
-      authMethods.updateIsActiveStatus(true);
-    } else if (call.method == "cancel_action") {
-      authMethods.updateIsActiveStatus(false);
-    }
-  });
-}
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   AppLogger.debug("Background message received: ${message}");
 
-  // Handle both data and notification messages
   if (message.data.isNotEmpty) {
     final String? eventType = message.data['event'];
-    if (eventType == "daily_ask_turn") {
-      AppLogger.debug("Daily ask turn event reçu");
-      final MethodChannel _channel =
-          const MethodChannel("notifications_channel");
-      await _channel.invokeMethod("scheduleNotification");
-    }
-    if (eventType == "daily_ask_turn_already") {
-      AppLogger.debug("Daily ask turn event AGAIN reçu");
-      final MethodChannel _channel =
-          const MethodChannel("notifications_channel");
-      await _channel.invokeMethod("scheduleNotification");
+    if (eventType == "daily_ask_turn" ||
+        eventType == "daily_ask_turn_already") {
+      _scheduleNotification();
     }
   }
 
-  // Handle notification payload if present
   if (message.notification != null) {
-    // You might want to show a local notification here
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    const androidDetails = AndroidNotificationDetails(
-      '1',
-      'cfq_notifications',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const iosDetails = DarwinNotificationDetails();
-    const generalDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    await flutterLocalNotificationsPlugin.show(
-      message.notification.hashCode,
-      message.notification?.title,
-      message.notification?.body,
-      generalDetails,
+    await _showNotification(
+      title: message.notification!.title,
+      body: message.notification!.body,
     );
   }
+}
+
+Future<void> _scheduleNotification() async {
+  const MethodChannel _channel = MethodChannel("notifications_channel");
+  await _channel.invokeMethod("scheduleNotification");
+}
+
+// Fonction pour générer un ID entier à partir de conversationId
+int generateNotificationId(String conversationId) {
+  var bytes = utf8.encode(conversationId); // Convertir en bytes
+  var digest = md5.convert(bytes); // Générer un hash MD5
+  var convertInt =
+      Uint8List.fromList(digest.bytes).buffer.asByteData().getUint32(0);
+  print("@@@ generateNotificationId = $convertInt");
+  return convertInt;
+}
+
+// Utiliser generateNotificationId dans _showNotification
+Future<void> _showNotification(
+    {String? title, String? body, String? conversationId}) async {
+  const androidDetails = AndroidNotificationDetails('1', 'cfq_notifications',
+      importance: Importance.high, priority: Priority.high, autoCancel: true);
+  const iosDetails = DarwinNotificationDetails();
+  const generalDetails = NotificationDetails(
+    android: androidDetails,
+    iOS: iosDetails,
+  );
+
+  int notificationId = conversationId != null
+      ? generateNotificationId(conversationId)
+      : DateTime.now().millisecondsSinceEpoch.hashCode;
+
+  await flutterLocalNotificationsPlugin.show(
+    notificationId,
+    title,
+    body,
+    generalDetails,
+  );
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  // Request notification permissions and configure Firebase Messaging
   await _initializeFirebaseMessaging();
-
   runApp(const CFQ());
 }
 
 Future<void> _initializeFirebaseMessaging() async {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  // Request permissions first
   await messaging.requestPermission(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  // Set foreground notification options
   await messaging.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  // Subscribe to topics with retry logic
-  await _subscribeToTopicsWithRetry(messaging);
-
-  // Set up background handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  await _setupNotificationListener();
-}
-
-Future<void> _subscribeToTopicsWithRetry(FirebaseMessaging messaging,
-    {int maxRetries = 3}) async {
-  int retryCount = 0;
-  bool subscribed = false;
-
-  while (!subscribed && retryCount < maxRetries) {
-    try {
-      if (Platform.isIOS) {
-        String? apnsToken = await messaging.getAPNSToken();
-        if (apnsToken != null) {
-          await messaging.subscribeToTopic("daily_ask_turn");
-          await messaging.subscribeToTopic("broadcast_notification");
-          subscribed = true;
-        }
-      } else {
-        await messaging.subscribeToTopic("daily_ask_turn");
-        await messaging.subscribeToTopic("broadcast_notification");
-        subscribed = true;
-      }
-    } catch (e) {
-      retryCount++;
-      await Future.delayed(Duration(seconds: 2 * retryCount));
-    }
-  }
-
-  if (!subscribed) {
-    AppLogger.debug('Failed to subscribe to topics after $maxRetries attempts');
-  }
 }
 
 class CFQ extends StatefulWidget {
@@ -155,8 +114,6 @@ class CFQ extends StatefulWidget {
 }
 
 class _CFQState extends State<CFQ> {
-  late FlutterLocalNotificationsPlugin fltNotification;
-
   @override
   void initState() {
     super.initState();
@@ -175,152 +132,53 @@ class _CFQState extends State<CFQ> {
       iOS: iosInitSettings,
     );
 
-    fltNotification = FlutterLocalNotificationsPlugin();
-    await fltNotification.initialize(initSettings);
-  }
-
-  Future<void> _showNotification(RemoteMessage message) async {
-    final notification = message.notification;
-    if (notification != null) {
-      const androidDetails = AndroidNotificationDetails(
-        '1',
-        'cfq_notifications',
-        importance: Importance.high,
-        priority: Priority.high,
-      );
-      const iosDetails = DarwinNotificationDetails();
-      const generalDetails = NotificationDetails(
-        android: androidDetails,
-        iOS: iosDetails,
-      );
-
-      await fltNotification.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        generalDetails,
-      );
-    }
-  }
-
-  Future<void> _manageFCMToken(String uid) async {
-    try {
-      final FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-      // For iOS: Ensure APNS token is retrieved
-      if (Platform.isIOS) {
-        await messaging.requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-
-        String? apnsToken = await messaging.getAPNSToken();
-        if (apnsToken == null) {
-          AppLogger.debug('Failed to retrieve APNS token.');
-          return;
-        }
-      }
-
-      // Get FCM token and update Firestore
-      String? token = await messaging.getToken();
-      if (token == null) return;
-
-      final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
-      final userData = await userDoc.get();
-
-      if (userData.exists) {
-        final currentToken = userData.data()?['tokenFCM'];
-        if (currentToken != token) {
-          await userDoc.update({'tokenFCM': token});
-        }
-      } else {
-        await userDoc.set({'tokenFCM': token}, SetOptions(merge: true));
-      }
-
-      // Listen to token refresh
-      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-        _manageFCMToken(uid);
-      });
-    } catch (e) {
-      AppLogger.debug('Error managing FCM token: $e');
-    }
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
   }
 
   Future<void> _initializeMessageHandling() async {
-    // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       AppLogger.debug("Foreground message received: ${message}");
 
-      // Handle data messages
+      // Vérifier si vous devez gérer manuellement les notifications
       if (message.data.isNotEmpty) {
         final String? eventType = message.data['event'];
-        if (eventType == "daily_ask_turn") {
-          AppLogger.debug("Daily ask turn event received in foreground");
-          final MethodChannel _channel =
-              const MethodChannel("notifications_channel");
-          await _channel.invokeMethod("scheduleNotification");
-        }
-        if (eventType == "daily_ask_turn_already") {
-          AppLogger.debug("Daily ask turn AGAIN event received in foreground");
-          final MethodChannel _channel =
-              const MethodChannel("notifications_channel");
-          await _channel.invokeMethod("scheduleNotification");
+        if (eventType == "daily_ask_turn" ||
+            eventType == "daily_ask_turn_already") {
+          _scheduleNotification();
         }
       }
 
-      // Handle notification messages
-      if (message.notification != null) {
-        await _showNotification(message);
-      }
-    });
-
-    // Handle message open events
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      _processMessage(message);
-    });
-  }
-
-  Future<void> _processMessage(RemoteMessage message) async {
-    // Handle data messages
-    if (message.data.isNotEmpty) {
-      final String? event = message.data['event'];
-      if (event == 'daily_ask_turn') {
-        await _showCustomNotification(
-          title: 'CFQ ?',
-          body: message.data['message'] ?? 'Ca turn ce soir ?',
+      if (message.notification != null &&
+          !(Platform.isIOS || Platform.isAndroid)) {
+        await _showNotification(
+          title: message.notification!.title,
+          body: message.notification!.body,
         );
       }
-    }
+    });
 
-    // Handle notification messages
-    if (message.notification != null) {
-      await _showNotification(message);
-    }
-  }
+// Dans onMessageOpenedApp
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      AppLogger.debug("Message ouvert depuis une notification : ${message}");
 
-  Future<void> _showCustomNotification({
-    required String title,
-    required String body,
-  }) async {
-    const androidDetails = AndroidNotificationDetails(
-      '1',
-      'cfq_notifications',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const iosDetails = DarwinNotificationDetails();
-    const generalDetails = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
+      print("@@@ ${message.data.containsKey('conversationId')}");
+      if (message.data.containsKey('conversationId')) {
+        final conversationId = message.data['conversationId'];
+        print("@@@ ici");
+        print("@@@ conversationId = ${conversationId}");
+        print(
+            "@@@ generateNotificationId(conversationId) = ${generateNotificationId(conversationId)}");
+        print(
+            "@@@ generateNotificationId(conversationId) = ${generateNotificationId(conversationId)}");
+        //flutterLocalNotificationsPlugin
+        //    .cancel(generateNotificationId(conversationId));
+        flutterLocalNotificationsPlugin.cancelAll();
+      }
 
-    await fltNotification.show(
-      DateTime.now().millisecondsSinceEpoch.hashCode,
-      title,
-      body,
-      generalDetails,
-    );
+      if (message.notification != null) {
+        print('Notification clicked: ${message.notification?.title}');
+      }
+    });
   }
 
   @override
@@ -343,27 +201,7 @@ class _CFQState extends State<CFQ> {
                 if (snapshot.hasData && snapshot.data?.uid != null) {
                   final uid = snapshot.data!.uid;
                   _manageFCMToken(uid);
-                  return FutureBuilder<bool>(
-                    future: _doesUserExist(uid),
-                    builder: (context, userSnapshot) {
-                      if (userSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: CustomColor.customWhite,
-                          ),
-                        );
-                      }
-                      if (userSnapshot.hasData && userSnapshot.data == true) {
-                        return RepsonsiveLayout(
-                          mobileScreenLayout: MobileScreenLayout(uid: uid),
-                          webScreenLayout: WebScreenLayout(),
-                        );
-                      } else {
-                        return const LoginScreenMobile();
-                      }
-                    },
-                  );
+                  return _buildUserScreen(uid);
                 } else if (snapshot.hasError) {
                   return Center(child: Text('${snapshot.error}'));
                 }
@@ -383,9 +221,49 @@ class _CFQState extends State<CFQ> {
     );
   }
 
+  Future<void> _manageFCMToken(String uid) async {
+    try {
+      final FirebaseMessaging messaging = FirebaseMessaging.instance;
+      String? token = await messaging.getToken();
+
+      if (token != null) {
+        final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
+        await userDoc.set({'tokenFCM': token}, SetOptions(merge: true));
+
+        FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+          await userDoc.update({'tokenFCM': newToken});
+        });
+      }
+    } catch (e) {
+      AppLogger.debug('Error managing FCM token: $e');
+    }
+  }
+
+  Widget _buildUserScreen(String uid) {
+    return FutureBuilder<bool>(
+      future: _doesUserExist(uid),
+      builder: (context, userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: CustomColor.customWhite,
+            ),
+          );
+        }
+        if (userSnapshot.hasData && userSnapshot.data == true) {
+          return RepsonsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(uid: uid),
+            webScreenLayout: WebScreenLayout(),
+          );
+        } else {
+          return const LoginScreenMobile();
+        }
+      },
+    );
+  }
+
   Future<bool> _doesUserExist(String uid) async {
-    final doc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    return doc.exists;
+    final doc = FirebaseFirestore.instance.collection('users').doc(uid);
+    return (await doc.get()).exists;
   }
 }

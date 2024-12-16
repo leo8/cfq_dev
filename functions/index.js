@@ -136,15 +136,15 @@ exports.onNotificationCreated = functions
             .get();
 
         const doc = notificationIdUsersSnapshot.docs[0];
-        console.log(`Utilisateur trouvé : ${doc.id}`);
-        console.log("Données :", doc.data().username);
-        console.log("Données :", doc.data().tokenFCM);
+        console.log(`@@@ Utilisateur trouvé : ${doc.id}`);
+        console.log("@@@ username :", doc.data().username);
 
         const tokenFCM = doc.data().tokenFCM;
 
-        // Determine notification content based on type
         let title = "";
         let body = "";
+        const conversationId = newNotification.content.conversationId;
+
         const content = newNotification.content;
         switch (newNotification.type) {
           case "message": {
@@ -195,6 +195,9 @@ exports.onNotificationCreated = functions
           notification: {
             title: title,
             body: body,
+          },
+          data: {
+            conversationId: conversationId,
           },
           token: tokenFCM,
         };
