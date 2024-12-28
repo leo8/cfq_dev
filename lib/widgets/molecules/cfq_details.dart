@@ -44,122 +44,135 @@ class CFQDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!isExpanded) const SizedBox(height: 10),
-        if (!isExpanded)
-          RichText(
-            text: TextSpan(
-              style: CustomTextStyle.hugeTitle.copyWith(
-                fontSize: 26,
-                letterSpacing: 1.4,
-              ),
-              children: [
-                const TextSpan(text: 'ÇFQ '),
-                TextSpan(
-                  text: when.toUpperCase(),
-                  style: const TextStyle(color: CustomColor.customPurple),
-                ),
-                const TextSpan(text: ' ?'),
-              ],
-            ),
-          ),
-        isExpanded ? const SizedBox(height: 4) : const SizedBox(height: 12),
-        if (moods.isNotEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: moods
-                .map((mood) => MoodChip(
-                      icon: _getMoodIcon(mood),
-                      label: mood,
-                      isSelected: false,
-                      onTap: () {},
-                    ))
-                .toList(),
-          ),
-        if (moods.isNotEmpty)
-          isExpanded ? const SizedBox(height: 12) : const SizedBox(height: 8),
-        if (eventDateTime != null) ...[
-          Text(
-            endDateTime != null
-                ? DateTimeUtils.formatDateTimeDisplay(
-                    eventDateTime, endDateTime)
-                : DateTimeUtils.formatEventDateTime(eventDateTime!),
-            style: CustomTextStyle.body1Bold.copyWith(
-              fontSize: endDateTime != null ? 12 : 14,
-              color: CustomColor.customPurple,
-            ),
-          ),
-          isExpanded ? const SizedBox(height: 10) : const SizedBox(height: 25),
-        ],
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CFQInviteesScreen(
-                  cfqId: cfqId,
-                ),
-              ),
-            );
-          },
-          child: StreamBuilder<int>(
-            stream: followersCountStream ?? Stream.value(followersCount),
-            builder: (context, snapshot) {
-              final count = snapshot.data ?? followersCount;
-              return RichText(
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.37,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isExpanded) const SizedBox(height: 10),
+            if (!isExpanded)
+              RichText(
                 text: TextSpan(
-                  style: CustomTextStyle.body1,
+                  style: CustomTextStyle.hugeTitle.copyWith(
+                    fontSize: 26,
+                    letterSpacing: 1.4,
+                  ),
                   children: [
-                    if (count > 0)
-                      TextSpan(
-                        text: '$count ',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
+                    const TextSpan(text: 'ÇFQ '),
                     TextSpan(
-                      text: count == 0
-                          ? CustomString.noFollowersYet
-                          : count == 1
-                              ? CustomString.onePersonFollows
-                              : CustomString.peopleFollow,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
+                      text: when.toUpperCase(),
+                      style: const TextStyle(color: CustomColor.customPurple),
                     ),
+                    const TextSpan(text: ' ?'),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
-        isExpanded ? const SizedBox(height: 30) : const SizedBox(height: 25),
-        if (location.isNotEmpty)
-          Row(
-            children: [
-              CustomIcon.eventLocation.copyWith(size: 18),
-              const SizedBox(width: 4),
-              Expanded(
-                  child: Text(location,
-                      style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                      overflow: TextOverflow.ellipsis)),
+              ),
+            isExpanded ? const SizedBox(height: 4) : const SizedBox(height: 12),
+            if (moods.isNotEmpty)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: moods
+                    .map((mood) => MoodChip(
+                          icon: _getMoodIcon(mood),
+                          label: mood,
+                          isSelected: false,
+                          onTap: () {},
+                        ))
+                    .toList(),
+              ),
+            if (moods.isNotEmpty)
+              isExpanded
+                  ? const SizedBox(height: 12)
+                  : const SizedBox(height: 8),
+            if (eventDateTime != null) ...[
+              Text(
+                endDateTime != null
+                    ? DateTimeUtils.formatDateTimeDisplay(
+                        eventDateTime, endDateTime)
+                    : DateTimeUtils.formatEventDateTime(eventDateTime!),
+                style: CustomTextStyle.body1Bold.copyWith(
+                  fontSize: endDateTime != null ? 12 : 14,
+                  color: CustomColor.customPurple,
+                ),
+              ),
+              isExpanded
+                  ? const SizedBox(height: 10)
+                  : const SizedBox(height: 25),
             ],
-          ),
-        if (description.isNotEmpty)
-          isExpanded ? const SizedBox(height: 25) : const SizedBox(height: 20),
-        if (description.isNotEmpty)
-          Text(
-            description,
-            style: CustomTextStyle.body1,
-            maxLines: isExpanded ? 50 : 3,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-      ],
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CFQInviteesScreen(
+                      cfqId: cfqId,
+                    ),
+                  ),
+                );
+              },
+              child: StreamBuilder<int>(
+                stream: followersCountStream ?? Stream.value(followersCount),
+                builder: (context, snapshot) {
+                  final count = snapshot.data ?? followersCount;
+                  return RichText(
+                    text: TextSpan(
+                      style: CustomTextStyle.body1,
+                      children: [
+                        if (count > 0)
+                          TextSpan(
+                            text: '$count ',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        TextSpan(
+                          text: count == 0
+                              ? CustomString.noFollowersYet
+                              : count == 1
+                                  ? CustomString.onePersonFollows
+                                  : CustomString.peopleFollow,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            isExpanded
+                ? const SizedBox(height: 30)
+                : const SizedBox(height: 25),
+            if (location.isNotEmpty)
+              Row(
+                children: [
+                  CustomIcon.eventLocation.copyWith(size: 18),
+                  const SizedBox(width: 4),
+                  Expanded(
+                      child: Text(location,
+                          style: CustomTextStyle.body1.copyWith(fontSize: 12),
+                          overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+            if (description.isNotEmpty)
+              isExpanded
+                  ? const SizedBox(height: 25)
+                  : const SizedBox(height: 20),
+            if (description.isNotEmpty)
+              Text(
+                description,
+                style: CustomTextStyle.body1,
+                maxLines: isExpanded ? 50 : 3,
+                overflow: isExpanded ? null : TextOverflow.ellipsis,
+              ),
+          ],
+        ),
+      ),
     );
   }
 

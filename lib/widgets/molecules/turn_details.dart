@@ -40,141 +40,148 @@ class TurnDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!isExpanded) const SizedBox(height: 10),
-        if (!isExpanded)
-          Text(turnName,
-              style: CustomTextStyle.hugeTitle.copyWith(
-                fontSize: 26,
-                letterSpacing: 1.4,
-              )),
-        isExpanded
-            ? const SizedBox(
-                height: 4,
-              )
-            : const SizedBox(height: 12),
-        if (!moods.isEmpty)
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: moods
-                .map((mood) => MoodChip(
-                      icon: _getMoodIcon(mood),
-                      label: mood,
-                      isSelected: false,
-                      onTap: () {},
-                    ))
-                .toList(),
-          ),
-        if (!moods.isEmpty)
-          isExpanded
-              ? const SizedBox(
-                  height: 20,
-                )
-              : const SizedBox(height: 15),
-        Text(
-          endDateTime != null
-              ? DateTimeUtils.formatDateTimeDisplay(eventDateTime, endDateTime)
-              : DateTimeUtils.formatEventDateTime(eventDateTime),
-          style: CustomTextStyle.body1Bold.copyWith(
-            fontSize: endDateTime != null ? 12 : 14,
-            color: CustomColor.customPurple,
-          ),
-        ),
-        isExpanded
-            ? const SizedBox(
-                height: 30,
-              )
-            : const SizedBox(height: 25),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TurnInviteesScreen(
-                        turnId: turnId,
-                      )),
-            );
-          },
-          child: RichText(
-            text: TextSpan(
-              style: CustomTextStyle.body1,
-              children: [
-                TextSpan(
-                  text: _getAttendeesCount(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ${_getAttendeesText()}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ],
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.37,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isExpanded) const SizedBox(height: 10),
+            if (!isExpanded)
+              Text(turnName,
+                  style: CustomTextStyle.hugeTitle.copyWith(
+                    fontSize: 26,
+                    letterSpacing: 1.4,
+                  )),
+            isExpanded
+                ? const SizedBox(
+                    height: 4,
+                  )
+                : const SizedBox(height: 12),
+            if (!moods.isEmpty)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: moods
+                    .map((mood) => MoodChip(
+                          icon: _getMoodIcon(mood),
+                          label: mood,
+                          isSelected: false,
+                          onTap: () {},
+                        ))
+                    .toList(),
+              ),
+            if (!moods.isEmpty)
+              isExpanded
+                  ? const SizedBox(
+                      height: 20,
+                    )
+                  : const SizedBox(height: 15),
+            Text(
+              endDateTime != null
+                  ? DateTimeUtils.formatDateTimeDisplay(
+                      eventDateTime, endDateTime)
+                  : DateTimeUtils.formatEventDateTime(eventDateTime),
+              style: CustomTextStyle.body1Bold.copyWith(
+                fontSize: endDateTime != null ? 12 : 14,
+                color: CustomColor.customPurple,
+              ),
             ),
-          ),
-        ),
-        isExpanded
-            ? const SizedBox(
-                height: 30,
-              )
-            : const SizedBox(height: 25),
-        isExpanded
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            isExpanded
+                ? const SizedBox(
+                    height: 30,
+                  )
+                : const SizedBox(height: 25),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TurnInviteesScreen(
+                            turnId: turnId,
+                          )),
+                );
+              },
+              child: RichText(
+                text: TextSpan(
+                  style: CustomTextStyle.body1,
+                  children: [
+                    TextSpan(
+                      text: _getAttendeesCount(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' ${_getAttendeesText()}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            isExpanded
+                ? const SizedBox(
+                    height: 30,
+                  )
+                : const SizedBox(height: 25),
+            isExpanded
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CustomIcon.eventLocation.copyWith(size: 18),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              where,
+                              style:
+                                  CustomTextStyle.body1.copyWith(fontSize: 12),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                    ],
+                  )
+                : Row(
                     children: [
                       CustomIcon.eventLocation.copyWith(size: 18),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           where,
                           style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  CustomIcon.eventLocation.copyWith(size: 18),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      where,
-                      style: CustomTextStyle.body1.copyWith(fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+            if (description.isNotEmpty)
+              isExpanded
+                  ? const SizedBox(
+                      height: 25,
+                    )
+                  : const SizedBox(height: 20),
+            if (description.isNotEmpty)
+              Text(
+                description,
+                style: CustomTextStyle.body1,
+                maxLines: isExpanded ? 50 : 3,
+                overflow: isExpanded ? null : TextOverflow.ellipsis,
               ),
-        if (description.isNotEmpty)
-          isExpanded
-              ? const SizedBox(
-                  height: 25,
-                )
-              : const SizedBox(height: 20),
-        if (description.isNotEmpty)
-          Text(
-            description,
-            style: CustomTextStyle.body1,
-            maxLines: isExpanded ? 50 : 3,
-            overflow: isExpanded ? null : TextOverflow.ellipsis,
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 

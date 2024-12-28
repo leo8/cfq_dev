@@ -1,4 +1,4 @@
-package com.cfq.cfqDev
+package com.cfq.cfqProd
 
 import io.flutter.embedding.android.FlutterActivity
 
